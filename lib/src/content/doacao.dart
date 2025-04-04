@@ -34,7 +34,7 @@ class _DoacaoState extends State<Doacao> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: mainColor,
+        backgroundColor: redColor,
         title: const Text("Doação", style: TextStyle(color: Colors.white)),
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,

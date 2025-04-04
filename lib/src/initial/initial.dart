@@ -10,176 +10,187 @@ class Initial extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get screen size for responsive sizing
+    final screenSize = MediaQuery.of(context).size;
+    // Reduced button size to 32% of screen width (smaller than before)
+    final buttonSize = screenSize.width * 0.27;
+    
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/fotoleaologo.jpg'),
             fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+              Colors.black45,
+              BlendMode.darken,
+            ),
           ),
         ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(height: 40),
-              const Icon(Icons.menu_book_rounded,
-                  color: Colors.white, size: 100.0),
-              const SizedBox(height: 70),
-              Column(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: screenSize.height - MediaQuery.of(context).padding.top,
+              ),
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: sizeBtnInitial[0],
-                        height: sizeBtnInitial[1],
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const BibleList()),
-                            );
-                          },
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.menu_book_rounded,
-                                  color: Colors.grey[800]),
-                              const SizedBox(height: 5),
-                              Text(
-                                'Biblia',
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.grey[800]),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 15),
-                      SizedBox(
-                        width: sizeBtnInitial[0],
-                        height: sizeBtnInitial[1],
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const HarpaList()),
-                            );
-                          },
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.music_note, color: Colors.grey[800]),
-                              const SizedBox(height: 5),
-                              Text(
-                                'Harpa',
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.grey[800]),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+                  const SizedBox(height: 30),
+                  // App logo
+                  const Icon(
+                    Icons.menu_book_rounded,
+                    color: Colors.white,
+                    size: 65.0,
+                    shadows: [Shadow(blurRadius: 10.0, color: Colors.black54)],
                   ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: sizeBtnInitial[0],
-                        height: sizeBtnInitial[1],
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            side: const BorderSide(
-                              color: Colors.white,
-                              width: 2,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const DevocionalScreen()),
-                            );
-                          },
-                          child: const Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.menu_book_rounded,
-                                  color: Colors.white),
-                              SizedBox(height: 5),
-                              Text(
-                                'Devocional',
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.white),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 15),
-                      SizedBox(
-                        width: sizeBtnInitial[0],
-                        height: sizeBtnInitial[1],
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            side: const BorderSide(
-                              color: Colors.white,
-                              width: 2,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const Doacao()),
-                            );
-                          },
-                          child: const Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.account_balance,
-                                  color: Colors.white),
-                              SizedBox(height: 5),
-                              Text(
-                                'Doação',
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.white),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+                  const SizedBox(height: 8),
+                  const Text(
+                    "Bíblia e Harpa",
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      shadows: [Shadow(blurRadius: 8.0, color: Colors.black54)],
+                    ),
                   ),
+                  const SizedBox(height: 5),
+                  // Restored tagline
+                  const Text(
+                    "Sua jornada espiritual diária",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white70,
+                      fontStyle: FontStyle.italic,
+                      shadows: [Shadow(blurRadius: 4.0, color: Colors.black54)],
+                    ),
+                  ),
+                  const SizedBox(height: 70),
+                  // Menu grid with smaller buttons
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildMenuCard(
+                              context,
+                              'Bíblia',
+                              Icons.menu_book_rounded,
+                              amberColor,
+                              () => Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const BibleList()),
+                              ),
+                              size: buttonSize,
+                            ),
+                            const SizedBox(width: 12),
+                            _buildMenuCard(
+                              context,
+                              'Harpa',
+                              Icons.music_note,
+                              indigoColor,
+                              () => Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const HarpaList()),
+                              ),
+                              size: buttonSize,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildMenuCard(
+                              context,
+                              'Devocional',
+                              Icons.auto_stories,
+                              tealColor,
+                              () => Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const DevocionalScreen()),
+                              ),
+                              size: buttonSize,
+                            ),
+                            const SizedBox(width: 12),
+                            _buildMenuCard(
+                              context,
+                              'Doação',
+                              Icons.favorite,
+                              Colors.red.shade700,
+                              () => Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const Doacao()),
+                              ),
+                              size: buttonSize,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 30),
                 ],
               ),
-            ],
+            ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMenuCard(
+    BuildContext context,
+    String title,
+    IconData icon,
+    Color color,
+    VoidCallback onPressed, {
+    required double size,
+  }) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          // ignore: deprecated_member_use
+          color: Colors.white.withOpacity(0.9),
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 5,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: color,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                icon,
+                color: Colors.white,
+                size: 24,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -49,7 +49,7 @@ class _HarpaListState extends State<HarpaList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: mainColor,
+        backgroundColor: indigoColor,
         centerTitle: true,
         automaticallyImplyLeading: true,
         iconTheme: const IconThemeData(color: Colors.white),

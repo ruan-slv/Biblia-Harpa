@@ -1,30 +1,27 @@
-# appbible
+# 📖 Bíblia Offline
 
-A new Flutter project.
+Este é um aplicativo desenvolvido com o propósito de ajudar pessoas que desejam acessar a Bíblia Sagrada em qualquer lugar, a qualquer momento, **sem necessidade de conexão com a internet e sem anúncios**. O foco principal é proporcionar uma **experiência agradável, limpa e acessível** para todos.
 
-## Getting Started
+## ✨ Objetivo
 
-This project is a starting point for a Flutter application.
+Levar a Palavra de Deus de forma simples, prática e gratuita, sem distrações ou barreiras tecnológicas. Este aplicativo não visa fins lucrativos, sendo um projeto pessoal voltado unicamente para a **edificação espiritual** de quem o utilizar.
 
-A few resources to get you started if this is your first Flutter project:
+## 💡 Recursos
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Bíblia completa disponível offline
+- Interface limpa e intuitiva
+- Sem anúncios ou interrupções
+- Leve e de fácil navegação
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 💖 Apoio
 
+Caso este aplicativo tenha te ajudado de alguma forma e você deseje apoiar o projeto, qualquer forma de ajuda será bem-vinda para manter e melhorar essa ferramenta. Fique à vontade!
 
-Janeiro (Jan): 31 dias
-Fevereiro (Fev): 28 dias (29 dias em anos bissextos, mas não em 2025)
-Março (Mar): 31 dias
-Abril (Abr): 30 dias
-Maio (Mai): 31 dias
-Junho (Jun): 30 dias
-Julho (Jul): 31 dias
-Agosto (Ago): 31 dias
-Setembro (Set): 30 dias
-Outubro (Out): 31 dias
-Novembro (Nov): 30 dias
-Dezembro (Dez): 31 dias
+---
+
+### 🙏 Agradecimento
+
+Muito obrigado por visitar este repositório e demonstrar interesse pelo projeto! Que a Palavra de Deus alcance o seu coração onde quer que você esteja. ✨
+
+Com carinho,
+**Ruan**

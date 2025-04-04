@@ -76,7 +76,7 @@ class _DevocionalScreenState extends State<DevocionalScreen> {
     final devocional = devocionais[index];
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: mainColor,
+        backgroundColor: tealColor,
         title: const Text("Devocional 365 Dias", style: TextStyle(color: Colors.white)),
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
