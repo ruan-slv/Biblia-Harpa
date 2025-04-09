@@ -12,8 +12,8 @@ class Initial extends StatelessWidget {
   Widget build(BuildContext context) {
     // Get screen size for responsive sizing
     final screenSize = MediaQuery.of(context).size;
-    // Reduced button size to 32% of screen width (smaller than before)
-    final buttonSize = screenSize.width * 0.27;
+    // Reduced button size to 30% of screen width (smaller than before)
+    final buttonSize = screenSize.width * 0.30;
     
     return Scaffold(
       body: Container(
