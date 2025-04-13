@@ -19,7 +19,7 @@ class Initial extends StatelessWidget {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/fotoleaologo.jpg'),
+            image: AssetImage('assets/images/Wall paperss.jpg'),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
               Colors.black45,

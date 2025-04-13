@@ -42,8 +42,9 @@ class HarpContentScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: brancoNeve,
       appBar: AppBar(
-        backgroundColor: indigoColor,
+        backgroundColor: azulSereno,
         title: Text(harp, style: const TextStyle(color: Colors.white)),
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
@@ -69,7 +70,7 @@ class HarpContentScreen extends StatelessWidget {
                 children: [
                   Text(
                     harpText.coro,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: cinzaEscuro)),
                   const SizedBox(height: 30),
                   ...harpText.verses.entries.map(
                     (entry) => Padding(
@@ -77,7 +78,7 @@ class HarpContentScreen extends StatelessWidget {
                           bottom: 30.0),
                       child: Text(
                         "${entry.key}. ${entry.value}",
-                        style: const TextStyle(fontSize: 18),
+                        style: const TextStyle(fontSize: 18, color: cinzaEscuro),
                       ),
                     ),
                   )

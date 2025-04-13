@@ -75,8 +75,9 @@ class _DevocionalScreenState extends State<DevocionalScreen> {
 
     final devocional = devocionais[index];
     return Scaffold(
+      backgroundColor: brancoNeve,
       appBar: AppBar(
-        backgroundColor: tealColor,
+        backgroundColor: azulSereno,
         title: const Text("Devocional 365 Dias", style: TextStyle(color: Colors.white)),
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
@@ -87,7 +88,7 @@ class _DevocionalScreenState extends State<DevocionalScreen> {
             child: IconButton(
               onPressed: initialDevocional,
               icon: const Icon(Icons.refresh),
-              color: whiteColor,
+              color: brancoNeve,
               tooltip: "Reiniciar o devocional",
             ),
           ),
@@ -99,33 +100,33 @@ class _DevocionalScreenState extends State<DevocionalScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Dia ${devocional["data"]}',
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
+              // Text(
+              //   'Dia ${devocional["data"]}',
+              //   style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              // ),
               const SizedBox(height: 10),
               Text(
                 '${devocional["texto"]}',
-                style: const TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
+                style: const TextStyle(fontSize: 18, fontStyle: FontStyle.italic, color: cinzaEscuro),
               ),
               Text(
                 '- ${devocional["versiculo"]}',
-                style: const TextStyle(fontSize: 16, color: Colors.grey),
+                style: const TextStyle(fontSize: 16, color: cinzaClaro),
               ),
               const SizedBox(height: 20),
               const Text(
                 'Reflexão',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: cinzaEscuro),
               ),
               const SizedBox(height: 10),
-              Text(devocional["reflexao"], style: const TextStyle(fontSize: 16)),
+              Text(devocional["reflexao"], style: const TextStyle(fontSize: 16, color: cinzaEscuro)),
               const SizedBox(height: 20),
               const Text(
                 'Oração',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: cinzaEscuro),
               ),
               const SizedBox(height: 10),
-              Text(devocional["oracao"], style: const TextStyle(fontSize: 16)),
+              Text(devocional["oracao"], style: const TextStyle(fontSize: 16, color: cinzaEscuro)),
               const SizedBox(height: 20), // Espaço final para evitar sobreposição
             ],
           ),
@@ -139,15 +140,15 @@ class _DevocionalScreenState extends State<DevocionalScreen> {
           children: [
             // Botão Anterior
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
                     // ignore: deprecated_member_use
-                    color: Colors.black.withOpacity(0.3),
+                    color: cinzaEscuro,
                     spreadRadius: 2,
                     blurRadius: 5,
-                    offset: const Offset(0, 3),
+                    offset: Offset(0, 3),
                   ),
                 ],
               ),
@@ -157,23 +158,23 @@ class _DevocionalScreenState extends State<DevocionalScreen> {
                   shape: const CircleBorder(),
                   padding: const EdgeInsets.all(12),
                   backgroundColor: Colors.white, // Contraste com o fundo
-                  foregroundColor: mainColor,
+                  foregroundColor: cinzaEscuro,
                 ),
-                child: const Icon(Icons.arrow_back, size: 24, color: mainColor),
+                child: const Icon(Icons.arrow_back, size: 24, color: cinzaEscuro),
               ),
             ),
             const SizedBox(width: 20), // Espaço entre os botões
             // Botão Próximo
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
                     // ignore: deprecated_member_use
-                    color: Colors.black.withOpacity(0.3),
+                    color: cinzaEscuro,
                     spreadRadius: 2,
                     blurRadius: 5,
-                    offset: const Offset(0, 3),
+                    offset: Offset(0, 3),
                   ),
                 ],
               ),
@@ -183,9 +184,9 @@ class _DevocionalScreenState extends State<DevocionalScreen> {
                   shape: const CircleBorder(),
                   padding: const EdgeInsets.all(12),
                   backgroundColor: Colors.white, // Contraste com o fundo
-                  foregroundColor: mainColor,
+                  foregroundColor: cinzaEscuro,
                 ),
-                child: const Icon(Icons.arrow_forward, size: 24, color: mainColor),
+                child: const Icon(Icons.arrow_forward, size: 24, color: cinzaEscuro),
               ),
             ),
           ],

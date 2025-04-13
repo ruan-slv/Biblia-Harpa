@@ -46,14 +46,15 @@ class _ChapterListScreenState extends State<ChapterListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: brancoNeve,
       appBar: AppBar(
-        backgroundColor: amberColor,
+        backgroundColor: azulSereno,
         centerTitle: true,
         automaticallyImplyLeading: true,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: brancoNeve),
         title: Text(
           widget.name,
-          style: const TextStyle(color: Colors.white),
+          style: const TextStyle(color: brancoNeve),
         ),
       ),
       body: FutureBuilder<Map<String, dynamic>>(
@@ -73,14 +74,14 @@ class _ChapterListScreenState extends State<ChapterListScreen> {
               final List verses = chapters[index];
 
               return ExpansionTile(
-                title: Text('Capítulo ${index + 1}', style: const TextStyle( fontSize: 18, fontWeight: FontWeight.bold)),
+                title: Text('Capítulo ${index + 1}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: cinzaEscuro)),
                 children: verses.asMap().entries.map((entry) {
                   final int verseIndex = entry.key + 1;
                   final String verseText = entry.value;
 
                   return ListTile(
-                    title: Text("Versículo $verseIndex", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    subtitle: Text(verseText, style: const TextStyle(fontSize: 18)),
+                    title: Text("Versículo $verseIndex", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: cinzaEscuro)),
+                    subtitle: Text(verseText, style: const TextStyle(fontSize: 18, color: cinzaEscuro)),
                   );
                 }).toList(),
               );

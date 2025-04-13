@@ -90,14 +90,15 @@ class _BibleListState extends State<BibleList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: brancoNeve,
       appBar: AppBar(
-        backgroundColor: amberColor,
+        backgroundColor: azulSereno,
         centerTitle: true,
         automaticallyImplyLeading: true,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: brancoNeve),
         title: const Text(
           'Biblia Cristã',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: brancoNeve),
         ),
         actions: [
           SizedBox(
@@ -109,15 +110,15 @@ class _BibleListState extends State<BibleList> {
                 return [
                   const PopupMenuItem<String>(
                     value: "ACF",
-                    child: Text("Almeida Corrigida Fiel"),
+                    child: Text("Almeida Corrigida Fiel", style: TextStyle(color: cinzaEscuro)),
                   ),
                   const PopupMenuItem<String>(
                     value: "NVI",
-                    child: Text("Nova Versão Internacional"),
+                    child: Text("Nova Versão Internacional", style: TextStyle(color: cinzaEscuro)),
                   ),
                   const PopupMenuItem<String>(
                     value: "AA",
-                    child: Text("Almeida Atualizada"),
+                    child: Text("Almeida Atualizada", style: TextStyle(color: cinzaEscuro)),
                   ),
                 ];
               },
@@ -152,8 +153,8 @@ class _BibleListState extends State<BibleList> {
               itemCount: filteredBible.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  leading: const Icon(Icons.menu_book_rounded),
-                  title: Text(filteredBible[index]),
+                  leading: const Icon(Icons.menu_book_rounded, color: cinzaEscuro),
+                  title: Text(filteredBible[index], style: const TextStyle(color: cinzaEscuro)),
                   onTap: () {
                     Navigator.push(
                       context,

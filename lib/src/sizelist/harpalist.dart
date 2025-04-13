@@ -48,14 +48,15 @@ class _HarpaListState extends State<HarpaList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: brancoNeve,
       appBar: AppBar(
-        backgroundColor: indigoColor,
+        backgroundColor: azulSereno,
         centerTitle: true,
         automaticallyImplyLeading: true,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: brancoNeve),
         title: const Text(
           "Harpa Cristã",
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: brancoNeve),
         ),
       ),
       body: Column(
@@ -88,7 +89,7 @@ class _HarpaListState extends State<HarpaList> {
               itemBuilder: (context, index) {
                 return ListTile(
                   leading: const Icon(Icons.menu_book_rounded),
-                  title: Text(filteredHarps[index]),
+                  title: Text(filteredHarps[index], style: TextStyle(color: cinzaEscuro)),
                   onTap: () {
                     Navigator.push(
                       context,

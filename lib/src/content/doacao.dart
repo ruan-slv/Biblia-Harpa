@@ -33,9 +33,10 @@ class _DoacaoState extends State<Doacao> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: brancoNeve,
       appBar: AppBar(
-        backgroundColor: redColor,
-        title: const Text("Doação", style: TextStyle(color: Colors.white)),
+        backgroundColor: azulSereno,
+        title: const Text("Doação", style: TextStyle(color: brancoNeve)),
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
       ),
@@ -46,11 +47,14 @@ class _DoacaoState extends State<Doacao> {
             children: [
               Text(
                 message,
-                style: const TextStyle(fontSize: 18),
+                style: const TextStyle(fontSize: 18, color: cinzaEscuro),
                 textAlign: TextAlign.justify,
               ),
               const SizedBox(height: 40),
-              const Text("Chave Pix Aleatória"),
+              const Text(
+                "Chave Pix Aleatória",
+                style: const TextStyle(color: cinzaEscuro),
+              ),
               const SizedBox(height: 10),
               SizedBox(
                 width: 200,
@@ -63,10 +67,10 @@ class _DoacaoState extends State<Doacao> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      backgroundColor: redColor),
+                      backgroundColor: verdeEsperanca),
                   child: Text(
                     buttonText[0],
-                    style: const TextStyle(color: Colors.white, fontSize: 16),
+                    style: const TextStyle(color: brancoNeve, fontSize: 16),
                   ),
                 ),
               )
