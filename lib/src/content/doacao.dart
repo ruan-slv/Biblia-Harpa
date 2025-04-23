@@ -67,7 +67,7 @@ class _DoacaoState extends State<Doacao> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      backgroundColor: verdeEsperanca),
+                      backgroundColor: Colors.lightGreen),
                   child: Text(
                     buttonText[0],
                     style: const TextStyle(color: brancoNeve, fontSize: 16),

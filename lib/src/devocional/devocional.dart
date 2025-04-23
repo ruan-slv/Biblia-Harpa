@@ -78,7 +78,7 @@ class _DevocionalScreenState extends State<DevocionalScreen> {
       backgroundColor: brancoNeve,
       appBar: AppBar(
         backgroundColor: azulSereno,
-        title: const Text("Devocional 365 Dias", style: TextStyle(color: Colors.white)),
+        title: const Text("Devocional", style: TextStyle(color: Colors.white)),
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
         actions: [
@@ -145,10 +145,10 @@ class _DevocionalScreenState extends State<DevocionalScreen> {
                 boxShadow: [
                   BoxShadow(
                     // ignore: deprecated_member_use
-                    color: cinzaEscuro,
-                    spreadRadius: 2,
+                    // color: cinzaEscuro,
+                    spreadRadius: 1,
                     blurRadius: 5,
-                    offset: Offset(0, 3),
+                    offset: Offset(0, 2),
                   ),
                 ],
               ),
@@ -171,10 +171,10 @@ class _DevocionalScreenState extends State<DevocionalScreen> {
                 boxShadow: [
                   BoxShadow(
                     // ignore: deprecated_member_use
-                    color: cinzaEscuro,
-                    spreadRadius: 2,
+                    // color: cinzaEscuro,
+                    spreadRadius: 1,
                     blurRadius: 5,
-                    offset: Offset(0, 3),
+                    offset: Offset(0, 2),
                   ),
                 ],
               ),

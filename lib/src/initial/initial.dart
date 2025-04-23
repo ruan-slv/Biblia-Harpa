@@ -4,9 +4,53 @@ import 'package:biblia_e_harpa/src/devocional/devocional.dart';
 import 'package:biblia_e_harpa/src/sizelist/biblelist.dart';
 import 'package:biblia_e_harpa/src/sizelist/harpalist.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path_provider/path_provider.dart';
 
-class Initial extends StatelessWidget {
+class Initial extends StatefulWidget {
   const Initial({super.key});
+
+  @override
+  State<Initial> createState() => _InitialState();
+}
+
+class _InitialState extends State<Initial> {
+
+  File? backgroundImage;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadWallpaper();
+  }
+
+  Future<void> _loadWallpaper() async {
+    final prefs = await SharedPreferences.getInstance();
+    final path = prefs.getString("backgroundImagePath");
+    if (path != null && File(path).existsSync()) {
+      setState(() {
+        backgroundImage = File(path);
+      });
+    }
+  }
+
+  Future<void> _pickWallpaper() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(source: ImageSource.gallery);
+    if (picked != null) {
+      final directory = await getApplicationDocumentsDirectory();
+      final savedImage = await File(picked.path).copy('${directory.path}/wallpaper.jpg');
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('backgroundImagePath', savedImage.path);
+
+      setState(() {
+        backgroundImage = savedImage;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,10 +60,16 @@ class Initial extends StatelessWidget {
     final buttonSize = screenSize.width * 0.30;
     
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.white,
+        onPressed: _pickWallpaper,
+        tooltip: "Alterar papel de parede",
+        child: const Icon(Icons.image, color: Colors.black87),
+      ),
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/Wall paperss.jpg'),
+            image: backgroundImage != null ? FileImage(backgroundImage!) : const AssetImage('assets/images/Wall paperss.jpg') as ImageProvider,
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
               Colors.black45,
