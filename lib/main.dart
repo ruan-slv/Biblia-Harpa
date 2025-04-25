@@ -1,9 +1,18 @@
+import 'package:biblia_e_harpa/models/music.dart';
 import 'package:biblia_e_harpa/src/initial/initial.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:path_provider/path_provider.dart';
+// import 'package:biblia_e_harpa/src/adapters/music_adapter.dart'; // Adjust the path as needed
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  final dir = await getApplicationDocumentsDirectory();
+  Hive.init(dir.path);
+  Hive.registerAdapter(MusicAdapter());
+  await Hive.openBox<Music>("musicas");
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
