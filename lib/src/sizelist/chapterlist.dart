@@ -48,7 +48,7 @@ class _ChapterListScreenState extends State<ChapterListScreen> {
     return Scaffold(
       backgroundColor: brancoNeve,
       appBar: AppBar(
-        backgroundColor: azulSereno,
+        backgroundColor: mainColor,
         centerTitle: true,
         automaticallyImplyLeading: true,
         iconTheme: const IconThemeData(color: brancoNeve),

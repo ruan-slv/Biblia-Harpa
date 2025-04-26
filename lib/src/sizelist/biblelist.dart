@@ -92,7 +92,7 @@ class _BibleListState extends State<BibleList> {
     return Scaffold(
       backgroundColor: brancoNeve,
       appBar: AppBar(
-        backgroundColor: azulSereno,
+        backgroundColor: mainColor,
         centerTitle: true,
         automaticallyImplyLeading: true,
         iconTheme: const IconThemeData(color: brancoNeve),

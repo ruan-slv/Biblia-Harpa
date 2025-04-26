@@ -35,7 +35,7 @@ class _DoacaoState extends State<Doacao> {
     return Scaffold(
       backgroundColor: brancoNeve,
       appBar: AppBar(
-        backgroundColor: azulSereno,
+        backgroundColor: mainColor,
         title: const Text("Doação", style: TextStyle(color: brancoNeve)),
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,

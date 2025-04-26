@@ -12,8 +12,14 @@ class wallpaperselectionscreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Escolher Papel de Parede"),
-        backgroundColor: amberColor,
+        backgroundColor: mainColor,
+        centerTitle: true,
+        automaticallyImplyLeading: true,
+        iconTheme: const IconThemeData(color: brancoNeve),
+        title: const Text(
+          "Plano de Fundo",
+          style: TextStyle(color: brancoNeve),
+        ),
       ),
       body: GridView.builder(
         padding: const EdgeInsets.all(10),

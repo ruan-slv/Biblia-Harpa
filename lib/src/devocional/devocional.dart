@@ -77,7 +77,7 @@ class _DevocionalScreenState extends State<DevocionalScreen> {
     return Scaffold(
       backgroundColor: brancoNeve,
       appBar: AppBar(
-        backgroundColor: azulSereno,
+        backgroundColor: mainColor,
         title: const Text("Devocional", style: TextStyle(color: Colors.white)),
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,

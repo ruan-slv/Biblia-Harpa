@@ -80,8 +80,8 @@ class _HarpaListState extends State<HarpaList> with SingleTickerProviderStateMix
           title: Text(hino, style: const TextStyle(color: cinzaEscuro)),
           trailing: IconButton(
             icon: Icon(
-              isFavorite ? Icons.star : Icons.star_border,
-              color: isFavorite ? Colors.yellow : Colors.grey,
+              isFavorite ? Icons.favorite : Icons.favorite_border_outlined,
+              color: isFavorite ? redColor : cinzaClaro,
             ),
             onPressed: () => _toggleFavorite(hino),
           ),
@@ -103,7 +103,7 @@ class _HarpaListState extends State<HarpaList> with SingleTickerProviderStateMix
     return Scaffold(
       backgroundColor: brancoNeve,
       appBar: AppBar(
-        backgroundColor: azulSereno,
+        backgroundColor: mainColor,
         centerTitle: true,
         automaticallyImplyLeading: true,
         iconTheme: const IconThemeData(color: brancoNeve),
