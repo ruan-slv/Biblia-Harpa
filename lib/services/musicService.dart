@@ -27,7 +27,7 @@ class MusicService {
 
   List<Music> getMusics() {
     try {
-      final musics = _musicBox.values.toList();
+      final musics = _musicBox.values.skip(0).take(20).toList();
       debugPrint('Músicas recuperadas: ${musics.length}');
       return musics;
     } catch (e) {

@@ -208,7 +208,7 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
           if (box.isEmpty) {
             return const Center(child: Text('Nenhuma música adicionada.'));
           }
-          final musics = box.values.toList();
+          final musics = box.values.skip(0).take(20).toList();
           debugPrint('Músicas carregadas: ${musics.length}');
           return ListView.builder(
             itemCount: musics.length,
@@ -217,7 +217,7 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
               final isPlaying = _isPlaying && _currentPlayingIndex == index;
               return ListTile(
                 title: Text(music.title),
-                subtitle: Text(music.filePath),
+                // subtitle: Text(music.filePath),
                 leading: IconButton(
                   icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
                   onPressed: () => _playMusic(music.filePath, index),
