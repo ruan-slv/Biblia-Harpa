@@ -42,6 +42,8 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 appBible.jks
+android/app/keystore.properties
+/android/app/build.gradle
 
 *.jks
 *.keystore
