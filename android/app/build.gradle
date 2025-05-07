@@ -25,7 +25,7 @@ android {
             // storePassword keystoreProperties["storePassword"] // Substitua pela senha da keystore
             // keyAlias keystoreProperties["keyAlias"] // Substitua pelo alias da chave
             // keyPassword keystoreProperties["keyPassword"] // Substitua pela senha da chave
-            storeFile file("D:/Bible/appBible/appBible.jks")
+            storeFile file("C:/Bible/appBible/appBible.jks")
             storePassword 'none#b4fRuan'
             keyAlias 'appBiblealias'
             keyPassword 'none#b4fRuan'

@@ -1,5 +1,6 @@
 import 'package:biblia_e_harpa/models/music.dart';
 import 'package:biblia_e_harpa/src/initial/initial.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -9,10 +10,15 @@ import 'package:path_provider/path_provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-  final dir = await getApplicationDocumentsDirectory();
-  Hive.init(dir.path);
+  if(!kIsWeb) {
+    final dir = await getApplicationDocumentsDirectory();
+    Hive.init(dir.path);
+  }
   Hive.registerAdapter(MusicAdapter());
   await Hive.openBox<Music>("musicas");
+  if (!kIsWeb) {
+    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  }
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);

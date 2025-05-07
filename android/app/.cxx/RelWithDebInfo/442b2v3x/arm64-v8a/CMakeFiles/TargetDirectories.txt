@@ -1,0 +1,2 @@
+C:/Bible/appbible/android/app/.cxx/RelWithDebInfo/442b2v3x/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Bible/appbible/android/app/.cxx/RelWithDebInfo/442b2v3x/arm64-v8a/CMakeFiles/rebuild_cache.dir

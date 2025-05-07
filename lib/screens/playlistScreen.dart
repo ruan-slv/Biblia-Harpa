@@ -200,6 +200,7 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: _pickMusicFile,
         tooltip: 'Adicionar Música',
+        backgroundColor: whiteColor,
         child: const Icon(Icons.library_music),
       ),
       body: ValueListenableBuilder<Box<Music>>(

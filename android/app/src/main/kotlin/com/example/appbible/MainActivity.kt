@@ -1,4 +1,4 @@
-package com.example.appbible
+package com.appBible.app
 
 import io.flutter.embedding.android.FlutterActivity
 
