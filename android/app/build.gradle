@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.appBible.app"
+    namespace = "com.bibleAplication.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -33,7 +33,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.appBible.app"
+        applicationId = "com.bibleAplication.app"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

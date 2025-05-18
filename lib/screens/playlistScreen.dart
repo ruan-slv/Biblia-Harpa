@@ -23,20 +23,33 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
   int? _currentPlayingIndex;
   DirectoryWatcher? _watcher;
 
+  Duration _currentPosition = Duration.zero;
+  Duration _musicDuration = Duration.zero;
+
   @override
   void initState() {
     super.initState();
-    // Verifica se a Box está aberta
     if (!Hive.box<Music>('musicas').isOpen) {
       debugPrint('Box "musicas" não está aberta!');
     }
-    // Inicia o monitoramento do diretório
     _startDirectoryMonitoring();
 
     player.playerStateStream.listen((state) {
       if (state.processingState == ProcessingState.completed) {
         _playNextMusic();
       }
+    });
+
+    player.positionStream.listen((position) {
+      setState(() {
+        _currentPosition = position;
+      });
+    });
+
+    player.durationStream.listen((duration) {
+      setState(() {
+        _musicDuration = duration ?? Duration.zero;
+      });
     });
   }
 
@@ -46,10 +59,8 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
     super.dispose();
   }
 
-  // Função para monitorar o diretório de downloads
   Future<void> _startDirectoryMonitoring() async {
     try {
-      // Obtém o diretório de downloads (ou outro diretório desejado)
       final directory = await getDownloadsDirectory();
       if (directory == null) {
         debugPrint('Diretório de downloads não encontrado.');
@@ -62,7 +73,6 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
       _watcher!.events.listen((event) {
         if (event.type == ChangeType.ADD) {
           final filePath = event.path;
-          // Verifica se o arquivo é um áudio (mp3, wav, aac)
           if (filePath.endsWith('.mp3') ||
               filePath.endsWith('.wav') ||
               filePath.endsWith('.aac')) {
@@ -75,7 +85,8 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                      content: Text('Música "${music.title}" adicionada automaticamente!')),
+                      content: Text(
+                          'Música "${music.title}" adicionada automaticamente!')),
                 );
               }
             });
@@ -100,12 +111,13 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
         setState(() {
           _isPlaying = true;
           _currentPlayingIndex = index;
+          _currentPosition = Duration.zero;
         });
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao tocar a música: $e')),
+          SnackBar(content: Text('Erro ao tocar a música, verifique se o seu arquivo de aúdio é no formato mp3, wav e acc')),
         );
       }
     }
@@ -137,7 +149,8 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
         await musicService.addMusic(music);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Música "${file.name}" adicionada com sucesso!')),
+            SnackBar(
+                content: Text('Música "${file.name}" adicionada com sucesso!')),
           );
         }
       } else {
@@ -150,7 +163,7 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao adicionar música: $e')),
+          SnackBar(content: Text('Erro ao adicionar música, verifique se o seu arquivo de aúdio é no formato mp3, wav e acc')),
         );
       }
     }
@@ -169,8 +182,11 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
         setState(() {
           _isPlaying = false;
           _currentPlayingIndex = null;
+          _currentPosition = Duration.zero;
+          _musicDuration = Duration.zero;
         });
-      } else if (_currentPlayingIndex != null && index < _currentPlayingIndex!) {
+      } else if (_currentPlayingIndex != null &&
+          index < _currentPlayingIndex!) {
         setState(() {
           _currentPlayingIndex = _currentPlayingIndex! - 1;
         });
@@ -178,10 +194,18 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao remover música: $e')),
+          SnackBar(content: Text('Erro ao remover música')),
         );
       }
+      debugPrint((mounted) ? "erro ao remover música $e" : "Sucesso");
     }
+  }
+
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+    return "$minutes:$seconds";
   }
 
   @override
@@ -201,7 +225,7 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
         onPressed: _pickMusicFile,
         tooltip: 'Adicionar Música',
         backgroundColor: whiteColor,
-        child: const Icon(Icons.library_music),
+        child: const Icon(Icons.library_music, color: Colors.black87),
       ),
       body: ValueListenableBuilder<Box<Music>>(
         valueListenable: Hive.box<Music>('musicas').listenable(),
@@ -209,23 +233,94 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
           if (box.isEmpty) {
             return const Center(child: Text('Nenhuma música adicionada.'));
           }
-          final musics = box.values.skip(0).take(20).toList();
+          final musics = box.values.toList();
           debugPrint('Músicas carregadas: ${musics.length}');
           return ListView.builder(
             itemCount: musics.length,
             itemBuilder: (context, index) {
               final music = musics[index];
               final isPlaying = _isPlaying && _currentPlayingIndex == index;
-              return ListTile(
-                title: Text(music.title),
-                // subtitle: Text(music.filePath),
-                leading: IconButton(
-                  icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
-                  onPressed: () => _playMusic(music.filePath, index),
-                ),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () => _removeMusic(index),
+              return Card(
+                margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                color: isPlaying ? Colors.green[50] : Colors.white,
+                elevation: isPlaying ? 6 : 2,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4),
+                  child: Column(
+                    children: [
+                      ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.green[200],
+                          child: Icon(
+                            isPlaying ? Icons.music_note : Icons.library_music,
+                            color: Colors.white,
+                          ),
+                        ),
+                        title: Text(
+                          music.title,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color:
+                                isPlaying ? Colors.green[800] : Colors.black87,
+                          ),
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                  isPlaying ? Icons.pause : Icons.play_arrow,
+                                  color: Colors.green[800]),
+                              onPressed: () =>
+                                  _playMusic(music.filePath, index),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete,
+                                  color: Colors.redAccent),
+                              onPressed: () => _removeMusic(index),
+                            ),
+                          ],
+                        ),
+                      ),
+                      if (isPlaying)
+                        Column(
+                          children: [
+                            Slider(
+                              value: _currentPosition.inSeconds.toDouble(),
+                              min: 0,
+                              max: _musicDuration.inSeconds.toDouble() > 0
+                                  ? _musicDuration.inSeconds.toDouble()
+                                  : 1,
+                              onChanged: (value) async {
+                                await player
+                                    .seek(Duration(seconds: value.toInt()));
+                              },
+                              activeColor: Colors.green,
+                              inactiveColor: Colors.green[100],
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    _formatDuration(_currentPosition),
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                  Text(
+                                    _formatDuration(_musicDuration),
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
                 ),
               );
             },
