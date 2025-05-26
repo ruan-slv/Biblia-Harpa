@@ -51,6 +51,12 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
         _musicDuration = duration ?? Duration.zero;
       });
     });
+
+    player.playingStream.listen((isPlaying) {
+      setState(() {
+        _isPlaying = isPlaying;
+      });
+    });
   }
 
   @override
@@ -100,24 +106,26 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
 
   void _playMusic(String path, int index) async {
     try {
-      if (_currentPlayingIndex == index && _isPlaying) {
-        await player.pause();
-        setState(() {
-          _isPlaying = false;
-        });
+      if (_currentPlayingIndex == index) {
+        if (player.playing) {
+          await player.pause();
+        } else {
+          await player.play();
+        }
       } else {
-        await player.setFilePath(path);
-        await player.play();
         setState(() {
-          _isPlaying = true;
           _currentPlayingIndex = index;
           _currentPosition = Duration.zero;
         });
+        await player.setFilePath(path);
+        await player.play();
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao tocar a música, verifique se o seu arquivo de aúdio é no formato mp3, wav e acc')),
+          SnackBar(
+              content: Text(
+                  'Erro ao tocar a música, verifique se o seu arquivo de aúdio é no formato mp3, wav e acc')),
         );
       }
     }

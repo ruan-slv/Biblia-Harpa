@@ -123,3 +123,6 @@ Vergonha
 
 
 Eu preciso que você crie esses tópicos e dentro de cada um deles, você coloca 20 devocionais, tendo versiculo, texto, reflexão e oração.
+
+
+flutter build appbundle
