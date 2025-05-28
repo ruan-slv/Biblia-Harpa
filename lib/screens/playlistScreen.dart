@@ -80,6 +80,7 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
         if (event.type == ChangeType.ADD) {
           final filePath = event.path;
           if (filePath.endsWith('.mp3') ||
+              filePath.endsWith('.mp4') ||
               filePath.endsWith('.wav') ||
               filePath.endsWith('.aac')) {
             final file = File(filePath);
@@ -96,6 +97,8 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
                 );
               }
             });
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Este tipo de arquivo não é compatível, considere adicionar somente tipos mp3, mp4, wav e aac")));
           }
         }
       });
@@ -145,7 +148,7 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['mp3', 'wav', 'aac'],
+        allowedExtensions: ['mp3', 'mp4', 'wav', 'aac'],
       );
 
       if (result != null && result.files.single.path != null) {

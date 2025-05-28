@@ -100,10 +100,10 @@ class _DevocionalScreenState extends State<DevocionalScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Text(
-              //   'Dia ${devocional["data"]}',
-              //   style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              // ),
+              Text(
+                'Dia ${devocional["data"]}',
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 10),
               Text(
                 '${devocional["texto"]}',

@@ -1,3 +1,4 @@
+import 'package:biblia_e_harpa/screens/palavraDiaScreen.dart';
 import 'package:biblia_e_harpa/screens/playlistScreen.dart';
 import 'package:biblia_e_harpa/src/config.dart';
 import 'package:biblia_e_harpa/src/content/doacao.dart';
@@ -188,12 +189,12 @@ class _InitialState extends State<Initial> {
                             const SizedBox(width: 12),
                             _buildMenuCard(
                               context,
-                              'Doação',
-                              Icons.favorite,
-                              Colors.red.shade700,
+                              'Palavra do Dia',
+                              Icons.local_fire_department_rounded,
+                              Colors.deepOrange,
                               () => Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => const Doacao()),
+                                MaterialPageRoute(builder: (context) => const PalavraDoDia()),
                               ),
                               size: buttonSize,
                             ),
@@ -212,8 +213,19 @@ class _InitialState extends State<Initial> {
                                 context,
                                 MaterialPageRoute(builder: (context) => const PlaylistScreen()),
                               ),
-                              width: musicButtonWidth, // Largura de dois botões + espaçamento
-                              height: buttonSize, // Mesma altura dos outros botões
+                              size: buttonSize
+                            ),
+                            const SizedBox(width: 12),
+                            _buildMenuCard(
+                              context,
+                              'Doação',
+                              Icons.favorite,
+                              Colors.red.shade700,
+                              () => Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const Doacao()),
+                              ),
+                              size: buttonSize,
                             ),
                           ],
                         ),

@@ -1,0 +1,35 @@
+import 'package:biblia_e_harpa/src/config.dart';
+import 'package:flutter/material.dart';
+
+class PalavraDoDia extends StatefulWidget {
+  const PalavraDoDia({super.key});
+
+  @override
+  State<PalavraDoDia> createState() => _MyWidgetState();
+}
+
+class _MyWidgetState extends State<PalavraDoDia> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: mainColor,
+          centerTitle: true,
+          automaticallyImplyLeading: true,
+          iconTheme: const IconThemeData(color: brancoNeve),
+          title: const Text(
+            "Palavra do Dia",
+            style: TextStyle(color: brancoNeve),
+          ),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("🧑‍💻", style: const TextStyle(fontSize: 40)),
+              Text("Em desenvolvimento", style: const TextStyle(fontSize: 16, color: cinzaEscuro)),
+            ],
+          ),
+        ));
+  }
+}
