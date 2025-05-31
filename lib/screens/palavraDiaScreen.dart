@@ -22,12 +22,11 @@ class _MyWidgetState extends State<PalavraDoDia> {
             style: TextStyle(color: brancoNeve),
           ),
         ),
-        body: Center(
+        body: const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("🧑‍💻", style: const TextStyle(fontSize: 40)),
-              Text("Em desenvolvimento", style: const TextStyle(fontSize: 16, color: cinzaEscuro)),
+              Text("Essa funcionalidade está em processo de desenvolvimento, aguarde atualizações futuras"),
             ],
           ),
         ));
