@@ -13,6 +13,9 @@ class DevocionalScreen extends StatefulWidget {
 
 class _DevocionalScreenState extends State<DevocionalScreen> {
   List<dynamic> devocionais = [];
+  List<String> devotionalTopics = [
+    "Adoração","Gratidão","Fé","Amor","Perdão","Esperança","Paz","Obediência","Confiança","Serviço",
+  ];
   int index = 0;
 
   @override
@@ -35,11 +38,10 @@ class _DevocionalScreenState extends State<DevocionalScreen> {
   }
 
   Future<void> loadDevocionais() async {
-    final String response =
-        await rootBundle.loadString('assets/json/devocional.json');
+    final String response = await rootBundle.loadString('assets/json/newDevocionalModel.json');
     final data = json.decode(response);
     setState(() {
-      devocionais = data['devocionais'];
+      devocionais = data[devotionalTopics];
     });
   }
 
