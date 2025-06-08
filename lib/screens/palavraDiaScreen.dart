@@ -25,8 +25,9 @@ class _MyWidgetState extends State<PalavraDoDia> {
         body: const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text("Essa funcionalidade está em processo de desenvolvimento, aguarde atualizações futuras"),
+              Text("Em desenvolvimento, aguarde atualizações futuras"),
             ],
           ),
         ));

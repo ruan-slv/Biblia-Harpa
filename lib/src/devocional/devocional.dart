@@ -38,10 +38,10 @@ class _DevocionalScreenState extends State<DevocionalScreen> {
   }
 
   Future<void> loadDevocionais() async {
-    final String response = await rootBundle.loadString('assets/json/newDevocionalModel.json');
+    final String response = await rootBundle.loadString('assets/json/devocional.json');
     final data = json.decode(response);
     setState(() {
-      devocionais = data[devotionalTopics];
+      devocionais = data["devocionais"];
     });
   }
 
@@ -102,11 +102,11 @@ class _DevocionalScreenState extends State<DevocionalScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              /*Text(
                 'Dia ${devocional["data"]}',
                 style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 10),*/
               Text(
                 '${devocional["texto"]}',
                 style: const TextStyle(fontSize: 18, fontStyle: FontStyle.italic, color: cinzaEscuro),
@@ -142,15 +142,14 @@ class _DevocionalScreenState extends State<DevocionalScreen> {
           children: [
             // Botão Anterior
             Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    // ignore: deprecated_member_use
-                    // color: cinzaEscuro,
-                    spreadRadius: 1,
-                    blurRadius: 5,
-                    offset: Offset(0, 2),
+                    color: Colors.black.withOpacity(0.1), // Sombra mais suave
+                    spreadRadius: 0.5,
+                    blurRadius: 3,
+                    offset: Offset(0, 1), // Sombra mais sutil
                   ),
                 ],
               ),
@@ -168,15 +167,14 @@ class _DevocionalScreenState extends State<DevocionalScreen> {
             const SizedBox(width: 20), // Espaço entre os botões
             // Botão Próximo
             Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    // ignore: deprecated_member_use
-                    // color: cinzaEscuro,
-                    spreadRadius: 1,
-                    blurRadius: 5,
-                    offset: Offset(0, 2),
+                    color: Colors.black.withOpacity(0.1), // Sombra mais suave
+                    spreadRadius: 0.5,
+                    blurRadius: 3,
+                    offset: Offset(0, 1), // Sombra mais sutil
                   ),
                 ],
               ),
