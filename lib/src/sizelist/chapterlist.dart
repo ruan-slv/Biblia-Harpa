@@ -48,13 +48,13 @@ class _ChapterListScreenState extends State<ChapterListScreen> {
     return Scaffold(
       backgroundColor: brancoNeve,
       appBar: AppBar(
-        backgroundColor: mainColor,
+        backgroundColor: begeClaro,
         centerTitle: true,
         automaticallyImplyLeading: true,
-        iconTheme: const IconThemeData(color: brancoNeve),
+        iconTheme: const IconThemeData(color: cinzaEscuro),
         title: Text(
           widget.name,
-          style: const TextStyle(color: brancoNeve),
+          style: const TextStyle(color: cinzaEscuro),
         ),
       ),
       body: FutureBuilder<Map<String, dynamic>>(

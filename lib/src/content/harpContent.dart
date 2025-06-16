@@ -44,9 +44,9 @@ class HarpContentScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: brancoNeve,
       appBar: AppBar(
-        backgroundColor: mainColor,
-        title: Text(harp, style: const TextStyle(color: Colors.white)),
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: begeClaro,
+        title: Text(harp, style: const TextStyle(color: cinzaEscuro)),
+        iconTheme: const IconThemeData(color: cinzaEscuro),
         centerTitle: true,
       ),
       body: Padding(
@@ -68,6 +68,8 @@ class HarpContentScreen extends StatelessWidget {
                 crossAxisAlignment:
                     CrossAxisAlignment.start,
                 children: [
+                  const Text("** CORO **", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: cinzaEscuro)),
+                  const SizedBox(height: 10),
                   Text(
                     harpText.coro,
                     style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: cinzaEscuro)),
@@ -76,12 +78,15 @@ class HarpContentScreen extends StatelessWidget {
                     (entry) => Padding(
                       padding: const EdgeInsets.only(
                           bottom: 30.0),
-                      child: Text(
-                        "${entry.key}. ${entry.value}",
-                        style: const TextStyle(fontSize: 18, color: cinzaEscuro),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(entry.key, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: cinzaEscuro)),
+                          Text(entry.value, style: const TextStyle(fontSize: 18, color: cinzaEscuro)),
+                        ],
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             );

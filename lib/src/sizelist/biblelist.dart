@@ -27,7 +27,8 @@ class _BibleListState extends State<BibleList> {
   Future<void> _loadSelectedVersion() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _jsonPath = 'assets/json/${prefs.getString('selectedVersion') ?? 'acf.json'}';
+      _jsonPath =
+          'assets/json/${prefs.getString('selectedVersion') ?? 'acf.json'}';
     });
   }
 
@@ -92,13 +93,13 @@ class _BibleListState extends State<BibleList> {
     return Scaffold(
       backgroundColor: brancoNeve,
       appBar: AppBar(
-        backgroundColor: mainColor,
+        backgroundColor: begeClaro,
         centerTitle: true,
         automaticallyImplyLeading: true,
-        iconTheme: const IconThemeData(color: brancoNeve),
+        iconTheme: const IconThemeData(color: cinzaEscuro),
         title: const Text(
           'Biblia Cristã',
-          style: TextStyle(color: brancoNeve),
+          style: TextStyle(color: cinzaEscuro),
         ),
         actions: [
           SizedBox(
@@ -110,15 +111,18 @@ class _BibleListState extends State<BibleList> {
                 return [
                   const PopupMenuItem<String>(
                     value: "ACF",
-                    child: Text("Almeida Corrigida Fiel", style: TextStyle(color: cinzaEscuro)),
+                    child: Text("Almeida Corrigida Fiel",
+                        style: TextStyle(color: cinzaEscuro)),
                   ),
                   const PopupMenuItem<String>(
                     value: "NVI",
-                    child: Text("Nova Versão Internacional", style: TextStyle(color: cinzaEscuro)),
+                    child: Text("Nova Versão Internacional",
+                        style: TextStyle(color: cinzaEscuro)),
                   ),
                   const PopupMenuItem<String>(
                     value: "AA",
-                    child: Text("Almeida Atualizada", style: TextStyle(color: cinzaEscuro)),
+                    child: Text("Almeida Atualizada",
+                        style: TextStyle(color: cinzaEscuro)),
                   ),
                 ];
               },
@@ -153,8 +157,10 @@ class _BibleListState extends State<BibleList> {
               itemCount: filteredBible.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  leading: const Icon(Icons.menu_book_rounded, color: cinzaEscuro),
-                  title: Text(filteredBible[index], style: const TextStyle(color: cinzaEscuro)),
+                  leading:
+                      const Icon(Icons.menu_book_rounded, color: cinzaEscuro),
+                  title: Text(filteredBible[index],
+                      style: const TextStyle(color: cinzaEscuro)),
                   onTap: () {
                     Navigator.push(
                       context,

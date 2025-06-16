@@ -103,13 +103,13 @@ class _HarpaListState extends State<HarpaList> with SingleTickerProviderStateMix
     return Scaffold(
       backgroundColor: brancoNeve,
       appBar: AppBar(
-        backgroundColor: mainColor,
+        backgroundColor: begeClaro,
         centerTitle: true,
         automaticallyImplyLeading: true,
-        iconTheme: const IconThemeData(color: brancoNeve),
+        iconTheme: const IconThemeData(color: cinzaEscuro),
         title: const Text(
           "Harpa Cristã",
-          style: TextStyle(color: brancoNeve),
+          style: TextStyle(color: cinzaEscuro),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(46.0), // Reduz a altura do TabBar

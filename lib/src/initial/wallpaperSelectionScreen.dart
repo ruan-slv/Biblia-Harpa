@@ -2,8 +2,7 @@ import 'package:biblia_e_harpa/src/config.dart';
 import 'package:flutter/material.dart';
 
 class wallpaperselectionscreen extends StatelessWidget {
-  const wallpaperselectionscreen(
-      {super.key, required this.wallpapers, required this.onSelect});
+  const wallpaperselectionscreen({super.key, required this.wallpapers, required this.onSelect});
 
   final List<String> wallpapers;
   final Function(String) onSelect;
@@ -12,13 +11,13 @@ class wallpaperselectionscreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: mainColor,
+        backgroundColor: begeClaro,
         centerTitle: true,
         automaticallyImplyLeading: true,
-        iconTheme: const IconThemeData(color: brancoNeve),
+        iconTheme: const IconThemeData(color: cinzaEscuro),
         title: const Text(
           "Plano de Fundo",
-          style: TextStyle(color: brancoNeve),
+          style: TextStyle(color: cinzaEscuro),
         ),
       ),
       body: GridView.builder(

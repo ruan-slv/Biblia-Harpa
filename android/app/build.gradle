@@ -10,12 +10,11 @@ android {
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
-
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        jvmTarget = "17"
     }
 
     // Adicione a configuração de assinatura
@@ -25,9 +24,9 @@ android {
             // storePassword keystoreProperties["storePassword"] // Substitua pela senha da keystore
             // keyAlias keystoreProperties["keyAlias"] // Substitua pelo alias da chave
             // keyPassword keystoreProperties["keyPassword"] // Substitua pela senha da chave
-            storeFile file("C:/Bible/appBible/appBible.jks")
+            storeFile file("/home/ruan/Documentos/Bíblia & Harpa - offline/Biblia-Harpa/upload-key.jks")
             storePassword 'none#b4fRuan'
-            keyAlias 'appBiblealias'
+            keyAlias 'upload'
             keyPassword 'none#b4fRuan'
         }
     }

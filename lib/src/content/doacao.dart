@@ -35,9 +35,9 @@ class _DoacaoState extends State<Doacao> {
     return Scaffold(
       backgroundColor: brancoNeve,
       appBar: AppBar(
-        backgroundColor: mainColor,
-        title: const Text("Doação", style: TextStyle(color: brancoNeve)),
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: begeClaro,
+        title: const Text("Doação", style: TextStyle(color: cinzaEscuro)),
+        iconTheme: const IconThemeData(color: cinzaEscuro),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -67,10 +67,10 @@ class _DoacaoState extends State<Doacao> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      backgroundColor: tealColor),
+                      backgroundColor: begeClaro),
                   child: Text(
                     buttonText[0],
-                    style: const TextStyle(color: brancoNeve, fontSize: 16),
+                    style: const TextStyle(color: cinzaEscuro, fontSize: 16),
                   ),
                 ),
               )

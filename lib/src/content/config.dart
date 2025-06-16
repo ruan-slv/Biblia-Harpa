@@ -75,11 +75,11 @@ class _ConfigState extends State<Config> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Configurações", style: TextStyle(color: Colors.white)),
-        backgroundColor: mainColor,
+        title: const Text("Configurações", style: TextStyle(color: cinzaEscuro)),
+        backgroundColor: begeClaro,
         centerTitle: true,
         automaticallyImplyLeading: true,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: cinzaEscuro),
       ),
       body: SingleChildScrollView(
         child: Padding(

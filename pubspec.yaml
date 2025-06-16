@@ -3,7 +3,7 @@ description: "Projeto voltado para desenvolvimento de biblia e harpa sem conexã
 
 publish_to: 'none'
 
-version: 1.0.1+3
+version: 1.0.1+5
 
 environment:
   sdk: ^3.5.4
@@ -43,6 +43,7 @@ flutter:
     - assets/json/aa.json
     - assets/json/nvi.json
     - assets/json/devocional.json
+    - assets/json/newDevocionalModel.json
 flutter_icons:
   image_path: "assets/images/logoExecutavel.png"
   android: true

@@ -2,7 +2,7 @@ import 'package:biblia_e_harpa/screens/palavraDiaScreen.dart';
 import 'package:biblia_e_harpa/screens/playlistScreen.dart';
 import 'package:biblia_e_harpa/src/config.dart';
 import 'package:biblia_e_harpa/src/content/doacao.dart';
-import 'package:biblia_e_harpa/src/devocional/devocional.dart';
+import 'package:biblia_e_harpa/src/devocional/devocionalList.dart';
 import 'package:biblia_e_harpa/src/sizelist/biblelist.dart';
 import 'package:biblia_e_harpa/src/sizelist/harpalist.dart';
 import 'package:flutter/material.dart';
@@ -182,7 +182,7 @@ class _InitialState extends State<Initial> {
                               tealColor,
                               () => Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => const DevocionalScreen()),
+                                MaterialPageRoute(builder: (context) => const DevocionalList()),
                               ),
                               size: buttonSize,
                             ),

@@ -223,13 +223,13 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: mainColor,
+        backgroundColor: begeClaro,
         centerTitle: true,
         automaticallyImplyLeading: true,
-        iconTheme: const IconThemeData(color: brancoNeve),
+        iconTheme: const IconThemeData(color: cinzaEscuro),
         title: const Text(
           "Minhas Músicas",
-          style: TextStyle(color: brancoNeve),
+          style: TextStyle(color: cinzaEscuro),
         ),
       ),
       floatingActionButton: FloatingActionButton(
