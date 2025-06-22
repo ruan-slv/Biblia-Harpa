@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:biblia_e_harpa/src/config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TextModel {
   final String versiculo;
@@ -66,6 +67,19 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
     });
   }
 
+  void initialDevocional() {
+    setState(() {
+      currentIndex = 0;
+      _saveLastIndex();
+    });
+    loadDevocionais();
+  }
+
+  Future<void> _saveLastIndex() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('lastDevocionalIndex', currentIndex);
+  }
+
   @override
   Widget build(BuildContext context) {
     if (devocionais.isEmpty) {
@@ -74,6 +88,18 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
         appBar: AppBar(
           backgroundColor: begeClaro,
           title: Text(widget.devo, style: const TextStyle(color: cinzaEscuro)),
+          actions: [
+            SizedBox(
+              width: sizeBtnOptions[0],
+              height: sizeBtnOptions[1],
+              child: IconButton(
+                onPressed: initialDevocional,
+                icon: const Icon(Icons.refresh),
+                color: cinzaEscuro,
+                tooltip: "Reiniciar o devocional",
+              ),
+            ),
+          ],
           iconTheme: const IconThemeData(color: cinzaEscuro),
           centerTitle: true,
         ),

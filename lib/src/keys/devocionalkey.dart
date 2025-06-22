@@ -9,4 +9,14 @@ final List<String> topicos = [
   'Obediência',
   'Confiança',
   'Serviço',
+  'Ansiedade',
+  'Arrependimento',
+  'Adversidade',
+  'Santidade',
+  'Salvação',
+  'Sabedoria',
+  'Tentação',
+  'Segurança',
+  'Solidão',
+  'Submissão'
 ];
