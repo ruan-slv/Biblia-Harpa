@@ -1,8 +1,604 @@
 {
-    "palavraDoDia": [
-      {
-        "texto": "",
-        "versiculo": ""
-      }
-    ]
+  "palavraDoDia": [
+    {
+      "id": 1,
+      "texto": "Confie no Senhor de todo o seu coração e não se apoie em seu próprio entendimento; reconheça-o em todos os seus caminhos, e ele endireitará as suas veredas.",
+      "versiculo": "Provérbios 3:5-6"
+    },
+    {
+      "id": 2,
+      "texto": "O Senhor é o meu pastor; de nada terei falta. Em verdes pastagens me faz repousar e me conduz a águas tranquilas; restaura-me o vigor.",
+      "versiculo": "Salmos 23:1-3"
+    },
+    {
+      "id": 3,
+      "texto": "Tudo posso naquele que me fortalece. E não digo isso por causa de alguma necessidade, pois aprendi a estar contente em qualquer situação em que me encontre.",
+      "versiculo": "Filipenses 4:13-14"
+    },
+    {
+      "id": 4,
+      "texto": "Porque eu sei os planos que tenho para vocês, diz o Senhor, planos de fazê-los prosperar e não de causar dano, planos de dar a vocês esperança e um futuro. Então vocês clamarão a mim, virão orar a mim, e eu os ouvirei.",
+      "versiculo": "Jeremias 29:11-12"
+    },
+    {
+      "id": 5,
+      "texto": "Seja forte e corajoso. Não tenha medo nem se apavore diante deles, pois o Senhor, o seu Deus, estará com você; ele nunca o deixará, nem o abandonará.",
+      "versiculo": "Deuteronômio 31:6"
+    },
+    {
+      "id": 6,
+      "texto": "O amor é paciente, o amor é bondoso. Não inveja, não se vangloria, não se orgulha. Não maltrata, não procura seus interesses, não se ira facilmente, não guarda rancor.",
+      "versiculo": "1 Coríntios 13:4-5"
+    },
+    {
+      "id": 7,
+      "texto": "Não andem ansiosos por coisa alguma, mas em tudo, pela oração e súplicas, e com ação de graças, apresentem seus pedidos a Deus. E a paz de Deus, que excede todo o entendimento, guardará os seus corações e as suas mentes em Cristo Jesus.",
+      "versiculo": "Filipenses 4:6-7"
+    },
+    {
+      "id": 8,
+      "texto": "Deleite-se no Senhor, e ele atenderá aos desejos do seu coração. Entregue o seu caminho ao Senhor; confie nele, e ele agirá.",
+      "versiculo": "Salmos 37:4-5"
+    },
+    {
+      "id": 9,
+      "texto": "Porque Deus amou o mundo de tal maneira que deu o seu Filho Unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna.",
+      "versiculo": "João 3:16"
+    },
+    {
+      "id": 10,
+      "texto": "O Senhor é bom, um refúgio em tempos de angústia. Ele protege os que nele confiam, mas varrerá os seus adversários com um dilúvio devastador.",
+      "versiculo": "Naum 1:7-8"
+    },
+    {
+      "id": 11,
+      "texto": "Bem-aventurados os que têm fome e sede de justiça, pois serão saciados. Bem-aventurados os misericordiosos, pois obterão misericórdia.",
+      "versiculo": "Mateus 5:6-7"
+    },
+    {
+      "id": 12,
+      "texto": "Por isso, não desanimamos; pelo contrário, mesmo que o nosso homem exterior se corrompa, o interior se renova de dia em dia. Porque a nossa leve e momentânea tribulação produz para nós um peso eterno de glória muito excelente.",
+      "versiculo": "2 Coríntios 4:16-17"
+    },
+    {
+      "id": 13,
+      "texto": "O Senhor é a minha luz e a minha salvação; de quem terei medo? O Senhor é o meu forte refúgio; de quem terei receio? Quando os malvados avançarem contra mim para me destruir, eles, meus inimigos e adversários, é que tropeçarão e cairão.",
+      "versiculo": "Salmos 27:1-2"
+    },
+    {
+      "id": 14,
+      "texto": "Se confessarmos os nossos pecados, ele é fiel e justo para nos perdoar os pecados e nos purificar de toda injustiça. Se dissermos que não pecamos, fazemo-lo mentiroso, e a sua palavra não está em nós.",
+      "versiculo": "1 João 1:9-10"
+    },
+    {
+      "id": 15,
+      "texto": "Não julgueis, para que não sejais julgados. Pois com o critério com que julgardes, sereis julgados; e com a medida com que medirdes, vos medirão a vós.",
+      "versiculo": "Mateus 7:1-2"
+    },
+    {
+      "id": 16,
+      "texto": "O Senhor está perto dos que têm o coração quebrantado e salva os de espírito abatido. São muitas as aflições do justo, mas o Senhor o livra de todas.",
+      "versiculo": "Salmos 34:18-19"
+    },
+    {
+      "id": 17,
+      "texto": "E sabemos que todas as coisas cooperam para o bem daqueles que amam a Deus, daqueles que são chamados segundo o seu propósito. Porque os que dantes conheceu, também os predestinou para serem conformes à imagem de seu Filho.",
+      "versiculo": "Romanos 8:28-29"
+    },
+    {
+      "id": 18,
+      "texto": "Clama a mim, e responder-te-ei, e anunciar-te-ei coisas grandes e firmes que não sabes. Porque assim diz o Senhor, o Deus de Israel, acerca das casas desta cidade e das casas dos reis de Judá.",
+      "versiculo": "Jeremias 33:3-4"
+    },
+    {
+      "id": 19,
+      "texto": "Não temas, porque eu sou contigo; não te assombres, porque eu sou o teu Deus; eu te fortaleço, e te ajudo, e te sustento com a destra da minha justiça.",
+      "versiculo": "Isaías 41:10"
+    },
+    {
+      "id": 20,
+      "texto": "Portanto, meus amados irmãos, sede firmes, inabaláveis, e sempre abundantes na obra do Senhor, sabendo que o vosso trabalho não é vão no Senhor.",
+      "versiculo": "1 Coríntios 15:58"
+    },
+    {
+      "id": 21,
+      "texto": "O Senhor te abençoe e te guarde; o Senhor faça resplandecer o seu rosto sobre ti e te conceda graça; o Senhor volte para ti o seu rosto e te dê paz.",
+      "versiculo": "Números 6:24-26"
+    },
+    {
+      "id": 22,
+      "texto": "O justo viverá pela fé; mas, se ele recuar, a minha alma não terá prazer nele. Nós, porém, não somos dos que recuam para a perdição, mas dos que creem para a salvação da alma.",
+      "versiculo": "Hebreus 10:38-39"
+    },
+    {
+      "id": 23,
+      "texto": "Lançai sobre ele toda a vossa ansiedade, porque ele tem cuidado de vós. Sede sóbrios, vigiai; porque o diabo, vosso adversário, anda em derredor, bramando como leão, buscando a quem possa tragar.",
+      "versiculo": "1 Pedro 5:7-8"
+    },
+    {
+      "id": 24,
+      "texto": "O Senhor é longânimo e grande em misericórdia, que perdoa a iniquidade e a transgressão, ainda que não inocenta o culpado, e visita a iniquidade dos pais sobre os filhos até a terceira e quarta geração.",
+      "versiculo": "Números 14:18"
+    },
+    {
+      "id": 25,
+      "texto": "Porque a palavra de Deus é viva e eficaz, e mais cortante do que qualquer espada de dois gumes, e penetra até à divisão da alma e do espírito, das juntas e medulas, e é apta para discernir os pensamentos e intenções do coração.",
+      "versiculo": "Hebreus 4:12"
+    },
+    {
+      "id": 26,
+      "texto": "Ensina-me a fazer a tua vontade, pois és o meu Deus; o teu Espírito é bom, guia-me por terra plana. Vivifica-me, Senhor, por amor do teu nome.",
+      "versiculo": "Salmos 143:10-11"
+    },
+    {
+      "id": 27,
+      "texto": "Não vos conformeis com este mundo, mas transformai-vos pela renovação da vossa mente, para que experimenteis qual seja a boa, agradável e perfeita vontade de Deus.",
+      "versiculo": "Romanos 12:2"
+    },
+    {
+      "id": 28,
+      "texto": "O Senhor é compassivo e misericordioso, lento para se irar e rico em amor. Não nos trata segundo os nossos pecados, nem nos retribui conforme as nossas iniquidades.",
+      "versiculo": "Salmos 103:8-10"
+    },
+    {
+      "id": 29,
+      "texto": "E esta é a confiança que temos nele: que, se pedirmos alguma coisa segundo a sua vontade, ele nos ouve. E, se sabemos que nos ouve em tudo o que pedimos, sabemos que alcançamos as petições que lhe fizemos.",
+      "versiculo": "1 João 5:14-15"
+    },
+    {
+      "id": 30,
+      "texto": "Tu conservarás em paz aquele cuja mente está firme em ti, porque ele confia em ti. Confiai no Senhor para sempre, porque o Senhor Deus é uma rocha eterna.",
+      "versiculo": "Isaías 26:3-4"
+    },
+    {
+      "id": 31,
+      "texto": "Porque o Senhor dá a sabedoria; da sua boca vem o conhecimento e o entendimento. Ele reserva a verdadeira sabedoria para os retos; é escudo para os que caminham em integridade.",
+      "versiculo": "Provérbios 2:6-7"
+    },
+    {
+      "id": 32,
+      "texto": "O Senhor é a minha força e o meu escudo; nele confiou o meu coração, e fui socorrido; pelo que o meu coração salta de prazer, e com o meu cântico o louvarei.",
+      "versiculo": "Salmos 28:7"
+    },
+    {
+      "id": 33,
+      "texto": "E esta é a mensagem que dele ouvimos e vos anunciamos: que Deus é luz, e não há nele treva nenhuma. Se dissermos que temos comunhão com ele, e andarmos em trevas, mentimos, e não praticamos a verdade.",
+      "versiculo": "1 João 1:5-6"
+    },
+    {
+      "id": 34,
+      "texto": "Não vos vingueis a vós mesmos, amados, mas dai lugar à ira de Deus, porque está escrito: Minha é a vingança; eu recompensarei, diz o Senhor. Pelo contrário, se o teu inimigo tiver fome, dá-lhe de comer; se tiver sede, dá-lhe de beber.",
+      "versiculo": "Romanos 12:19-20"
+    },
+    {
+      "id": 35,
+      "texto": "Esperei com paciência no Senhor, e ele se inclinou para mim e ouviu o meu clamor. Tirou-me de um lago horrível, de um charco de lodo, pôs os meus pés sobre uma rocha, firmou-me num lugar seguro.",
+      "versiculo": "Salmos 40:1-2"
+    },
+    {
+      "id": 36,
+      "texto": "Porque a sua ira dura só um momento; no seu favor está a vida. O choro pode durar uma noite, mas a alegria vem pela manhã.",
+      "versiculo": "Salmos 30:5"
+    },
+    {
+      "id": 37,
+      "texto": "Sejam vós perfeitos, como perfeito é o vosso Pai celestial. Portanto, orai vós deste modo: Pai nosso que estás nos céus, santificado seja o teu nome.",
+      "versiculo": "Mateus 5:48, 6:9"
+    },
+    {
+      "id": 38,
+      "texto": "O Senhor é misericordioso e compassivo, muito paciente e cheio de amor. Como está o céu acima da terra, assim é grande o seu amor para com os que o temem.",
+      "versiculo": "Salmos 103:11-12"
+    },
+    {
+      "id": 39,
+      "texto": "Porque o Reino de Deus não é comida nem bebida, mas justiça, paz e alegria no Espírito Santo. Quem assim serve a Cristo é agradável a Deus e aprovado pelos homens.",
+      "versiculo": "Romanos 14:17-18"
+    },
+    {
+      "id": 40,
+      "texto": "Buscai primeiro o Reino de Deus e a sua justiça, e todas essas coisas vos serão acrescentadas. Não vos preocupeis, pois, com o dia de amanhã, pois o amanhã trará suas próprias preocupações.",
+      "versiculo": "Mateus 6:33-34"
+    },
+    {
+      "id": 41,
+      "texto": "O Senhor dos Exércitos está conosco; o Deus de Jacó é o nosso refúgio. Vinde, contemplai as obras do Senhor, que desolações causou na terra.",
+      "versiculo": "Salmos 46:7-8"
+    },
+    {
+      "id": 42,
+      "texto": "E disse-me: A minha graça te basta, porque o meu poder se aperfeiçoa na fraqueza. De boa vontade, pois, me gloriarei nas minhas fraquezas, para que em mim habite o poder de Cristo.",
+      "versiculo": "2 Coríntios 12:9"
+    },
+    {
+      "id": 43,
+      "texto": "O temor do Senhor é o princípio do conhecimento; os loucos desprezam a sabedoria e a instrução. Ouve, meu filho, a instrução de teu pai, e não rejeites o ensino de tua mãe.",
+      "versiculo": "Provérbios 1:7-8"
+    },
+    {
+      "id": 44,
+      "texto": "Eu sou o caminho, a verdade e a vida; ninguém vem ao Pai senão por mim. Se vós me conhecêsseis, também conheceríeis a meu Pai; e desde agora o conheceis e o tendes visto.",
+      "versiculo": "João 14:6-7"
+    },
+    {
+      "id": 45,
+      "texto": "O Senhor é bom para todos, e as suas misericórdias estão sobre todas as suas obras. Todos os teus feitos te louvarão, Senhor, e os teus santos te bendirão.",
+      "versiculo": "Salmos 145:9-10"
+    },
+    {
+      "id": 46,
+      "texto": "E, se alguém ouvir as minhas palavras e não as guardar, eu não o julgo; porque não vim para julgar o mundo, mas para salvar o mundo.",
+      "versiculo": "João 12:47"
+    },
+    {
+      "id": 47,
+      "texto": "O Senhor é o meu ajudador, e não temerei o que me possa fazer o homem. Lembrai-vos dos vossos guias, que vos falaram a palavra de Deus; considerai o resultado da sua conduta, e imitai-lhes a fé.",
+      "versiculo": "Hebreus 13:6-7"
+    },
+    {
+      "id": 48,
+      "texto": "Confessai, pois, os vossos pecados uns aos outros, e orai uns pelos outros, para que sareis. A oração de um justo é poderosa e eficaz.",
+      "versiculo": "Tiago 5:16"
+    },
+    {
+      "id": 49,
+      "texto": "O Senhor é tardio em irar-se, mas grande em poder, e ao culpado não tem por inocente. O Senhor tem o seu caminho na tormenta e na tempestade, e as nuvens são o pó dos seus pés.",
+      "versiculo": "Naum 1:3"
+    },
+    {
+      "id": 50,
+      "texto": "Aquele que habita no esconderijo do Altíssimo, à sombra do Onipotente descansará. Direi do Senhor: Ele é o meu Deus, o meu refúgio, a minha fortaleza, e nele confiarei.",
+      "versiculo": "Salmos 91:1-2"
+    },
+    {
+      "id": 51,
+      "texto": "Toda a Escritura é divinamente inspirada e proveitosa para ensinar, para repreender, para corrigir, para instruir em justiça, a fim de que o homem de Deus seja perfeito, e perfeitamente preparado para toda boa obra.",
+      "versiculo": "2 Timóteo 3:16-17"
+    },
+    {
+      "id": 52,
+      "texto": "Não ameis o mundo, nem o que no mundo há. Se alguém ama o mundo, o amor do Pai não está nele. Porque tudo o que há no mundo, a concupiscência da carne, a concupiscência dos olhos e a soberba da vida, não é do Pai, mas do mundo.",
+      "versiculo": "1 João 2:15-16"
+    },
+    {
+      "id": 53,
+      "texto": "Os passos de um homem bom são confirmados pelo Senhor, e ele se agrada do seu caminho. Ainda que caia, não ficará prostrado, pois o Senhor o sustém com a sua mão.",
+      "versiculo": "Salmos 37:23-24"
+    },
+    {
+      "id": 54,
+      "texto": "Porque o Senhor Deus é um sol e escudo; o Senhor dará graça e glória; nenhum bem sonegará aos que andam na retidão. Ó Senhor dos Exércitos, bem-aventurado o homem que em ti confia.",
+      "versiculo": "Salmos 84:11-12"
+    },
+    {
+      "id": 55,
+      "texto": "E disse Jesus aos seus discípulos: Se alguém quiser vir após mim, renuncie a si mesmo, tome a sua cruz e siga-me. Porque aquele que quiser salvar a sua vida, perdê-la-á; mas aquele que perder a sua vida por amor de mim, achá-la-á.",
+      "versiculo": "Mateus 16:24-25"
+    },
+    {
+      "id": 56,
+      "texto": "O Senhor é justo em todos os seus caminhos, e santo em todas as suas obras. O Senhor está perto de todos os que o invocam, de todos os que o invocam em verdade.",
+      "versiculo": "Salmos 145:17-18"
+    },
+    {
+      "id": 57,
+      "texto": "E, orando, não useis de vãs repetições, como os gentios, que pensam que por muito falarem serão ouvidos. Não vos assemelheis, pois, a eles; porque vosso Pai sabe o que vos é necessário antes de vós lho pedirdes.",
+      "versiculo": "Mateus 6:7-8"
+    },
+    {
+      "id": 58,
+      "texto": "Aquele que não poupou o seu próprio Filho, mas o entregou por todos nós, como não nos dará também com ele todas as coisas? Quem intentará acusação contra os escolhidos de Deus? É Deus quem os justifica.",
+      "versiculo": "Romanos 8:32-33"
+    },
+    {
+      "id": 59,
+      "texto": "O Senhor é a porção da minha herança e do meu cálice; tu és o sustentáculo da minha sorte. Caem-me as divisas em lugares aprazíveis; sim, coube-me uma formosa herança.",
+      "versiculo": "Salmos 16:5-6"
+    },
+    {
+      "id": 60,
+      "texto": "Porque, se perdoardes aos homens as suas ofensas, também vosso Pai celestial vos perdoará a vós; se, porém, não perdoardes aos homens as suas ofensas, também vosso Pai vos não perdoará as vossas ofensas.",
+      "versiculo": "Mateus 6:14-15"
+    },
+    {
+      "id": 61,
+      "texto": "Bendize, ó minha alma, ao Senhor, e tudo o que há em mim bendiga o seu santo nome. Bendize, ó minha alma, ao Senhor, e não te esqueças de nenhum dos seus benefícios.",
+      "versiculo": "Salmos 103:1-2"
+    },
+    {
+      "id": 62,
+      "texto": "E tudo quanto pedirdes em oração, crendo, o recebereis. E, quando estiverdes orando, perdoai, se tendes alguma coisa contra alguém, para que vosso Pai, que está nos céus, vos perdoe as vossas ofensas.",
+      "versiculo": "Mateus 21:22-23"
+    },
+    {
+      "id": 63,
+      "texto": "O Senhor é o meu rochedo, a minha fortaleza e o meu libertador; o meu Deus é o meu refúgio, em quem me abrigo; o meu escudo e a força da minha salvação, a minha cidadela.",
+      "versiculo": "Salmos 18:2"
+    },
+    {
+      "id": 64,
+      "texto": "Portanto, se você estiver apresentando sua oferta no altar e ali se lembrar de que seu irmão tem algo contra você, deixe sua oferta ali, diante do altar, e vá primeiro reconciliar-se com seu irmão; depois volte e apresente sua oferta.",
+      "versiculo": "Mateus 5:23-24"
+    },
+    {
+      "id": 65,
+      "texto": "Pois tu, Senhor, és bom e perdoador, rico em amor para com todos os que te invocam. Ouve, Senhor, a minha oração, dá ouvidos à voz das minhas súplicas.",
+      "versiculo": "Salmos 86:5-6"
+    },
+    {
+      "id": 66,
+      "texto": "Eis que estou à porta e bato; se alguém ouvir a minha voz e abrir a porta, entrarei em sua casa e cearei com ele, e ele comigo. Ao que vencer, dar-lhe-ei sentar-se comigo no meu trono.",
+      "versiculo": "Apocalipse 3:20-21"
+    },
+    {
+      "id": 67,
+      "texto": "Guarda-me, ó Deus, porque em ti me refugio. Disse ao Senhor: Tu és o meu Senhor; não tenho outro bem além de ti.",
+      "versiculo": "Salmos 16:1-2"
+    },
+    {
+      "id": 68,
+      "texto": "Por isso, vos digo que tudo o que pedirdes, orando, crede que o recebereis, e tê-lo-eis. E, quando estiverdes orando, perdoai, se tendes alguma coisa contra alguém.",
+      "versiculo": "Marcos 11:24-25"
+    },
+    {
+      "id": 69,
+      "texto": "O Senhor é a minha força e o meu cântico; ele me foi por salvação. Este é o meu Deus, eu o louvarei; o Deus de meu pai, eu o exaltarei.",
+      "versiculo": "Êxodo 15:2"
+    },
+    {
+      "id": 70,
+      "texto": "E conhecereis a verdade, e a verdade vos libertará. Se, pois, o Filho vos libertar, verdadeiramente sereis livres.",
+      "versiculo": "João 8:32, 36"
+    },
+    {
+      "id": 71,
+      "texto": "O Senhor é clemente e misericordioso, longânimo e grande em benignidade. Não contende perpetuamente, nem para sempre retém a sua ira.",
+      "versiculo": "Salmos 103:8-9"
+    },
+    {
+      "id": 72,
+      "texto": "Porque, onde estiverem dois ou três reunidos em meu nome, aí estou eu no meio deles. Então Pedro, aproximando-se dele, disse: Senhor, até quantas vezes pecará meu irmão contra mim, e eu lhe perdoarei?",
+      "versiculo": "Mateus 18:20-21"
+    },
+    {
+      "id": 73,
+      "texto": "O Senhor é o meu pastor; de nada terei falta. Em verdes pastagens me faz repousar e me conduz a águas tranquilas; restaura-me o vigor e guia-me por caminhos retos por amor do seu nome.",
+      "versiculo": "Salmos 23:1-3"
+    },
+    {
+      "id": 74,
+      "texto": "Seja a vossa palavra: Sim, sim; não, não; porque o que passa disto vem do maligno. Ouvistes que foi dito: Amarás o teu próximo e odiarás o teu inimigo.",
+      "versiculo": "Mateus 5:37, 43"
+    },
+    {
+      "id": 75,
+      "texto": "O Senhor é a minha rocha, a minha fortaleza e o meu libertador; o meu Deus é o meu refúgio, em quem me abrigo; o meu escudo e a força da minha salvação.",
+      "versiculo": "2 Samuel 22:2-3"
+    },
+    {
+      "id": 76,
+      "texto": "E eu vos digo: Pedi, e dar-se-vos-á; buscai, e achareis; batei, e abrir-se-vos-á. Porque qualquer que pede recebe; e quem busca acha; e a quem bate, abrir-se-á.",
+      "versiculo": "Lucas 11:9-10"
+    },
+    {
+      "id": 77,
+      "texto": "Louvai ao Senhor, porque ele é bom; porque a sua benignidade dura para sempre. Quem pode contar os feitos poderosos do Senhor, ou anunciar todo o seu louvor?",
+      "versiculo": "Salmos 106:1-2"
+    },
+    {
+      "id": 78,
+      "texto": "Porque o Filho do Homem veio buscar e salvar o que se havia perdido. Assim, não é da vontade de vosso Pai, que está nos céus, que se perca um só destes pequeninos.",
+      "versiculo": "Lucas 19:10, Mateus 18:14"
+    },
+    {
+      "id": 79,
+      "texto": "O Senhor é o meu auxilio, e não temerei; que me pode fazer o homem? O Senhor é o meu auxílio, e eu exultarei na salvação que ele me concede.",
+      "versiculo": "Salmos 118:6-7"
+    },
+    {
+      "id": 80,
+      "texto": "E disse-lhes: Ide por todo o mundo, pregai o evangelho a toda criatura. Quem crer e for batizado será salvo; mas quem não crer será condenado.",
+      "versiculo": "Marcos 16:15-16"
+    },
+    {
+      "id": 81,
+      "texto": "O Senhor é a minha força e o meu cântico; ele me foi por salvação. Este é o meu Deus, eu o louvarei; o Deus de meu pai, eu o exaltarei.",
+      "versiculo": "Salmos 118:14"
+    },
+    {
+      "id": 82,
+      "texto": "Portanto, ide, fazei discípulos de todas as nações, batizando-os em nome do Pai, e do Filho, e do Espírito Santo; ensinando-os a guardar todas as coisas que eu vos tenho mandado.",
+      "versiculo": "Mateus 28:19-20"
+    },
+    {
+      "id": 83,
+      "texto": "O Senhor é a minha força e o meu escudo; nele confiou o meu coração, e fui socorrido; pelo que o meu coração salta de prazer, e com o meu cântico o louvarei.",
+      "versiculo": "Salmos 28:7"
+    },
+    {
+      "id": 84,
+      "texto": "E tudo quanto fizerdes, fazei-o de todo o coração, como ao Senhor, e não aos homens, sabendo que recebereis do Senhor o galardão da herança, porque a Cristo, o Senhor, servis.",
+      "versiculo": "Colossenses 3:23-24"
+    },
+    {
+      "id": 85,
+      "texto": "O Senhor é o meu pastor, e nada me faltará. Ele me faz repousar em pastos verdejantes e me guia a águas tranquilas.",
+      "versiculo": "Salmos 23:1-2"
+    },
+    {
+      "id": 86,
+      "texto": "E, se o Espírito daquele que ressuscitou a Jesus dentre os mortos habita em vós, aquele que ressuscitou a Cristo Jesus dentre os mortos também dará vida aos vossos corpos mortais, por meio do seu Espírito que em vós habita.",
+      "versiculo": "Romanos 8:11"
+    },
+    {
+      "id": 87,
+      "texto": "O Senhor é o meu refúgio e a minha fortaleza, o meu Deus, em quem confio. Ele me livra do laço do caçador e da peste perniciosa.",
+      "versiculo": "Salmos 91:2-3"
+    },
+    {
+      "id": 88,
+      "texto": "Porque o Reino de Deus não consiste em palavras, mas em poder. Que quereis? Irei ter convosco com vara ou com amor e espírito de mansidão?",
+      "versiculo": "1 Coríntios 4:20-21"
+    },
+    {
+      "id": 89,
+      "texto": "O Senhor é a minha força e o meu cântico; ele me foi por salvação. Vozes de júbilo e de salvação se ouvem nas tendas dos justos; a destra do Senhor faz proezas.",
+      "versiculo": "Salmos 118:14-15"
+    },
+    {
+      "id": 90,
+      "texto": "E, se alguém vos perguntar pela razão da esperança que há em vós, estai sempre preparados para responder, mas fazei-o com mansidão e temor, tendo boa consciência.",
+      "versiculo": "1 Pedro 3:15-16"
+    },
+    {
+      "id": 91,
+      "texto": "O Senhor é a minha rocha, a minha fortaleza e o meu libertador; o meu Deus é o meu refúgio, em quem me abrigo; o meu escudo e a força da minha salvação.",
+      "versiculo": "Salmos 18:2-3"
+    },
+    {
+      "id": 92,
+      "texto": "E, se o Espírito daquele que ressuscitou a Jesus dentre os mortos habita em vós, aquele que ressuscitou a Cristo Jesus dentre os mortos também dará vida aos vossos corpos mortais.",
+      "versiculo": "Romanos 8:11"
+    },
+    {
+      "id": 93,
+      "texto": "O Senhor é a minha força e o meu cântico; ele me foi por salvação. Este é o meu Deus, eu o louvarei; o Deus de meu pai, eu o exaltarei.",
+      "versiculo": "Êxodo 15:2"
+    },
+    {
+      "id": 94,
+      "texto": "E tudo quanto fizerdes, fazei-o de todo o coração, como ao Senhor, e não aos homens, sabendo que recebereis do Senhor o galardão da herança.",
+      "versiculo": "Colossenses 3:23-24"
+    },
+    {
+      "id": 95,
+      "texto": "O Senhor é a minha força e o meu escudo; nele confiou o meu coração, e fui socorrido; pelo que o meu coração salta de prazer, e com o meu cântico o louvarei.",
+      "versiculo": "Salmos 28:7"
+    },
+    {
+      "id": 96,
+      "texto": "E disse-lhes: Ide por todo o mundo, pregai o evangelho a toda criatura. Quem crer e for batizado será salvo; mas quem não crer será condenado.",
+      "versiculo": "Marcos 16:15-16"
+    },
+    {
+      "id": 97,
+      "texto": "O Senhor é o meu pastor; de nada terei falta. Em verdes pastagens me faz repousar e me conduz a águas tranquilas; restaura-me o vigor.",
+      "versiculo": "Salmos 23:1-3"
+    },
+    {
+      "id": 98,
+      "texto": "Portanto, ide, fazei discípulos de todas as nações, batizando-os em nome do Pai, e do Filho, e do Espírito Santo; ensinando-os a guardar todas as coisas que eu vos tenho mandado.",
+      "versiculo": "Mateus 28:19-20"
+    },
+    {
+      "id": 99,
+      "texto": "O Senhor é a minha força e o meu cântico; ele me foi por salvação. Vozes de júbilo e de salvação se ouvem nas tendas dos justos; a destra do Senhor faz proezas.",
+      "versiculo": "Salmos 118:14-15"
+    },
+    {
+      "id": 100,
+      "texto": "E, se alguém vos perguntar pela razão da esperança que há em vós, estai sempre preparados para responder, mas fazei-o com mansidão e temor, tendo boa consciência.",
+      "versiculo": "1 Pedro 3:15-16"
+    },
+    {
+      "id": 101,
+      "texto": "Bendize, ó minha alma, ao Senhor, e tudo o que há em mim bendiga o seu santo nome. Bendize, ó minha alma, ao Senhor, e não te esqueças de nenhum dos seus benefícios.",
+      "versiculo": "Salmos 103:1-2"
+    },
+    {
+      "id": 102,
+      "texto": "E tudo quanto pedirdes em oração, crendo, o recebereis. E, quando estiverdes orando, perdoai, se tendes alguma coisa contra alguém.",
+      "versiculo": "Mateus 21:22-23"
+    },
+    {
+      "id": 103,
+      "texto": "O Senhor é o meu rochedo, a minha fortaleza e o meu libertador; o meu Deus é o meu refúgio, em quem me abrigo; o meu escudo e a força da minha salvação.",
+      "versiculo": "Salmos 18:2"
+    },
+    {
+      "id": 104,
+      "texto": "Portanto, se você estiver apresentando sua oferta no altar e ali se lembrar de que seu irmão tem algo contra você, deixe sua oferta ali, diante do altar, e vá primeiro reconciliar-se com seu irmão.",
+      "versiculo": "Mateus 5:23-24"
+    },
+    {
+      "id": 105,
+      "texto": "Pois tu, Senhor, és bom e perdoador, rico em amor para com todos os que te invocam. Ouve, Senhor, a minha oração, dá ouvidos à voz das minhas súplicas.",
+      "versiculo": "Salmos 86:5-6"
+    },
+    {
+      "id": 106,
+      "texto": "Eis que estou à porta e bato; se alguém ouvir a minha voz e abrir a porta, entrarei em sua casa e cearei com ele, e ele comigo.",
+      "versiculo": "Apocalipse 3:20"
+    },
+    {
+      "id": 107,
+      "texto": "Guarda-me, ó Deus, porque em ti me refugio. Disse ao Senhor: Tu és o meu Senhor; não tenho outro bem além de ti.",
+      "versiculo": "Salmos 16:1-2"
+    },
+    {
+      "id": 108,
+      "texto": "Por isso, vos digo que tudo o que pedirdes, orando, crede que o recebereis, e tê-lo-eis. E, quando estiverdes orando, perdoai, se tendes alguma coisa contra alguém.",
+      "versiculo": "Marcos 11:24-25"
+    },
+    {
+      "id": 109,
+      "texto": "O Senhor é a minha força e o meu cântico; ele me foi por salvação. Este é o meu Deus, eu o louvarei; o Deus de meu pai, eu o exaltarei.",
+      "versiculo": "Êxodo 15:2"
+    },
+    {
+      "id": 110,
+      "texto": "E conhecereis a verdade, e a verdade vos libertará. Se, pois, o Filho vos libertar, verdadeiramente sereis livres.",
+      "versiculo": "João 8:32, 36"
+    },
+    {
+      "id": 111,
+      "texto": "O Senhor é clemente e misericordioso, longânimo e grande em benignidade. Não contende perpetuamente, nem para sempre retém a sua ira.",
+      "versiculo": "Salmos 103:8-9"
+    },
+    {
+      "id": 112,
+      "texto": "Porque, onde estiverem dois ou três reunidos em meu nome, aí estou eu no meio deles. Então Pedro, aproximando-se dele, disse: Senhor, até quantas vezes pecará meu irmão contra mim, e eu lhe perdoarei?",
+      "versiculo": "Mateus 18:20-21"
+    },
+    {
+      "id": 113,
+      "texto": "Louvai ao Senhor, porque ele é bom; porque a sua benignidade dura para sempre. Quem pode contar os feitos poderosos do Senhor, ou anunciar todo o seu louvor?",
+      "versiculo": "Salmos 106:1-2"
+    },
+    {
+      "id": 114,
+      "texto": "Porque o Filho do Homem veio buscar e salvar o que se havia perdido. Assim, não é da vontade de vosso Pai, que está nos céus, que se perca um só destes pequeninos.",
+      "versiculo": "Lucas 19:10, Mateus 18:14"
+    },
+    {
+      "id": 115,
+      "texto": "O Senhor é o meu auxilio, e não temerei; que me pode fazer o homem? O Senhor é o meu auxílio, e eu exultarei na salvação que ele me concede.",
+      "versiculo": "Salmos 118:6-7"
+    },
+    {
+      "id": 116,
+      "texto": "E tudo quanto fizerdes, fazei-o de todo o coração, como ao Senhor, e não aos homens, sabendo que recebereis do Senhor o galardão da herança.",
+      "versiculo": "Colossenses 3:23-24"
+    },
+    {
+      "id": 117,
+      "texto": "O Senhor é a minha força e o meu escudo; nele confiou o meu coração, e fui socorrido; pelo que o meu coração salta de prazer, e com o meu cântico o louvarei.",
+      "versiculo": "Salmos 28:7"
+    },
+    {
+      "id": 118,
+      "texto": "E disse-lhes: Ide por todo o mundo, pregai o evangelho a toda criatura. Quem crer e for batizado será salvo; mas quem não crer será condenado.",
+      "versiculo": "Marcos 16:15-16"
+    },
+    {
+      "id": 119,
+      "texto": "O Senhor é a minha força e o meu cântico; ele me foi por salvação. Vozes de júbilo e de salvação se ouvem nas tendas dos justos; a destra do Senhor faz proezas.",
+      "versiculo": "Salmos 118:14-15"
+    },
+    {
+      "id": 120,
+      "texto": "E, se alguém vos perguntar pela razão da esperança que há em vós, estai sempre preparados para responder, mas fazei-o com mansidão e temor, tendo boa consciência.",
+      "versiculo": "1 Pedro 3:15-16"
+    }
+  ]
 }
