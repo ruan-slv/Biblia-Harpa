@@ -21,8 +21,8 @@ dependencies:
   hive_flutter: ^1.1.0
   just_audio: ^0.9.36
   dio: ^5.3.2
-  
   cupertino_icons: ^1.0.8
+  share_plus: ^11.0.0
 
 dev_dependencies:
   flutter_test:
@@ -44,6 +44,8 @@ flutter:
     - assets/json/nvi.json
     - assets/json/devocional.json
     - assets/json/newDevocionalModel.json
+    - assets/json/palavraDoDia.json
+
 flutter_icons:
   image_path: "assets/images/logoExecutavel.png"
   android: true
