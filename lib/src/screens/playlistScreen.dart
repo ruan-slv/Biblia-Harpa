@@ -2,12 +2,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:biblia_e_harpa/models/music.dart';
-import 'package:biblia_e_harpa/services/musicService.dart';
 import 'package:biblia_e_harpa/src/config.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:watcher/watcher.dart';
 import 'package:path_provider/path_provider.dart';
+
+import '../models/music.dart';
+import '../services/musicService.dart';
 
 class PlaylistScreen extends StatefulWidget {
   const PlaylistScreen({super.key});

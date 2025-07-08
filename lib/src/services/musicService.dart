@@ -1,6 +1,7 @@
-import 'package:biblia_e_harpa/models/music.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+
+import '../models/music.dart';
 
 class MusicService {
   late final Box<Music> _musicBox;

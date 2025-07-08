@@ -1,3 +1,4 @@
+import 'package:biblia_e_harpa/src/components/appBarComponent.dart';
 import 'package:biblia_e_harpa/src/config.dart';
 import 'package:biblia_e_harpa/src/keys/biblekey.dart';
 import 'package:biblia_e_harpa/src/sizelist/chapterlist.dart';

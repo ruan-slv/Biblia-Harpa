@@ -1,13 +1,14 @@
-import 'package:biblia_e_harpa/screens/palavraDiaScreen.dart';
-import 'package:biblia_e_harpa/screens/playlistScreen.dart';
 import 'package:biblia_e_harpa/src/config.dart';
 import 'package:biblia_e_harpa/src/content/doacao.dart';
 import 'package:biblia_e_harpa/src/devocional/devocionalList.dart';
+import 'package:biblia_e_harpa/src/screens/audiosScreen.dart';
 import 'package:biblia_e_harpa/src/sizelist/biblelist.dart';
 import 'package:biblia_e_harpa/src/sizelist/harpalist.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:biblia_e_harpa/src/initial/wallpaperSelectionScreen.dart';
+
+import '../screens/palavraDiaScreen.dart';
 
 class Initial extends StatefulWidget {
   const Initial({super.key});
@@ -80,12 +81,24 @@ class _InitialState extends State<Initial> {
     final musicButtonWidth = 2 * buttonSize + 12; // Two buttons + 12px spacing
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.white,
-        onPressed: _pickWallpaper,
-        tooltip: "Alterar papel de parede",
-        child: const Icon(Icons.image, color: Colors.black87),
-      ),
+      floatingActionButton: /*Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FloatingActionButton(
+            backgroundColor: Colors.white,
+            onPressed: _pickWallpaper,
+            tooltip: "Configurações",
+            child: const Icon(Icons.settings, color: Colors.black87),
+          ),
+          const SizedBox(width: 16),*/
+          FloatingActionButton(
+            backgroundColor: Colors.white,
+            onPressed: _pickWallpaper,
+            tooltip: "Alterar papel de parede",
+            child: const Icon(Icons.image, color: Colors.black87),
+          ),
+        //],
+      //),
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -206,12 +219,12 @@ class _InitialState extends State<Initial> {
                           children: [
                             _buildMenuCard(
                               context,
-                              'Músicas',
+                              'Áudios',
                               Icons.music_note_outlined,
                               Colors.deepOrange,
                               () => Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => const PlaylistScreen()),
+                                MaterialPageRoute(builder: (context) => const AudioScreen()),
                               ),
                               size: buttonSize
                             ),
@@ -232,7 +245,6 @@ class _InitialState extends State<Initial> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 30),
                 ],
               ),
             ),
