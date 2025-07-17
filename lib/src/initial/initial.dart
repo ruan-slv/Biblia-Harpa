@@ -34,6 +34,7 @@ class _InitialState extends State<Initial> {
     "assets/images/fundoOption10.jpeg",
     "assets/images/fundoOption11.jpeg",
     "assets/images/fundoOption12.jpeg",
+    "assets/images/fundoOption13.jpeg",
   ];
 
   @override
@@ -81,32 +82,20 @@ class _InitialState extends State<Initial> {
     final musicButtonWidth = 2 * buttonSize + 12; // Two buttons + 12px spacing
 
     return Scaffold(
-      floatingActionButton: /*Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          FloatingActionButton(
-            backgroundColor: Colors.white,
-            onPressed: _pickWallpaper,
-            tooltip: "Configurações",
-            child: const Icon(Icons.settings, color: Colors.black87),
-          ),
-          const SizedBox(width: 16),*/
-          FloatingActionButton(
-            backgroundColor: Colors.white,
-            onPressed: _pickWallpaper,
-            tooltip: "Alterar papel de parede",
-            child: const Icon(Icons.image, color: Colors.black87),
-          ),
-        //],
-      //),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.white,
+        onPressed: _pickWallpaper,
+        tooltip: "Alterar papel de parede",
+        child: const Icon(Icons.image, color: Colors.black87),
+      ),
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
             image: backgroundImagePath != null
                 ? AssetImage(backgroundImagePath!)
-                : const AssetImage('assets/images/Wall paperss.jpg'),
+                : const AssetImage('assets/images/fundoOption9.jpeg'),
             fit: BoxFit.cover,
-            colorFilter: ColorFilter.mode(
+            colorFilter: const ColorFilter.mode(
               Colors.black45,
               BlendMode.darken,
             ),
@@ -116,7 +105,8 @@ class _InitialState extends State<Initial> {
           child: SingleChildScrollView(
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                minHeight: screenSize.height - MediaQuery.of(context).padding.top,
+                minHeight:
+                    screenSize.height - MediaQuery.of(context).padding.top,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -166,7 +156,8 @@ class _InitialState extends State<Initial> {
                               amberColor,
                               () => Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => const BibleList()),
+                                MaterialPageRoute(
+                                    builder: (context) => const BibleList()),
                               ),
                               size: buttonSize,
                             ),
@@ -178,7 +169,8 @@ class _InitialState extends State<Initial> {
                               indigoColor,
                               () => Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => const HarpaList()),
+                                MaterialPageRoute(
+                                    builder: (context) => const HarpaList()),
                               ),
                               size: buttonSize,
                             ),
@@ -195,7 +187,9 @@ class _InitialState extends State<Initial> {
                               tealColor,
                               () => Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => const DevocionalList()),
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const DevocionalList()),
                               ),
                               size: buttonSize,
                             ),
@@ -207,7 +201,8 @@ class _InitialState extends State<Initial> {
                               Colors.deepOrange,
                               () => Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => const PalavraDoDia()),
+                                MaterialPageRoute(
+                                    builder: (context) => const PalavraDoDia()),
                               ),
                               size: buttonSize,
                             ),
@@ -218,16 +213,17 @@ class _InitialState extends State<Initial> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             _buildMenuCard(
-                              context,
-                              'Áudios',
-                              Icons.music_note_outlined,
-                              Colors.deepOrange,
-                              () => Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => const AudioScreen()),
-                              ),
-                              size: buttonSize
-                            ),
+                                'Áudios',
+                                Icons.music_note_outlined,
+                                Colors.deepOrange,
+                                () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const AudioScreen()),
+                                    ),
+                                size: buttonSize),
                             const SizedBox(width: 12),
                             _buildMenuCard(
                               context,
@@ -236,7 +232,8 @@ class _InitialState extends State<Initial> {
                               Colors.red.shade700,
                               () => Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => const Doacao()),
+                                MaterialPageRoute(
+                                    builder: (context) => const Doacao()),
                               ),
                               size: buttonSize,
                             ),
@@ -264,8 +261,10 @@ class _InitialState extends State<Initial> {
     double? height,
     double? size,
   }) {
-    final effectiveWidth = width ?? size ?? 100; // Usa width, senão size, senão valor padrão
-    final effectiveHeight = height ?? size ?? 100; // Usa height, senão size, senão valor padrão
+    final effectiveWidth =
+        width ?? size ?? 100; // Usa width, senão size, senão valor padrão
+    final effectiveHeight =
+        height ?? size ?? 100; // Usa height, senão size, senão valor padrão
 
     return GestureDetector(
       onTap: onPressed,
@@ -285,7 +284,8 @@ class _InitialState extends State<Initial> {
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center, // Centraliza o conteúdo
+          crossAxisAlignment:
+              CrossAxisAlignment.center, // Centraliza o conteúdo
           children: [
             Container(
               padding: const EdgeInsets.all(8),

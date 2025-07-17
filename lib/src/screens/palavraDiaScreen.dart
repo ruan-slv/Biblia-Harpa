@@ -45,7 +45,8 @@ class _PalavraDoDiaState extends State<PalavraDoDia> {
     final String? palavraSalva = prefs.getString("palavra_atual");
 
     final now = DateTime.now();
-    bool precisaAtualizar = lastUpdate == null || DateTime.parse(lastUpdate).difference(now).inDays.abs() >= 1;
+    bool precisaAtualizar = lastUpdate == null ||
+        DateTime.parse(lastUpdate).difference(now).inDays.abs() >= 1;
 
     if (!precisaAtualizar && palavraSalva != null) {
       setState(() {
@@ -56,7 +57,8 @@ class _PalavraDoDiaState extends State<PalavraDoDia> {
     }
 
     try {
-      final String jsonString = await DefaultAssetBundle.of(context).loadString("assets/json/palavraDoDia.json");
+      final String jsonString = await DefaultAssetBundle.of(context)
+          .loadString("assets/json/palavraDoDia.json");
       final List<dynamic> jsonResponse = jsonDecode(jsonString)["palavraDoDia"];
 
       final randomIndex = Random().nextInt(jsonResponse.length);
@@ -70,9 +72,10 @@ class _PalavraDoDiaState extends State<PalavraDoDia> {
       await prefs.setString("last_update", now.toIso8601String());
       await prefs.setString("palavra_atual", jsonEncode(selectedPalavra));
     } catch (e) {
-      print("Erro ao carregar dado: ${e.toString()}");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Erro ao carregar a palavra do dia: ${e.toString()}")),
+        SnackBar(
+            content:
+                Text("Erro ao carregar a palavra do dia: ${e.toString()}")),
       );
     }
   }
@@ -86,14 +89,16 @@ class _PalavraDoDiaState extends State<PalavraDoDia> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        backgroundColor: begeClaro,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         centerTitle: true,
         automaticallyImplyLeading: true,
-        iconTheme: const IconThemeData(color: cinzaEscuro),
-        title: const Text(
+        iconTheme:
+            IconThemeData(color: Theme.of(context).colorScheme.secondary),
+        title: Text(
           "Palavra do Dia",
-          style: TextStyle(color: cinzaEscuro),
+          style: TextStyle(color: Theme.of(context).colorScheme.secondary),
         ),
       ),
       body: Stack(
@@ -106,17 +111,19 @@ class _PalavraDoDiaState extends State<PalavraDoDia> {
                   const SizedBox(height: 20),
                   Text(
                     palavraAtual?.texto ?? "Palavra do dia não encontrada",
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontStyle: FontStyle.italic,
-                      color: cinzaEscuro,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 20),
                   Text(
                     palavraAtual?.versiculo ?? "Versículo não encontrado",
-                    style: const TextStyle(fontSize: 16, color: cinzaClaro),
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: Theme.of(context).colorScheme.secondary),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 80),
@@ -131,14 +138,15 @@ class _PalavraDoDiaState extends State<PalavraDoDia> {
             child: SizedBox(
               height: 50,
               child: ElevatedButton(
-                child: const Text("Compartilhar", style: TextStyle(color: cinzaEscuro, fontSize: 16)),
                 onPressed: _compartilharPalavra,
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  backgroundColor: begeClaro,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                 ),
+                child: Text("Compartilhar",
+                    style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 16)),
               ),
             ),
           ),

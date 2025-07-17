@@ -1,5 +1,7 @@
+import 'package:biblia_e_harpa/src/controllers/theme_controller.dart';
 import 'package:biblia_e_harpa/src/initial/initial.dart';
 import 'package:biblia_e_harpa/src/models/music.dart';
+import 'package:biblia_e_harpa/src/theme/theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,7 +13,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
 
-  if(!kIsWeb) {
+  if (!kIsWeb) {
     final dir = await getApplicationDocumentsDirectory();
     Hive.init(dir.path);
   }
@@ -23,6 +25,8 @@ void main() async {
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   }
 
+  await ThemeController.loadTheme();
+
   runApp(const MyApp());
 }
 
@@ -31,14 +35,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Biblia e Harpa',
-        theme: ThemeData(
-          primarySwatch: Colors.blueGrey,
-        ),
-        home: UpgradeAlert(
-          child: const Initial(),
-        )
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: ThemeController.themeNotifier,
+      builder: (context, currentTheme, _) {
+        return MaterialApp(
+          title: 'Biblia e Harpa',
+          theme: lightMode,
+          darkTheme: darkMode,
+          themeMode: currentTheme,
+          debugShowCheckedModeBanner: false,
+          home: UpgradeAlert(
+            child: const Initial(),
+          ),
+        );
+      },
     );
   }
 }

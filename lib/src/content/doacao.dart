@@ -33,11 +33,11 @@ class _DoacaoState extends State<Doacao> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: brancoNeve,
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        backgroundColor: begeClaro,
-        title: const Text("Doação", style: TextStyle(color: cinzaEscuro)),
-        iconTheme: const IconThemeData(color: cinzaEscuro),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        title:  Text("Doação", style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
+        iconTheme:  IconThemeData(color: Theme.of(context).colorScheme.secondary),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -47,13 +47,13 @@ class _DoacaoState extends State<Doacao> {
             children: [
               Text(
                 message,
-                style: const TextStyle(fontSize: 18, color: cinzaEscuro),
+                style:  TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.secondary),
                 textAlign: TextAlign.justify,
               ),
               const SizedBox(height: 40),
-              const Text(
+               Text(
                 "Chave Pix Aleatória",
-                style: const TextStyle(color: cinzaEscuro),
+                style:  TextStyle(color: Theme.of(context).colorScheme.secondary),
               ),
               const SizedBox(height: 10),
               SizedBox(
@@ -67,11 +67,11 @@ class _DoacaoState extends State<Doacao> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      backgroundColor: begeClaro
+                      backgroundColor: Theme.of(context).colorScheme.primary
                   ),
                   child: Text(
                     buttonText[0],
-                    style: const TextStyle(color: cinzaEscuro, fontSize: 16),
+                    style:  TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 16),
                   ),
                 ),
               )

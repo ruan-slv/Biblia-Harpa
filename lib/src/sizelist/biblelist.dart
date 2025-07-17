@@ -92,15 +92,14 @@ class _BibleListState extends State<BibleList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: brancoNeve,
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        backgroundColor: begeClaro,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         centerTitle: true,
         automaticallyImplyLeading: true,
-        iconTheme: const IconThemeData(color: cinzaEscuro),
-        title: const Text(
+        title: Text(
           'Biblia Cristã',
-          style: TextStyle(color: cinzaEscuro),
+          style: TextStyle(color: Theme.of(context).colorScheme.secondary),
         ),
         actions: [
           SizedBox(
@@ -110,20 +109,29 @@ class _BibleListState extends State<BibleList> {
               onSelected: _onMenuItemSelected,
               itemBuilder: (BuildContext context) {
                 return [
-                  const PopupMenuItem<String>(
+                  PopupMenuItem<String>(
                     value: "ACF",
-                    child: Text("Almeida Corrigida Fiel",
-                        style: TextStyle(color: cinzaEscuro)),
+                    child: Text(
+                      "Almeida Corrigida Fiel",
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary),
+                    ),
                   ),
-                  const PopupMenuItem<String>(
+                  PopupMenuItem<String>(
                     value: "NVI",
-                    child: Text("Nova Versão Internacional",
-                        style: TextStyle(color: cinzaEscuro)),
+                    child: Text(
+                      "Nova Versão Internacional",
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary),
+                    ),
                   ),
-                  const PopupMenuItem<String>(
+                  PopupMenuItem<String>(
                     value: "AA",
-                    child: Text("Almeida Atualizada",
-                        style: TextStyle(color: cinzaEscuro)),
+                    child: Text(
+                      "Almeida Atualizada",
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary),
+                    ),
                   ),
                 ];
               },
@@ -139,8 +147,11 @@ class _BibleListState extends State<BibleList> {
               controller: _searchController,
               decoration: InputDecoration(
                 labelText: "Pesquisar Livro",
+                labelStyle: TextStyle(
+                  color: Theme.of(context).colorScheme.secondary
+                ),
                 border: const OutlineInputBorder(),
-                prefixIcon: const Icon(Icons.search),
+                prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.secondary),
                 suffixIcon: IconButton(
                   onPressed: () {
                     _searchController.clear();
@@ -148,9 +159,16 @@ class _BibleListState extends State<BibleList> {
                       filteredBible = books;
                     });
                   },
-                  icon: const Icon(Icons.clear),
+                  icon: Icon(Icons.clear, color: Theme.of(context).colorScheme.secondary),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.secondary
+                  ),
                 ),
               ),
+              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+              cursorColor: Theme.of(context).colorScheme.secondary,
             ),
           ),
           Expanded(
@@ -158,10 +176,11 @@ class _BibleListState extends State<BibleList> {
               itemCount: filteredBible.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  leading:
-                      const Icon(Icons.menu_book_rounded, color: cinzaEscuro),
+                  leading: Icon(Icons.menu_book_rounded,
+                      color: Theme.of(context).colorScheme.secondary),
                   title: Text(filteredBible[index],
-                      style: const TextStyle(color: cinzaEscuro)),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary)),
                   onTap: () {
                     Navigator.push(
                       context,

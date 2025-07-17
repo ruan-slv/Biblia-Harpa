@@ -107,31 +107,31 @@ class _DevocionalListState extends State<DevocionalList> with SingleTickerProvid
                 children: [
                   Text(
                     devocional["texto"],
-                    style: const TextStyle(fontSize: 18, fontStyle: FontStyle.italic, color: cinzaEscuro),
+                    style:  TextStyle(fontSize: 18, fontStyle: FontStyle.italic, color: Theme.of(context).colorScheme.secondary),
                   ),
                   Text(
                     '- ${devocional["versiculo"]}',
-                    style: const TextStyle(fontSize: 16, color: cinzaClaro),
+                    style:  TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.secondary),
                   ),
                   const SizedBox(height: 20),
-                  const Text(
+                   Text(
                     'Reflexão',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: cinzaEscuro),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.secondary),
                   ),
                   const SizedBox(height: 10),
                   Text(
                     devocional["reflexao"],
-                    style: const TextStyle(fontSize: 16, color: cinzaEscuro),
+                    style:  TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.secondary),
                   ),
                   const SizedBox(height: 20),
-                  const Text(
+                   Text(
                     'Oração',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: cinzaEscuro),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.secondary),
                   ),
                   const SizedBox(height: 10),
                   Text(
                     devocional["oracao"],
-                    style: const TextStyle(fontSize: 16, color: cinzaEscuro),
+                    style:  TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.secondary),
                   ),
                   const SizedBox(height: 20),
                 ],
@@ -162,10 +162,10 @@ class _DevocionalListState extends State<DevocionalList> with SingleTickerProvid
                   style: ElevatedButton.styleFrom(
                     shape: const CircleBorder(),
                     padding: const EdgeInsets.all(12),
-                    backgroundColor: Colors.white,
-                    foregroundColor: cinzaEscuro,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.secondary,
                   ),
-                  child: const Icon(Icons.arrow_back, size: 24, color: cinzaEscuro),
+                  child:  Icon(Icons.arrow_back, size: 24, color: Theme.of(context).colorScheme.secondary),
                 ),
               ),
               const SizedBox(width: 20),
@@ -186,10 +186,10 @@ class _DevocionalListState extends State<DevocionalList> with SingleTickerProvid
                   style: ElevatedButton.styleFrom(
                     shape: const CircleBorder(),
                     padding: const EdgeInsets.all(12),
-                    backgroundColor: Colors.white,
-                    foregroundColor: cinzaEscuro,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.secondary,
                   ),
-                  child: const Icon(Icons.arrow_forward, size: 24, color: cinzaEscuro),
+                  child:  Icon(Icons.arrow_forward, size: 24, color: Theme.of(context).colorScheme.secondary),
                 ),
               ),
             ],
@@ -208,10 +208,13 @@ class _DevocionalListState extends State<DevocionalList> with SingleTickerProvid
             controller: _filterController,
             decoration: InputDecoration(
               labelText: "Pesquisar temas ex: Fé, Adoração",
+              labelStyle: TextStyle(
+                color: Theme.of(context).colorScheme.secondary,
+              ),
               border: const OutlineInputBorder(),
-              prefixIcon: const Icon(Icons.search),
+              prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.secondary),
               suffixIcon: IconButton(
-                icon: const Icon(Icons.clear),
+                icon: Icon(Icons.clear, color: Theme.of(context).colorScheme.secondary),
                 onPressed: () {
                   _filterController.clear();
                   setState(() {
@@ -219,7 +222,14 @@ class _DevocionalListState extends State<DevocionalList> with SingleTickerProvid
                   });
                 },
               ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              ),
             ),
+            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+            cursorColor: Theme.of(context).colorScheme.secondary,
           ),
         ),
         Expanded(
@@ -229,7 +239,7 @@ class _DevocionalListState extends State<DevocionalList> with SingleTickerProvid
               final devocional = devoList[index];
               return ListTile(
                 leading: const Icon(Icons.menu_book_rounded),
-                title: Text(devocional, style: const TextStyle(color: cinzaEscuro)),
+                title: Text(devocional, style:  TextStyle(color: Theme.of(context).colorScheme.secondary)),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -249,13 +259,12 @@ class _DevocionalListState extends State<DevocionalList> with SingleTickerProvid
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: brancoNeve,
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        backgroundColor: begeClaro,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         centerTitle: true,
         automaticallyImplyLeading: true,
-        iconTheme: const IconThemeData(color: cinzaEscuro),
-        title: const Text("Devocional", style: TextStyle(color: cinzaEscuro)),
+        title:  Text("Devocional", style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
         actions: [
           SizedBox(
             width: sizeBtnOptions[0],
@@ -263,7 +272,7 @@ class _DevocionalListState extends State<DevocionalList> with SingleTickerProvid
             child: IconButton(
               onPressed: initialDevocional,
               icon: const Icon(Icons.refresh),
-              color: cinzaEscuro,
+              color: Theme.of(context).colorScheme.secondary,
               tooltip: "Reiniciar o devocional",
             ),
           ),
@@ -271,12 +280,12 @@ class _DevocionalListState extends State<DevocionalList> with SingleTickerProvid
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(46.0),
           child: Container(
-            color: brancoNeve,
+            color: Theme.of(context).colorScheme.primary,
             child: TabBar(
               controller: _tabController,
-              labelColor: azulSereno,
-              unselectedLabelColor: cinzaEscuro,
-              indicatorColor: azulSereno,
+              labelColor: Theme.of(context).colorScheme.secondary,
+              unselectedLabelColor: Theme.of(context).colorScheme.onSurface,
+              indicatorColor: Theme.of(context).colorScheme.secondary,
               indicatorSize: TabBarIndicatorSize.tab,
               labelStyle: const TextStyle(fontWeight: FontWeight.bold),
               unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal),

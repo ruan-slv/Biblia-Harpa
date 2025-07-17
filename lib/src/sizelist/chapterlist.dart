@@ -36,8 +36,11 @@ class _ChapterListScreenState extends State<ChapterListScreen> {
         orElse: () => null,
       );
 
-      if (bookData != null) {return bookData as Map<String, dynamic>;} 
-      else {throw Exception("Livro com a abreviação '$name' não encontrado.");}
+      if (bookData != null) {
+        return bookData as Map<String, dynamic>;
+      } else {
+        throw Exception("Livro com a abreviação '$name' não encontrado.");
+      }
     } catch (e) {
       return {};
     }
@@ -46,42 +49,66 @@ class _ChapterListScreenState extends State<ChapterListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: brancoNeve,
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        backgroundColor: begeClaro,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         centerTitle: true,
         automaticallyImplyLeading: true,
-        iconTheme: const IconThemeData(color: cinzaEscuro),
+        iconTheme:
+            IconThemeData(color: Theme.of(context).colorScheme.secondary),
         title: Text(
           widget.name,
-          style: const TextStyle(color: cinzaEscuro),
+          style: TextStyle(color: Theme.of(context).colorScheme.secondary),
         ),
       ),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _bibleData,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator());
-          if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) return const Center(child: Text("Nenhum texto foi encontrado"));
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text("Nenhum texto foi encontrado"));
+          }
 
           final Map<String, dynamic> bookData = snapshot.data!;
           final List chapters = bookData["chapters"] ?? [];
 
-          if (chapters.isEmpty) return const Center(child: Text('Nenhum capítulo encontrado.'));
-          
+          if (chapters.isEmpty) {
+            return const Center(child: Text('Nenhum capítulo encontrado.'));
+          }
+
           return ListView.builder(
             itemCount: chapters.length,
             itemBuilder: (context, index) {
               final List verses = chapters[index];
 
               return ExpansionTile(
-                title: Text('Capítulo ${index + 1}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: cinzaEscuro)),
+                title: Text(
+                  'Capítulo ${index + 1}',
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.secondary),
+                ),
                 children: verses.asMap().entries.map((entry) {
                   final int verseIndex = entry.key + 1;
                   final String verseText = entry.value;
 
                   return ListTile(
-                    title: Text("Versículo $verseIndex", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: cinzaEscuro)),
-                    subtitle: Text(verseText, style: const TextStyle(fontSize: 18, color: cinzaEscuro)),
+                    title: Text(
+                      "Versículo $verseIndex",
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.secondary),
+                    ),
+                    subtitle: Text(
+                      verseText,
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: Theme.of(context).colorScheme.secondary),
+                    ),
                   );
                 }).toList(),
               );

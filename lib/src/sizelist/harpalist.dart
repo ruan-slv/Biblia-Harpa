@@ -11,7 +11,8 @@ class HarpaList extends StatefulWidget {
   _HarpaListState createState() => _HarpaListState();
 }
 
-class _HarpaListState extends State<HarpaList> with SingleTickerProviderStateMixin {
+class _HarpaListState extends State<HarpaList>
+    with SingleTickerProviderStateMixin {
   List<String> filteredHarps = [];
   Set<String> favoriteHarps = {};
   final TextEditingController _searchController = TextEditingController();
@@ -77,7 +78,8 @@ class _HarpaListState extends State<HarpaList> with SingleTickerProviderStateMix
         final isFavorite = favoriteHarps.contains(hino);
         return ListTile(
           leading: const Icon(Icons.menu_book_rounded),
-          title: Text(hino, style: const TextStyle(color: cinzaEscuro)),
+          title: Text(hino,
+              style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
           trailing: IconButton(
             icon: Icon(
               isFavorite ? Icons.favorite : Icons.favorite_border_outlined,
@@ -101,28 +103,32 @@ class _HarpaListState extends State<HarpaList> with SingleTickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: brancoNeve,
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        backgroundColor: begeClaro,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         centerTitle: true,
         automaticallyImplyLeading: true,
-        iconTheme: const IconThemeData(color: cinzaEscuro),
-        title: const Text(
+        iconTheme:
+            IconThemeData(color: Theme.of(context).colorScheme.secondary),
+        title: Text(
           "Harpa Cristã",
-          style: TextStyle(color: cinzaEscuro),
+          style: TextStyle(color: Theme.of(context).colorScheme.secondary),
         ),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(46.0), // Reduz a altura do TabBar
+          preferredSize:
+              const Size.fromHeight(46.0), // Reduz a altura do TabBar
           child: Container(
-            color: brancoNeve, // Fundo do TabBar igual ao Scaffold
+            color: Theme.of(context).colorScheme.primary, // Fundo do TabBar igual ao Scaffold
             child: TabBar(
               controller: _tabController,
-              labelColor: azulSereno, // Cor do texto da aba ativa
-              unselectedLabelColor: cinzaEscuro, // Cor do texto da aba inativa
-              indicatorColor: azulSereno, // Cor do indicador da aba ativa
-              indicatorSize: TabBarIndicatorSize.tab, // Indicador ocupa toda a aba
+              labelColor: Theme.of(context).colorScheme.secondary, // Cor do texto da aba ativa
+              unselectedLabelColor: Theme.of(context).colorScheme.onSurface, // Cor do texto da aba inativa
+              indicatorColor: Theme.of(context).colorScheme.secondary, // Cor do indicador da aba ativa
+              indicatorSize:
+                  TabBarIndicatorSize.tab, // Indicador ocupa toda a aba
               labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-              unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal),
+              unselectedLabelStyle:
+                  const TextStyle(fontWeight: FontWeight.normal),
               tabs: const [
                 Tab(text: "Todos"),
                 Tab(text: "Favoritos"),
@@ -139,10 +145,13 @@ class _HarpaListState extends State<HarpaList> with SingleTickerProviderStateMix
               controller: _searchController,
               decoration: InputDecoration(
                 labelText: "Pesquisar Hino",
+                labelStyle: TextStyle(
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
                 border: const OutlineInputBorder(),
-                prefixIcon: const Icon(Icons.search),
+                prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.secondary),
                 suffixIcon: IconButton(
-                  icon: const Icon(Icons.clear),
+                  icon: Icon(Icons.clear, color: Theme.of(context).colorScheme.secondary),
                   onPressed: () {
                     _searchController.clear();
                     setState(() {
@@ -150,7 +159,14 @@ class _HarpaListState extends State<HarpaList> with SingleTickerProviderStateMix
                     });
                   },
                 ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                ),
               ),
+              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+              cursorColor: Theme.of(context).colorScheme.secondary,
             ),
           ),
           Expanded(

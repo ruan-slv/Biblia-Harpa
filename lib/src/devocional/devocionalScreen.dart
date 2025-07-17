@@ -84,10 +84,10 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
   Widget build(BuildContext context) {
     if (devocionais.isEmpty) {
       return Scaffold(
-        backgroundColor: brancoNeve,
+        backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
-          backgroundColor: begeClaro,
-          title: Text(widget.devo, style: const TextStyle(color: cinzaEscuro)),
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          title: Text(widget.devo, style:  TextStyle(color: Theme.of(context).colorScheme.secondary)),
           actions: [
             SizedBox(
               width: sizeBtnOptions[0],
@@ -95,12 +95,11 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
               child: IconButton(
                 onPressed: initialDevocional,
                 icon: const Icon(Icons.refresh),
-                color: cinzaEscuro,
+                color: Theme.of(context).colorScheme.secondary,
                 tooltip: "Reiniciar o devocional",
               ),
             ),
           ],
-          iconTheme: const IconThemeData(color: cinzaEscuro),
           centerTitle: true,
         ),
         body: const Center(
@@ -111,11 +110,11 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
 
     final devocional = devocionais[currentIndex];
     return Scaffold(
-      backgroundColor: brancoNeve,
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        backgroundColor: begeClaro,
-        title: Text(widget.devo, style: const TextStyle(color: cinzaEscuro)),
-        iconTheme: const IconThemeData(color: cinzaEscuro),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: Text(widget.devo, style:  TextStyle(color: Theme.of(context).colorScheme.secondary)),
+        iconTheme:  IconThemeData(color: Theme.of(context).colorScheme.secondary),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -126,27 +125,27 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
             children: [
               Text(
                 devocional.versiculo,
-                style: const TextStyle(fontSize: 18, fontStyle: FontStyle.italic, color: cinzaEscuro),
+                style:  TextStyle(fontSize: 18, fontStyle: FontStyle.italic, color: Theme.of(context).colorScheme.secondary),
               ),
               const SizedBox(height: 20),
-              const Text(
+               Text(
                 'Reflexão',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: cinzaEscuro),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.secondary),
               ),
               const SizedBox(height: 10),
               Text(
                 devocional.texto,
-                style: const TextStyle(fontSize: 16, color: cinzaEscuro),
+                style:  TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.secondary),
               ),
               const SizedBox(height: 20),
-              const Text(
+               Text(
                 'Oração',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: cinzaEscuro),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.secondary),
               ),
               const SizedBox(height: 10),
               Text(
                 devocional.oracao,
-                style: const TextStyle(fontSize: 16, color: cinzaEscuro),
+                style:  TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.secondary),
               ),
               const SizedBox(height: 20),
             ],
@@ -176,10 +175,10 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
                 style: ElevatedButton.styleFrom(
                   shape: const CircleBorder(),
                   padding: const EdgeInsets.all(12),
-                  backgroundColor: Colors.white,
-                  foregroundColor: cinzaEscuro,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Theme.of(context).colorScheme.secondary,
                 ),
-                child: const Icon(Icons.arrow_back, size: 24, color: cinzaEscuro),
+                child:  Icon(Icons.arrow_back, size: 24, color: Theme.of(context).colorScheme.secondary),
               ),
             ),
             const SizedBox(width: 20),
@@ -200,10 +199,10 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
                 style: ElevatedButton.styleFrom(
                   shape: const CircleBorder(),
                   padding: const EdgeInsets.all(12),
-                  backgroundColor: Colors.white,
-                  foregroundColor: cinzaEscuro,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Theme.of(context).colorScheme.secondary,
                 ),
-                child: const Icon(Icons.arrow_forward, size: 24, color: cinzaEscuro),
+                child:  Icon(Icons.arrow_forward, size: 24, color: Theme.of(context).colorScheme.secondary),
               ),
             ),
           ],
