@@ -3,7 +3,7 @@ description: "Projeto voltado para desenvolvimento de biblia e harpa sem conexã
 
 publish_to: 'none'
 
-version: 1.0.7+14
+version: 1.0.7+15
 
 environment:
   sdk: ^3.5.4
