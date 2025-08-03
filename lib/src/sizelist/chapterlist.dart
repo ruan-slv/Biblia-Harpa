@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:biblia_e_harpa/src/config.dart';
+import 'package:biblia_e_harpa/src/screens/textBibleScreen.dart';
 
 class ChapterListScreen extends StatefulWidget {
   final String name;
@@ -32,7 +33,7 @@ class _ChapterListScreenState extends State<ChapterListScreen> {
       final List<dynamic> bibleData = json.decode(jsonString);
 
       final bookData = bibleData.firstWhere(
-        (book) => book['name'] == name,
+            (book) => book['name'] == name,
         orElse: () => null,
       );
 
@@ -55,7 +56,7 @@ class _ChapterListScreenState extends State<ChapterListScreen> {
         centerTitle: true,
         automaticallyImplyLeading: true,
         iconTheme:
-            IconThemeData(color: Theme.of(context).colorScheme.secondary),
+        IconThemeData(color: Theme.of(context).colorScheme.secondary),
         title: Text(
           widget.name,
           style: TextStyle(color: Theme.of(context).colorScheme.secondary),
@@ -78,41 +79,62 @@ class _ChapterListScreenState extends State<ChapterListScreen> {
             return const Center(child: Text('Nenhum capítulo encontrado.'));
           }
 
-          return ListView.builder(
-            itemCount: chapters.length,
-            itemBuilder: (context, index) {
-              final List verses = chapters[index];
+          return Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 6,
+                crossAxisSpacing: 4.0,
+                mainAxisSpacing: 4.0,
+                childAspectRatio: 1.0,
+              ),
+              itemCount: chapters.length,
+              itemBuilder: (context, index) {
+                final int chapterNumber = index + 1;
+                return ElevatedButton(
+                  onPressed: () {
 
-              return ExpansionTile(
-                title: Text(
-                  'Capítulo ${index + 1}',
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.secondary),
-                ),
-                children: verses.asMap().entries.map((entry) {
-                  final int verseIndex = entry.key + 1;
-                  final String verseText = entry.value;
+                    final List<List<dynamic>> allChapterrForBook = (bookData["chapters"] as List)
+                    .map((chapter) => List<dynamic>.from(chapter as List)).toList();
 
-                  return ListTile(
-                    title: Text(
-                      "Versículo $verseIndex",
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.secondary),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Textbiblescreen(
+                          bookName: widget.name,
+                          jsonPath: widget.jsonPath,
+                          initialChapterNumber: chapterNumber,
+                          allBookChapters: allChapterrForBook,
+                        ),
+                      ),
+                    );
+                  },
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all(EdgeInsets.zero),
+                    minimumSize: MaterialStateProperty.all(const Size(30, 30)),
+                    side: MaterialStateProperty.all(
+                      const BorderSide(color: Colors.blueGrey, width: 0.5),
                     ),
-                    subtitle: Text(
-                      verseText,
-                      style: TextStyle(
-                          fontSize: 18,
-                          color: Theme.of(context).colorScheme.secondary),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(7.0),
+                      ),
                     ),
-                  );
-                }).toList(),
-              );
-            },
+                    backgroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.primary),
+                    foregroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.secondary),
+                    //overlayColor: MaterialStateProperty.all(Theme.of(context).colorScheme.secondary),
+                  ),
+                  child: Text(
+                    "$chapterNumber",
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.normal,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                  ),
+                );
+              },
+            ),
           );
         },
       ),

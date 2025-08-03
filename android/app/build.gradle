@@ -47,6 +47,11 @@ android {
             shrinkResources true // Remove recursos não utilizados
         }
     }
+
+    subprojects {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
 }
 
 flutter {

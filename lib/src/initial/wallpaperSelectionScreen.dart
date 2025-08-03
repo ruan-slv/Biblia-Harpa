@@ -45,13 +45,13 @@ class wallpaperselectionscreen extends StatelessWidget {
                   },
                   child: isDark
                       ? const Icon(
-                          Icons.wb_sunny,
+                          Icons.sunny,
                           key: Key("sunny"),
                           color: Colors.yellow,
                           size: 30,
                         )
                       : Icon(
-                          Icons.brightness_2,
+                          Icons.brightness_4,
                           key: const Key("moon"),
                           color: Colors.grey[800],
                           size: 30,

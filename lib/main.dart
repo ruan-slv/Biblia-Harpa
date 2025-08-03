@@ -39,12 +39,18 @@ class MyApp extends StatelessWidget {
       valueListenable: ThemeController.themeNotifier,
       builder: (context, currentTheme, _) {
         return MaterialApp(
-          title: 'Biblia e Harpa',
+          title: 'Bíblia e Harpa',
           theme: lightMode,
           darkTheme: darkMode,
           themeMode: currentTheme,
           debugShowCheckedModeBanner: false,
           home: UpgradeAlert(
+            upgrader: Upgrader(
+              debugLogging: true,
+              showIgnore: false,
+              showLater: false,
+              dialogStyle: UpgradeDialogStyle.material,
+            ),
             child: const Initial(),
           ),
         );

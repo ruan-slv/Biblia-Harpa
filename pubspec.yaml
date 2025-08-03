@@ -25,7 +25,8 @@ dependencies:
   dio: ^5.3.2
   cupertino_icons: ^1.0.8
   share_plus: ^11.0.0
-  upgrader: ^11.4.0
+  upgrader: ^8.4.0
+  in_app_update: ^4.2.3
 
 dev_dependencies:
   flutter_test:

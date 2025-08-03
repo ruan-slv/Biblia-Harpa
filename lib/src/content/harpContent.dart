@@ -45,8 +45,10 @@ class HarpContentScreen extends StatelessWidget {
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text(harp,
-            style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
+        title: Text(
+          harp,
+          style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+        ),
         iconTheme:
             IconThemeData(color: Theme.of(context).colorScheme.secondary),
         centerTitle: true,
@@ -56,12 +58,21 @@ class HarpContentScreen extends StatelessWidget {
         child: FutureBuilder<List<TextModel>>(
           future: loadTexts(),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting)
-              return const Center(child: CircularProgressIndicator());
-            if (snapshot.hasError)
-              return const Center(child: Text('Erro ao carregar os textos.'));
-            if (!snapshot.hasData || snapshot.data!.isEmpty)
-              return const Center(child: Text('Nenhum texto encontrado.'));
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (snapshot.hasError) {
+              return const Center(
+                child: Text('Erro ao carregar os textos.'),
+              );
+            }
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(
+                child: Text('Nenhum texto encontrado.'),
+              );
+            }
 
             final harpText = snapshot.data!.firstWhere(
               (text) =>
@@ -71,37 +82,49 @@ class HarpContentScreen extends StatelessWidget {
 
             return SingleChildScrollView(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("** CORO **",
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.secondary)),
+                  Text(
+                    "** CORO **",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                   const SizedBox(height: 10),
-                  Text(harpText.coro,
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.secondary)),
+                  Text(
+                    harpText.coro,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                   const SizedBox(height: 30),
                   ...harpText.verses.entries.map(
                     (entry) => Padding(
                       padding: const EdgeInsets.only(bottom: 30.0),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(entry.key,
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color:
-                                      Theme.of(context).colorScheme.secondary)),
-                          Text(entry.value,
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  color:
-                                      Theme.of(context).colorScheme.secondary)),
+                          Text(
+                            entry.key,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          Text(
+                            entry.value,
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
                         ],
                       ),
                     ),
