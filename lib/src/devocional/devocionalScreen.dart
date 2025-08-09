@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:biblia_e_harpa/src/config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TextModel {
@@ -9,7 +10,8 @@ class TextModel {
   final String texto;
   final String oracao;
 
-  TextModel({required this.versiculo, required this.texto, required this.oracao});
+  TextModel(
+      {required this.versiculo, required this.texto, required this.oracao});
 
   factory TextModel.fromJson(Map<String, dynamic> json) {
     return TextModel(
@@ -26,7 +28,8 @@ class DevocionalContentScreen extends StatefulWidget {
   final String devo;
 
   @override
-  _DevocionalContentScreenState createState() => _DevocionalContentScreenState();
+  _DevocionalContentScreenState createState() =>
+      _DevocionalContentScreenState();
 }
 
 class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
@@ -41,11 +44,13 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
 
   Future<void> loadDevocionais() async {
     try {
-      final String jsonString = await rootBundle.loadString('assets/json/newDevocionalModel.json');
+      final String jsonString =
+          await rootBundle.loadString('assets/json/newDevocionalModel.json');
       final Map<String, dynamic> jsonResponse = jsonDecode(jsonString);
       final List<dynamic> topicDevocionais = jsonResponse[widget.devo] ?? [];
       setState(() {
-        devocionais = topicDevocionais.map((json) => TextModel.fromJson(json)).toList();
+        devocionais =
+            topicDevocionais.map((json) => TextModel.fromJson(json)).toList();
       });
     } catch (e) {
       print('Error loading devotionals: $e');
@@ -63,8 +68,29 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
 
   void previousDevocional() {
     setState(() {
-      currentIndex = (currentIndex - 1 + devocionais.length) % devocionais.length;
+      currentIndex =
+          (currentIndex - 1 + devocionais.length) % devocionais.length;
     });
+  }
+
+  String _getDataForSharing() {
+    if (devocionais.isEmpty || currentIndex >= devocionais.length) {
+      return "Nenhum conteúdo devocional para compartilhar no momento.";
+    }
+    final devocionalAtual = devocionais[currentIndex];
+    StringBuffer sb = StringBuffer();
+
+    sb.writeln("Tópico do Devocional: ${widget.devo}"); // Título do tema
+    sb.writeln("\n");
+    sb.writeln("📖 Versículo:");
+    sb.writeln(devocionalAtual.versiculo);
+    sb.writeln("\n✝️ Reflexão:");
+    sb.writeln(devocionalAtual.texto);
+    sb.writeln("\n🙏 Oração:");
+    sb.writeln(devocionalAtual.oracao);
+    sb.writeln("\nCompartilhado via App Bíblia e Harpa");
+
+    return sb.toString();
   }
 
   void initialDevocional() {
@@ -87,7 +113,8 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
         backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.primary,
-          title: Text(widget.devo, style:  TextStyle(color: Theme.of(context).colorScheme.secondary)),
+          title: Text(widget.devo,
+              style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
           actions: [
             SizedBox(
               width: sizeBtnOptions[0],
@@ -113,39 +140,72 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text(widget.devo, style:  TextStyle(color: Theme.of(context).colorScheme.secondary)),
-        iconTheme:  IconThemeData(color: Theme.of(context).colorScheme.secondary),
+        title: Text(widget.devo,
+            style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
+        iconTheme:
+            IconThemeData(color: Theme.of(context).colorScheme.secondary),
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              final String devocionalText = _getDataForSharing();
+              Share.share(
+                devocionalText,
+                subject: "Devocional: ${widget.devo} - ${devocional.versiculo}",
+              );
+            },
+            icon: const Icon(Icons.share),
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
                 devocional.versiculo,
-                style:  TextStyle(fontSize: 18, fontStyle: FontStyle.italic, color: Theme.of(context).colorScheme.secondary),
+                style: TextStyle(
+                    fontSize: 18,
+                    fontStyle: FontStyle.italic,
+                    color: Theme.of(context).colorScheme.secondary),
+                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
-               Text(
+              Text(
                 'Reflexão',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.secondary),
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.secondary),
+                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 10),
               Text(
                 devocional.texto,
-                style:  TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.secondary),
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).colorScheme.secondary),
+                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
-               Text(
+              Text(
                 'Oração',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.secondary),
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.secondary),
+                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 10),
               Text(
                 devocional.oracao,
-                style:  TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.secondary),
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).colorScheme.secondary),
+                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
             ],
@@ -178,7 +238,8 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
                   backgroundColor: Theme.of(context).colorScheme.primary,
                   foregroundColor: Theme.of(context).colorScheme.secondary,
                 ),
-                child:  Icon(Icons.arrow_back, size: 24, color: Theme.of(context).colorScheme.secondary),
+                child: Icon(Icons.arrow_back,
+                    size: 24, color: Theme.of(context).colorScheme.secondary),
               ),
             ),
             const SizedBox(width: 20),
@@ -202,7 +263,8 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
                   backgroundColor: Theme.of(context).colorScheme.primary,
                   foregroundColor: Theme.of(context).colorScheme.secondary,
                 ),
-                child:  Icon(Icons.arrow_forward, size: 24, color: Theme.of(context).colorScheme.secondary),
+                child: Icon(Icons.arrow_forward,
+                    size: 24, color: Theme.of(context).colorScheme.secondary),
               ),
             ),
           ],

@@ -103,35 +103,41 @@ class _DevocionalListState extends State<DevocionalList> with SingleTickerProvid
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
                     devocional["texto"],
                     style:  TextStyle(fontSize: 18, fontStyle: FontStyle.italic, color: Theme.of(context).colorScheme.secondary),
+                    textAlign: TextAlign.center,
                   ),
                   Text(
                     '- ${devocional["versiculo"]}',
                     style:  TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.secondary),
+                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 20),
                    Text(
                     'Reflexão',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.secondary),
+                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 10),
                   Text(
                     devocional["reflexao"],
                     style:  TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.secondary),
+                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 20),
                    Text(
                     'Oração',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.secondary),
+                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 10),
                   Text(
                     devocional["oracao"],
                     style:  TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.secondary),
+                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 20),
                 ],

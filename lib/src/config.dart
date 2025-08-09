@@ -20,7 +20,19 @@ const cinzaClaro = Color.fromARGB(255, 136, 136, 136);     // #888888
 List<double> sizeBtnOptions = [100, 50];
 List<double> sizeBtnInitial = [150, 100];
 
-Color amberColor = Colors.amber.shade700;
+Color amberColor = Colors.amber.shade800;
 Color indigoColor = Colors.indigo.shade700;
 Color tealColor = Colors.teal.shade700;
 Color redColor = Colors.red.shade700;
+Color purpleColor = Colors.deepPurple;
+Color light_purpleColor = Colors.deepPurpleAccent.shade200;
+
+Color deepOrangeColor = Colors.deepOrange.shade800; // Adicionada para Palavra do Dia
+
+// Listas de Cores para os Gradientes dos Ícones
+final List<Color> gradienteBiblia = [Colors.orange.shade800, Colors.amber, Colors.orange.shade200];
+final List<Color> gradienteHarpa = [indigoColor, purpleColor, light_purpleColor];
+final List<Color> gradienteDevocional = [tealColor, verdeEsperanca, Colors.green.shade200];
+final List<Color> gradientePalavraDoDia = [deepOrangeColor, redColor, Colors.red.shade200];
+final List<Color> gradienteAudios = [azulSereno, Colors.blue.shade600, Colors.lightBlue.shade200];
+final List<Color> gradienteApoio = [Colors.pink.shade800, Colors.red, Colors.pink.shade200];

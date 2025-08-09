@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:biblia_e_harpa/src/config.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -145,8 +144,13 @@ class _PalavraDoDiaState extends State<PalavraDoDia> {
                   ),
                   backgroundColor: Theme.of(context).colorScheme.primary,
                 ),
-                child: Text("Compartilhar",
-                    style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 16)),
+                child: Text(
+                  "Compartilhar",
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
+                    fontSize: 16,
+                  ),
+                ),
               ),
             ),
           ),

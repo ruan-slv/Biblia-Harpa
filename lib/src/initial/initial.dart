@@ -1,4 +1,4 @@
-import 'package:biblia_e_harpa/src/config.dart';
+import 'package:biblia_e_harpa/src/config.dart'; // Certifique-se que suas cores como amberColor, etc., estão aqui ou defina-as abaixo
 import 'package:biblia_e_harpa/src/content/doacao.dart';
 import 'package:biblia_e_harpa/src/devocional/devocionalList.dart';
 import 'package:biblia_e_harpa/src/screens/audiosScreen.dart';
@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:biblia_e_harpa/src/initial/wallpaperSelectionScreen.dart';
 
-import '../screens/palavraDiaScreen.dart';
+import '../screens/palavraDiaScreen.dart'; // Se 'palavraDiaScreen.dart' estiver em '../screens/'
 
 class Initial extends StatefulWidget {
   const Initial({super.key});
@@ -65,7 +65,7 @@ class _InitialState extends State<Initial> {
             setState(() {
               backgroundImagePath = selectedPath;
             });
-            Navigator.pop(context);
+            Navigator.pop(context); // Fecha a tela de seleção
           },
         ),
       ),
@@ -74,12 +74,8 @@ class _InitialState extends State<Initial> {
 
   @override
   Widget build(BuildContext context) {
-    // Get screen size for responsive sizing
     final screenSize = MediaQuery.of(context).size;
-    // Button size for regular buttons (30% of screen width)
     final buttonSize = screenSize.width * 0.30;
-    // Button width for the "Músicas" button (width of two buttons + spacing)
-    final musicButtonWidth = 2 * buttonSize + 12; // Two buttons + 12px spacing
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -91,12 +87,12 @@ class _InitialState extends State<Initial> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: backgroundImagePath != null
+            image: backgroundImagePath != null && backgroundImagePath!.isNotEmpty
                 ? AssetImage(backgroundImagePath!)
-                : const AssetImage('assets/images/fundoOption9.jpeg'),
+                : const AssetImage('assets/images/fundoOption9.jpeg'), // Imagem padrão
             fit: BoxFit.cover,
             colorFilter: const ColorFilter.mode(
-              Colors.black45,
+              Colors.black45, // Escurece um pouco a imagem de fundo
               BlendMode.darken,
             ),
           ),
@@ -105,14 +101,12 @@ class _InitialState extends State<Initial> {
           child: SingleChildScrollView(
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                minHeight:
-                    screenSize.height - MediaQuery.of(context).padding.top,
+                minHeight: screenSize.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const SizedBox(height: 30),
-                  // App logo
                   const Icon(
                     Icons.menu_book_rounded,
                     color: Colors.white,
@@ -130,7 +124,6 @@ class _InitialState extends State<Initial> {
                     ),
                   ),
                   const SizedBox(height: 5),
-                  // Restored tagline
                   const Text(
                     "Sua jornada espiritual diária",
                     style: TextStyle(
@@ -140,8 +133,17 @@ class _InitialState extends State<Initial> {
                       shadows: [Shadow(blurRadius: 4.0, color: Colors.black54)],
                     ),
                   ),
-                  const SizedBox(height: 70),
-                  // Menu grid with smaller buttons
+                  const SizedBox(height: 5),
+                  const Text(
+                    "Desenvolvido por Ruan",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white70,
+                      fontStyle: FontStyle.italic,
+                      shadows: [Shadow(blurRadius: 4.0, color: Colors.black54)],
+                    ),
+                  ),
+                  const SizedBox(height: 60), // Ajustado para dar mais espaço
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Column(
@@ -153,11 +155,10 @@ class _InitialState extends State<Initial> {
                               context,
                               'Bíblia',
                               Icons.menu_book_rounded,
-                              amberColor,
-                              () => Navigator.push(
+                              gradienteBiblia, // Passando o gradiente
+                                  () => Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                    builder: (context) => const BibleList()),
+                                MaterialPageRoute(builder: (context) => const BibleList()),
                               ),
                               size: buttonSize,
                             ),
@@ -166,11 +167,10 @@ class _InitialState extends State<Initial> {
                               context,
                               'Harpa',
                               Icons.music_note,
-                              indigoColor,
-                              () => Navigator.push(
+                              gradienteHarpa, // Passando o gradiente
+                                  () => Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                    builder: (context) => const HarpaList()),
+                                MaterialPageRoute(builder: (context) => const HarpaList()),
                               ),
                               size: buttonSize,
                             ),
@@ -184,12 +184,10 @@ class _InitialState extends State<Initial> {
                               context,
                               'Devocional',
                               Icons.auto_stories,
-                              tealColor,
-                              () => Navigator.push(
+                              gradienteDevocional, // Passando o gradiente
+                                  () => Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const DevocionalList()),
+                                MaterialPageRoute(builder: (context) => const DevocionalList()),
                               ),
                               size: buttonSize,
                             ),
@@ -198,11 +196,10 @@ class _InitialState extends State<Initial> {
                               context,
                               'Palavra do Dia',
                               Icons.local_fire_department_rounded,
-                              Colors.deepOrange,
-                              () => Navigator.push(
+                              gradientePalavraDoDia, // Passando o gradiente
+                                  () => Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                    builder: (context) => const PalavraDoDia()),
+                                MaterialPageRoute(builder: (context) => const PalavraDoDia()),
                               ),
                               size: buttonSize,
                             ),
@@ -213,27 +210,25 @@ class _InitialState extends State<Initial> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             _buildMenuCard(
+                              context,
+                              'Áudios',
+                              Icons.headphones_outlined, // Ícone mais apropriado para áudios em geral
+                              gradienteAudios, // Passando o gradiente
+                                  () => Navigator.push(
                                 context,
-                                'Áudios',
-                                Icons.music_note_outlined,
-                                Colors.deepOrange,
-                                () => Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const AudioScreen()),
-                                    ),
-                                size: buttonSize),
+                                MaterialPageRoute(builder: (context) => const AudioScreen()),
+                              ),
+                              size: buttonSize,
+                            ),
                             const SizedBox(width: 12),
                             _buildMenuCard(
                               context,
-                              'Doação',
-                              Icons.favorite,
-                              Colors.red.shade700,
-                              () => Navigator.push(
+                              'Apoio',
+                              Icons.favorite_border_outlined, // Ícone de apoio/favorito
+                              gradienteApoio, // Passando o gradiente
+                                  () => Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                    builder: (context) => const Doacao()),
+                                MaterialPageRoute(builder: (context) => const Doacao()),
                               ),
                               size: buttonSize,
                             ),
@@ -242,6 +237,7 @@ class _InitialState extends State<Initial> {
                       ],
                     ),
                   ),
+                  const SizedBox(height: 40), // Espaço no final para o FAB não cobrir conteúdo
                 ],
               ),
             ),
@@ -252,19 +248,17 @@ class _InitialState extends State<Initial> {
   }
 
   Widget _buildMenuCard(
-    BuildContext context,
-    String title,
-    IconData icon,
-    Color color,
-    VoidCallback onPressed, {
-    double? width,
-    double? height,
-    double? size,
-  }) {
-    final effectiveWidth =
-        width ?? size ?? 100; // Usa width, senão size, senão valor padrão
-    final effectiveHeight =
-        height ?? size ?? 100; // Usa height, senão size, senão valor padrão
+      BuildContext context,
+      String title,
+      IconData iconData,
+      List<Color> gradientColors, // Recebe a lista de cores para o gradiente
+      VoidCallback onPressed, {
+        double? width,
+        double? height,
+        double? size,
+      }) {
+    final effectiveWidth = width ?? size ?? 100;
+    final effectiveHeight = height ?? size ?? 100;
 
     return GestureDetector(
       onTap: onPressed,
@@ -272,41 +266,56 @@ class _InitialState extends State<Initial> {
         width: effectiveWidth,
         height: effectiveHeight,
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.9),
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: const [
+          color: Colors.white.withOpacity(0.9), // Aumentei um pouco a opacidade para melhor leitura
+          borderRadius: BorderRadius.circular(12), // Um pouco mais arredondado
+          boxShadow: [
             BoxShadow(
-              color: Colors.black26,
-              blurRadius: 5,
-              offset: Offset(0, 2),
+              color: Colors.black.withOpacity(0.3),
+              blurRadius: 6,
+              offset: const Offset(0, 3),
             ),
           ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment:
-              CrossAxisAlignment.center, // Centraliza o conteúdo
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(10), // Aumentado um pouco o padding do ícone
               decoration: BoxDecoration(
-                color: color,
-                shape: BoxShape.circle,
+                  gradient: LinearGradient( // Aplicando o gradiente aqui
+                    colors: gradientColors.length >= 2 ? gradientColors : [gradientColors.first, gradientColors.first], // Garante pelo menos 2 cores
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    stops: gradientColors.length == 3 ? [0.0, 0.5, 1.0] : null, // Exemplo de stops para 3 cores
+                  ),
+                  shape: BoxShape.circle,
+                  boxShadow: [ // Sombra sutil no círculo do ícone
+                    BoxShadow(
+                        color: gradientColors.last.withOpacity(0.5),
+                        blurRadius: 5,
+                        offset: const Offset(0,2)
+                    )
+                  ]
               ),
               child: Icon(
-                icon,
-                color: Colors.white,
-                size: 24,
+                iconData,
+                color: Colors.white, // Ícone branco para bom contraste com o gradiente
+                size: effectiveWidth * 0.18, // Tamanho do ícone responsivo ao tamanho do botão
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 8),
             Text(
               title,
               textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: color,
+                  fontSize: effectiveWidth * 0.13, // Tamanho da fonte responsivo
+                  fontWeight: FontWeight.bold,
+                  color: gradientColors.first.computeLuminance() > 0.5 // Escolhe cor do texto baseada na luminância da primeira cor do gradiente
+                      ? cinzaEscuro // Se a cor do gradiente for clara, texto escuro
+                      : mainColor,
               ),
             ),
           ],
@@ -315,3 +324,4 @@ class _InitialState extends State<Initial> {
     );
   }
 }
+
