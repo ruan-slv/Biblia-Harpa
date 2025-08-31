@@ -20,14 +20,10 @@ android {
     // Adicione a configuração de assinatura
     signingConfigs {
         release {
-            // storeFile file(keystoreProperties["storeFile"]) // Substitua pelo caminho da sua keystore
-            // storePassword keystoreProperties["storePassword"] // Substitua pela senha da keystore
-            // keyAlias keystoreProperties["keyAlias"] // Substitua pelo alias da chave
-            // keyPassword keystoreProperties["keyPassword"] // Substitua pela senha da chave
-            storeFile file("/home/ruan/Documentos/Bíblia & Harpa - offline/Biblia-Harpa/upload-key.jks")
-            storePassword 'none#b4fRuan'
+            storeFile file("novo-upload.jks")
+            storePassword 'Ruan#2006'
             keyAlias 'upload'
-            keyPassword 'none#b4fRuan'
+            keyPassword 'Ruan#2006'
         }
     }
 

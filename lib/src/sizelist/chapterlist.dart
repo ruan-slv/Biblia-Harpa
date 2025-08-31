@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:biblia_e_harpa/src/config.dart';
 import 'package:biblia_e_harpa/src/screens/textBibleScreen.dart';
+import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart' hide FontSizeController;
 
 class ChapterListScreen extends StatefulWidget {
   final String name;
@@ -33,7 +34,7 @@ class _ChapterListScreenState extends State<ChapterListScreen> {
       final List<dynamic> bibleData = json.decode(jsonString);
 
       final bookData = bibleData.firstWhere(
-            (book) => book['name'] == name,
+        (book) => book['name'] == name,
         orElse: () => null,
       );
 
@@ -56,7 +57,7 @@ class _ChapterListScreenState extends State<ChapterListScreen> {
         centerTitle: true,
         automaticallyImplyLeading: true,
         iconTheme:
-        IconThemeData(color: Theme.of(context).colorScheme.secondary),
+            IconThemeData(color: Theme.of(context).colorScheme.secondary),
         title: Text(
           widget.name,
           style: TextStyle(color: Theme.of(context).colorScheme.secondary),
@@ -68,7 +69,9 @@ class _ChapterListScreenState extends State<ChapterListScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
+          if (snapshot.hasError ||
+              !snapshot.hasData ||
+              snapshot.data!.isEmpty) {
             return const Center(child: Text("Nenhum texto foi encontrado"));
           }
 
@@ -93,9 +96,10 @@ class _ChapterListScreenState extends State<ChapterListScreen> {
                 final int chapterNumber = index + 1;
                 return ElevatedButton(
                   onPressed: () {
-
-                    final List<List<dynamic>> allChapterrForBook = (bookData["chapters"] as List)
-                    .map((chapter) => List<dynamic>.from(chapter as List)).toList();
+                    final List<List<dynamic>> allChapterrForBook = (bookData[
+                            "chapters"] as List)
+                        .map((chapter) => List<dynamic>.from(chapter as List))
+                        .toList();
 
                     Navigator.push(
                       context,
@@ -120,17 +124,24 @@ class _ChapterListScreenState extends State<ChapterListScreen> {
                         borderRadius: BorderRadius.circular(7.0),
                       ),
                     ),
-                    backgroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.primary),
-                    foregroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.secondary),
+                    backgroundColor: MaterialStateProperty.all(
+                        Theme.of(context).colorScheme.primary),
+                    foregroundColor: MaterialStateProperty.all(
+                        Theme.of(context).colorScheme.secondary),
                     //overlayColor: MaterialStateProperty.all(Theme.of(context).colorScheme.secondary),
                   ),
-                  child: Text(
-                    "$chapterNumber",
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.normal,
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
+                  child: ValueListenableBuilder<double>(
+                    valueListenable: FontSizeController.fontSizeNotifier,
+                    builder: (context, fontSize, _) {
+                      return Text(
+                        "$chapterNumber",
+                        style: TextStyle(
+                          fontSize: fontSize,
+                          fontWeight: FontWeight.normal,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      );
+                    },
                   ),
                 );
               },

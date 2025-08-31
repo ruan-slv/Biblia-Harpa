@@ -133,7 +133,8 @@ class _AudioScreenState extends State<AudioScreen> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
         centerTitle: true,
-        iconTheme: IconThemeData(color: Theme.of(context).colorScheme.secondary),
+        iconTheme:
+            IconThemeData(color: Theme.of(context).colorScheme.secondary),
         title: Text(
           "Áudios Online",
           style: TextStyle(color: Theme.of(context).colorScheme.secondary),

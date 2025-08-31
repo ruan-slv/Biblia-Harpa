@@ -1,0 +1,2 @@
+C:/Users/ruan/Documents/Biblia-Harpa/android/app/.cxx/RelWithDebInfo/4m5yt6n1/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/ruan/Documents/Biblia-Harpa/android/app/.cxx/RelWithDebInfo/4m5yt6n1/arm64-v8a/CMakeFiles/rebuild_cache.dir

@@ -1,3 +1,4 @@
+import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 import 'package:biblia_e_harpa/src/controllers/theme_controller.dart';
 import 'package:biblia_e_harpa/src/initial/initial.dart';
 import 'package:biblia_e_harpa/src/models/music.dart';
@@ -12,6 +13,7 @@ import 'package:upgrader/upgrader.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
+  await FontSizeController.loadFontSize();
 
   if (!kIsWeb) {
     final dir = await getApplicationDocumentsDirectory();
@@ -46,7 +48,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           home: UpgradeAlert(
             upgrader: Upgrader(
-              debugLogging: true,
+              debugLogging: false,
               showIgnore: false,
               showLater: false,
               dialogStyle: UpgradeDialogStyle.material,

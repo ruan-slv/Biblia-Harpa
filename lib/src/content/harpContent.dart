@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:biblia_e_harpa/src/config.dart';
+import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -29,7 +30,6 @@ class HarpContentScreen extends StatefulWidget {
 }
 
 class _HarpContentScreenState extends State<HarpContentScreen> {
-
   Future<List<TextModel>> loadTexts() async {
     try {
       String jsonString = await rootBundle
@@ -82,7 +82,8 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
 
             final harpText = snapshot.data!.firstWhere(
               (text) =>
-                  text.hino.toLowerCase().trim() == widget.harp.toLowerCase().trim(),
+                  text.hino.toLowerCase().trim() ==
+                  widget.harp.toLowerCase().trim(),
               orElse: () => TextModel(hino: '', coro: '', verses: {}),
             );
 
@@ -102,18 +103,23 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 10),
-                    Text(
-                      harpText.coro,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                      textAlign: TextAlign.center,
+                    ValueListenableBuilder<double>(
+                      valueListenable: FontSizeController.fontSizeNotifier,
+                      builder: (context, fontSize, _) {
+                        return Text(
+                          harpText.coro,
+                          style: TextStyle(
+                            fontSize: fontSize,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                          textAlign: TextAlign.center,
+                        );
+                      },
                     ),
                     const SizedBox(height: 30),
                     ...harpText.verses.entries.map(
-                          (entry) => Padding(
+                      (entry) => Padding(
                         padding: const EdgeInsets.only(bottom: 30.0),
                         child: Column(
                           children: [
@@ -126,13 +132,20 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
                               ),
                               textAlign: TextAlign.center,
                             ),
-                            Text(
-                              entry.value,
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
-                              textAlign: TextAlign.center,
+                            ValueListenableBuilder<double>(
+                              valueListenable:
+                                  FontSizeController.fontSizeNotifier,
+                              builder: (context, fontSize, _) {
+                                return Text(
+                                  entry.value,
+                                  style: TextStyle(
+                                    fontSize: fontSize,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                );
+                              },
                             ),
                           ],
                         ),

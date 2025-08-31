@@ -1,5 +1,6 @@
 import 'package:biblia_e_harpa/src/components/appBarComponent.dart';
 import 'package:biblia_e_harpa/src/config.dart';
+import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 import 'package:biblia_e_harpa/src/keys/biblekey.dart';
 import 'package:biblia_e_harpa/src/sizelist/chapterlist.dart';
 import 'package:flutter/material.dart';
@@ -147,11 +148,11 @@ class _BibleListState extends State<BibleList> {
               controller: _searchController,
               decoration: InputDecoration(
                 labelText: "Pesquisar Livro",
-                labelStyle: TextStyle(
-                  color: Theme.of(context).colorScheme.secondary
-                ),
+                labelStyle:
+                    TextStyle(color: Theme.of(context).colorScheme.secondary),
                 border: const OutlineInputBorder(),
-                prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.secondary),
+                prefixIcon: Icon(Icons.search,
+                    color: Theme.of(context).colorScheme.secondary),
                 suffixIcon: IconButton(
                   onPressed: () {
                     _searchController.clear();
@@ -159,12 +160,12 @@ class _BibleListState extends State<BibleList> {
                       filteredBible = books;
                     });
                   },
-                  icon: Icon(Icons.clear, color: Theme.of(context).colorScheme.secondary),
+                  icon: Icon(Icons.clear,
+                      color: Theme.of(context).colorScheme.secondary),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.secondary
-                  ),
+                      color: Theme.of(context).colorScheme.secondary),
                 ),
               ),
               style: TextStyle(color: Theme.of(context).colorScheme.secondary),
@@ -178,9 +179,18 @@ class _BibleListState extends State<BibleList> {
                 return ListTile(
                   leading: Icon(Icons.menu_book_rounded,
                       color: Theme.of(context).colorScheme.secondary),
-                  title: Text(filteredBible[index],
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary)),
+                  title: ValueListenableBuilder<double>(
+                    valueListenable: FontSizeController.fontSizeNotifier,
+                    builder: (context, fontSize, _) {
+                      return Text(
+                        filteredBible[index],
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary,
+                          fontSize: fontSize,
+                        ),
+                      );
+                    },
+                  ),
                   onTap: () {
                     Navigator.push(
                       context,

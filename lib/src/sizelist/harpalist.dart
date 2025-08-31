@@ -1,5 +1,6 @@
 import "package:biblia_e_harpa/src/config.dart";
 import "package:biblia_e_harpa/src/content/harpContent.dart";
+import "package:biblia_e_harpa/src/controllers/fontSizeController.dart";
 import "package:biblia_e_harpa/src/keys/harpkey.dart";
 import "package:flutter/material.dart";
 import "package:shared_preferences/shared_preferences.dart";
@@ -78,8 +79,18 @@ class _HarpaListState extends State<HarpaList>
         final isFavorite = favoriteHarps.contains(hino);
         return ListTile(
           leading: const Icon(Icons.menu_book_rounded),
-          title: Text(hino,
-              style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
+          title: ValueListenableBuilder<double>(
+            valueListenable: FontSizeController.fontSizeNotifier,
+            builder: (context, fontSize, _) {
+              return Text(
+                hino,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.secondary,
+                  fontSize: fontSize,
+                ),
+              );
+            },
+          ),
           trailing: IconButton(
             icon: Icon(
               isFavorite ? Icons.favorite : Icons.favorite_border_outlined,
@@ -118,12 +129,20 @@ class _HarpaListState extends State<HarpaList>
           preferredSize:
               const Size.fromHeight(46.0), // Reduz a altura do TabBar
           child: Container(
-            color: Theme.of(context).colorScheme.primary, // Fundo do TabBar igual ao Scaffold
+            color: Theme.of(context)
+                .colorScheme
+                .primary, // Fundo do TabBar igual ao Scaffold
             child: TabBar(
               controller: _tabController,
-              labelColor: Theme.of(context).colorScheme.secondary, // Cor do texto da aba ativa
-              unselectedLabelColor: Theme.of(context).colorScheme.onSurface, // Cor do texto da aba inativa
-              indicatorColor: Theme.of(context).colorScheme.secondary, // Cor do indicador da aba ativa
+              labelColor: Theme.of(context)
+                  .colorScheme
+                  .secondary, // Cor do texto da aba ativa
+              unselectedLabelColor: Theme.of(context)
+                  .colorScheme
+                  .onSurface, // Cor do texto da aba inativa
+              indicatorColor: Theme.of(context)
+                  .colorScheme
+                  .secondary, // Cor do indicador da aba ativa
               indicatorSize:
                   TabBarIndicatorSize.tab, // Indicador ocupa toda a aba
               labelStyle: const TextStyle(fontWeight: FontWeight.bold),
@@ -149,9 +168,11 @@ class _HarpaListState extends State<HarpaList>
                   color: Theme.of(context).colorScheme.secondary,
                 ),
                 border: const OutlineInputBorder(),
-                prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.secondary),
+                prefixIcon: Icon(Icons.search,
+                    color: Theme.of(context).colorScheme.secondary),
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.clear, color: Theme.of(context).colorScheme.secondary),
+                  icon: Icon(Icons.clear,
+                      color: Theme.of(context).colorScheme.secondary),
                   onPressed: () {
                     _searchController.clear();
                     setState(() {

@@ -1,11 +1,14 @@
-import 'dart:convert'; // Não parece ser usado diretamente neste arquivo
 import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart'; // Não parece ser usado diretamente neste arquivo
 import 'package:share_plus/share_plus.dart';
+
+/// Controller global para tamanho da fonte
+class FontSizeController {
+  static final ValueNotifier<double> fontSizeNotifier = ValueNotifier<double>(17);
+}
 
 class Textbiblescreen extends StatefulWidget {
   final String bookName;
-  final String jsonPath; // jsonPath não está sendo usado neste widget, considerar remover se não for necessário
+  final String jsonPath;
   final int initialChapterNumber;
   final List<List<dynamic>> allBookChapters;
 
@@ -24,46 +27,47 @@ class Textbiblescreen extends StatefulWidget {
 class _TextbiblescreenState extends State<Textbiblescreen> {
   late int currentChapterNumber;
   late List<dynamic> currentVerses;
-  final ScrollController _scrollController = ScrollController(); // 1. Criar o ScrollController
+  final ScrollController _scrollController = ScrollController();
+  List<int> _selectedVerseIndices = [];
 
   @override
   void initState() {
     super.initState();
     currentChapterNumber = widget.initialChapterNumber;
-    // Garante que o capítulo inicial não esteja fora dos limites
     if (currentChapterNumber < 1) currentChapterNumber = 1;
-    if (currentChapterNumber > widget.allBookChapters.length && widget.allBookChapters.isNotEmpty) {
+    if (currentChapterNumber > widget.allBookChapters.length &&
+        widget.allBookChapters.isNotEmpty) {
       currentChapterNumber = widget.allBookChapters.length;
     }
 
-    if (widget.allBookChapters.isNotEmpty && currentChapterNumber -1 < widget.allBookChapters.length) {
+    if (widget.allBookChapters.isNotEmpty &&
+        currentChapterNumber - 1 < widget.allBookChapters.length) {
       currentVerses = widget.allBookChapters[currentChapterNumber - 1];
     } else {
-      currentVerses = []; // Capítulo inicial inválido ou lista de capítulos vazia
+      currentVerses = [];
     }
   }
 
   @override
   void dispose() {
-    _scrollController.dispose(); // 4. Descartar o Controller
+    _scrollController.dispose();
     super.dispose();
   }
 
   void _navigateToChapter(int newChapterNumber) {
-    if (newChapterNumber >= 1 && newChapterNumber <= widget.allBookChapters.length) {
+    if (newChapterNumber >= 1 &&
+        newChapterNumber <= widget.allBookChapters.length) {
       setState(() {
         currentChapterNumber = newChapterNumber;
         currentVerses = widget.allBookChapters[currentChapterNumber - 1];
+        _selectedVerseIndices = [];
       });
-      // 3. Animar/pular para o topo
-      if (_scrollController.hasClients) { // Verifica se o controller está anexado a um scroll view
+      if (_scrollController.hasClients) {
         _scrollController.animateTo(
-          0.0, // Posição do scroll (topo)
-          duration: const Duration(milliseconds: 300), // Duração da animação
-          curve: Curves.easeInOut, // Curva de animação
+          0.0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
         );
-        // Ou, para pular instantaneamente sem animação:
-        // _scrollController.jumpTo(0.0);
       }
     }
   }
@@ -80,35 +84,69 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
     }
   }
 
-  String _getDataForSharing() {
-    StringBuffer shareText = StringBuffer(); // Variável local com minúscula
-    shareText.writeln("${widget.bookName} - Capítulo $currentChapterNumber");
-    shareText.writeln(); // Uma linha em branco é suficiente
+  void _toggleVerseSelection(int index) {
+    setState(() {
+      if (_selectedVerseIndices.contains(index)) {
+        _selectedVerseIndices.remove(index);
+      } else {
+        _selectedVerseIndices.add(index);
+      }
+    });
+  }
 
-    for (int i = 0; i < currentVerses.length; i++) {
-      final String verseText = currentVerses[i].toString();
-      final int verseNumber = i + 1;
-      shareText.writeln("$verseNumber. $verseText");
+  void _clearSelections() {
+    setState(() {
+      _selectedVerseIndices = [];
+    });
+  }
+
+  String _getDataForSharing() {
+    StringBuffer shareText = StringBuffer();
+    shareText.writeln("${widget.bookName} - Capítulo $currentChapterNumber");
+    shareText.writeln();
+
+    if (_selectedVerseIndices.isNotEmpty) {
+      List<int> sortedIndices = List.from(_selectedVerseIndices)..sort();
+      for (int index in sortedIndices) {
+        final String verseText = currentVerses[index].toString();
+        final int verseNumber = index + 1;
+        shareText.writeln("$verseNumber. $verseText");
+      }
+    } else {
+      for (int i = 0; i < currentVerses.length; i++) {
+        final String verseText = currentVerses[i].toString();
+        final int verseNumber = i + 1;
+        shareText.writeln("$verseNumber. $verseText");
+      }
     }
     return shareText.toString();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Adiciona um tratamento para o caso de allBookChapters estar vazio
     if (widget.allBookChapters.isEmpty) {
       return Scaffold(
         appBar: AppBar(
           centerTitle: true,
+          // 🔒 AppBar.title NÃO muda
           title: Text(widget.bookName),
           backgroundColor: Theme.of(context).colorScheme.primary,
           foregroundColor: Theme.of(context).colorScheme.secondary,
         ),
         backgroundColor: Theme.of(context).colorScheme.background,
         body: Center(
-          child: Text(
-            'Nenhum capítulo disponível para este livro.',
-            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+          child: ValueListenableBuilder<double>(
+            valueListenable: FontSizeController.fontSizeNotifier,
+            builder: (context, fontSize, _) {
+              return Text(
+                'Nenhum capítulo disponível para este livro.',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.secondary,
+                  fontSize: fontSize,
+                ),
+                textAlign: TextAlign.center,
+              );
+            },
           ),
         ),
       );
@@ -117,21 +155,32 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('${widget.bookName} - Cap. $currentChapterNumber'), // Abreviação para caber melhor
+        // 🔒 Título do AppBar fixo
+        title: Text('${widget.bookName} - Cap. $currentChapterNumber'),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.secondary,
         actions: [
+          if (_selectedVerseIndices.isNotEmpty)
+            IconButton(
+              onPressed: _clearSelections,
+              icon: const Icon(Icons.clear),
+              tooltip: 'Limpar seleções',
+            ),
           IconButton(
             onPressed: () {
-              if (currentVerses.isNotEmpty) { // Só compartilha se houver versículos
+              if (currentVerses.isNotEmpty) {
                 final String chapterText = _getDataForSharing();
                 Share.share(
                   chapterText,
-                  subject: "${widget.bookName} - Capítulo $currentChapterNumber",
+                  subject:
+                      "${widget.bookName} - Capítulo $currentChapterNumber",
                 );
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Não há versículos para compartilhar neste capítulo.')),
+                  const SnackBar(
+                    content: Text(
+                        'Não há versículos para compartilhar neste capítulo.'),
+                  ),
                 );
               }
             },
@@ -142,82 +191,133 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
       backgroundColor: Theme.of(context).colorScheme.background,
       body: currentVerses.isEmpty
           ? Center(
-        child: Text(
-          'Nenhum versículo encontrado para este capítulo.',
-          style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 16),
-          textAlign: TextAlign.center,
-        ),
-      )
-          : ListView.builder(
-        controller: _scrollController, // 2. Associar o Controller ao ListView
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
-        itemCount: currentVerses.length,
-        itemBuilder: (context, index) {
-          final String verseText = currentVerses[index].toString();
-          final int verseNumber = index + 1;
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 16.0), // Aumenta o espaçamento inferior entre os versos
-            child: Row( // Usa Row para alinhar número e texto
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "$verseNumber ", // Adiciona um espaço após o número
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold, // Destaca o número do versículo
-                    color: Theme.of(context).colorScheme.secondary.withOpacity(0.9),
-                  ),
-                ),
-                Expanded( // Permite que o texto do versículo quebre a linha corretamente
-                  child: Text(
-                    verseText,
+              child: ValueListenableBuilder<double>(
+                valueListenable: FontSizeController.fontSizeNotifier,
+                builder: (context, fontSize, _) {
+                  return Text(
+                    'Nenhum versículo encontrado para este capítulo.',
                     style: TextStyle(
-                      fontSize: 17, // Tamanho de fonte consistente
                       color: Theme.of(context).colorScheme.secondary,
-                      height: 1.4, // Melhora a legibilidade com espaçamento entre linhas
+                      fontSize: fontSize,
                     ),
-                    textAlign: TextAlign.left, // Alinhamento à esquerda é mais comum para texto bíblico
+                    textAlign: TextAlign.center,
+                  );
+                },
+              ),
+            )
+          : ListView.builder(
+              controller: _scrollController,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+              itemCount: currentVerses.length,
+              itemBuilder: (context, index) {
+                final String verseText = currentVerses[index].toString();
+                final int verseNumber = index + 1;
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: GestureDetector(
+                    onTap: () => _toggleVerseSelection(index),
+                    child: Container(
+                      padding: const EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: _selectedVerseIndices.contains(index)
+                            ? Colors.green.withOpacity(0.3)
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ValueListenableBuilder<double>(
+                            valueListenable:
+                                FontSizeController.fontSizeNotifier,
+                            builder: (context, fontSize, _) {
+                              return Text(
+                                "$verseNumber ",
+                                style: TextStyle(
+                                  fontSize: fontSize,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .secondary
+                                      .withOpacity(0.9),
+                                ),
+                              );
+                            },
+                          ),
+                          Expanded(
+                            child: ValueListenableBuilder<double>(
+                              valueListenable:
+                                  FontSizeController.fontSizeNotifier,
+                              builder: (context, fontSize, _) {
+                                return Text(
+                                  verseText,
+                                  style: TextStyle(
+                                    fontSize: fontSize,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                    height: 1.4,
+                                  ),
+                                  textAlign: TextAlign.left,
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                );
+              },
             ),
-          );
-        },
-      ),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-        color: Theme.of(context).colorScheme.background.withOpacity(0.95), // Leve transparência ou cor sólida
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween, // Melhor distribuição
-          children: [
-            ElevatedButton(
-              onPressed: currentChapterNumber > 1 ? _previousChapter : null, // Desabilita se for o primeiro capítulo
-              style: ElevatedButton.styleFrom(
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(14),
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                foregroundColor: Theme.of(context).colorScheme.secondary,
-                elevation: 2,
-              ),
-              child: Icon(Icons.arrow_back_ios_new, size: 20, color: Theme.of(context).colorScheme.secondary),
-            ),
-            // Opcional: Mostrar o número do capítulo atual / total de capítulos
-            Text(
-              "Capítulo $currentChapterNumber de ${widget.allBookChapters.length}",
-              style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.secondary),
-            ),
-            ElevatedButton(
-              onPressed: currentChapterNumber < widget.allBookChapters.length ? _nextChapter : null, // Desabilita se for o último
-              style: ElevatedButton.styleFrom(
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(14),
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                foregroundColor: Theme.of(context).colorScheme.secondary,
-                elevation: 2,
-              ),
-              child: Icon(Icons.arrow_forward_ios, size: 20, color: Theme.of(context).colorScheme.secondary),
-            ),
-          ],
+        color: Theme.of(context).colorScheme.background.withOpacity(0.95),
+        child: ValueListenableBuilder<double>(
+          valueListenable: FontSizeController.fontSizeNotifier,
+          builder: (context, fontSize, _) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  onPressed: currentChapterNumber > 1 ? _previousChapter : null,
+                  style: ElevatedButton.styleFrom(
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.all(14),
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.secondary,
+                    elevation: 2,
+                  ),
+                  child: Icon(Icons.arrow_back_ios_new,
+                      size: fontSize * 0.9,
+                      color: Theme.of(context).colorScheme.secondary),
+                ),
+                Text(
+                  "Capítulo $currentChapterNumber de ${widget.allBookChapters.length}",
+                  style: TextStyle(
+                    fontSize: fontSize * 0.85,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: currentChapterNumber <
+                          widget.allBookChapters.length
+                      ? _nextChapter
+                      : null,
+                  style: ElevatedButton.styleFrom(
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.all(14),
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.secondary,
+                    elevation: 2,
+                  ),
+                  child: Icon(Icons.arrow_forward_ios,
+                      size: fontSize * 0.9,
+                      color: Theme.of(context).colorScheme.secondary),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
