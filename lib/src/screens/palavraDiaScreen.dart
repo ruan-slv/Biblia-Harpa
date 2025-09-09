@@ -119,7 +119,7 @@ class _PalavraDoDiaState extends State<PalavraDoDia> {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    palavraAtual?.versiculo ?? "Versículo não encontrado",
+                    palavraAtual?.versiculo ?? "versiculo não encontrado",
                     style: TextStyle(
                         fontSize: 16,
                         color: Theme.of(context).colorScheme.secondary),

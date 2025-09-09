@@ -1,16 +1,27 @@
-allprojects {
+buildscript {
+    ext.kotlin_version = '1.9.0' // Versão estável do Kotlin (ajuste se necessário)
     repositories {
         google()
         mavenCentral()
     }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.6.0' // Versão que você especificou
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version" // Adiciona suporte ao Kotlin
+    }
 }
 
-rootProject.buildDir = "../build"
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' } // Adiciona suporte a plugins como audio_service
+    }
+}
+
+rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
-}
-subprojects {
-    project.evaluationDependsOn(":app")
+    project.evaluationDependsOn(':app')
 }
 
 tasks.register("clean", Delete) {

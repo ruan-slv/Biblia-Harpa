@@ -1,10 +1,6 @@
+import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
-
-/// Controller global para tamanho da fonte
-class FontSizeController {
-  static final ValueNotifier<double> fontSizeNotifier = ValueNotifier<double>(17);
-}
 
 class Textbiblescreen extends StatefulWidget {
   final String bookName;
@@ -179,7 +175,7 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text(
-                        'Não há versículos para compartilhar neste capítulo.'),
+                        'Não há versiculos para compartilhar neste capítulo.'),
                   ),
                 );
               }
@@ -195,7 +191,7 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
                 valueListenable: FontSizeController.fontSizeNotifier,
                 builder: (context, fontSize, _) {
                   return Text(
-                    'Nenhum versículo encontrado para este capítulo.',
+                    'Nenhum versiculo encontrado para este capítulo.',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.secondary,
                       fontSize: fontSize,
@@ -300,10 +296,10 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: currentChapterNumber <
-                          widget.allBookChapters.length
-                      ? _nextChapter
-                      : null,
+                  onPressed:
+                      currentChapterNumber < widget.allBookChapters.length
+                          ? _nextChapter
+                          : null,
                   style: ElevatedButton.styleFrom(
                     shape: const CircleBorder(),
                     padding: const EdgeInsets.all(14),

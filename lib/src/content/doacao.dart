@@ -195,7 +195,7 @@ class _DoacaoState extends State<Doacao> {
                       onPressed: () {
                         Share.share(
                           "📖✨ Descubra uma nova forma de se conectar com a Palavra de Deus!\n\n"
-                          "Baixe agora nosso aplicativo gratuito de leitura bíblica e tenha acesso a versículos, harpa e muito mais, tudo na palma da sua mão de forma ofline e sem anúncios.\n\n"
+                          "Baixe agora nosso aplicativo gratuito de leitura bíblica e tenha acesso a versiculos, harpa e muito mais, tudo na palma da sua mão de forma ofline e sem anúncios.\n\n"
                           "🔗 Acesse aqui: $play_store_url",
                         );
                       },

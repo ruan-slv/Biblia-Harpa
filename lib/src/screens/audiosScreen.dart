@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
@@ -62,7 +63,7 @@ class _AudioScreenState extends State<AudioScreen> {
 
     try {
       final response = await http
-          .get(Uri.parse("http://192.168.1.111:3000/list"))
+          .get(Uri.parse("https://bible-server-api.vercel.app/list"))
           .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
@@ -71,11 +72,11 @@ class _AudioScreenState extends State<AudioScreen> {
           _isLoading = false;
         });
       } else {
-        throw Exception("Erro HTTP: ${response.statusCode}");
+        throw Exception("Houve um erro, já estamos buscando soluções"); // "Erro HTTP: ${response.statusCode}"
       }
-    } catch (e) {
+    } catch (_) {
       setState(() {
-        _error = "Falha na conexão: $e";
+        _error = "Esta funcionalidade começou a ser desenvolvida no dia 03/09/2025\nAguarde só mais um pouco, tentaremos finalizar esta funcionalidade até Novembro";
         _isLoading = false;
       });
     }
@@ -104,7 +105,7 @@ class _AudioScreenState extends State<AudioScreen> {
         _isBuffering = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao tocar o áudio: $e')),
+        SnackBar(content: Text("Houve um problema durante a execução do áudio")),//'Erro ao tocar o áudio: $e'
       );
     } finally {
       setState(() {
@@ -130,144 +131,148 @@ class _AudioScreenState extends State<AudioScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        centerTitle: true,
-        iconTheme:
-            IconThemeData(color: Theme.of(context).colorScheme.secondary),
-        title: Text(
-          "Áudios Online",
-          style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-        ),
-      ),
-      body: const Center(
-        child: Text("Em desenvolvimento, aguarde atualizações futuras"),
-      ),
+//       body: Padding(
+//         padding: const EdgeInsets.all(20.0),
+//         child: Center(
+//           child: ValueListenableBuilder<double>(
+//             valueListenable: FontSizeController.fontSizeNotifier,
+//             builder: (context, fontSize, _) {
+//               return Text(
+//                 "🚧 Desenvolvimento iniciado! Estamos dando os primeiros passos na criação da funcionalidade de aúdio da bíblia e harpa. mas por se tratar de uma etapa complexa, o processo pode levar algum tempo. Agradecemos pela paciência e apoio!",
+//                 style: TextStyle(
+//                     color: Theme.of(context).colorScheme.secondary,
+//                     fontSize: fontSize),
+//                 textAlign: TextAlign.justify,
+//               );
+//             },
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _error != null
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        _error!,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: _fetchAudios,
+                        child: Text(
+                          "Tentar novamente",
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : RefreshIndicator(
+                  onRefresh: _fetchAudios,
+                  child: ListView.builder(
+                    itemCount: _audios.length,
+                    itemBuilder: (context, index) {
+                      final audio = _audios[index];
+                      final isPlaying =
+                          _player.playing && _currentIndex == index;
+                      return Card(
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
+                        color: isPlaying ? Colors.green[50] : Colors.white,
+                        elevation: isPlaying ? 6 : 2,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8.0, horizontal: 4),
+                          child: Column(
+                            children: [
+                              ListTile(
+                                leading: CircleAvatar(
+                                  backgroundColor: Colors.green[200],
+                                  child: Icon(
+                                    isPlaying
+                                        ? Icons.music_note
+                                        : Icons.library_music,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                title: Text(
+                                  audio['name'] ?? 'Sem título',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: isPlaying
+                                        ? Colors.green[800]
+                                        : Colors.black87,
+                                  ),
+                                ),
+                                trailing: _isBuffering && _currentIndex == index
+                                    ? const CircularProgressIndicator()
+                                    : IconButton(
+                                        icon: Icon(
+                                          isPlaying
+                                              ? Icons.pause
+                                              : Icons.play_arrow,
+                                          color: Colors.green[800],
+                                        ),
+                                        onPressed: () =>
+                                            _playAudio(audio['url'], index),
+                                      ),
+                              ),
+                              if (isPlaying)
+                                Column(
+                                  children: [
+                                    Slider(
+                                      value:
+                                          _currentPosition.inSeconds.toDouble(),
+                                      min: 0,
+                                      max: _audioDuration.inSeconds.toDouble() >
+                                              0
+                                          ? _audioDuration.inSeconds.toDouble()
+                                          : 1,
+                                      onChanged: (value) async {
+                                        await _player.seek(
+                                            Duration(seconds: value.toInt()));
+                                      },
+                                      activeColor: Colors.green,
+                                      inactiveColor: Colors.green[100],
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            _formatDuration(_currentPosition),
+                                            style:
+                                                const TextStyle(fontSize: 12),
+                                          ),
+                                          Text(
+                                            _formatDuration(_audioDuration),
+                                            style:
+                                                const TextStyle(fontSize: 12),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
     );
   }
 }
-
-/*
-* body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _error != null
-          ? Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              _error!,
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.red),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _fetchAudios,
-              child: Text(
-                "Tentar novamente",
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.secondary),
-              ),
-            ),
-          ],
-        ),
-      )
-          : RefreshIndicator(
-        onRefresh: _fetchAudios,
-        child: ListView.builder(
-          itemCount: _audios.length,
-          itemBuilder: (context, index) {
-            final audio = _audios[index];
-            final isPlaying =
-                _player.playing && _currentIndex == index;
-            return Card(
-              margin: const EdgeInsets.symmetric(
-                  horizontal: 12, vertical: 8),
-              color: isPlaying ? Colors.green[50] : Colors.white,
-              elevation: isPlaying ? 6 : 2,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 8.0, horizontal: 4),
-                child: Column(
-                  children: [
-                    ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: Colors.green[200],
-                        child: Icon(
-                          isPlaying
-                              ? Icons.music_note
-                              : Icons.library_music,
-                          color: Colors.white,
-                        ),
-                      ),
-                      title: Text(
-                        audio['name'] ?? 'Sem título',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: isPlaying
-                              ? Colors.green[800]
-                              : Colors.black87,
-                        ),
-                      ),
-                      trailing: _isBuffering && _currentIndex == index
-                          ? const CircularProgressIndicator()
-                          : IconButton(
-                        icon: Icon(
-                          isPlaying
-                              ? Icons.pause
-                              : Icons.play_arrow,
-                          color: Colors.green[800],
-                        ),
-                        onPressed: () =>
-                            _playAudio(audio['url'], index),
-                      ),
-                    ),
-                    if (isPlaying)
-                      Column(
-                        children: [
-                          Slider(
-                            value:
-                            _currentPosition.inSeconds.toDouble(),
-                            min: 0,
-                            max: _audioDuration.inSeconds.toDouble() >
-                                0
-                                ? _audioDuration.inSeconds.toDouble()
-                                : 1,
-                            onChanged: (value) async {
-                              await _player.seek(
-                                  Duration(seconds: value.toInt()));
-                            },
-                            activeColor: Colors.green,
-                            inactiveColor: Colors.green[100],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0),
-                            child: Row(
-                              mainAxisAlignment:
-                              MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  _formatDuration(_currentPosition),
-                                  style:
-                                  const TextStyle(fontSize: 12),
-                                ),
-                                Text(
-                                  _formatDuration(_audioDuration),
-                                  style:
-                                  const TextStyle(fontSize: 12),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                  ],
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-*
-* */

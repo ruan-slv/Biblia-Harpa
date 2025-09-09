@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:biblia_e_harpa/src/config.dart';
+import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:share_plus/share_plus.dart';
@@ -15,7 +16,7 @@ class TextModel {
 
   factory TextModel.fromJson(Map<String, dynamic> json) {
     return TextModel(
-      versiculo: json['versiculo'] ?? 'Versículo não encontrado',
+      versiculo: json['versiculo'] ?? 'versiculo não encontrado',
       texto: json['texto'] ?? 'Texto não encontrado',
       oracao: json['Oração'] ?? 'Oração não encontrada',
     );
@@ -82,7 +83,7 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
 
     sb.writeln("Tópico do Devocional: ${widget.devo}"); // Título do tema
     sb.writeln("\n");
-    sb.writeln("📖 Versículo:");
+    sb.writeln("📖 versiculo:");
     sb.writeln(devocionalAtual.versiculo);
     sb.writeln("\n✝️ Reflexão:");
     sb.writeln(devocionalAtual.texto);
@@ -165,47 +166,77 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                devocional.versiculo,
-                style: TextStyle(
-                    fontSize: 18,
-                    fontStyle: FontStyle.italic,
-                    color: Theme.of(context).colorScheme.secondary),
-                textAlign: TextAlign.center,
+              ValueListenableBuilder<double>(
+                valueListenable: FontSizeController.fontSizeNotifier,
+                builder: (context, fontSize, _) {
+                  return Text(
+                    devocional.versiculo,
+                    style: TextStyle(
+                      fontSize: fontSize,
+                      fontStyle: FontStyle.italic,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                    textAlign: TextAlign.center,
+                  );
+                },
               ),
               const SizedBox(height: 20),
-              Text(
-                'Reflexão',
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.secondary),
-                textAlign: TextAlign.center,
+              ValueListenableBuilder<double>(
+                valueListenable: FontSizeController.fontSizeNotifier,
+                builder: (context, fontSize, _) {
+                  return Text(
+                    'Reflexão',
+                    style: TextStyle(
+                      fontSize: fontSize + 2, // título pode ser um pouco maior
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                    textAlign: TextAlign.center,
+                  );
+                },
               ),
               const SizedBox(height: 10),
-              Text(
-                devocional.texto,
-                style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.secondary),
-                textAlign: TextAlign.center,
+              ValueListenableBuilder<double>(
+                valueListenable: FontSizeController.fontSizeNotifier,
+                builder: (context, fontSize, _) {
+                  return Text(
+                    devocional.texto,
+                    style: TextStyle(
+                      fontSize: fontSize,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                    textAlign: TextAlign.center,
+                  );
+                },
               ),
               const SizedBox(height: 20),
-              Text(
-                'Oração',
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.secondary),
-                textAlign: TextAlign.center,
+              ValueListenableBuilder<double>(
+                valueListenable: FontSizeController.fontSizeNotifier,
+                builder: (context, fontSize, _) {
+                  return Text(
+                    'Oração',
+                    style: TextStyle(
+                      fontSize: fontSize + 2,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                    textAlign: TextAlign.center,
+                  );
+                },
               ),
               const SizedBox(height: 10),
-              Text(
-                devocional.oracao,
-                style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.secondary),
-                textAlign: TextAlign.center,
+              ValueListenableBuilder<double>(
+                valueListenable: FontSizeController.fontSizeNotifier,
+                builder: (context, fontSize, _) {
+                  return Text(
+                    devocional.oracao,
+                    style: TextStyle(
+                      fontSize: fontSize,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                    textAlign: TextAlign.center,
+                  );
+                },
               ),
               const SizedBox(height: 20),
             ],

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:biblia_e_harpa/src/config.dart';
+import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -105,39 +106,97 @@ class _DevocionalListState extends State<DevocionalList> with SingleTickerProvid
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    devocional["texto"],
-                    style:  TextStyle(fontSize: 18, fontStyle: FontStyle.italic, color: Theme.of(context).colorScheme.secondary),
-                    textAlign: TextAlign.center,
-                  ),
-                  Text(
-                    '- ${devocional["versiculo"]}',
-                    style:  TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.secondary),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20),
-                   Text(
-                    'Reflexão',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.secondary),
-                     textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    devocional["reflexao"],
-                    style:  TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.secondary),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20),
-                   Text(
-                    'Oração',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.secondary),
-                     textAlign: TextAlign.center,
+                  ValueListenableBuilder<double>(
+                    valueListenable: FontSizeController.fontSizeNotifier,
+                    builder: (context, fontSize, _) {
+                      print('Aleatorios texto fontSize: $fontSize');
+                      return Text(
+                        devocional["texto"],
+                        style: TextStyle(
+                          fontSize: fontSize,
+                          fontStyle: FontStyle.italic,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                        textAlign: TextAlign.center,
+                      );
+                    },
                   ),
                   const SizedBox(height: 10),
-                  Text(
-                    devocional["oracao"],
-                    style:  TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.secondary),
-                    textAlign: TextAlign.center,
+                  ValueListenableBuilder<double>(
+                    valueListenable: FontSizeController.fontSizeNotifier,
+                    builder: (context, fontSize, _) {
+                      print('Aleatorios versiculo fontSize: $fontSize');
+                      return Text(
+                        '- ${devocional["versiculo"]}',
+                        style: TextStyle(
+                          fontSize: fontSize * 0.9,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                        textAlign: TextAlign.center,
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  ValueListenableBuilder<double>(
+                    valueListenable: FontSizeController.fontSizeNotifier,
+                    builder: (context, fontSize, _) {
+                      print('Aleatorios reflexao title fontSize: $fontSize');
+                      return Text(
+                        'Reflexão',
+                        style: TextStyle(
+                          fontSize: fontSize * 1.1,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                        textAlign: TextAlign.center,
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  ValueListenableBuilder<double>(
+                    valueListenable: FontSizeController.fontSizeNotifier,
+                    builder: (context, fontSize, _) {
+                      print('Aleatorios reflexao fontSize: $fontSize');
+                      return Text(
+                        devocional["reflexao"],
+                        style: TextStyle(
+                          fontSize: fontSize,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                        textAlign: TextAlign.center,
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  ValueListenableBuilder<double>(
+                    valueListenable: FontSizeController.fontSizeNotifier,
+                    builder: (context, fontSize, _) {
+                      print('Aleatorios oracao title fontSize: $fontSize');
+                      return Text(
+                        'Oração',
+                        style: TextStyle(
+                          fontSize: fontSize * 1.1,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                        textAlign: TextAlign.center,
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  ValueListenableBuilder<double>(
+                    valueListenable: FontSizeController.fontSizeNotifier,
+                    builder: (context, fontSize, _) {
+                      print('Aleatorios oracao fontSize: $fontSize');
+                      return Text(
+                        devocional["oracao"],
+                        style: TextStyle(
+                          fontSize: fontSize,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                        textAlign: TextAlign.center,
+                      );
+                    },
                   ),
                   const SizedBox(height: 20),
                 ],
@@ -239,25 +298,37 @@ class _DevocionalListState extends State<DevocionalList> with SingleTickerProvid
           ),
         ),
         Expanded(
-          child: ListView.builder(
-            itemCount: devoList.length,
-            itemBuilder: (context, index) {
-              final devocional = devoList[index];
-              return ListTile(
-                leading: const Icon(Icons.menu_book_rounded),
-                title: Text(devocional, style:  TextStyle(color: Theme.of(context).colorScheme.secondary)),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => DevocionalContentScreen(devo: devocional),
-                    ),
-                  );
-                },
-              );
-            },
-          ),
+  child: ListView.builder(
+    itemCount: devoList.length,
+    itemBuilder: (context, index) {
+      final devocional = devoList[index];
+      return ListTile(
+        leading: const Icon(Icons.menu_book_rounded),
+        title: ValueListenableBuilder<double>(
+          valueListenable: FontSizeController.fontSizeNotifier,
+          builder: (context, fontSize, _) {
+            return Text(
+              devocional,
+              style: TextStyle(
+                fontSize: fontSize,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            );
+          },
         ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DevocionalContentScreen(devo: devocional),
+            ),
+          );
+        },
+      );
+    },
+  ),
+),
+
       ],
     );
   }

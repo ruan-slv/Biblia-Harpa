@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 import 'package:biblia_e_harpa/src/controllers/theme_controller.dart';
 import 'package:biblia_e_harpa/src/initial/initial.dart';
@@ -10,6 +11,8 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:upgrader/upgrader.dart';
 
+late final AudioHandler audioHandler;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
@@ -17,7 +20,7 @@ void main() async {
 
   if (!kIsWeb) {
     final dir = await getApplicationDocumentsDirectory();
-    Hive.init(dir.path);
+    //Hive.init(dir.path);
   }
 
   Hive.registerAdapter(MusicAdapter());
@@ -28,6 +31,7 @@ void main() async {
   }
 
   await ThemeController.loadTheme();
+  //audioHandler = await initAudioHandler();
 
   runApp(const MyApp());
 }
@@ -37,24 +41,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: ThemeController.themeNotifier,
-      builder: (context, currentTheme, _) {
-        return MaterialApp(
-          title: 'Bíblia e Harpa',
-          theme: lightMode,
-          darkTheme: darkMode,
-          themeMode: currentTheme,
-          debugShowCheckedModeBanner: false,
-          home: UpgradeAlert(
-            upgrader: Upgrader(
-              debugLogging: false,
-              showIgnore: false,
-              showLater: false,
-              dialogStyle: UpgradeDialogStyle.material,
-            ),
-            child: const Initial(),
-          ),
+    return ValueListenableBuilder<ThemeData>(
+      valueListenable: ThemeController.customThemeNotifier,
+      builder: (context, themeData, _) {
+        return ValueListenableBuilder<ThemeMode>(
+          valueListenable: ThemeController.themeNotifier,
+          builder: (context, themeMode, _) {
+            return MaterialApp(
+              title: 'Bíblia e Harpa',
+              theme: themeData,
+              darkTheme: themeData.copyWith(brightness: Brightness.dark),
+              themeMode: themeMode,
+              debugShowCheckedModeBanner: false,
+              home: UpgradeAlert(
+                upgrader: Upgrader(debugLogging: false),
+                child: const Initial(),
+              ),
+            );
+          },
         );
       },
     );

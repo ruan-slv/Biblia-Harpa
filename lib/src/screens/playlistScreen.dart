@@ -31,7 +31,7 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
   void initState() {
     super.initState();
     if (!Hive.box<Music>('musicas').isOpen) {
-      debugPrint('Box "musicas" não está aberta!');
+      //debugPrint('Box "musicas" não está aberta!');
     }
     _startDirectoryMonitoring();
 
@@ -104,7 +104,7 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
         }
       });
     } catch (e) {
-      debugPrint('Erro ao monitorar diretório: $e');
+      //debugPrint('Erro ao monitorar diretório: $e');
     }
   }
 
@@ -209,7 +209,7 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
           SnackBar(content: Text('Erro ao remover música')),
         );
       }
-      debugPrint((mounted) ? "erro ao remover música $e" : "Sucesso");
+      //debugPrint((mounted) ? "erro ao remover música $e" : "Sucesso");
     }
   }
 
@@ -223,16 +223,7 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: begeClaro,
-        centerTitle: true,
-        automaticallyImplyLeading: true,
-        iconTheme: const IconThemeData(color: cinzaEscuro),
-        title: const Text(
-          "Minhas Músicas",
-          style: TextStyle(color: cinzaEscuro),
-        ),
-      ),
+      backgroundColor: Theme.of(context).colorScheme.background,
       floatingActionButton: FloatingActionButton(
         onPressed: _pickMusicFile,
         tooltip: 'Adicionar Música',
@@ -243,10 +234,18 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
         valueListenable: Hive.box<Music>('musicas').listenable(),
         builder: (context, box, _) {
           if (box.isEmpty) {
-            return const Center(child: Text('Nenhuma música adicionada.'));
+            return Center(child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Nenhuma áudio foi adicionado / encontrado.'),
+                const SizedBox(height: 8),
+                ElevatedButton(onPressed: () => _pickMusicFile(), child: Text("Adicionar música", style: TextStyle(color: Theme.of(context).colorScheme.secondary),)),
+              ],
+            ));
           }
           final musics = box.values.toList();
-          debugPrint('Músicas carregadas: ${musics.length}');
+          //debugPrint('Músicas carregadas: ${musics.length}');
           return ListView.builder(
             itemCount: musics.length,
             itemBuilder: (context, index) {

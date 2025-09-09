@@ -1,9 +1,12 @@
 import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 import 'package:biblia_e_harpa/src/controllers/theme_controller.dart';
+import 'package:biblia_e_harpa/src/screens/aboutProjectScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import "package:in_app_review/in_app_review.dart";
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -13,18 +16,19 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-
+  Color newPrimaryColor = Colors.grey.shade300;
+  Color newSecondaryColor = Colors.grey.shade900;
+  Color newBackgroundColor = Colors.grey.shade400;
   final Uri play_store_url = Uri.parse(
-        "https://play.google.com/store/apps/details?id=com.bibleAplication.app&pcampaignid=web_share");
+      "https://play.google.com/store/apps/details?id=com.bibleAplication.app&pcampaignid=web_share");
 
-    final String _pixKey =
-        "5e32d467-b1e8-4db4-ae93-e6767105b704"; // Nome com underscore e final
-    final List<String> _buttonTexts = [
-      "Copiar Chave",
-      "Chave Copiada!"
-    ]; // Nome com underscore e final
-    String _currentButtonText =
-        "Copiar Chave"; // Estado atual do texto do botão
+  final String _pixKey =
+      "5e32d467-b1e8-4db4-ae93-e6767105b704"; // Nome com underscore e final
+  final List<String> _buttonTexts = [
+    "Copiar Chave",
+    "Chave Copiada!"
+  ]; // Nome com underscore e final
+  String _currentButtonText = "Copiar Chave"; // Estado atual do texto do botão
 
   @override
   void initState() {
@@ -52,7 +56,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: ThemeController.themeNotifier,
       builder: (context, currentTheme, _) {
@@ -90,6 +93,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(16),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               "Tamanho da Fonte",
@@ -116,15 +120,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               },
                             ),
                             const SizedBox(height: 12),
-                            Row(
+                            Column(
                               mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                Text(
+                                  "Tamanho atual: ${fontSize.toStringAsFixed(0)} pt",
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
                                 Row(
                                   children: [
                                     ElevatedButton(
                                       onPressed: () {
                                         double newSize =
-                                            (fontSize - 2).clamp(10.0, 40.0);
+                                            (fontSize - 2).clamp(12.0, 26.0);
                                         FontSizeController.setFontSize(newSize);
                                       },
                                       style: ElevatedButton.styleFrom(
@@ -145,7 +158,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     ElevatedButton(
                                       onPressed: () {
                                         double newSize =
-                                            (fontSize + 2).clamp(10.0, 40.0);
+                                            (fontSize + 2).clamp(1.0, 26.0);
                                         FontSizeController.setFontSize(newSize);
                                       },
                                       style: ElevatedButton.styleFrom(
@@ -163,14 +176,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       ),
                                     ),
                                   ],
-                                ),
-                                const SizedBox(width: 20),
-                                Text(
-                                  "Tamanho atual: ${fontSize.toStringAsFixed(0)} pt",
-                                  style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                  ),
                                 ),
                               ],
                             ),
@@ -212,95 +217,160 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           },
                         ),
                         const SizedBox(height: 12),
-                        ElevatedButton.icon(
-                          onPressed: () => ThemeController.toggleTheme(),
-                          icon: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 300),
-                            transitionBuilder: (child, animation) {
-                              return RotationTransition(
-                                turns: Tween(begin: 0.0, end: 1.0)
-                                    .animate(animation),
-                                child: child,
-                              );
-                            },
-                            child: isDark
-                                ? const Icon(Icons.sunny,
-                                    key: Key("sunny"),
-                                    color: Colors.yellow,
-                                    size: 20)
-                                : Icon(Icons.brightness_4,
-                                    key: const Key("moon"),
-                                    color: Colors.grey[800],
-                                    size: 20),
-                          ),
-                          label: Text(
-                            Theme.of(context).brightness == Brightness.dark
-                                ? "claro"
-                                : "escuro",
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Card(
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Plano de Fundo",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        ValueListenableBuilder<double>(
-                          valueListenable: FontSizeController.fontSizeNotifier,
-                          builder: (context, fontSize, _) {
-                            return Text(
-                              "Escolha uma imagem para personalizar o fundo do app.",
-                              style: TextStyle(
-                                fontSize: fontSize,
-                                color: Theme.of(context).colorScheme.secondary,
+                        Row(
+                          // crossAxisAlignment: CrossAxisAlignment.stretch,
+                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ElevatedButton.icon(
+                              onPressed: () => ThemeController.toggleTheme(),
+                              icon: AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 300),
+                                transitionBuilder: (child, animation) {
+                                  return RotationTransition(
+                                    turns: Tween(begin: 0.0, end: 1.0)
+                                        .animate(animation),
+                                    child: child,
+                                  );
+                                },
+                                child: isDark
+                                    ? const Icon(Icons.sunny,
+                                        key: Key("sunny"),
+                                        color: Colors.yellow,
+                                        size: 20)
+                                    : Icon(Icons.brightness_4,
+                                        key: const Key("moon"),
+                                        color: Colors.grey[800],
+                                        size: 20),
                               ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            // Adicione aqui a navegação para seleção de plano de fundo
-                          },
-                          icon: Icon(
-                            Icons.image,
-                            color: Theme.of(context).colorScheme.secondary,
-                            size: 20,
-                          ),
-                          label: Text(
-                            "Plano de fundo",
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
+                              label: Text(
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? "claro"
+                                    : "escuro",
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.primary,
+                              ),
                             ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                          ),
+                            const SizedBox(width: 10),
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text("Personalizar cores"),
+                                    content: SingleChildScrollView(
+                                      child: Column(
+                                        children: [
+                                          const Text("Cor Primária"),
+                                          ColorPicker(
+                                            pickerColor: newPrimaryColor,
+                                            onColorChanged: (color) {
+                                              setState(() {
+                                                newPrimaryColor = color;
+                                              });
+                                            },
+                                          ),
+                                          const SizedBox(height: 10),
+                                          const Text("Cor Secundária"),
+                                          ColorPicker(
+                                            pickerColor: newSecondaryColor,
+                                            onColorChanged: (color) {
+                                              setState(() {
+                                                newSecondaryColor = color;
+                                              });
+                                            },
+                                          ),
+                                          const SizedBox(height: 10),
+                                          const Text("Cor De Fundo"),
+                                          ColorPicker(
+                                            pickerColor: newBackgroundColor,
+                                            onColorChanged: (color) {
+                                              setState(() {
+                                                newBackgroundColor = color;
+                                              });
+                                            },
+                                          ),
+                                          const SizedBox(height: 20),
+                                          Text('Preview',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold)),
+                                          Container(
+                                            padding: const EdgeInsets.all(16),
+                                            decoration: BoxDecoration(
+                                              color: newBackgroundColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              border: Border.all(
+                                                  color: Colors.black12),
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                ElevatedButton(
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        newPrimaryColor,
+                                                    foregroundColor:
+                                                        Colors.white,
+                                                  ),
+                                                  onPressed: () {},
+                                                  child: const Text(
+                                                      'Botão Primário'),
+                                                ),
+                                                const SizedBox(height: 10),
+                                                Text(
+                                                  'Texto com cor secundária',
+                                                  style: TextStyle(
+                                                      color: newSecondaryColor,
+                                                      fontSize: 16),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          ThemeController.updateCustomColors(
+                                            primary: newPrimaryColor,
+                                            secondary: newSecondaryColor,
+                                            background: newBackgroundColor,
+                                          );
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text("Aplicar"),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                              icon: Icon(
+                                Icons.dashboard_customize,
+                                color: Theme.of(context).colorScheme.secondary,
+                                size: 20,
+                              ),
+                              label: Text(
+                                "Personalizar",
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -342,7 +412,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           onPressed: () {
                             Share.share(
                               "📖✨ Descubra uma nova forma de se conectar com a Palavra de Deus!\n\n"
-                              "Baixe agora nosso aplicativo gratuito de leitura bíblica e tenha acesso a versículos, harpa e muito mais, tudo na palma da sua mão de forma ofline e sem anúncios.\n\n"
+                              "Baixe agora nosso aplicativo gratuito de leitura bíblica e tenha acesso a versiculos, harpa e muito mais, tudo na palma da sua mão de forma ofline e sem anúncios.\n\n"
                               "🔗 Acesse aqui: $play_store_url",
                             );
                           },
@@ -480,6 +550,130 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           label: Text(
                             _currentButtonText,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Card(
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Sobre o app e política de privacidade",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        ValueListenableBuilder<double>(
+                          valueListenable: FontSizeController.fontSizeNotifier,
+                          builder: (context, fontSize, _) {
+                            return Text(
+                              "Confira informações sobre o aplicativo e nossa política de privacidade.",
+                              style: TextStyle(
+                                fontSize: fontSize,
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const Aboutprojectscreen(),
+                              ),
+                            );
+                          },
+                          icon: Icon(
+                            Icons.info,
+                            color: Theme.of(context).colorScheme.secondary,
+                            size: 20,
+                          ),
+                          label: Text(
+                            "Conferir",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Card(
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Avaliação do app",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        ValueListenableBuilder<double>(
+                          valueListenable: FontSizeController.fontSizeNotifier,
+                          builder: (context, fontSize, _) {
+                            return Text(
+                              "Nos ajude a alcançar boas notas na Playstore para alcançarmos mais pessoas atraves de uma avaliação.",
+                              style: TextStyle(
+                                fontSize: fontSize,
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        ElevatedButton.icon(
+                          onPressed: () async {
+                            final InAppReview inAppReview =
+                                InAppReview.instance;
+                            if (await inAppReview.isAvailable()) {
+                              inAppReview.openStoreListing(
+                                appStoreId: "com.bibleAplication.app",
+                              );
+                            }
+                          },
+                          icon: Icon(
+                            Icons.star,
+                            color: Theme.of(context).colorScheme.secondary,
+                            size: 20,
+                          ),
+                          label: Text(
+                            "Avaliar app",
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.secondary,
                             ),

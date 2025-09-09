@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:biblia_e_harpa/src/config.dart';
 import 'package:biblia_e_harpa/src/screens/textBibleScreen.dart';
-import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart' hide FontSizeController;
+import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 
 class ChapterListScreen extends StatefulWidget {
   final String name;
@@ -51,7 +51,7 @@ class _ChapterListScreenState extends State<ChapterListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
         centerTitle: true,
@@ -114,19 +114,19 @@ class _ChapterListScreenState extends State<ChapterListScreen> {
                     );
                   },
                   style: ButtonStyle(
-                    padding: MaterialStateProperty.all(EdgeInsets.zero),
-                    minimumSize: MaterialStateProperty.all(const Size(30, 30)),
-                    side: MaterialStateProperty.all(
+                    padding: WidgetStateProperty.all(EdgeInsets.zero),
+                    minimumSize: WidgetStateProperty.all(const Size(30, 30)),
+                    side: WidgetStateProperty.all(
                       const BorderSide(color: Colors.blueGrey, width: 0.5),
                     ),
-                    shape: MaterialStateProperty.all(
+                    shape: WidgetStateProperty.all(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(7.0),
                       ),
                     ),
-                    backgroundColor: MaterialStateProperty.all(
+                    backgroundColor: WidgetStateProperty.all(
                         Theme.of(context).colorScheme.primary),
-                    foregroundColor: MaterialStateProperty.all(
+                    foregroundColor: WidgetStateProperty.all(
                         Theme.of(context).colorScheme.secondary),
                     //overlayColor: MaterialStateProperty.all(Theme.of(context).colorScheme.secondary),
                   ),

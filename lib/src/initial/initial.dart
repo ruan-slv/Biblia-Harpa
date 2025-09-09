@@ -6,6 +6,7 @@ import 'package:biblia_e_harpa/src/content/doacao.dart';
 import 'package:biblia_e_harpa/src/devocional/devocionalList.dart';
 import 'package:biblia_e_harpa/src/screens/aboutProjectScreen.dart';
 import 'package:biblia_e_harpa/src/screens/audiosScreen.dart';
+import 'package:biblia_e_harpa/src/screens/homeAudioScreen.dart';
 import 'package:biblia_e_harpa/src/screens/settingsScreen.dart';
 import 'package:biblia_e_harpa/src/sizelist/biblelist.dart';
 import 'package:biblia_e_harpa/src/sizelist/harpalist.dart';
@@ -27,9 +28,9 @@ class Data {
 
   factory Data.fromJson(Map<String, dynamic> json) {
     return Data(
-      id: json["id"],
-      texto: json["texto"],
-      versiculo: json["versiculo"],
+      id: json["id"] ?? 0,
+      texto: json["texto"] ?? "Texto indisponível",
+      versiculo: json["versiculo"] ?? "versiculo indisponível",
     );
   }
 }
@@ -42,54 +43,6 @@ class Initial extends StatefulWidget {
 }
 
 class _InitialState extends State<Initial> {
-  String? backgroundImagePath;
-
-  final List<String> imagesWallpapers = [
-    "assets/images/Wall paperss.jpg",
-    "assets/images/fundoOption1.jpeg",
-    "assets/images/fundoOption2.jpeg",
-    "assets/images/fundoOption3.jpeg",
-    "assets/images/fundoOption4.jpg",
-    "assets/images/fundoOption5.jpeg",
-    "assets/images/fundoOption6.jpeg",
-    "assets/images/fundoOption7.jpeg",
-    "assets/images/fundoOption8.jpeg",
-    "assets/images/fundoOption9.jpeg",
-    "assets/images/fundoOption10.jpeg",
-    "assets/images/fundoOption11.jpeg",
-    "assets/images/fundoOption12.jpeg",
-    "assets/images/fundoOption13.jpeg",
-  ];
-
-  Future<void> _loadWallpaper() async {
-    final prefs = await SharedPreferences.getInstance();
-    final path = prefs.getString("backgroundImagePath");
-    if (path != null && imagesWallpapers.contains(path)) {
-      setState(() {
-        backgroundImagePath = path;
-      });
-    }
-  }
-
-  void _pickWallpaper() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => wallpaperselectionscreen(
-          wallpapers: imagesWallpapers,
-          onSelect: (selectedPath) async {
-            final prefs = await SharedPreferences.getInstance();
-            await prefs.setString("backgroundImagePath", selectedPath);
-            setState(() {
-              backgroundImagePath = selectedPath;
-            });
-            Navigator.pop(context); // Fecha a tela de seleção
-          },
-        ),
-      ),
-    );
-  }
-
   Data? palavraAtual;
   DateTime? ultimaAtualizacao;
 
@@ -97,7 +50,6 @@ class _InitialState extends State<Initial> {
   void initState() {
     super.initState();
     _loadPalavraDoDia();
-    _loadWallpaper();
   }
 
   Future<void> _loadPalavraDoDia() async {
@@ -106,30 +58,38 @@ class _InitialState extends State<Initial> {
     final String? palavraSalva = prefs.getString("palavra_atual");
 
     final now = DateTime.now();
-    bool precisaAtualizar = lastUpdate == null ||
+    final precisaAtualizar = lastUpdate == null ||
         DateTime.parse(lastUpdate).difference(now).inDays.abs() >= 1;
 
     if (!precisaAtualizar && palavraSalva != null) {
-      setState(() {
-        palavraAtual = Data.fromJson(jsonDecode(palavraSalva));
-        ultimaAtualizacao = DateTime.parse(lastUpdate);
-      });
-      return;
-    } else if (palavraSalva == null) {
-      setState(() {
-        palavraAtual =
-            Data(id: 0, texto: "Nunhuma palavra encontrada", versiculo: "");
-      });
-      Future.delayed(const Duration(seconds: 1), () => _loadPalavraDoDia());
+      try {
+        final Map<String, dynamic> json = jsonDecode(palavraSalva);
+        setState(() {
+          palavraAtual = Data.fromJson(json);
+          ultimaAtualizacao = DateTime.parse(lastUpdate);
+        });
+      } catch (e) {
+        _mostrarErro("Erro ao carregar palavra salva: ${e.toString()}");
+      }
       return;
     }
-
     try {
       final String jsonString = await DefaultAssetBundle.of(context)
           .loadString("assets/json/palavraDoDia.json");
       final List<dynamic> jsonResponse = jsonDecode(jsonString)["palavraDoDia"];
 
-      final randomIndex = Random().nextInt(jsonResponse.length);
+      if (jsonResponse.isEmpty) {
+        setState(() {
+          palavraAtual = Data(
+            id: 0,
+            texto: "Nenhuma palavra disponível",
+            versiculo: "",
+          );
+        });
+        return;
+      }
+
+      final randomIndex = Random().nextInt(jsonResponse.length - 1);
       final selectedPalavra = jsonResponse[randomIndex];
 
       setState(() {
@@ -140,12 +100,16 @@ class _InitialState extends State<Initial> {
       await prefs.setString("last_update", now.toIso8601String());
       await prefs.setString("palavra_atual", jsonEncode(selectedPalavra));
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Erro ao carregar a palavra do dia: ${e.toString()}"),
-        ),
-      );
+      _mostrarErro("Erro ao carregar palavra salva: ${e.toString()}");
     }
+  }
+
+  void _mostrarErro(String mensagem) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(mensagem),
+      ),
+    );
   }
 
   void _compartilharPalavra() {
@@ -180,25 +144,27 @@ class _InitialState extends State<Initial> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const SettingsScreen()),
+                MaterialPageRoute(builder: (context) => SettingsScreen()),
               );
             },
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.white,
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const Aboutprojectscreen(),
-            ),
-          );
-        },
-        tooltip: "Alterar papel de parede",
-        child: const Icon(Icons.info, color: Colors.black87),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   backgroundColor: Theme.of(context).colorScheme.primary,
+      //   onPressed: () {
+      //     Navigator.push(
+      //       context,
+      //       MaterialPageRoute(
+      //         builder: (context) => const Aboutprojectscreen(),
+      //       ),
+      //     );
+      //   },
+      //   child: Icon(
+      //     Icons.info,
+      //     color: Theme.of(context).colorScheme.secondary,
+      //   ),
+      // ),
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -211,19 +177,9 @@ class _InitialState extends State<Initial> {
                 minHeight: constraints.maxHeight,
               ),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Padding(
-                  //   padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 20),
-                  //   child: Text(
-                  //     "Palavra do Dia",
-                  //     style: TextStyle(
-                  //       color: Theme.of(context).colorScheme.secondary,
-                  //       fontSize: 22,
-                  //     ),
-                  //   ),
-                  // ),
                   Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: ConstrainedBox(
@@ -249,7 +205,8 @@ class _InitialState extends State<Initial> {
                           child: Stack(
                             children: [
                               Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
                                     "Palavra do Dia",
@@ -289,22 +246,17 @@ class _InitialState extends State<Initial> {
                                     },
                                   ),
                                   const SizedBox(height: 10),
-                                  ValueListenableBuilder<double>(
-                                    valueListenable:
-                                        FontSizeController.fontSizeNotifier,
-                                    builder: (context, fontSize, _) {
-                                      return Text(
-                                        palavraAtual?.versiculo ??
-                                            "Versículo não encontrado",
-                                        style: TextStyle(
-                                          fontSize: fontSize,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .secondary,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      );
-                                    },
+                                  Text(
+                                    palavraAtual?.versiculo.isNotEmpty == true
+                                        ? palavraAtual!.versiculo
+                                        : "versiculo não encontrado",
+                                    style: TextStyle(
+                                      fontSize: 16.0,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
+                                    ),
+                                    textAlign: TextAlign.center,
                                   ),
                                   const SizedBox(height: 10),
                                   ElevatedButton.icon(
@@ -405,7 +357,7 @@ class _InitialState extends State<Initial> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          const AudioScreen()),
+                                          const Homeaudioscreen()),
                                 ),
                               ),
                             ),
@@ -418,12 +370,12 @@ class _InitialState extends State<Initial> {
               ),
             );
 
-            if (constraints.maxHeight > minContentHeight) {
+            if (screenSize.height < minContentHeight || constraints.maxHeight < 600) {
               // Tela grande: sem scroll
-              return content;
+              return SingleChildScrollView(child: content);
             } else {
               // Tela pequena: com scroll
-              return SingleChildScrollView(child: content);
+              return content;
             }
           },
         ),

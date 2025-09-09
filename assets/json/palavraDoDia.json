@@ -292,7 +292,7 @@
     },
     {
       "id": 59,
-      "texto": "O Senhor é a porção da minha herança e do meu cálice; tu és o sustentáculo da minha sorte. Caem-me as divisas em lugares aprazíveis; sim, coube-me uma formosa herança.",
+      "texto": "O Senhor é a minha porção da minha herança e do meu cálice; tu és o sustentáculo da minha sorte. Caem-me as divisas em lugares aprazíveis; sim, coube-me uma formosa herança.",
       "versiculo": "Salmos 16:5-6"
     },
     {
@@ -302,8 +302,8 @@
     },
     {
       "id": 61,
-      "texto": "Bendize, ó minha alma, ao Senhor, e tudo o que há em mim bendiga o seu santo nome. Bendize, ó minha alma, ao Senhor, e não te esqueças de nenhum dos seus benefícios.",
-      "versiculo": "Salmos 103:1-2"
+      "texto": "Bendize, ó minha alma, ao Senhor, e tudo o que há em mim bendiga o seu santo nome.",
+      "versiculo": "Salmos 103:1"
     },
     {
       "id": 62,
@@ -362,8 +362,8 @@
     },
     {
       "id": 73,
-      "texto": "O Senhor é o meu pastor; de nada terei falta. Em verdes pastagens me faz repousar e me conduz a águas tranquilas; restaura-me o vigor e guia-me por caminhos retos por amor de seu nome.",
-      "versiculo": "Salmos 23:1-3"
+      "texto": "O Senhor é o meu pastor; de nada terei falta. Em verdes pastagens me faz repousar e me conduz a águas tranquilas; restaura-me o vigor. Prepara-me uma mesa na presença dos meus inimigos, unge-me a cabeça com óleo; o meu cálice transborda.",
+      "versiculo": "Salmos 23:1-3, 5"
     },
     {
       "id": 74,
@@ -392,7 +392,7 @@
     },
     {
       "id": 79,
-      "texto": "O Senhor é o meu auxílio, e não temerei; que me pode fazer o homem? O Senhor é o meu auxílio, e eu exultarei na salvação que ele me concede.",
+      "texto": "O Senhor é o meu auxílio, e não temerei; que me pode fazer o homem? O Senhor é o meu auxílio, e eu exultarei na salvação que ele concede.",
       "versiculo": "Salmos 118:6-7"
     },
     {
@@ -402,7 +402,7 @@
     },
     {
       "id": 81,
-      "texto": "O Senhor é a minha força e o meu cântico; ele me foi por salvação. Este é o meu Deus, eu o louvarei; o Deus de meu pai, eu o exaltarei.",
+      "texto": "O Senhor é a minha força e o meu cântico; ele me foi por salvação.",
       "versiculo": "Salmos 118:14"
     },
     {
@@ -412,8 +412,8 @@
     },
     {
       "id": 83,
-      "texto": "O Senhor é a minha força e o meu escudo; nele confiou o meu coração, e fui socorrido; pelo que o meu coração salta de prazer, e com o meu cântico o louvarei.",
-      "versiculo": "Salmos 28:7"
+      "texto": "O Senhor é a força do seu povo; ele é a fortaleza salvadora do seu ungido. Salva o teu povo e abençoa a tua herança; apascenta-os e exalta-os para sempre.",
+      "versiculo": "Salmos 28:8-9"
     },
     {
       "id": 84,
@@ -422,8 +422,8 @@
     },
     {
       "id": 85,
-      "texto": "O Senhor é o meu pastor, e nada me faltará. Ele me faz repousar em pastos verdejantes e me guia a águas tranquilas.",
-      "versiculo": "Salmos 23:1-2"
+      "texto": "O Senhor é o meu pastor; de nada terei falta.",
+      "versiculo": "Salmos 23:1"
     },
     {
       "id": 86,
@@ -442,8 +442,8 @@
     },
     {
       "id": 89,
-      "texto": "O Senhor é a minha força e o meu cântico; ele me foi por salvação. Vozes de júbilo e de salvação se ouvem nas tendas dos justos; a destra do Senhor faz proezas.",
-      "versiculo": "Salmos 118:14-15"
+      "texto": "Não morrerei, mas viverei, e contarei as obras do Senhor. O Senhor me castigou severamente, mas não me entregou à morte.",
+      "versiculo": "Salmos 118:17-18"
     },
     {
       "id": 90,
@@ -458,152 +458,152 @@
     {
       "id": 92,
       "texto": "E, se o Espírito daquele que ressuscitou a Jesus dentre os mortos habita em vós, aquele que ressuscitou a Cristo Jesus também dará vida aos vós de corpos mortos.",
-      "vesículo": "Romanos 8:11"
+      "versiculo": "Romanos 8:11"
     },
     {
       "id": 93,
-      "texto": "O Senhor é a minha força e o meu cântico; ele me foi por salvação. Este é o meu Deus, eu o louvarei; o Deus de meu pai, eu o exaltarei.",
-      "versículo": "Êxodo 15:2"
+      "texto": "O Senhor é guerreiro; Jeová é o seu nome. Lançou no mar os carros de Faraó e o seu exército; e os seus escolhidos capitães afogaram-se no Mar Vermelho.",
+      "versiculo": "Êxodo 15:3-4"
     },
     {
       "id": 94,
       "texto": "E tudo quanto fizerdes, fazei-o de todo o coração, como ao Senhor, e não aos homens, sabendo que recebereis do Senhor o galardão da herança.",
-      "versículo": "Colossenses 3:23-24"
+      "versiculo": "Colossenses 3:23-24"
     },
     {
       "id": 95,
-      "texto": "O Senhor é a minha força e o meu escudo; nele confiou o meu coração, e fui socorrido; pelo que o meu coração salta de prazer, e com o meu cântico o louvarei.",
-      "versículo": "Salmos 28:7"
+      "texto": "O Senhor é a força do seu povo; ele é a fortaleza salvadora do seu ungido.",
+      "versiculo": "Salmos 28:8"
     },
     {
       "id": 96,
-      "texto": "E disse-lhes: Ide por todo o mundo, pregai o evangelho a toda criatura. Quem crer e for batizado será salvo; mas quem não crer será condenado.",
-      "versículo": "Marcos 16:15-16"
+      "texto": "E estes sinais seguirão aos que crerem: Em meu nome expulsarão demônios; falarão novas línguas; pegarão em serpentes; e, se beberem alguma coisa mortífera, não lhes fará dano algum.",
+      "versiculo": "Marcos 16:17-18"
     },
     {
       "id": 97,
-      "texto": "O Senhor é o meu pastor; de nada terei falta. Em verdes pastagens me faz repousar e me conduz a águas tranquilas; restaura-me o vigor.",
-      "versículo": "Salmos 23:1-3"
+      "texto": "Ainda que eu ande pelo vale da sombra da morte, não temerei mal algum, porque tu estás comigo; a tua vara e o teu cajado me consolam.",
+      "versiculo": "Salmos 23:4"
     },
     {
       "id": 98,
-      "texto": "Portanto, ide, fazei discípulos de todas as nações, batizando-os em nome do Pai, e do Filho, e do Espírito Santo; ensinando-os a guardar todas as coisas que eu vos tenho mandado.",
-      "versículo": "Mateus 28:19-20"
+      "texto": "E eis que eu estou convosco todos os dias, até à consumação dos séculos.",
+      "versiculo": "Mateus 28:20"
     },
     {
       "id": 99,
       "texto": "O Senhor é a minha força e o meu cântico; ele me foi por salvação. Vozes de júbilo e de salvação se ouvem nas tendas dos justos; a destra do Senhor faz proezas.",
-      "versículo": "Salmos 118:14-15"
+      "versiculo": "Salmos 118:14-15"
     },
     {
       "id": 100,
-      "texto": "E se alguém vos perguntar pela razão da esperança que há em vós, estai sempre preparados para responder, mas fazei-o com mansidão e temor, tendo uma boa consciência.",
-      "versículo": "1 Pedro 3:15-16"
+      "texto": "Sede sóbrios, vigiai; porque o vosso adversário, o diabo, anda em derredor, bramando como leão, buscando a quem possa tragar.",
+      "versiculo": "1 Pedro 5:8"
     },
     {
       "id": 101,
-      "texto": "Bendize, ó minha alma, ao Senhor, e tudo o que há em mim bendiga o seu santo nome. Bendize, ó minha alma, ao Senhor, e não te esqueças de nenhum dos seus benefícios.",
-      "versículo": "Salmos 103:1-2"
+      "texto": "Ele é o que perdoa todas as tuas iniquidades, que sara todas as tuas enfermidades, que redime da cova a tua vida.",
+      "versiculo": "Salmos 103:3-4"
     },
     {
       "id": 102,
-      "texto": "E tudo quanto pedirdes em oração, crendo, o recebereis. E, quando estiverdes orando, perdoai, se tendes alguma coisa contra alguém.",
-      "versículo": "Mateus 21:22-23"
+      "texto": "E, quando estiverdes orando, perdoai, se tendes alguma coisa contra alguém, para que vosso Pai, que está nos céus, vos perdoe as vossas ofensas.",
+      "versiculo": "Marcos 11:25"
     },
     {
       "id": 103,
-      "texto": "O Senhor é o meu rochedo, a minha fortaleza e o meu libertador; o meu Deus é o meu refúgio, em quem me abrigo.",
-      "versículo": "Salmos 18:2"
+      "texto": "O Senhor é a minha rocha, a minha fortaleza e o meu libertador.",
+      "versiculo": "Salmos 18:2"
     },
     {
       "id": 104,
-      "texto": "Portanto, se você estiver apresentando sua oferta no altar e ali se lembrar de que seu irmão tem algo contra você, deixe sua oferta ali, diante do altar, e vá primeiro reconciliar-se com seu irmão.",
-      "versículo": "Mateus 5:23-24"
+      "texto": "Reconcilie-se depressa com o seu adversário, enquanto você está com ele no caminho, para que o adversário não o entregue ao juiz, e o juiz ao oficial de justiça, e você seja lançado na prisão.",
+      "versiculo": "Mateus 5:25"
     },
     {
       "id": 105,
-      "texto": "Pois tu, Senhor, és bom e perdoador, rico em amor para com todos os que te invocam. Ouve, Senhor, a minha oração, dá ouvidos à voz das minhas súplicas.",
-      "versículo": "Salmos 86:5-6"
+      "texto": "No dia da minha angústia, clamo a ti, porque tu me respondes. Não há entre os deuses semelhante a ti, Senhor, nem há obras como as tuas.",
+      "versiculo": "Salmos 86:7-8"
     },
     {
       "id": 106,
-      "texto": "Eis que estou à porta e bato; se alguém ouvir a minha voz e abrir a porta, entrarei em sua casa e cearei com ele, e ele comigo.",
-      "versículo": "Apocalipse 3:20"
+      "texto": "Ao que vencer, dar-lhe-ei assentar-se comigo no meu trono, assim como eu venci e me assentei com meu Pai no seu trono.",
+      "versiculo": "Apocalipse 3:21"
     },
     {
       "id": 107,
-      "texto": "Guarda-me, ó Deus, porque em ti me refugio. Disse ao Senhor: Tu és o meu Senhor; não tenho outro bem além de ti.",
-      "versículo": "Salmos 16:1-2"
+      "texto": "Quanto aos santos que estão na terra, eles são os ilustres nos quais está todo o meu prazer.",
+      "versiculo": "Salmos 16:3"
     },
     {
       "id": 108,
-      "texto": "Por isso, vos digo que tudo o que pedirdes, orando, crede que o recebereis, e tê-lo-eis. E, quando estiverdes orando, perdoai, se tendes alguma coisa contra alguém.",
-      "versículo": "Marcos 11:24-25"
+      "texto": "Mas, se não perdoardes, também vosso Pai, que está nos céus, não vos perdoará as vossas ofensas.",
+      "versiculo": "Marcos 11:26"
     },
     {
       "id": 109,
-      "texto": "O Senhor é a minha força e o meu cântico; ele me foi por salvação. Este é o meu Deus, eu o louvarei; o Deus de meu pai, eu o exaltarei.",
-      "versículo": "Êxodo 15:2"
+      "texto": "O Senhor é guerreiro; Jeová é o seu nome.",
+      "versiculo": "Êxodo 15:3"
     },
     {
       "id": 110,
       "texto": "E conhecereis a verdade, e a verdade vos libertará. Se, pois, o Filho vos libertar, verdadeiramente sereis livres.",
-      "versículo": "João 8:32, 36"
+      "versiculo": "João 8:32, 36"
     },
     {
       "id": 111,
-      "texto": "O Senhor é clemente e misericordioso, longânimo e grande em benignidade. Não contende perpetuamente, nem para sempre retém a sua ira.",
-      "versículo": "Salmos 103:8-9"
+      "texto": "Não nos trata segundo os nossos pecados, nem nos retribui conforme as nossas iniquidades.",
+      "versiculo": "Salmos 103:10"
     },
     {
       "id": 112,
       "texto": "Porque, onde estiverem dois ou três reunidos em meu nome, aí estou eu no meio deles. Então Pedro, aproximando-se dele, disse: Senhor, até quantas vezes pecará meu irmão contra mim, e eu lhe perdoarei?",
-      "versículo": "Mateus 18:20-21"
+      "versiculo": "Mateus 18:20-21"
     },
     {
       "id": 113,
       "texto": "Louvai ao Senhor, porque ele é bom; porque a sua benignidade dura para sempre. Quem pode contar os feitos poderosos do Senhor, ou anunciar todo o seu louvor?",
-      "versículo": "Salmos 106:1-2"
+      "versiculo": "Salmos 106:1-2"
     },
     {
       "id": 114,
-      "texto": "Porque o Filho do Homem veio buscar e salvar o que se havia perdido. Assim, não é da vontade de vosso Pai, que está nos céus, que se perca um só destes pequeninos.",
-      "versículo": "Lucas 19:10, Mateus 18:14"
+      "texto": "Porque vos digo que os seus anjos nos céus sempre veem a face de meu Pai que está nos céus.",
+      "versiculo": "Mateus 18:10"
     },
     {
       "id": 115,
-      "texto": "O Senhor é o meu auxílio, e não temerei; que me pode fazer o homem? O Senhor é o meu auxílio, e eu exultarei na salvação que ele concede.",
-      "versículo": "Salmos 118:6-7"
+      "texto": "A pedra que os construtores rejeitaram tornou-se a principal pedra angular.",
+      "versiculo": "Salmos 118:22"
     },
     {
       "id": 116,
       "texto": "E tudo quanto fizerdes, fazei-o de todo o coração, como ao Senhor, e não aos homens, sabendo que recebereis do Senhor o galardão da herança.",
-      "versículo": "Colossenses 3:23-24"
+      "versiculo": "Colossenses 3:23-24"
     },
     {
       "id": 117,
-      "texto": "O Senhor é a minha força e o meu escudo; nele confiou o meu coração, e fui socorrido; pelo que o meu coração salta de prazer, e com o meu cântico o louvarei.",
-      "versículo": "Salmos 28:7"
+      "texto": "Salva o teu povo e abençoa a tua herança; apascenta-os e exalta-os para sempre.",
+      "versiculo": "Salmos 28:9"
     },
     {
       "id": 118,
-      "texto": "E disse-lhes: Ide por todo o mundo, pregai o evangelho a toda criatura. Quem crer e for batizado será salvo; mas quem não crer será condenado.",
-      "versículo": "Marcos 16:15-16"
+      "texto": "Quem crer e for batizado será salvo; mas quem não crer será condenado.",
+      "versiculo": "Marcos 16:16"
     },
     {
       "id": 119,
-      "texto": "O Senhor é a minha força e o meu cântico; ele me foi por salvação. Vozes de júbilo e de salvação se ouvem nas tendas dos justos; a destra do Senhor faz proezas.",
-      "versículo": "Salmos 118:14-15"
+      "texto": "A destra do Senhor se exalta; a destra do Senhor faz proezas.",
+      "versiculo": "Salmos 118:16"
     },
     {
       "id": 120,
-      "texto": "E, se alguém vos perguntar pela razão da esperança que há em vós, estai sempre preparados para responder, mas fazei-o com mansidão e temor, tendo uma boa consciência.",
-      "versículo": "1 Pedro 3:15-16"
+      "texto": "Para que, naquilo em que falam mal de vós, fiquem confundidos os que vituperam o vosso bom procedimento em Cristo.",
+      "versiculo": "1 Pedro 3:16"
     },
     {
       "id": 121,
-      "texto": "O Senhor é o meu pastor, e nada me faltará. Ele me faz repousar em pastos verdes e me guia a águas tranquilas.",
-      "versiculo": "Salmos 23:1-2"
+      "texto": "Ele me faz repousar em pastos verdejantes e me guia a águas tranquilas.",
+      "versiculo": "Salmos 23:2"
     },
     {
       "id": 122,
@@ -622,7 +622,7 @@
     },
     {
       "id": 125,
-      "texto": "O Senhor é a minha luz e a minha salvação; de quem terei medo? O Senhor é a fortaleza da minha vida.",
+      "texto": "O Senhor é a minha luz e a minha salvação; de quem terei medo?",
       "versiculo": "Salmos 27:1"
     },
     {
@@ -682,8 +682,8 @@
     },
     {
       "id": 137,
-      "texto": "O Senhor é a minha rocha, a minha fortaleza e o meu libertador; o meu Deus é a minha rocha em quem me refugio.",
-      "versiculo": "2 Samuel 22:2"
+      "texto": "Clamei ao Senhor, que é digno de louvor, e fui salvo dos meus inimigos.",
+      "versiculo": "2 Samuel 22:4"
     },
     {
       "id": 138,
@@ -692,8 +692,8 @@
     },
     {
       "id": 139,
-      "texto": "O Senhor é o meu pastor; de nada terei falta. Em verdes pastagens me faz repousar.",
-      "versiculo": "Salmos 23:1-2"
+      "texto": "Prepara-me uma mesa na presença dos meus inimigos, unge-me a cabeça com óleo; o meu cálice transborda.",
+      "versiculo": "Salmos 23:5"
     },
     {
       "id": 140,
@@ -702,13 +702,13 @@
     },
     {
       "id": 141,
-      "texto": "O Senhor é a minha força e o meu cântico; ele me foi por salvação. Vozes de júbilo e de salvação se ouvem nas tendas dos justos.",
-      "versiculo": "Salmos 118:14-15"
+      "texto": "Não morrerei, mas viverei, e contarei as obras do Senhor.",
+      "versiculo": "Salmos 118:17"
     },
     {
       "id": 142,
-      "texto": "E, se alguém vos perguntar pela razão da esperança que há em vós, estai sempre preparados para responder.",
-      "versiculo": "1 Pedro 3:15"
+      "texto": "Sede santos, porque eu sou santo, diz o Senhor.",
+      "versiculo": "1 Pedro 1:16"
     },
     {
       "id": 143,
@@ -717,28 +717,28 @@
     },
     {
       "id": 144,
-      "texto": "Ide por todo o mundo, pregai o evangelho a toda criatura. Quem crer e for batizado será salvo.",
-      "versiculo": "Marcos 16:15-16"
+      "texto": "E estes sinais seguirão aos que crerem: Em meu nome expulsarão demônios.",
+      "versiculo": "Marcos 16:17"
     },
     {
       "id": 145,
-      "texto": "O Senhor é a minha força e o meu escudo; nele confiou o meu coração, e fui socorrido.",
-      "versiculo": "Salmos 28:7"
+      "texto": "O Senhor é a força do seu povo; ele é a fortaleza salvadora do seu ungido.",
+      "versiculo": "Salmos 28:8"
     },
     {
       "id": 146,
-      "texto": "Portanto, ide, fazei discípulos de todas as nações, batizando-os em nome do Pai, e do Filho, e do Espírito Santo.",
-      "versiculo": "Mateus 28:19"
+      "texto": "Ensinando-os a guardar todas as coisas que eu vos tenho mandado; e eis que eu estou convosco todos os dias.",
+      "versiculo": "Mateus 28:20"
     },
     {
       "id": 147,
-      "texto": "O Senhor é a minha rocha, a minha fortaleza e o meu libertador; o meu Deus é o meu refúgio.",
-      "versiculo": "Salmos 18:2"
+      "texto": "Invoco o Senhor, que é digno de louvor, e fico livre dos meus inimigos.",
+      "versiculo": "Salmos 18:3"
     },
     {
       "id": 148,
-      "texto": "E tudo quanto pedirdes em oração, crendo, o recebereis.",
-      "versiculo": "Mateus 21:22"
+      "texto": "Tudo quanto pedirdes em meu nome, isso farei, para que o Pai seja glorificado no Filho.",
+      "versiculo": "João 14:13"
     },
     {
       "id": 149,
@@ -747,7 +747,7 @@
     },
     {
       "id": 150,
-      "texto": "Eis que estou à porta e bato; se alguém ouvir a minha voz e abrir a porta.",
+      "texto": "Se alguém ouvir a minha voz e abrir a porta, entrarei em sua casa e cearei com ele.",
       "versiculo": "Apocalipse 3:20"
     },
     {
@@ -757,8 +757,8 @@
     },
     {
       "id": 152,
-      "texto": "O Senhor é a minha força e o meu cântico; ele é a minha salvação.",
-      "versiculo": "Salmos 118:14"
+      "texto": "A destra do Senhor faz proezas.",
+      "versiculo": "Salmos 118:15"
     },
     {
       "id": 153,
@@ -787,18 +787,18 @@
     },
     {
       "id": 158,
-      "texto": "O Senhor é a minha força e o meu escudo; nele confia o meu coração.",
-      "versiculo": "Salmos 28:7"
+      "texto": "O Senhor é a minha fortaleza; nele encontro proteção.",
+      "versiculo": "Salmos 28:8"
     },
     {
       "id": 159,
-      "texto": "Porque o Senhor dá a sabedoria, e da sua boca vem o conhecimento e o entendimento.",
+      "texto": "Porque o Senhor dá a sabedoria; da sua boca vem o conhecimento e o entendimento.",
       "versiculo": "Provérbios 2:6"
     },
     {
       "id": 160,
-      "texto": "O Senhor é o meu pastor; nada me faltará.",
-      "versiculo": "Salmos 23:1"
+      "texto": "O Senhor é o meu guia; ele me conduz por caminhos seguros.",
+      "versiculo": "Salmos 23:3"
     },
     {
       "id": 161,
@@ -807,8 +807,8 @@
     },
     {
       "id": 162,
-      "texto": "O Senhor é a minha luz e a minha salvação; de quem terei medo?",
-      "versiculo": "Salmos 27:1"
+      "texto": "O Senhor é o meu refúgio; ele me guarda em tempos de tribulação.",
+      "versiculo": "Salmos 27:5"
     },
     {
       "id": 163,
@@ -827,8 +827,8 @@
     },
     {
       "id": 166,
-      "texto": "O Senhor é a minha força e o meu cântico; ele me foi por salvação.",
-      "versiculo": "Êxodo 15:2"
+      "texto": "O Senhor é guerreiro; Jeová é o seu nome.",
+      "versiculo": "Êxodo 15:3"
     },
     {
       "id": 167,
@@ -837,43 +837,43 @@
     },
     {
       "id": 168,
-      "texto": "O Senhor é a minha rocha, a minha fortaleza e o meu libertador.",
-      "versiculo": "2 Samuel 22:2"
+      "texto": "O Senhor é o meu refúgio, em quem me abrigo; a força da minha salvação.",
+      "versiculo": "2 Samuel 22:3"
     },
     {
       "id": 169,
-      "texto": "E disse-lhes: Ide por todo o mundo, pregai o evangelho a toda criatura.",
-      "versiculo": "Marcos 16:15"
+      "texto": "Quem crer e for batizado será salvo.",
+      "versiculo": "Marcos 16:16"
     },
     {
       "id": 170,
-      "texto":  "O Senhor é o meu refúgio e a minha fortaleza, o meu Deus, em quem confio.",
+      "texto": "O Senhor é o meu refúgio e a minha fortaleza, o meu Deus, em quem confio.",
       "versiculo": "Salmos 91:2"
     },
     {
       "id": 171,
-      "texto": "Bendize, ó minha alma, ao Senhor, e tudo o que há em mim bendiga o seu santo nome.",
-      "versiculo": "Salmos 103:1"
+      "texto": "Ele é o que perdoa todas as tuas iniquidades, que sara todas as tuas enfermidades.",
+      "versiculo": "Salmos 103:3"
     },
     {
       "id": 172,
-      "texto": "E tudo quanto pedirdes em oração, crendo, o recebereis.",
-      "versiculo": "Mateus 21:22"
+      "texto": "Tudo quanto pedirdes em meu nome, isso farei.",
+      "versiculo": "João 14:13"
     },
     {
       "id": 173,
-      "texto": "O Senhor é a minha força e o meu escudo; nele confiou o meu coração.",
-      "versiculo": "Salmos 28:7"
+      "texto": "O Senhor é a força do seu povo; ele é a fortaleza salvadora do seu ungido.",
+      "versiculo": "Salmos 28:8"
     },
     {
       "id": 174,
-      "texto": "Eis que estou à porta e bato; se alguém ouvir a minha voz e abrir a porta.",
+      "texto": "Se alguém abrir a porta, entrarei em sua casa e cearei com ele.",
       "versiculo": "Apocalipse 3:20"
     },
     {
       "id": 175,
-      "texto": "O Senhor é a minha força e o meu cântico; ele me foi por salvação.",
-      "versiculo": "Salmos 118:14"
+      "texto": "A destra do Senhor faz proezas.",
+      "versiculo": "Salmos 118:15"
     },
     {
       "id": 176,
@@ -892,8 +892,8 @@
     },
     {
       "id": 179,
-      "texto": "O Senhor é a minha força; ele é a minha salvação.",
-      "versiculo": "Salmos 118:14"
+      "texto": "Não morrerei, mas viverei, e contarei as obras do Senhor.",
+      "versiculo": "Salmos 118:17"
     },
     {
       "id": 180,
@@ -902,103 +902,988 @@
     },
     {
       "id": 181,
-      "texto": "O Senhor é a minha luz e a minha salvação; de quem terei medo? O Senhor é o meu forte refúgio; de quem terei receio?",
+      "texto": "O Senhor é o meu forte refúgio; de quem terei receio?",
       "versiculo": "Salmos 27:1"
     },
     {
-      "id":182,
+      "id": 182,
       "texto": "Confie no Senhor de todo o seu coração e não se apoie em seu próprio entendimento.",
       "versiculo": "Provérbios 3:5"
     },
     {
-      "id":183,
-      "texto": "O Senhor é o meu pastor; de nada terei falta.",
+      "id": 183,
+      "texto": "O Senhor é o meu provedor; ele supre todas as minhas necessidades.",
       "versiculo": "Salmos 23:1"
     },
     {
-      "id":184,
-      "texto": "Tudo posso naquele que me fortalece.",
-      "versiculo": "Filipenses 4:13"
+      "id": 184,
+      "texto": "Sei estar abatido e sei também ter abundância; em toda a maneira e em todas as coisas estou instruído.",
+      "versiculo": "Filipenses 4:12"
     },
     {
-      "id":185,
+      "id": 185,
       "texto": "Não andem ansiosos por coisa alguma, mas em tudo, pela oração e súplicas, apresentem seus pedidos a Deus.",
       "versiculo": "Filipenses 4:6"
     },
     {
-      "id":186,
+      "id": 186,
       "texto": "Porque Deus amou o mundo de tal maneira que deu o seu Filho Unigênito.",
       "versiculo": "João 3:16"
     },
     {
-      "id":187,
+      "id": 187,
       "texto": "Seja forte e corajoso, pois o Senhor, o seu Deus, estará com você.",
       "versiculo": "Deuteronômio 31:6"
     },
     {
-      "id":188,
+      "id": 188,
       "texto": "O amor é paciente, o amor é bondoso. Não inveja, não se vangloria.",
       "versiculo": "1 Coríntios 13:4"
     },
     {
-      "id":189,
-      "texto": "O Senhor é bom, um refúgio em tempos de angústia.",
-      "versiculo": "Naum 1:7"
+      "id": 189,
+      "texto": "O Senhor é o meu abrigo; ele me protege na adversidade.",
+      "versiculo": "Salmos 9:9"
     },
     {
-      "id":190,
-      "texto": "Buscai primeiro o Reino de Deus e a sua justiça.",
+      "id": 190,
+      "texto": "Buscai ao Senhor com todo o coração, e ele vos guiará.",
       "versiculo": "Mateus 6:33"
     },
     {
-      "id":191,
+      "id": 191,
       "texto": "Não temas, porque eu sou contigo; eu te fortaleço.",
       "versiculo": "Isaías 41:10"
     },
     {
-      "id":192,
+      "id": 192,
       "texto": "A paz de Deus, que excede todo o entendimento, guardará os vossos corações.",
       "versiculo": "Filipenses 4:7"
     },
     {
-      "id":193,
+      "id": 193,
       "texto": "O Senhor é a minha força e o meu escudo.",
       "versiculo": "Salmos 28:7"
     },
     {
-      "id":194,
-      "texto": "Eis que estou à porta e bato; se alguém abrir a porta.",
-      "versiculo": "Apocalipse 3:20"
+      "id": 194,
+      "texto": "Eis que estou à porta e bato; se alguém ouvir a minha voz e abrir a porta.",
+      "versiculo": "Apocalipse 3:20-21"
     },
     {
-      "id":195,
-      "texto": "O Senhor é a minha rocha e a minha fortaleza.",
-      "versiculo": "Salmos 18:2"
+      "id": 195,
+      "texto": "O Senhor é a minha cidadela; invoco o Senhor, que é digno de louvor.",
+      "versiculo": "Salmos 18:2-3"
     },
     {
-      "id":196,
+      "id": 196,
       "texto": "Bendize, ó minha alma, ao Senhor, e não te esqueças de seus benefícios.",
       "versiculo": "Salmos 103:2"
     },
     {
-      "id":197,
+      "id": 197,
       "texto": "Ide por todo o mundo, pregai o evangelho a toda criatura.",
       "versiculo": "Marcos 16:15"
     },
     {
-      "id":198,
-      "texto": "O Senhor é o meu pastor, e nada me faltará.",
-      "versiculo": "Salmos 23:1"
+      "id": 198,
+      "texto": "O Senhor me faz repousar em pastos verdejantes.",
+      "versiculo": "Salmos 23:2"
     },
     {
-      "id":199,
-      "texto": "O temor do Senhor é o princípio da sabedoria.",
+      "id": 199,
+      "texto": "O temor do Senhor guia à verdadeira sabedoria.",
       "versiculo": "Provérbios 9:10"
     },
     {
-      "id":200,
-      "texto": "O Senhor é a minha força e o meu cântico.",
+      "id": 200,
+      "texto": "Vozes de júbilo e de salvação se ouvem nas tendas dos justos.",
+      "versiculo": "Salmos 118:15"
+    },
+    {
+      "id": 201,
+      "texto": "O Senhor é fiel em todas as suas palavras e bondoso em todas as suas obras.",
+      "versiculo": "Salmos 145:13"
+    },
+    {
+      "id": 202,
+      "texto": "Aquele que começou a boa obra em vós há de completá-la até o dia de Cristo Jesus.",
+      "versiculo": "Filipenses 1:6"
+    },
+    {
+      "id": 203,
+      "texto": "O Senhor é o meu socorro; ele é a minha força na hora da adversidade.",
+      "versiculo": "Salmos 46:1"
+    },
+    {
+      "id": 204,
+      "texto": "Confessai-vos uns aos outros os vossos pecados e orai uns pelos outros para serdes curados.",
+      "versiculo": "Tiago 5:16"
+    },
+    {
+      "id": 205,
+      "texto": "O Senhor guarda todos os que o amam, mas destruirá todos os ímpios.",
+      "versiculo": "Salmos 145:20"
+    },
+    {
+      "id": 206,
+      "texto": "Alegrai-vos na esperança, sede pacientes na tribulação, perseverai na oração.",
+      "versiculo": "Romanos 12:12"
+    },
+    {
+      "id": 207,
+      "texto": "O Senhor está perto de todos os que o invocam, de todos os que o invocam em verdade.",
+      "versiculo": "Salmos 145:18"
+    },
+    {
+      "id": 208,
+      "texto": "Porque o Senhor é justo, ama a justiça; os retos verão a sua face.",
+      "versiculo": "Salmos 11:7"
+    },
+    {
+      "id": 209,
+      "texto": "Clama a mim, e responder-te-ei, e mostrar-te-ei coisas grandes e ocultas que não sabes.",
+      "versiculo": "Jeremias 33:3"
+    },
+    {
+      "id": 210,
+      "texto": "O Senhor é a minha porção; eu disse que guardaria as tuas palavras.",
+      "versiculo": "Salmos 119:57"
+    },
+    {
+      "id": 211,
+      "texto": "O Senhor é a minha torre forte; nele me refugio dos meus inimigos.",
+      "versiculo": "Salmos 61:3"
+    },
+    {
+      "id": 212,
+      "texto": "Entrega o teu caminho ao Senhor; confia nele, e ele tudo fará.",
+      "versiculo": "Salmos 37:5"
+    },
+    {
+      "id": 213,
+      "texto": "Quando passares pelas águas, estarei contigo; e quando pelos rios, eles não te submergirão.",
+      "versiculo": "Isaías 43:2"
+    },
+    {
+      "id": 214,
+      "texto": "O amor tudo sofre, tudo crê, tudo espera, tudo suporta.",
+      "versiculo": "1 Coríntios 13:7"
+    },
+    {
+      "id": 215,
+      "texto": "O Senhor é refúgio para os oprimidos, uma fortaleza nos tempos de angústia.",
+      "versiculo": "Salmos 9:9"
+    },
+    {
+      "id": 216,
+      "texto": "Buscai ao Senhor enquanto se pode achar, invocai-o enquanto está perto.",
+      "versiculo": "Isaías 55:6"
+    },
+    {
+      "id": 217,
+      "texto": "O Senhor é o meu Deus, e eu o louvarei; é o Deus do meu pai, e eu o exaltarei.",
+      "versiculo": "Êxodo 15:2"
+    },
+    {
+      "id": 218,
+      "texto": "O Senhor me deu força para a batalha; ele humilhou os meus adversários diante de mim.",
+      "versiculo": "2 Samuel 22:40"
+    },
+    {
+      "id": 219,
+      "texto": "Lançai sobre ele toda a vossa ansiedade, porque ele tem cuidado de vós.",
+      "versiculo": "1 Pedro 5:7"
+    },
+    {
+      "id": 220,
+      "texto": "Nisto se manifestou o amor de Deus para conosco: em que Deus enviou seu Filho unigênito ao mundo, para que por ele vivamos.",
+      "versiculo": "1 João 4:9"
+    },
+    {
+      "id": 221,
+      "texto": "O Senhor é o meu pastor; de nada terei falta. Em verdes pastagens me faz repousar e me conduz a águas tranquilas; restaura-me o vigor e guia-me por caminhos retos por amor de seu nome.",
+      "versiculo": "Salmos 23:1-4"
+    },
+    {
+      "id": 222,
+      "texto": "Confie no Senhor de todo o seu coração e não se apoie em seu próprio entendimento. Reconheça-o em todos os seus caminhos, e ele endireitará as suas veredas.",
+      "versiculo": "Provérbios 3:5-6"
+    },
+    {
+      "id": 223,
+      "texto": "O Senhor é a minha fortaleza, e eu cantarei louvores ao meu Deus.",
+      "versiculo": "Salmos 59:17"
+    },
+    {
+      "id": 224,
+      "texto": "Não temas, porque eu sou contigo; não te assombres, porque eu sou o teu Deus; eu te fortaleço.",
+      "versiculo": "Isaías 41:10"
+    },
+    {
+      "id": 225,
+      "texto": "Se alguém me ama, guardará a minha palavra, e meu Pai o amará, e viremos para ele.",
+      "versiculo": "João 14:23"
+    },
+    {
+      "id": 226,
+      "texto": "O amor é paciente, o amor é bondoso. Não inveja, não se vangloria, não se orgulha. Não maltrata, não procura seus interesses.",
+      "versiculo": "1 Coríntios 13:4-5"
+    },
+    {
+      "id": 227,
+      "texto": "O temor do Senhor é o princípio do conhecimento; os loucos desprezam a sabedoria.",
+      "versiculo": "Provérbios 1:7"
+    },
+    {
+      "id": 228,
+      "texto": "O Senhor é a minha rocha e a minha fortaleza; nele confio com todo o coração.",
+      "versiculo": "Salmos 31:3"
+    },
+    {
+      "id": 229,
+      "texto": "O Senhor é o meu refúgio; ele me livra dos meus inimigos.",
+      "versiculo": "Salmos 18:48"
+    },
+    {
+      "id": 230,
+      "texto": "Porque Deus enviou o seu Filho ao mundo, não para que condenasse o mundo, mas para que o mundo fosse salvo por ele.",
+      "versiculo": "João 3:17"
+    },
+    {
+      "id": 231,
+      "texto": "Confia no Senhor e faze o bem; habitarás na terra, e verdadeiramente serás alimentado.",
+      "versiculo": "Salmos 37:3"
+    },
+    {
+      "id": 232,
+      "texto": "O Senhor é a minha fortaleza; nele encontro segurança.",
+      "versiculo": "Salmos 46:1"
+    },
+    {
+      "id": 233,
+      "texto": "Não temas, porque eu te remi; chamei-te pelo teu nome, tu és meu.",
+      "versiculo": "Isaías 43:1"
+    },
+    {
+      "id": 234,
+      "texto": "O amor nunca falha; mas, havendo profecias, serão aniquiladas; havendo línguas, cessarão.",
+      "versiculo": "1 Coríntios 13:8"
+    },
+    {
+      "id": 235,
+      "texto": "O Senhor é o meu socorro; ele é a minha força na hora da adversidade.",
+      "versiculo": "Salmos 46:1"
+    },
+    {
+      "id": 236,
+      "texto": "Buscai ao Senhor e a sua força, buscai a sua face continuamente.",
+      "versiculo": "1 Crônicas 16:11"
+    },
+    {
+      "id": 237,
+      "texto": "O Senhor é o meu refúgio e a minha fortaleza; nele confio.",
+      "versiculo": "Salmos 91:2"
+    },
+    {
+      "id": 238,
+      "texto": "O Senhor me revestiu de força e me fez andar em segurança.",
+      "versiculo": "Salmos 18:32"
+    },
+    {
+      "id": 239,
+      "texto": "Confiai nele, ó povo, em todo o tempo; derramai perante ele o vosso coração; Deus é o nosso refúgio.",
+      "versiculo": "Salmos 62:8"
+    },
+    {
+      "id": 240,
+      "texto": "Ninguém tem maior amor do que este: de dar alguém a sua vida pelos seus amigos.",
+      "versiculo": "João 15:13"
+    },
+    {
+      "id": 241,
+      "texto": "O Senhor é o meu guia; ele me conduz por caminhos retos.",
+      "versiculo": "Salmos 23:3"
+    },
+    {
+      "id": 242,
+      "texto": "O Senhor me faz repousar em pastos verdejantes e me guia a águas tranquilas.",
+      "versiculo": "Salmos 23:2"
+    },
+    {
+      "id": 243,
+      "texto": "O Senhor é a minha salvação; ele é a minha força e o meu louvor.",
+      "versiculo": "Isaías 12:2"
+    },
+    {
+      "id": 244,
+      "texto": "O Senhor é o meu pastor; ele me guia por caminhos retos por amor do seu nome.",
+      "versiculo": "Salmos 23:3"
+    },
+    {
+      "id": 245,
+      "texto": "Se guardardes os meus mandamentos, permanecereis no meu amor.",
+      "versiculo": "João 15:10"
+    },
+    {
+      "id": 246,
+      "texto": "Sede firmes e constantes, sempre abundantes na obra do Senhor.",
+      "versiculo": "1 Coríntios 15:58"
+    },
+    {
+      "id": 247,
+      "texto": "O temor do Senhor conduz à vida; quem o tem descansará satisfeito.",
+      "versiculo": "Provérbios 19:23"
+    },
+    {
+      "id": 248,
+      "texto": "O Senhor é a minha fortaleza; ele me livra de todo o mal.",
+      "versiculo": "Salmos 144:2"
+    },
+    {
+      "id": 249,
+      "texto": "O Senhor é o meu refúgio; ele me livra de todo perigo.",
+      "versiculo": "Salmos 18:48"
+    },
+    {
+      "id": 250,
+      "texto": "Em Cristo, encontro força para todas as coisas.",
+      "versiculo": "Filipenses 4:13"
+    },
+    {
+      "id": 251,
+      "texto": "Confiai a Deus vossas preocupações, pois ele cuida de vós.",
+      "versiculo": "1 Pedro 5:7"
+    },
+    {
+      "id": 252,
+      "texto": "Deus amou o mundo e enviou seu Filho para a salvação.",
+      "versiculo": "João 3:17"
+    },
+    {
+      "id": 253,
+      "texto": "O Senhor é a minha salvação; com ele exulto de alegria.",
       "versiculo": "Salmos 118:14"
+    },
+    {
+      "id": 254,
+      "texto": "Se pedirdes alguma coisa em meu nome, eu o farei.",
+      "versiculo": "João 14:14"
+    },
+    {
+      "id": 255,
+      "texto": "Louvai ao Senhor, porque ele é bom; a sua misericórdia dura para sempre.",
+      "versiculo": "Salmos 107:1"
+    },
+    {
+      "id": 256,
+      "texto": "Abri a porta do coração, e o Senhor entrará para habitar.",
+      "versiculo": "Apocalipse 3:20"
+    },
+    {
+      "id": 257,
+      "texto": "Guarda-me, ó Deus, porque em ti me refugio. Disse ao Senhor: Tu és o meu Senhor; não tenho outro bem além de ti.",
+      "versiculo": "Salmos 16:1-3"
+    },
+    {
+      "id": 258,
+      "texto": "Por isso, vos digo que tudo o que pedirdes, orando, crede que o recebereis, e tê-lo-eis. E, quando estiverdes orando, perdoai, se tendes alguma coisa contra alguém.",
+      "versiculo": "Marcos 11:24-25"
+    },
+    {
+      "id": 259,
+      "texto": "O Senhor é o meu louvor; ele me salvou com poder.",
+      "versiculo": "Êxodo 15:2"
+    },
+    {
+      "id": 260,
+      "texto": "O Senhor é clemente e misericordioso, longânimo e grande em benignidade.",
+      "versiculo": "Salmos 103:8"
+    },
+    {
+      "id": 261,
+      "texto": "O Senhor é o meu sustento; ele provê abundantemente.",
+      "versiculo": "Salmos 23:1"
+    },
+    {
+      "id": 262,
+      "texto": "Porque o Filho do Homem veio buscar e salvar o que se havia perdido. Assim, não é da vontade de vosso Pai, que está nos céus, que se perca um só destes pequeninos.",
+      "versiculo": "Lucas 19:10, Mateus 18:14, 10"
+    },
+    {
+      "id": 263,
+      "texto": "O Senhor é o meu auxílio, e não temerei; que me pode fazer o homem?",
+      "versiculo": "Salmos 118:6-7"
+    },
+    {
+      "id": 264,
+      "texto": "Portanto, ide, fazei discípulos de todas as nações, batizando-os em nome do Pai, e do Filho, e do Espírito Santo.",
+      "versiculo": "Mateus 28:19-20"
+    },
+    {
+      "id": 265,
+      "texto": "E disse-lhes: Ide por todo o mundo, pregai o evangelho a toda criatura.",
+      "versiculo": "Marcos 16:15-17"
+    },
+    {
+      "id": 266,
+      "texto": "O Senhor é o meu protetor; nele deposito minha confiança.",
+      "versiculo": "Salmos 28:7"
+    },
+    {
+      "id": 267,
+      "texto": "Sede fortes, e o vosso coração se esforce, todos vós que esperais no Senhor.",
+      "versiculo": "Salmos 31:24"
+    },
+    {
+      "id": 268,
+      "texto": "O Senhor é o meu refúgio seguro; em suas mãos entrego meu espírito, pois ele me redimiu com seu amor eterno e me guia por caminhos de justiça.",
+      "versiculo": "Salmos 31:5-7"
+    },
+    {
+      "id": 269,
+      "texto": "Confiai no Senhor, pois sua misericórdia é grande; ele nunca abandona aqueles que o buscam com coração sincero, mas os sustenta com sua força.",
+      "versiculo": "Salmos 33:18-20"
+    },
+    {
+      "id": 270,
+      "texto": "Bendito seja o Senhor, que carrega nossas cargas diariamente; ele é a nossa salvação, nosso Deus forte, que nos livra da morte.",
+      "versiculo": "Salmos 68:19-20"
+    },
+    {
+      "id": 271,
+      "texto": "Aquele que confia no Senhor está seguro; como uma árvore plantada junto às águas, não teme o calor, pois suas raízes estão firmes na esperança.",
+      "versiculo": "Jeremias 17:7-8"
+    },
+    {
+      "id": 272,
+      "texto": "O Senhor é a minha herança e o meu cálice; ele assegura meu futuro, guia meus passos e me concede alegria em sua presença.",
+      "versiculo": "Salmos 16:5-6"
+    },
+    {
+      "id": 273,
+      "texto": "Clamei ao Senhor na minha angústia, e ele me respondeu; tirou-me de um lago horrível e firmou meus pés em terra sólida.",
+      "versiculo": "Salmos 40:1-2"
+    },
+    {
+      "id": 274,
+      "texto": "O Senhor é fiel em todas as suas promessas e amoroso em todas as suas obras; ele levanta os caídos e consola os que choram.",
+      "versiculo": "Salmos 145:13-14"
+    },
+    {
+      "id": 275,
+      "texto": "Não temas, pois o Senhor te escolheu; ele te chama pelo nome e te sustenta com sua destra poderosa em todos os momentos de tribulação.",
+      "versiculo": "Isaías 43:1-2"
+    },
+    {
+      "id": 276,
+      "texto": "O amor de Deus é eterno; ele não se cansa de perdoar, e sua compaixão nos renova a cada manhã, trazendo esperança ao coração.",
+      "versiculo": "Lamentações 3:22-23"
+    },
+    {
+      "id": 277,
+      "texto": "O Senhor é a minha luz; ele ilumina meu caminho nas trevas e me guia para a vida eterna com sua verdade infalível.",
+      "versiculo": "Salmos 36:9"
+    },
+    {
+      "id": 278,
+      "texto": "Entrega teu caminho ao Senhor, confia nele com todo o coração, e ele fará brilhar tua justiça como a luz e teu direito como o meio-dia.",
+      "versiculo": "Salmos 37:5-6"
+    },
+    {
+      "id": 279,
+      "texto": "O Senhor é o meu escudo e a minha força; nele encontro descanso e proteção, e sua palavra me sustenta em todo tempo.",
+      "versiculo": "Salmos 119:114"
+    },
+    {
+      "id": 280,
+      "texto": "Aquele que busca o Senhor nunca será envergonhado; ele ouve o clamor dos justos e os livra de todas as suas aflições.",
+      "versiculo": "Salmos 34:4-5"
+    },
+    {
+      "id": 281,
+      "texto": "Deus é o nosso refúgio e fortaleza, socorro bem presente na angústia; por isso, não temeremos, ainda que a terra se mude.",
+      "versiculo": "Salmos 46:1-2"
+    },
+    {
+      "id": 282,
+      "texto": "O Senhor é compassivo e justo; ele guia os humildes no caminho da verdade e ensina aos mansos a sua vontade.",
+      "versiculo": "Salmos 25:8-9"
+    },
+    {
+      "id": 283,
+      "texto": "A palavra do Senhor é lâmpada para os meus pés e luz para o meu caminho; ela me guia e me guarda de todo mal.",
+      "versiculo": "Salmos 119:105"
+    },
+    {
+      "id": 284,
+      "texto": "Confia no Senhor, pois ele é bom; sua misericórdia dura para sempre, e sua fidelidade se estende por todas as gerações.",
+      "versiculo": "Salmos 100:5"
+    },
+    {
+      "id": 285,
+      "texto": "O Senhor é o meu Salvador; ele me livra da angústia e me coloca em lugar seguro, onde posso louvar seu nome.",
+      "versiculo": "Salmos 18:46-48"
+    },
+    {
+      "id": 286,
+      "texto": "Busquei o Senhor, e ele me respondeu; livrou-me de todos os meus temores e me deu paz em meu coração.",
+      "versiculo": "Salmos 34:4"
+    },
+    {
+      "id": 287,
+      "texto": "O Senhor é a minha força; ele me faz andar em lugares altos e me dá vitória sobre meus inimigos.",
+      "versiculo": "Habacuque 3:19"
+    },
+    {
+      "id": 288,
+      "texto": "Aquele que confia no Senhor é como o monte Sião, que não se abala, mas permanece firme para sempre.",
+      "versiculo": "Salmos 125:1"
+    },
+    {
+      "id": 289,
+      "texto": "O Senhor é a minha esperança; ele me sustenta com sua mão poderosa e me guia por caminhos de paz.",
+      "versiculo": "Salmos 31:14-15"
+    },
+    {
+      "id": 290,
+      "texto": "Clama ao Senhor, e ele te responderá; ele te mostrará coisas grandes e maravilhosas que não conheces.",
+      "versiculo": "Jeremias 33:3"
+    },
+    {
+      "id": 291,
+      "texto": "O Senhor é o meu refúgio; nele encontro proteção contra a tempestade e descanso em meio à tribulação.",
+      "versiculo": "Salmos 62:7-8"
+    },
+    {
+      "id": 292,
+      "texto": "A bondade do Senhor é nova a cada manhã; grande é a sua fidelidade, e seu amor nunca falha.",
+      "versiculo": "Lamentações 3:22-23"
+    },
+    {
+      "id": 293,
+      "texto": "O Senhor é o meu ajudador; ele me sustenta quando estou fraco e me levanta quando caio.",
+      "versiculo": "Salmos 54:4"
+    },
+    {
+      "id": 294,
+      "texto": "Confie no Senhor, pois ele é fiel; sua palavra é verdadeira, e suas promessas nunca falham.",
+      "versiculo": "Salmos 33:4"
+    },
+    {
+      "id": 295,
+      "texto": "O Senhor é a minha rocha firme; nele encontro estabilidade e força para enfrentar todas as provações.",
+      "versiculo": "Salmos 62:2"
+    },
+    {
+      "id": 296,
+      "texto": "O Senhor é o meu Deus; ele me guia com sua mão amorosa e me protege com seu poder eterno.",
+      "versiculo": "Salmos 48:14"
+    },
+    {
+      "id": 297,
+      "texto": "Aquele que teme ao Senhor encontra vida; ele descansará satisfeito e não será visitado pelo mal.",
+      "versiculo": "Provérbios 19:23"
+    },
+    {
+      "id": 298,
+      "texto": "O Senhor é a minha salvação; ele me livra da angústia e me coloca em lugar seguro para louvar seu nome.",
+      "versiculo": "Salmos 34:6-7"
+    },
+    {
+      "id": 299,
+      "texto": "Confia no Senhor com todo o teu coração, e ele endireitará teus caminhos; sua luz brilhará sobre ti.",
+      "versiculo": "Provérbios 3:5-6"
+    },
+    {
+      "id": 300,
+      "texto": "O Senhor é o meu protetor; ele me guarda em sua sombra e me livra de todo perigo com sua mão poderosa.",
+      "versiculo": "Salmos 91:4-5"
+    },
+    {
+      "id": 301,
+      "texto": "O Senhor é fiel; ele cumpre suas promessas e guia seu povo com justiça e verdade para sempre.",
+      "versiculo": "Salmos 111:7-8"
+    },
+    {
+      "id": 302,
+      "texto": "O Senhor é a minha força; ele me capacita para vencer as batalhas e me sustenta em todo tempo.",
+      "versiculo": "Salmos 28:8"
+    },
+    {
+      "id": 303,
+      "texto": "Buscai o Senhor com todo o coração, e ele vos ouvirá; sua misericórdia vos alcançará, e ele vos dará paz.",
+      "versiculo": "Salmos 34:17-18"
+    },
+    {
+      "id": 304,
+      "texto": "O Senhor é o meu refúgio; nele encontro segurança, e sua palavra me guia em todos os meus caminhos.",
+      "versiculo": "Salmos 119:114"
+    },
+    {
+      "id": 305,
+      "texto": "O Senhor é a minha esperança; ele me sustenta em tempos de angústia e me dá alegria em sua presença.",
+      "versiculo": "Salmos 16:8-9"
+    },
+    {
+      "id": 306,
+      "texto": "O Senhor é o meu Salvador; ele me livra do mal e me guia para a vida eterna com sua graça.",
+      "versiculo": "Salmos 27:9"
+    },
+    {
+      "id": 307,
+      "texto": "Confia no Senhor, pois ele é bom; sua bondade é eterna, e sua fidelidade nunca falha.",
+      "versiculo": "Salmos 107:1"
+    },
+    {
+      "id": 308,
+      "texto": "O Senhor é a minha força; ele me fortalece na fraqueza e me guia com sua luz em meio às trevas.",
+      "versiculo": "Isaías 40:29-31"
+    },
+    {
+      "id": 309,
+      "texto": "O Senhor é o meu protetor; ele me guarda em sua sombra e me livra de todo perigo com sua mão poderosa.",
+      "versiculo": "Salmos 91:4-5"
+    },
+    {
+      "id": 310,
+      "texto": "Aquele que confia no Senhor é abençoado; sua vida é como uma árvore frutífera plantada junto às águas.",
+      "versiculo": "Jeremias 17:7-8"
+    },
+    {
+      "id": 311,
+      "texto": "O Senhor é o meu refúgio; ele me protege na tempestade e me guia por caminhos de paz e justiça.",
+      "versiculo": "Salmos 62:7-8"
+    },
+    {
+      "id": 312,
+      "texto": "O Senhor é a minha salvação; ele me livra da angústia e me coloca em lugar seguro para louvar seu nome.",
+      "versiculo": "Salmos 34:6-7"
+    },
+    {
+      "id": 313,
+      "texto": "Confia no Senhor com todo o teu coração, e ele endireitará teus caminhos; sua luz brilhará sobre ti.",
+      "versiculo": "Provérbios 3:5-6"
+    },
+    {
+      "id": 314,
+      "texto": "O Senhor é o meu escudo; ele me protege de todo mal e me guia com sua palavra verdadeira.",
+      "versiculo": "Salmos 119:114"
+    },
+    {
+      "id": 315,
+      "texto": "O Senhor é a minha força; ele me sustenta na fraqueza e me guia com sua luz em meio às trevas.",
+      "versiculo": "Isaías 40:29-31"
+    },
+    {
+      "id": 316,
+      "texto": "O Senhor é o meu refúgio; nele encontro segurança, e sua palavra me guia em todos os meus caminhos.",
+      "versiculo": "Salmos 119:114"
+    },
+    {
+      "id": 317,
+      "texto": "O Senhor é a minha esperança; ele me sustenta em tempos de angústia e me dá alegria em sua presença.",
+      "versiculo": "Salmos 16:8-9"
+    },
+    {
+      "id": 318,
+      "texto": "O Senhor é o meu Salvador; ele me livra do mal e me guia para a vida eterna com sua graça.",
+      "versiculo": "Salmos 27:9"
+    },
+    {
+      "id": 319,
+      "texto": "Confia no Senhor, pois ele é bom; sua bondade é eterna, e sua fidelidade nunca falha.",
+      "versiculo": "Salmos 107:1"
+    },
+    {
+      "id": 320,
+      "texto": "O Senhor é a minha força; ele me capacita para vencer as batalhas e me sustenta em todo tempo.",
+      "versiculo": "Salmos 28:8"
+    },
+    {
+      "id": 321,
+      "texto": "Buscai o Senhor com todo o coração, e ele vos ouvirá; sua misericórdia vos alcançará, e ele vos dará paz.",
+      "versiculo": "Salmos 34:17-18"
+    },
+    {
+      "id": 322,
+      "texto": "O Senhor é o meu refúgio; nele encontro proteção contra a tempestade e descanso em meio à tribulação.",
+      "versiculo": "Salmos 62:7-8"
+    },
+    {
+      "id": 323,
+      "texto": "O Senhor é a minha salvação; ele me livra da angústia e me coloca em lugar seguro para louvar seu nome.",
+      "versiculo": "Salmos 34:6-7"
+    },
+    {
+      "id": 324,
+      "texto": "Confia no Senhor com todo o teu coração, e ele endireitará teus caminhos; sua luz brilhará sobre ti.",
+      "versiculo": "Provérbios 3:5-6"
+    },
+    {
+      "id": 325,
+      "texto": "O Senhor é o meu escudo; ele me protege de todo mal e me guia com sua palavra verdadeira.",
+      "versiculo": "Salmos 119:114"
+    },
+    {
+      "id": 326,
+      "texto": "O Senhor é a minha força; ele me sustenta na fraqueza e me guia com sua luz em meio às trevas.",
+      "versiculo": "Isaías 40:29-31"
+    },
+    {
+      "id": 327,
+      "texto": "O Senhor é a minha esperança; ele me sustenta em tempos de angústia e me dá alegria em sua presença.",
+      "versiculo": "Salmos 16:8-9"
+    },
+    {
+      "id": 328,
+      "texto": "O Senhor é o meu refúgio seguro; em suas mãos entrego meu espírito, pois ele me redimiu com seu amor eterno e me guia por caminhos de justiça e verdade para sempre.",
+      "versiculo": "Salmos 31:5-7"
+    },
+    {
+      "id": 329,
+      "texto": "Confiai no Senhor, pois sua misericórdia é grande; ele nunca abandona aqueles que o buscam com coração sincero, mas os sustenta com sua força e os protege em todo tempo.",
+      "versiculo": "Salmos 33:18-20"
+    },
+    {
+      "id": 330,
+      "texto": "Bendito seja o Senhor, que carrega nossas cargas diariamente; ele é a nossa salvação, nosso Deus forte, que nos livra da morte e nos concede vida abundante.",
+      "versiculo": "Salmos 68:19-20"
+    },
+    {
+      "id": 331,
+      "texto": "Aquele que confia no Senhor está seguro; como uma árvore plantada junto às águas, não teme o calor, pois suas raízes estão firmes na esperança e produzem frutos em todo tempo.",
+      "versiculo": "Jeremias 17:7-8"
+    },
+    {
+      "id": 332,
+      "texto": "O Senhor é a minha herança e o meu cálice; ele assegura meu futuro, guia meus passos e me concede alegria em sua presença eterna, para sempre.",
+      "versiculo": "Salmos 16:5-6"
+    },
+    {
+      "id": 333,
+      "texto": "Clamei ao Senhor na minha angústia, e ele me respondeu; tirou-me de um lago horrível e firmou meus pés em terra sólida, restaurando minha alma.",
+      "versiculo": "Salmos 40:1-2"
+    },
+    {
+      "id": 334,
+      "texto": "O Senhor é fiel em todas as suas promessas e amoroso em todas as suas obras; ele levanta os caídos e consola os que choram, trazendo paz ao coração.",
+      "versiculo": "Salmos 145:13-14"
+    },
+    {
+      "id": 335,
+      "texto": "Não temas, pois o Senhor te escolheu; ele te chama pelo nome e te sustenta com sua destra poderosa em todos os momentos de tribulação e dúvida.",
+      "versiculo": "Isaías 43:1-2"
+    },
+    {
+      "id": 336,
+      "texto": "O amor de Deus é eterno; ele não se cansa de perdoar, e sua compaixão nos renova a cada manhã, trazendo esperança ao coração aflito e luz ao caminho escuro.",
+      "versiculo": "Lamentações 3:22-23"
+    },
+    {
+      "id": 337,
+      "texto": "O Senhor é a minha luz; ele ilumina meu caminho nas trevas e me guia para a vida eterna com sua verdade infalível e amor incondicional.",
+      "versiculo": "Salmos 36:9"
+    },
+    {
+      "id": 338,
+      "texto": "Entrega teu caminho ao Senhor, confia nele com todo o coração, e ele fará brilhar tua justiça como a luz e teu direito como o meio-dia, guiando teus passos.",
+      "versiculo": "Salmos 37:5-6"
+    },
+    {
+      "id": 339,
+      "texto": "O Senhor é o meu escudo e a minha força; nele encontro descanso e proteção, e sua palavra me sustenta em todo tempo de provação.",
+      "versiculo": "Salmos 119:114"
+    },
+    {
+      "id": 340,
+      "texto": "Aquele que busca o Senhor nunca será envergonhado; ele ouve o clamor dos justos e os livra de todas as suas aflições, concedendo vitória.",
+      "versiculo": "Salmos 34:4-5"
+    },
+    {
+      "id": 341,
+      "texto": "Deus é o nosso refúgio e fortaleza, socorro bem presente na angústia; por isso, não temeremos, ainda que a terra se mude e os montes se abalem.",
+      "versiculo": "Salmos 46:1-2"
+    },
+    {
+      "id": 342,
+      "texto": "O Senhor é compassivo e justo; ele guia os humildes no caminho da verdade e ensina aos mansos a sua vontade, com amor e paciência.",
+      "versiculo": "Salmos 25:8-9"
+    },
+    {
+      "id": 343,
+      "texto": "A palavra do Senhor é lâmpada para os meus pés e luz para o meu caminho; ela me guia e me guarda de todo mal, trazendo sabedoria eterna.",
+      "versiculo": "Salmos 119:105"
+    },
+    {
+      "id": 344,
+      "texto": "Confia no Senhor, pois ele é bom; sua misericórdia dura para sempre, e sua fidelidade se estende por todas as gerações, sustentando os fiéis.",
+      "versiculo": "Salmos 100:5"
+    },
+    {
+      "id": 345,
+      "texto": "O Senhor é o meu Salvador; ele me livra da angústia e me coloca em lugar seguro, onde posso louvar seu nome com alegria.",
+      "versiculo": "Salmos 18:46-48"
+    },
+    {
+      "id": 346,
+      "texto": "Busquei o Senhor, e ele me respondeu; livrou-me de todos os meus temores e me deu paz em meu coração, restaurando minha alma.",
+      "versiculo": "Salmos 34:4"
+    },
+    {
+      "id": 347,
+      "texto": "O Senhor é a minha força; ele me faz andar em lugares altos e me dá vitória sobre meus inimigos, com poder e graça.",
+      "versiculo": "Habacuque 3:19"
+    },
+    {
+      "id": 348,
+      "texto": "Aquele que confia no Senhor é como o monte Sião, que não se abala, mas permanece firme para sempre, protegido por Deus.",
+      "versiculo": "Salmos 125:1"
+    },
+    {
+      "id": 349,
+      "texto": "O Senhor é a minha esperança; ele me sustenta com sua mão poderosa e me guia por caminhos de paz e justiça eterna.",
+      "versiculo": "Salmos 31:14-15"
+    },
+    {
+      "id": 350,
+      "texto": "Clama ao Senhor, e ele te responderá; ele te mostrará coisas grandes e maravilhosas que não conheces, revelando sua glória.",
+      "versiculo": "Jeremias 33:3"
+    },
+    {
+      "id": 351,
+      "texto": "O Senhor é o meu refúgio; nele encontro proteção contra a tempestade e descanso em meio à tribulação, com sua paz.",
+      "versiculo": "Salmos 62:7-8"
+    },
+    {
+      "id": 352,
+      "texto": "A bondade do Senhor é nova a cada manhã; grande é a sua fidelidade, e seu amor nunca falha, renovando-nos sempre.",
+      "versiculo": "Lamentações 3:22-23"
+    },
+    {
+      "id": 353,
+      "texto": "O Senhor é o meu ajudador; ele me sustenta quando estou fraco e me levanta quando caio, com sua graça infinita.",
+      "versiculo": "Salmos 54:4"
+    },
+    {
+      "id": 354,
+      "texto": "Confie no Senhor, pois ele é fiel; sua palavra é verdadeira, e suas promessas nunca falham, guiando-nos para sempre.",
+      "versiculo": "Salmos 33:4"
+    },
+    {
+      "id": 355,
+      "texto": "O Senhor é a minha rocha firme; nele encontro estabilidade e força para enfrentar todas as provações com coragem.",
+      "versiculo": "Salmos 62:2"
+    },
+    {
+      "id": 356,
+      "texto": "O Senhor é o meu Deus; ele me guia com sua mão amorosa e me protege com seu poder eterno, em todos os dias.",
+      "versiculo": "Salmos 48:14"
+    },
+    {
+      "id": 357,
+      "texto": "Aquele que teme ao Senhor encontra vida; ele descansará satisfeito e não será visitado pelo mal, pois Deus o guarda.",
+      "versiculo": "Provérbios 19:23"
+    },
+    {
+      "id": 358,
+      "texto": "O Senhor é a minha salvação; ele me livra da angústia e me coloca em lugar seguro para louvar seu nome com gratidão.",
+      "versiculo": "Salmos 34:6-7"
+    },
+    {
+      "id": 359,
+      "texto": "Confia no Senhor com todo o teu coração, e ele endireitará teus caminhos; sua luz brilhará sobre ti, iluminando teu futuro.",
+      "versiculo": "Provérbios 3:5-6"
+    },
+    {
+      "id": 360,
+      "texto": "O Senhor é o meu protetor; ele me guarda em sua sombra e me livra de todo perigo com sua mão poderosa e amorosa.",
+      "versiculo": "Salmos 91:4-5"
+    },
+    {
+      "id": 361,
+      "texto": "O Senhor é fiel; ele cumpre suas promessas e guia seu povo com justiça e verdade para sempre, com misericórdia eterna.",
+      "versiculo": "Salmos 111:7-8"
+    },
+    {
+      "id": 362,
+      "texto": "O Senhor é a minha força; ele me capacita para vencer as batalhas e me sustenta em todo tempo com sua graça.",
+      "versiculo": "Salmos 28:8"
+    },
+    {
+      "id": 363,
+      "texto": "Buscai o Senhor com todo o coração, e ele vos ouvirá; sua misericórdia vos alcançará, e ele vos dará paz abundante.",
+      "versiculo": "Salmos 34:17-18"
+    },
+    {
+      "id": 364,
+      "texto": "O Senhor é o meu refúgio; nele encontro segurança, e sua palavra me guia em todos os meus caminhos com sabedoria.",
+      "versiculo": "Salmos 119:114"
+    },
+    {
+      "id": 365,
+      "texto": "O Senhor é a minha esperança; ele me sustenta em tempos de angústia e me dá alegria em sua presença, para sempre.",
+      "versiculo": "Salmos 16:8-9"
+    },
+    {
+      "id": 366,
+      "texto": "O Senhor é o meu Salvador; ele me livra do mal e me guia para a vida eterna com sua graça infinita e amor.",
+      "versiculo": "Salmos 27:9"
+    },
+    {
+      "id": 367,
+      "texto": "Confia no Senhor, pois ele é bom; sua bondade é eterna, e sua fidelidade nunca falha, sustentando os que confiam.",
+      "versiculo": "Salmos 107:1"
+    },
+    {
+      "id": 368,
+      "texto": "O Senhor é a minha força; ele me fortalece na fraqueza e me guia com sua luz em meio às trevas da vida.",
+      "versiculo": "Isaías 40:29-31"
+    },
+    {
+      "id": 369,
+      "texto": "O Senhor é o meu protetor; ele me guarda em sua sombra e me livra de todo perigo com sua mão poderosa.",
+      "versiculo": "Salmos 91:4-5"
+    },
+    {
+      "id": 370,
+      "texto": "Aquele que confia no Senhor é abençoado; sua vida é como uma árvore frutífera plantada junto às águas, produzindo frutos.",
+      "versiculo": "Jeremias 17:7-8"
+    },
+    {
+      "id": 371,
+      "texto": "O Senhor é o meu refúgio; ele me protege na tempestade e me guia por caminhos de paz e justiça eterna.",
+      "versiculo": "Salmos 62:7-8"
+    },
+    {
+      "id": 372,
+      "texto": "O Senhor é a minha salvação; ele me livra da angústia e me coloca em lugar seguro para louvar seu nome.",
+      "versiculo": "Salmos 34:6-7"
+    },
+    {
+      "id": 373,
+      "texto": "Confia no Senhor com todo o teu coração, e ele endireitará teus caminhos; sua luz brilhará sobre ti, guiando-te.",
+      "versiculo": "Provérbios 3:5-6"
+    },
+    {
+      "id": 374,
+      "texto": "O Senhor é o meu escudo; ele me protege de todo mal e me guia com sua palavra verdadeira e eterna.",
+      "versiculo": "Salmos 119:114"
+    },
+    {
+      "id": 375,
+      "texto": "O Senhor é a minha força; ele me sustenta na fraqueza e me guia com sua luz em meio às trevas.",
+      "versiculo": "Isaías 40:29-31"
+    },
+    {
+      "id": 376,
+      "texto": "O Senhor é o meu refúgio; nele encontro segurança, e sua palavra me guia em todos os meus caminhos.",
+      "versiculo": "Salmos 119:114"
+    },
+    {
+      "id": 377,
+      "texto": "O Senhor é a minha esperança; ele me sustenta em tempos de angústia e me dá alegria em sua presença.",
+      "versiculo": "Salmos 16:8-9"
     }
-  ]
+      ]
 }

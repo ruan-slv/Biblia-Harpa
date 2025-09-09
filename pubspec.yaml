@@ -1,46 +1,46 @@
 name: biblia_e_harpa
-description: "Projeto voltado para desenvolvimento de biblia e harpa sem conexão com a internet"
-
+description: "Projeto voltado para desenvolvimento de bíblia e harpa sem conexão com a internet"
 publish_to: 'none'
-
-version: 1.0.7+16
-
+version: 1.0.8+17
 environment:
   sdk: ^3.5.4
 
 dependencies:
   flutter:
     sdk: flutter
-  shared_preferences: ^2.0.6
-  image_picker: ^0.8.7+3
-  file_picker: any
-  watcher: any
-  path_provider: ^2.0.11
-  permission_handler: ^11.3.1
+  shared_preferences: ^2.2.3
+  image_picker: ^1.2.0
+  file_picker: ^10.3.2
+  watcher: ^1.1.0
+  path_provider: ^2.1.4
+  permission_handler: ^12.0.1
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-  http: any
-  just_audio: ^0.10.4
+  http: ^1.2.2
+  just_audio: ^0.10.5  # Atualizado para 0.10.5
   just_audio_platform_interface: ^4.0.0
-  dio: ^5.3.2
+  dio: ^5.7.0
   cupertino_icons: ^1.0.8
   share_plus: ^11.0.0
-  upgrader: ^8.4.0
+  upgrader: ^11.5.0
   in_app_update: ^4.2.3
-  url_launcher: any
+  url_launcher: ^6.3.0
+  package_info_plus: ^8.3.1
+  audio_service: ^0.18.18
+  audio_session: ^0.2.2
+  in_app_review: ^2.0.11
+  flutter_colorpicker: ^1.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  
-  flutter_lints: ^4.0.0
+  flutter_lints: ^6.0.0
   flutter_launcher_icons: ^0.14.1
-  build_runner: ^2.4.6
+  build_runner: ^2.4.13  # Downgrade para resolver o conflito
   hive_generator: ^2.0.1
 
 flutter:
   uses-material-design: true
-
   assets:
     - assets/images/
     - assets/json/harpa_crista_640_hinos.json
@@ -51,11 +51,12 @@ flutter:
     - assets/json/newDevocionalModel.json
     - assets/json/palavraDoDia.json
     - assets/json/apoio.json
+    - assets/json/audios.json
 
 flutter_icons:
-  image_path: "assets/images/logoExecutavel.png"
+  image_path: "assets/images/newLogoIcon.png"
   android: true
   ios: true
   remove_alpha_ios: true
   adaptive_icon_background: "#D3D3D3"
-  adaptive_icon_foreground: "assets/images/logoExecutavel.png"
+  adaptive_icon_foreground: "assets/images/newLogoIcon.png"
