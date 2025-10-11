@@ -46,3 +46,4 @@ texts
 
 *.jks
 *.keystore
+.vs/
