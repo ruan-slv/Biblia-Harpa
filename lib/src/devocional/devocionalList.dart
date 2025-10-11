@@ -15,7 +15,8 @@ class DevocionalList extends StatefulWidget {
   _DevocionalListState createState() => _DevocionalListState();
 }
 
-class _DevocionalListState extends State<DevocionalList> with SingleTickerProviderStateMixin {
+class _DevocionalListState extends State<DevocionalList>
+    with SingleTickerProviderStateMixin {
   List<String> filteredDevocionalTopic = [];
   final TextEditingController _filterController = TextEditingController();
   String _jsonPath = "assets/json/devocional.json";
@@ -86,7 +87,8 @@ class _DevocionalListState extends State<DevocionalList> with SingleTickerProvid
   void _filterDevocional() {
     setState(() {
       filteredDevocionalTopic = topicos
-          .where((devo) => devo.toLowerCase().contains(_filterController.text.toLowerCase()))
+          .where((devo) =>
+              devo.toLowerCase().contains(_filterController.text.toLowerCase()))
           .toList();
     });
   }
@@ -230,7 +232,8 @@ class _DevocionalListState extends State<DevocionalList> with SingleTickerProvid
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     foregroundColor: Theme.of(context).colorScheme.secondary,
                   ),
-                  child:  Icon(Icons.arrow_back, size: 24, color: Theme.of(context).colorScheme.secondary),
+                  child: Icon(Icons.arrow_back,
+                      size: 24, color: Theme.of(context).colorScheme.secondary),
                 ),
               ),
               const SizedBox(width: 20),
@@ -254,7 +257,8 @@ class _DevocionalListState extends State<DevocionalList> with SingleTickerProvid
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     foregroundColor: Theme.of(context).colorScheme.secondary,
                   ),
-                  child:  Icon(Icons.arrow_forward, size: 24, color: Theme.of(context).colorScheme.secondary),
+                  child: Icon(Icons.arrow_forward,
+                      size: 24, color: Theme.of(context).colorScheme.secondary),
                 ),
               ),
             ],
@@ -277,9 +281,11 @@ class _DevocionalListState extends State<DevocionalList> with SingleTickerProvid
                 color: Theme.of(context).colorScheme.secondary,
               ),
               border: const OutlineInputBorder(),
-              prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.secondary),
+              prefixIcon: Icon(Icons.search,
+                  color: Theme.of(context).colorScheme.secondary),
               suffixIcon: IconButton(
-                icon: Icon(Icons.clear, color: Theme.of(context).colorScheme.secondary),
+                icon: Icon(Icons.clear,
+                    color: Theme.of(context).colorScheme.secondary),
                 onPressed: () {
                   _filterController.clear();
                   setState(() {
@@ -298,37 +304,40 @@ class _DevocionalListState extends State<DevocionalList> with SingleTickerProvid
           ),
         ),
         Expanded(
-  child: ListView.builder(
-    itemCount: devoList.length,
-    itemBuilder: (context, index) {
-      final devocional = devoList[index];
-      return ListTile(
-        leading: const Icon(Icons.menu_book_rounded),
-        title: ValueListenableBuilder<double>(
-          valueListenable: FontSizeController.fontSizeNotifier,
-          builder: (context, fontSize, _) {
-            return Text(
-              devocional,
-              style: TextStyle(
-                fontSize: fontSize,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-            );
-          },
+          child: ListView.builder(
+            itemCount: devoList.length,
+            itemBuilder: (context, index) {
+              final devocional = devoList[index];
+              return ListTile(
+                leading: Icon(
+                  Icons.menu_book_rounded,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+                title: ValueListenableBuilder<double>(
+                  valueListenable: FontSizeController.fontSizeNotifier,
+                  builder: (context, fontSize, _) {
+                    return Text(
+                      devocional,
+                      style: TextStyle(
+                        fontSize: fontSize,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                    );
+                  },
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          DevocionalContentScreen(devo: devocional),
+                    ),
+                  );
+                },
+              );
+            },
+          ),
         ),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DevocionalContentScreen(devo: devocional),
-            ),
-          );
-        },
-      );
-    },
-  ),
-),
-
       ],
     );
   }
@@ -341,7 +350,10 @@ class _DevocionalListState extends State<DevocionalList> with SingleTickerProvid
         backgroundColor: Theme.of(context).colorScheme.primary,
         centerTitle: true,
         automaticallyImplyLeading: true,
-        title:  Text("Devocional", style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
+        iconTheme:
+            IconThemeData(color: Theme.of(context).colorScheme.secondary),
+        title: Text("Devocional",
+            style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
         actions: [
           SizedBox(
             width: sizeBtnOptions[0],
@@ -365,7 +377,8 @@ class _DevocionalListState extends State<DevocionalList> with SingleTickerProvid
               indicatorColor: Theme.of(context).colorScheme.secondary,
               indicatorSize: TabBarIndicatorSize.tab,
               labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-              unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal),
+              unselectedLabelStyle:
+                  const TextStyle(fontWeight: FontWeight.normal),
               tabs: const [
                 Tab(text: "Aleatórios"),
                 Tab(text: "Temas"),
@@ -377,12 +390,12 @@ class _DevocionalListState extends State<DevocionalList> with SingleTickerProvid
       body: devocionais.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : TabBarView(
-        controller: _tabController,
-        children: [
-          _buildAleatoriosTab(),
-          _buildTemasTab(filteredDevocionalTopic),
-        ],
-      ),
+              controller: _tabController,
+              children: [
+                _buildAleatoriosTab(),
+                _buildTemasTab(filteredDevocionalTopic),
+              ],
+            ),
     );
   }
 }

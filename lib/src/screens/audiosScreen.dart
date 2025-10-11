@@ -21,111 +21,111 @@ class _AudioScreenState extends State<AudioScreen> {
   Duration _currentPosition = Duration.zero;
   Duration _audioDuration = Duration.zero;
 
-  @override
-  void initState() {
-    super.initState();
-    _fetchAudios();
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _fetchAudios();
 
-    _player.playerStateStream.listen((state) {
-      setState(() {
-        _isBuffering = state.processingState == ProcessingState.buffering ||
-            state.processingState == ProcessingState.loading;
-        if (state.processingState == ProcessingState.completed) {
-          _playNextAudio();
-        }
-      });
-    });
+  //   _player.playerStateStream.listen((state) {
+  //     setState(() {
+  //       _isBuffering = state.processingState == ProcessingState.buffering ||
+  //           state.processingState == ProcessingState.loading;
+  //       if (state.processingState == ProcessingState.completed) {
+  //         _playNextAudio();
+  //       }
+  //     });
+  //   });
 
-    _player.positionStream.listen((position) {
-      setState(() {
-        _currentPosition = position;
-      });
-    });
+  //   _player.positionStream.listen((position) {
+  //     setState(() {
+  //       _currentPosition = position;
+  //     });
+  //   });
 
-    _player.durationStream.listen((duration) {
-      setState(() {
-        _audioDuration = duration ?? Duration.zero;
-      });
-    });
-  }
+  //   _player.durationStream.listen((duration) {
+  //     setState(() {
+  //       _audioDuration = duration ?? Duration.zero;
+  //     });
+  //   });
+  // }
 
-  @override
-  void dispose() {
-    _player.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _player.dispose();
+  //   super.dispose();
+  // }
 
-  Future<void> _fetchAudios() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
+  // Future<void> _fetchAudios() async {
+  //   setState(() {
+  //     _isLoading = true;
+  //     _error = null;
+  //   });
 
-    try {
-      final response = await http
-          .get(Uri.parse("https://bible-server-api.vercel.app/list"))
-          .timeout(const Duration(seconds: 10));
+  //   try {
+  //     final response = await http
+  //         .get(Uri.parse("https://bible-server-api.vercel.app/list"))
+  //         .timeout(const Duration(seconds: 10));
 
-      if (response.statusCode == 200) {
-        setState(() {
-          _audios = json.decode(response.body);
-          _isLoading = false;
-        });
-      } else {
-        throw Exception("Houve um erro, já estamos buscando soluções"); // "Erro HTTP: ${response.statusCode}"
-      }
-    } catch (_) {
-      setState(() {
-        _error = "Esta funcionalidade começou a ser desenvolvida no dia 03/09/2025\nAguarde só mais um pouco, tentaremos finalizar esta funcionalidade até Novembro";
-        _isLoading = false;
-      });
-    }
-  }
+  //     if (response.statusCode == 200) {
+  //       setState(() {
+  //         _audios = json.decode(response.body);
+  //         _isLoading = false;
+  //       });
+  //     } else {
+  //       throw Exception("Houve um erro, já estamos buscando soluções"); // "Erro HTTP: ${response.statusCode}"
+  //     }
+  //   } catch (_) {
+  //     setState(() {
+  //       _error = "Esta funcionalidade começou a ser desenvolvida no dia 03/09/2025\nAguarde só mais um pouco, tentaremos finalizar esta funcionalidade até Novembro";
+  //       _isLoading = false;
+  //     });
+  //   }
+  // }
 
-  Future<void> _playAudio(String url, int index) async {
-    try {
-      setState(() {
-        _isBuffering = true;
-      });
+  // Future<void> _playAudio(String url, int index) async {
+  //   try {
+  //     setState(() {
+  //       _isBuffering = true;
+  //     });
 
-      if (_currentIndex == index && _player.playing) {
-        await _player.pause();
-      } else {
-        await _player.setAudioSource(
-          AudioSource.uri(Uri.parse(url)),
-        );
-        await _player.play();
-        setState(() {
-          _currentIndex = index;
-          _currentPosition = Duration.zero;
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _isBuffering = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Houve um problema durante a execução do áudio")),//'Erro ao tocar o áudio: $e'
-      );
-    } finally {
-      setState(() {
-        _isBuffering = false;
-      });
-    }
-  }
+  //     if (_currentIndex == index && _player.playing) {
+  //       await _player.pause();
+  //     } else {
+  //       await _player.setAudioSource(
+  //         AudioSource.uri(Uri.parse(url)),
+  //       );
+  //       await _player.play();
+  //       setState(() {
+  //         _currentIndex = index;
+  //         _currentPosition = Duration.zero;
+  //       });
+  //     }
+  //   } catch (e) {
+  //     setState(() {
+  //       _isBuffering = false;
+  //     });
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text("Houve um problema durante a execução do áudio")),//'Erro ao tocar o áudio: $e'
+  //     );
+  //   } finally {
+  //     setState(() {
+  //       _isBuffering = false;
+  //     });
+  //   }
+  // }
 
-  void _playNextAudio() {
-    if (_currentIndex == null || _audios.isEmpty) return;
-    final nextIndex = (_currentIndex! + 1) % _audios.length;
-    _playAudio(_audios[nextIndex]['url'], nextIndex);
-  }
+  // void _playNextAudio() {
+  //   if (_currentIndex == null || _audios.isEmpty) return;
+  //   final nextIndex = (_currentIndex! + 1) % _audios.length;
+  //   _playAudio(_audios[nextIndex]['url'], nextIndex);
+  // }
 
-  String _formatDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final minutes = twoDigits(duration.inMinutes.remainder(60));
-    final seconds = twoDigits(duration.inSeconds.remainder(60));
-    return "$minutes:$seconds";
-  }
+  // String _formatDuration(Duration duration) {
+  //   String twoDigits(int n) => n.toString().padLeft(2, '0');
+  //   final minutes = twoDigits(duration.inMinutes.remainder(60));
+  //   final seconds = twoDigits(duration.inSeconds.remainder(60));
+  //   return "$minutes:$seconds";
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -166,7 +166,8 @@ class _AudioScreenState extends State<AudioScreen> {
                       ),
                       const SizedBox(height: 20),
                       ElevatedButton(
-                        onPressed: _fetchAudios,
+                        //onPressed: _fetchAudios,
+                        onPressed: null,
                         child: Text(
                           "Tentar novamente",
                           style: TextStyle(
@@ -177,7 +178,8 @@ class _AudioScreenState extends State<AudioScreen> {
                   ),
                 )
               : RefreshIndicator(
-                  onRefresh: _fetchAudios,
+                  //onRefresh: _fetchAudios,
+                  onRefresh: () async {},
                   child: ListView.builder(
                     itemCount: _audios.length,
                     itemBuilder: (context, index) {
@@ -223,7 +225,8 @@ class _AudioScreenState extends State<AudioScreen> {
                                           color: Colors.green[800],
                                         ),
                                         onPressed: () =>
-                                            _playAudio(audio['url'], index),
+                                            //_playAudio(audio['url'], index),
+                                            null,
                                       ),
                               ),
                               if (isPlaying)
@@ -251,16 +254,16 @@ class _AudioScreenState extends State<AudioScreen> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text(
-                                            _formatDuration(_currentPosition),
-                                            style:
-                                                const TextStyle(fontSize: 12),
-                                          ),
-                                          Text(
-                                            _formatDuration(_audioDuration),
-                                            style:
-                                                const TextStyle(fontSize: 12),
-                                          ),
+                                          // Text(
+                                          //   _formatDuration(_currentPosition),
+                                          //   style:
+                                          //       const TextStyle(fontSize: 12),
+                                          // ),
+                                          // Text(
+                                          //   _formatDuration(_audioDuration),
+                                          //   style:
+                                          //       const TextStyle(fontSize: 12),
+                                          // ),
                                         ],
                                       ),
                                     ),

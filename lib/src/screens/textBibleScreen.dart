@@ -25,6 +25,7 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
   late List<dynamic> currentVerses;
   final ScrollController _scrollController = ScrollController();
   List<int> _selectedVerseIndices = [];
+  final int _verseSelectionLimit = 10; // Limite de versículos
 
   @override
   void initState() {
@@ -80,11 +81,51 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
     }
   }
 
+  void _showSelectionLimitWarning() {
+    // Evita mostrar o pop-up se ele já estiver na tela
+    if (ModalRoute.of(context)?.isCurrent != true) return;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Theme.of(context).colorScheme.background,
+          title: Text(
+            "Aviso de Limite",
+            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+          ),
+          content: Text(
+            "Selecionar muitos versículos pode fazer com que o texto seja cortado ao compartilhar em algumas redes sociais. Considere compartilhar a quantidade máxima de versículos e depois realizar um novo compartilhamento com o restante dos versículos desejados!",
+            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                "Entendi",
+                style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _toggleVerseSelection(int index) {
     setState(() {
-      if (_selectedVerseIndices.contains(index)) {
+      final isAlreadySelected = _selectedVerseIndices.contains(index);
+
+      if (isAlreadySelected) {
         _selectedVerseIndices.remove(index);
       } else {
+        // Verifica o limite ANTES de adicionar
+        if (_selectedVerseIndices.length >= _verseSelectionLimit) {
+          _showSelectionLimitWarning();
+          return; // Não adiciona o novo versículo se o limite foi atingido
+        }
         _selectedVerseIndices.add(index);
       }
     });
@@ -109,6 +150,7 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
         shareText.writeln("$verseNumber. $verseText");
       }
     } else {
+      // Este bloco agora é redundante por causa da nova lógica, mas o mantemos por segurança.
       for (int i = 0; i < currentVerses.length; i++) {
         final String verseText = currentVerses[i].toString();
         final int verseNumber = i + 1;
@@ -124,7 +166,6 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
       return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          // 🔒 AppBar.title NÃO muda
           title: Text(widget.bookName),
           backgroundColor: Theme.of(context).colorScheme.primary,
           foregroundColor: Theme.of(context).colorScheme.secondary,
@@ -151,7 +192,6 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        // 🔒 Título do AppBar fixo
         title: Text('${widget.bookName} - Cap. $currentChapterNumber'),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.secondary,
@@ -164,20 +204,42 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
             ),
           IconButton(
             onPressed: () {
-              if (currentVerses.isNotEmpty) {
-                final String chapterText = _getDataForSharing();
-                Share.share(
-                  chapterText,
-                  subject:
-                      "${widget.bookName} - Capítulo $currentChapterNumber",
-                );
-              } else {
+              // LÓGICA DE COMPARTILHAMENTO ATUALIZADA
+              if (_selectedVerseIndices.isEmpty) {
+                // Se nenhum versículo está selecionado, seleciona os 10 primeiros
+                setState(() {
+                  _selectedVerseIndices = List<int>.generate(
+                    // Garante que não vamos tentar selecionar mais versículos do que os existentes
+                    currentVerses.length < _verseSelectionLimit
+                        ? currentVerses.length
+                        : _verseSelectionLimit,
+                        (i) => i,
+                  );
+                });
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text(
-                        'Não há versiculos para compartilhar neste capítulo.'),
+                        '10 primeiros versículos selecionados para compartilhamento.'),
+                    duration: Duration(seconds: 2),
                   ),
                 );
+              } else {
+                // Se já há versículos selecionados, compartilha como antes
+                if (currentVerses.isNotEmpty) {
+                  final String chapterText = _getDataForSharing();
+                  Share.share(
+                    chapterText,
+                    subject:
+                    "${widget.bookName} - Capítulo $currentChapterNumber",
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                          'Não há versículos para compartilhar neste capítulo.'),
+                    ),
+                  );
+                }
               }
             },
             icon: const Icon(Icons.share),
@@ -187,88 +249,88 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
       backgroundColor: Theme.of(context).colorScheme.background,
       body: currentVerses.isEmpty
           ? Center(
-              child: ValueListenableBuilder<double>(
-                valueListenable: FontSizeController.fontSizeNotifier,
-                builder: (context, fontSize, _) {
-                  return Text(
-                    'Nenhum versiculo encontrado para este capítulo.',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
-                      fontSize: fontSize,
-                    ),
-                    textAlign: TextAlign.center,
-                  );
-                },
+        child: ValueListenableBuilder<double>(
+          valueListenable: FontSizeController.fontSizeNotifier,
+          builder: (context, fontSize, _) {
+            return Text(
+              'Nenhum versículo encontrado para este capítulo.',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.secondary,
+                fontSize: fontSize,
               ),
-            )
+              textAlign: TextAlign.center,
+            );
+          },
+        ),
+      )
           : ListView.builder(
-              controller: _scrollController,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
-              itemCount: currentVerses.length,
-              itemBuilder: (context, index) {
-                final String verseText = currentVerses[index].toString();
-                final int verseNumber = index + 1;
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 16.0),
-                  child: GestureDetector(
-                    onTap: () => _toggleVerseSelection(index),
-                    child: Container(
-                      padding: const EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        color: _selectedVerseIndices.contains(index)
-                            ? Colors.green.withOpacity(0.3)
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ValueListenableBuilder<double>(
-                            valueListenable:
-                                FontSizeController.fontSizeNotifier,
-                            builder: (context, fontSize, _) {
-                              return Text(
-                                "$verseNumber ",
-                                style: TextStyle(
-                                  fontSize: fontSize,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .secondary
-                                      .withOpacity(0.9),
-                                ),
-                              );
-                            },
+        controller: _scrollController,
+        padding:
+        const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+        itemCount: currentVerses.length,
+        itemBuilder: (context, index) {
+          final String verseText = currentVerses[index].toString();
+          final int verseNumber = index + 1;
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: GestureDetector(
+              onTap: () => _toggleVerseSelection(index),
+              child: Container(
+                padding: const EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  color: _selectedVerseIndices.contains(index)
+                      ? Theme.of(context).colorScheme.primary.withOpacity(0.9) // Cor do tema
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ValueListenableBuilder<double>(
+                      valueListenable:
+                      FontSizeController.fontSizeNotifier,
+                      builder: (context, fontSize, _) {
+                        return Text(
+                          "$verseNumber ",
+                          style: TextStyle(
+                            fontSize: fontSize,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondary
+                                .withOpacity(0.9),
                           ),
-                          Expanded(
-                            child: ValueListenableBuilder<double>(
-                              valueListenable:
-                                  FontSizeController.fontSizeNotifier,
-                              builder: (context, fontSize, _) {
-                                return Text(
-                                  verseText,
-                                  style: TextStyle(
-                                    fontSize: fontSize,
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                    height: 1.4,
-                                  ),
-                                  textAlign: TextAlign.left,
-                                );
-                              },
+                        );
+                      },
+                    ),
+                    Expanded(
+                      child: ValueListenableBuilder<double>(
+                        valueListenable:
+                        FontSizeController.fontSizeNotifier,
+                        builder: (context, fontSize, _) {
+                          return Text(
+                            verseText,
+                            style: TextStyle(
+                              fontSize: fontSize,
+                              color:
+                              Theme.of(context).colorScheme.secondary,
+                              height: 1.4,
                             ),
-                          ),
-                        ],
+                            textAlign: TextAlign.left,
+                          );
+                        },
                       ),
                     ),
-                  ),
-                );
-              },
+                  ],
+                ),
+              ),
             ),
+          );
+        },
+      ),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-        color: Theme.of(context).colorScheme.background.withOpacity(0.95),
+        color: Theme.of(context).colorScheme.primary.withOpacity(0.95), // Cor do tema
         child: ValueListenableBuilder<double>(
           valueListenable: FontSizeController.fontSizeNotifier,
           builder: (context, fontSize, _) {
@@ -297,9 +359,9 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
                 ),
                 ElevatedButton(
                   onPressed:
-                      currentChapterNumber < widget.allBookChapters.length
-                          ? _nextChapter
-                          : null,
+                  currentChapterNumber < widget.allBookChapters.length
+                      ? _nextChapter
+                      : null,
                   style: ElevatedButton.styleFrom(
                     shape: const CircleBorder(),
                     padding: const EdgeInsets.all(14),

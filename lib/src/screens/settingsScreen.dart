@@ -1,10 +1,12 @@
 import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 import 'package:biblia_e_harpa/src/controllers/theme_controller.dart';
 import 'package:biblia_e_harpa/src/screens/aboutProjectScreen.dart';
+import 'package:biblia_e_harpa/src/screens/transparenciaScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import "package:in_app_review/in_app_review.dart";
 
@@ -87,6 +89,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   valueListenable: FontSizeController.fontSizeNotifier,
                   builder: (context, fontSize, _) {
                     return Card(
+                      color: Theme.of(context).colorScheme.primary,
                       elevation: 3,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12)),
@@ -137,7 +140,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     ElevatedButton(
                                       onPressed: () {
                                         double newSize =
-                                            (fontSize - 2).clamp(12.0, 26.0);
+                                            (fontSize - 2).clamp(16.0, 30.0);
                                         FontSizeController.setFontSize(newSize);
                                       },
                                       style: ElevatedButton.styleFrom(
@@ -158,7 +161,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     ElevatedButton(
                                       onPressed: () {
                                         double newSize =
-                                            (fontSize + 2).clamp(1.0, 26.0);
+                                            (fontSize + 2).clamp(16.0, 30.0);
                                         FontSizeController.setFontSize(newSize);
                                       },
                                       style: ElevatedButton.styleFrom(
@@ -187,6 +190,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const SizedBox(height: 16),
                 Card(
+                  color: Theme.of(context).colorScheme.primary,
                   elevation: 3,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
@@ -217,167 +221,155 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           },
                         ),
                         const SizedBox(height: 12),
-                        Row(
-                          // crossAxisAlignment: CrossAxisAlignment.stretch,
-                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ElevatedButton.icon(
-                              onPressed: () => ThemeController.toggleTheme(),
-                              icon: AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 300),
-                                transitionBuilder: (child, animation) {
-                                  return RotationTransition(
-                                    turns: Tween(begin: 0.0, end: 1.0)
-                                        .animate(animation),
-                                    child: child,
-                                  );
-                                },
-                                child: isDark
-                                    ? const Icon(Icons.sunny,
-                                        key: Key("sunny"),
-                                        color: Colors.yellow,
-                                        size: 20)
-                                    : Icon(Icons.brightness_4,
-                                        key: const Key("moon"),
-                                        color: Colors.grey[800],
-                                        size: 20),
-                              ),
-                              label: Text(
-                                Theme.of(context).brightness == Brightness.dark
-                                    ? "claro"
-                                    : "escuro",
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
-                                ),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.primary,
-                              ),
+                        ElevatedButton.icon(
+                          onPressed: () => ThemeController.toggleTheme(),
+                          icon: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            transitionBuilder: (child, animation) {
+                              return RotationTransition(
+                                turns: Tween(begin: 0.0, end: 1.0)
+                                    .animate(animation),
+                                child: child,
+                              );
+                            },
+                            child: isDark
+                                ? const Icon(Icons.sunny,
+                                    key: Key("sunny"),
+                                    color: Colors.yellow,
+                                    size: 20)
+                                : Icon(Icons.brightness_4,
+                                    key: const Key("moon"),
+                                    color: Colors.grey[800],
+                                    size: 20),
+                          ),
+                          label: Text(
+                            Theme.of(context).brightness == Brightness.dark
+                                ? "claro"
+                                : "escuro",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
                             ),
-                            const SizedBox(width: 10),
-                            ElevatedButton.icon(
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: const Text("Personalizar cores"),
-                                    content: SingleChildScrollView(
-                                      child: Column(
-                                        children: [
-                                          const Text("Cor Primária"),
-                                          ColorPicker(
-                                            pickerColor: newPrimaryColor,
-                                            onColorChanged: (color) {
-                                              setState(() {
-                                                newPrimaryColor = color;
-                                              });
-                                            },
-                                          ),
-                                          const SizedBox(height: 10),
-                                          const Text("Cor Secundária"),
-                                          ColorPicker(
-                                            pickerColor: newSecondaryColor,
-                                            onColorChanged: (color) {
-                                              setState(() {
-                                                newSecondaryColor = color;
-                                              });
-                                            },
-                                          ),
-                                          const SizedBox(height: 10),
-                                          const Text("Cor De Fundo"),
-                                          ColorPicker(
-                                            pickerColor: newBackgroundColor,
-                                            onColorChanged: (color) {
-                                              setState(() {
-                                                newBackgroundColor = color;
-                                              });
-                                            },
-                                          ),
-                                          const SizedBox(height: 20),
-                                          Text('Preview',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold)),
-                                          Container(
-                                            padding: const EdgeInsets.all(16),
-                                            decoration: BoxDecoration(
-                                              color: newBackgroundColor,
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              border: Border.all(
-                                                  color: Colors.black12),
-                                            ),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                ElevatedButton(
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    backgroundColor:
-                                                        newPrimaryColor,
-                                                    foregroundColor:
-                                                        Colors.white,
-                                                  ),
-                                                  onPressed: () {},
-                                                  child: const Text(
-                                                      'Botão Primário'),
-                                                ),
-                                                const SizedBox(height: 10),
-                                                Text(
-                                                  'Texto com cor secundária',
-                                                  style: TextStyle(
-                                                      color: newSecondaryColor,
-                                                      fontSize: 16),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          ThemeController.updateCustomColors(
-                                            primary: newPrimaryColor,
-                                            secondary: newSecondaryColor,
-                                            background: newBackgroundColor,
-                                          );
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text("Aplicar"),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                              icon: Icon(
-                                Icons.dashboard_customize,
-                                color: Theme.of(context).colorScheme.secondary,
-                                size: 20,
-                              ),
-                              label: Text(
-                                "Personalizar",
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
-                                ),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                          ],
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                          ),
                         ),
+
+                        // Theme(
+                        //   data: Theme.of(context).copyWith(
+                        //     popupMenuTheme: PopupMenuThemeData(
+                        //       color: Theme.of(context).colorScheme.primary,
+                        //       textStyle: TextStyle(
+                        //         color: Theme.of(context).colorScheme.secondary,
+                        //       ),
+                        //     ),
+                        //   ),
+                        //   child: PopupMenuButton<String>(
+                        //     child: Container(
+                        //       height: 40,
+                        //       width: 200,
+                        //       decoration: BoxDecoration(
+                        //         color: Theme.of(context).colorScheme.primary,
+                        //         borderRadius: BorderRadius.circular(20),
+                        //       ),
+                        //       child: Row(
+                        //         crossAxisAlignment: CrossAxisAlignment.center,
+                        //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        //         children: [
+                        //           Icon(
+                        //             Icons.palette,
+                        //             color:
+                        //                 Theme.of(context).colorScheme.secondary,
+                        //           ),
+                        //           Text(
+                        //             "Selecione um tema",
+                        //             style: TextStyle(
+                        //               color:
+                        //                   Theme.of(context).colorScheme.secondary,
+                        //             ),
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //     onSelected: (value) async {
+                        //       if (value == "light") {
+                        //         await ThemeController.updateCustomColors(
+                        //           primary: Colors.grey.shade300,
+                        //           secondary: Colors.grey.shade900,
+                        //           background: Colors.grey.shade100,
+                        //         );
+                        //       } else if (value == "dark") {
+                        //         ThemeController.updateCustomColors(
+                        //             primary: Colors.grey.shade700,
+                        //             secondary: Colors.grey.shade100,
+                        //             background: Colors.grey.shade900,
+                        //         );
+                        //       } else if (value == "quente") {
+                        //         await ThemeController.updateCustomColors(
+                        //           primary: Colors.deepOrange.shade300,
+                        //           secondary: Colors.redAccent.shade700,
+                        //           background: Colors.orange.shade100,
+                        //         );
+                        //       } else if (value == "frio") {
+                        //         await ThemeController.updateCustomColors(
+                        //           primary: Colors.blue.shade600,
+                        //           secondary: Colors.white,
+                        //           background: Colors.blueGrey.shade400,
+                        //         );
+                        //       }
+                        //     },
+                        //     itemBuilder: (context) => [
+                        //       PopupMenuItem(
+                        //         value: "light",
+                        //         child: Text(
+                        //           "Tema claro",
+                        //           style: TextStyle(
+                        //             color:
+                        //                 Theme.of(context).colorScheme.secondary,
+                        //           ),
+                        //         ),
+                        //       ),
+                        //       PopupMenuItem(
+                        //         value: "dark",
+                        //         child: Text(
+                        //           "Tema escuro",
+                        //           style: TextStyle(
+                        //             color:
+                        //                 Theme.of(context).colorScheme.secondary,
+                        //           ),
+                        //         ),
+                        //       ),
+                        //       PopupMenuItem(
+                        //         value: "quente",
+                        //         child: Text(
+                        //           "Tema quente",
+                        //           style: TextStyle(
+                        //             color:
+                        //                 Theme.of(context).colorScheme.secondary,
+                        //           ),
+                        //         ),
+                        //       ),
+                        //       PopupMenuItem(
+                        //         value: "frio",
+                        //         child: Text(
+                        //           "Tema frio",
+                        //           style: TextStyle(
+                        //             color:
+                        //                 Theme.of(context).colorScheme.secondary,
+                        //           ),
+                        //         ),
+                        //       )
+                        //     ],
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
                 ),
                 const SizedBox(height: 16),
                 Card(
+                  color: Theme.of(context).colorScheme.primary,
                   elevation: 3,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
@@ -438,6 +430,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const SizedBox(height: 16),
                 Card(
+                  color: Theme.of(context).colorScheme.primary,
                   elevation: 3,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
@@ -498,6 +491,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const SizedBox(height: 16),
                 Card(
+                  color: Theme.of(context).colorScheme.primary,
                   elevation: 3,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
@@ -565,6 +559,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const SizedBox(height: 16),
                 Card(
+                  color: Theme.of(context).colorScheme.primary,
                   elevation: 3,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
@@ -627,6 +622,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const SizedBox(height: 16),
                 Card(
+                  color: Theme.of(context).colorScheme.primary,
                   elevation: 3,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
@@ -674,6 +670,69 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           label: Text(
                             "Avaliar app",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Card(
+                  color: Theme.of(context).colorScheme.primary,
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Transparência de contribuições do app",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        ValueListenableBuilder<double>(
+                          valueListenable: FontSizeController.fontSizeNotifier,
+                          builder: (context, fontSize, _) {
+                            return Text(
+                              "Veja como a sua contribuição está sendo direcionada",
+                              style: TextStyle(
+                                fontSize: fontSize,
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const TransparenciaScreen(),
+                              ),
+                            );
+                          },
+                          icon: Icon(
+                            Icons.info,
+                            color: Theme.of(context).colorScheme.secondary,
+                            size: 20,
+                          ),
+                          label: Text(
+                            "Acessar Transparência",
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.secondary,
                             ),

@@ -98,6 +98,9 @@ class _BibleListState extends State<BibleList> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         centerTitle: true,
         automaticallyImplyLeading: true,
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.secondary,
+        ),
         title: Text(
           'Biblia Cristã',
           style: TextStyle(color: Theme.of(context).colorScheme.secondary),
@@ -106,36 +109,50 @@ class _BibleListState extends State<BibleList> {
           SizedBox(
             width: sizeBtnOptions[0],
             height: sizeBtnOptions[1],
-            child: PopupMenuButton<String>(
-              onSelected: _onMenuItemSelected,
-              itemBuilder: (BuildContext context) {
-                return [
-                  PopupMenuItem<String>(
-                    value: "ACF",
-                    child: Text(
-                      "Almeida Corrigida Fiel",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary),
-                    ),
+            child: Theme(
+              data: Theme.of(context).copyWith(
+                popupMenuTheme: PopupMenuThemeData(
+                  color: Theme.of(context).colorScheme.primary,
+                  textStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
-                  PopupMenuItem<String>(
-                    value: "NVI",
-                    child: Text(
-                      "Nova Versão Internacional",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary),
+                ),
+              ),
+              child: PopupMenuButton<String>(
+                icon: Icon(
+                  Icons.more_vert,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+                onSelected: _onMenuItemSelected,
+                itemBuilder: (BuildContext context) {
+                  return [
+                    PopupMenuItem<String>(
+                      value: "ACF",
+                      child: Text(
+                        "Almeida Corrigida Fiel",
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary),
+                      ),
                     ),
-                  ),
-                  PopupMenuItem<String>(
-                    value: "AA",
-                    child: Text(
-                      "Almeida Atualizada",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary),
+                    PopupMenuItem<String>(
+                      value: "NVI",
+                      child: Text(
+                        "Nova Versão Internacional",
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary),
+                      ),
                     ),
-                  ),
-                ];
-              },
+                    PopupMenuItem<String>(
+                      value: "AA",
+                      child: Text(
+                        "Almeida Atualizada",
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary),
+                      ),
+                    ),
+                  ];
+                },
+              ),
             ),
           ),
         ],

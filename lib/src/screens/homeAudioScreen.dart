@@ -50,7 +50,12 @@ class _Homeaudioscreen extends State<Homeaudioscreen>
         automaticallyImplyLeading: true,
         iconTheme:
             IconThemeData(color: Theme.of(context).colorScheme.secondary),
-        title: const Text("Aúdios"),
+        title: Text(
+            "Áudios",
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+        ),
         centerTitle: true,
         bottom: TabBar(
           controller: _tabController,

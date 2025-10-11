@@ -99,7 +99,9 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
               }
             });
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Este tipo de arquivo não é compatível, considere adicionar somente tipos mp3, mp4, wav e aac")));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(
+                    "Este tipo de arquivo não é compatível, considere adicionar somente tipos mp3, mp4, wav e aac")));
           }
         }
       });
@@ -175,7 +177,9 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao adicionar música, verifique se o seu arquivo de aúdio é no formato mp3, wav e acc')),
+          SnackBar(
+              content: Text(
+                  'Erro ao adicionar música, verifique se o seu arquivo de aúdio é no formato mp3, wav e acc')),
         );
       }
     }
@@ -227,20 +231,40 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: _pickMusicFile,
         tooltip: 'Adicionar Música',
-        backgroundColor: whiteColor,
-        child: const Icon(Icons.library_music, color: Colors.black87),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        child: Icon(
+            Icons.library_music,
+            color: Theme.of(context).colorScheme.secondary,
+        ),
       ),
       body: ValueListenableBuilder<Box<Music>>(
         valueListenable: Hive.box<Music>('musicas').listenable(),
         builder: (context, box, _) {
           if (box.isEmpty) {
-            return Center(child: Column(
+            return Center(
+                child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Nenhuma áudio foi adicionado / encontrado.'),
+                Text(
+                  'Nenhuma áudio foi adicionado / encontrado.',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                ),
                 const SizedBox(height: 8),
-                ElevatedButton(onPressed: () => _pickMusicFile(), child: Text("Adicionar música", style: TextStyle(color: Theme.of(context).colorScheme.secondary),)),
+                ElevatedButton(
+                  onPressed: () => _pickMusicFile(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                  ),
+                  child: Text(
+                    "Adicionar áudio",
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                  ),
+                ),
               ],
             ));
           }

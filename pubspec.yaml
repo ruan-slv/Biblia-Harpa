@@ -52,6 +52,7 @@ flutter:
     - assets/json/palavraDoDia.json
     - assets/json/apoio.json
     - assets/json/audios.json
+    - assets/json/audiosHarpa.json
 
 flutter_icons:
   image_path: "assets/images/newLogoIcon.png"

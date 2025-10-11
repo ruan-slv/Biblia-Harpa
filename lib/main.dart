@@ -41,24 +41,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeData>(
-      valueListenable: ThemeController.customThemeNotifier,
-      builder: (context, themeData, _) {
-        return ValueListenableBuilder<ThemeMode>(
-          valueListenable: ThemeController.themeNotifier,
-          builder: (context, themeMode, _) {
-            return MaterialApp(
-              title: 'Bíblia e Harpa',
-              theme: themeData,
-              darkTheme: themeData.copyWith(brightness: Brightness.dark),
-              themeMode: themeMode,
-              debugShowCheckedModeBanner: false,
-              home: UpgradeAlert(
-                upgrader: Upgrader(debugLogging: false),
-                child: const Initial(),
-              ),
-            );
-          },
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: ThemeController.themeNotifier,
+      builder: (context, currentTheme, _) {
+        return MaterialApp(
+          title: 'Bíblia e Harpa',
+          theme: lightMode,
+          darkTheme: darkMode,
+          themeMode: currentTheme,
+          debugShowCheckedModeBanner: false,
+          home: UpgradeAlert(
+            upgrader: Upgrader(debugLogging: false),
+            child: const Initial(),
+          ),
         );
       },
     );
