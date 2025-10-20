@@ -53,12 +53,17 @@ android {
         }
     }
 
-    subprojects {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+    // ADICIONADO CONFORME SOLICITADO
+    configurations.all {
+        resolutionStrategy {
+            force 'androidx.media:media:1.4.3' // Força uma versão específica e estável
+        }
     }
 }
 
 flutter {
     source = "../.."
 }
+
+// A seção subprojects foi removida pois o 'configurations.all' já cobre isso de forma mais eficaz
+// e para evitar redundância.

@@ -6,10 +6,12 @@ import 'package:biblia_e_harpa/src/content/doacao.dart';
 import 'package:biblia_e_harpa/src/devocional/devocionalList.dart';
 import 'package:biblia_e_harpa/src/screens/StoreScreen.dart';
 import 'package:biblia_e_harpa/src/screens/aboutProjectScreen.dart';
-import 'package:biblia_e_harpa/src/screens/audiosScreen.dart';
+import 'package:biblia_e_harpa/src/screens/harpaAudioScreen.dart';
 import 'package:biblia_e_harpa/src/screens/homeAudioScreen.dart';
-import 'package:biblia_e_harpa/src/screens/informacao.dart';
+import 'package:biblia_e_harpa/src/screens/informacaoScreen.dart';
+import 'package:biblia_e_harpa/src/screens/informacaoWrapper.dart';
 import 'package:biblia_e_harpa/src/screens/settingsScreen.dart';
+import 'package:biblia_e_harpa/src/screens/storeWrapper.dart';
 import 'package:biblia_e_harpa/src/sizelist/biblelist.dart';
 import 'package:biblia_e_harpa/src/sizelist/harpalist.dart';
 import 'package:flutter/material.dart';
@@ -322,123 +324,18 @@ class _InitialState extends State<Initial> {
                       ],
                     ),
                   ),
-                  // Padding(
-                  //   padding: const EdgeInsets.all(20.0),
-                  //   child: ConstrainedBox(
-                  //     constraints: const BoxConstraints(minHeight: 100),
-                  //     child: Container(
-                  //       width: double.infinity,
-                  //       decoration: BoxDecoration(
-                  //         color: Theme.of(context)
-                  //             .colorScheme
-                  //             .primary
-                  //             .withOpacity(0.9),
-                  //         borderRadius: BorderRadius.circular(12),
-                  //         boxShadow: [
-                  //           BoxShadow(
-                  //             color: Colors.black.withOpacity(0.3),
-                  //             blurRadius: 6,
-                  //             offset: const Offset(0, 3),
-                  //           ),
-                  //         ],
-                  //       ),
-                  //       child: Padding(
-                  //         padding: const EdgeInsets.all(20),
-                  //         child: Stack(
-                  //           children: [
-                  //             Column(
-                  //               mainAxisAlignment: MainAxisAlignment.center,
-                  //               crossAxisAlignment: CrossAxisAlignment.center,
-                  //               children: [
-                  //                 Text(
-                  //                   "Loja",
-                  //                   style: TextStyle(
-                  //                     color: Theme.of(context)
-                  //                         .colorScheme
-                  //                         .secondary,
-                  //                     fontSize: 22,
-                  //                     fontWeight: FontWeight.bold,
-                  //                   ),
-                  //                   textAlign: TextAlign.center,
-                  //                 ),
-                  //                 const SizedBox(height: 12),
-                  //                 ValueListenableBuilder<double>(
-                  //                   valueListenable:
-                  //                       FontSizeController.fontSizeNotifier,
-                  //                   builder: (context, fontSize, _) {
-                  //                     return Text(
-                  //                       "Nos ajude a manter o app comprando produtos através do nossa lista de produtos",
-                  //                       style: TextStyle(
-                  //                         fontSize: fontSize,
-                  //                         fontStyle: FontStyle.italic,
-                  //                         color: Theme.of(context)
-                  //                             .colorScheme
-                  //                             .secondary,
-                  //                         shadows: [
-                  //                           Shadow(
-                  //                             blurRadius: 4.0,
-                  //                             color:
-                  //                                 Colors.black.withOpacity(0.3),
-                  //                           ),
-                  //                         ],
-                  //                       ),
-                  //                       textAlign: TextAlign.center,
-                  //                     );
-                  //                   },
-                  //                 ),
-                  //                 const SizedBox(height: 10),
-                  //                 ElevatedButton.icon(
-                  //                   onPressed: _compartilharPalavra,
-                  //                   icon: Icon(
-                  //                     Icons.share,
-                  //                     color: Theme.of(context)
-                  //                         .colorScheme
-                  //                         .secondary,
-                  //                   ),
-                  //                   label: Text(
-                  //                     "Compartilhar",
-                  //                     style: TextStyle(
-                  //                       color: Theme.of(context)
-                  //                           .colorScheme
-                  //                           .secondary,
-                  //                     ),
-                  //                   ),
-                  //                   style: ElevatedButton.styleFrom(
-                  //                     backgroundColor: Theme.of(context)
-                  //                                 .colorScheme
-                  //                                 .brightness ==
-                  //                             Brightness.light
-                  //                         ? whiteColor
-                  //                         : cinzaClaro,
-                  //                   ),
-                  //                 ),
-                  //               ],
-                  //             ),
-                  //           ],
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
                 ],
               ),
             );
             return SingleChildScrollView(
               child: content,
             );
-            // if (screenSize.height < minContentHeight || constraints.maxHeight < 600) {
-            //   // Tela grande: sem scroll
-            //   return SingleChildScrollView(child: content);
-            // } else {
-            //   // Tela pequena: com scroll
-            //   return content;
-            // }
           },
         ),
       ),
 
-      StoreScreen(),
-      InformacaoScreen()
+      StoreWrapper(),
+      InformacaoWrapper(),
     ];
 
     return Scaffold(
@@ -517,18 +414,6 @@ class _InitialState extends State<Initial> {
       ),
     );
   }
-
-  // Padding(
-  //       padding: const EdgeInsets.only(bottom: 8.0),
-  //       child: Text(
-  //         "Desde 2024 - Desenvolvido por Ruan",
-  //         textAlign: TextAlign.center,
-  //         style: TextStyle(
-  //           fontSize: 12,
-  //           color: Theme.of(context).colorScheme.secondary,
-  //         ),
-  //       ),
-  //     ),
 
   Widget _buildMenuCard(
     BuildContext context,

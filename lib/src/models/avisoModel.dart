@@ -1,11 +1,11 @@
-class Aviso {
-  final int id;
+class AvisoModel {
+  final String id;
   final String titulo;
   final String descricao;
   final String imagemURL;
   final String dataPublicacao;
 
-  Aviso({
+  AvisoModel({
     required this.id,
     required this.titulo,
     required this.descricao,
@@ -13,13 +13,13 @@ class Aviso {
     required this.dataPublicacao,
   });
 
-  factory Aviso.fromJson(Map<String, dynamic> json) {
-    return Aviso(
-      id: json['id'],
-      titulo: json['titulo'],
-      descricao: json['descricao'],
-      imagemURL: json['imagem'],
-      dataPublicacao: json['dataPublicacao'],
+  factory AvisoModel.fromJson(Map<String, dynamic> json) {
+    return AvisoModel(
+      id: json['id'].toString() ?? "",
+      titulo: json['titulo'] ?? "",
+      descricao: json['descricao'] ?? "",
+      imagemURL: json['imagem'] ?? "",
+      dataPublicacao: json['dataPublicacao'] ?? "",
     );
   }
 }

@@ -1,21 +1,9 @@
-import 'package:biblia_e_harpa/src/models/produtoModel.dart';
+import 'package:biblia_e_harpa/src/models/avisoModel.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-class CardProduto extends StatelessWidget {
-  final ProdutoModel produto;
-  const CardProduto({super.key, required this.produto});
-
-  Future<void> _abrirLinkProduto(String url) async {
-    final Uri uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      Center(
-        child: Text("Houve um problema ao abrir link"),
-      );
-    }
-  }
+class CardAvisoComponent extends StatelessWidget {
+  final AvisoModel aviso;
+  const CardAvisoComponent({super.key, required this.aviso});
 
   @override
   Widget build(BuildContext context) {
@@ -34,13 +22,10 @@ class CardProduto extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadiusGeometry.circular(8.0),
                 child: Image.network(
-                  produto.imagemURL,
+                  aviso.imagemURL,
                   height: 150,
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  headers: {
-                    "Access-Control-Allow-Origin": "*",
-                  },
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       height: 150,
@@ -58,7 +43,7 @@ class CardProduto extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              produto.nome,
+              aviso.titulo,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).colorScheme.secondary,
@@ -66,30 +51,20 @@ class CardProduto extends StatelessWidget {
             ),
             const SizedBox(height: 8.0),
             Text(
-              produto.descricao,
+              aviso.descricao,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.secondary.withOpacity(0.7),
               ),
               overflow: TextOverflow.ellipsis, // Adiciona "..." se o texto for muito longo
             ),
-            const SizedBox(height: 16.0),
-            Align(
-              alignment: Alignment.centerRight,
-              child: ElevatedButton(
-                onPressed: () => _abrirLinkProduto(produto.linkProduto),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
-                  textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                child: Text(
-                  "Ver detalhes",
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                ),
+            const SizedBox(height: 8.0),
+            Text(
+              aviso.dataPublicacao,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.secondary.withOpacity(0.7),
               ),
+              maxLines: 3, // Limita o número de linhas para a descrição
+              overflow: TextOverflow.ellipsis, // Adiciona "..." se o texto for muito longo
             ),
           ],
         ),

@@ -41,17 +41,30 @@
         </activity>
 
         <!-- Serviço de áudio em segundo plano para audio_service -->
-        <service
-            android:name="com.ryanheise.audioservice.AudioService"
-            android:enabled="true"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="androidx.media3.session.MediaSessionService" />
-            </intent-filter>
-        </service>
+<!--        <service-->
+<!--            android:name="com.ryanheise.audioservice.AudioService"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="false">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="androidx.media3.session.MediaSessionService" />-->
+<!--            </intent-filter>-->
+<!--        </service>-->
 
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+    <!-- Adicione este bloco -->
+    <queries>
+        <!-- Permite abrir links da web -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="http" />
+        </intent>
+    </queries>
+
 </manifest>

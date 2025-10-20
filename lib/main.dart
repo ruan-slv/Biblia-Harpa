@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:just_audio_media_kit/just_audio_media_kit.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:upgrader/upgrader.dart';
 
@@ -17,6 +18,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   await FontSizeController.loadFontSize();
+  JustAudioMediaKit.ensureInitialized(windows: true);
 
   if (!kIsWeb) {
     final dir = await getApplicationDocumentsDirectory();
@@ -41,6 +43,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final upgraderMessages = UpgraderMessages(code: 'pt');
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: ThemeController.themeNotifier,
       builder: (context, currentTheme, _) {
@@ -51,7 +54,10 @@ class MyApp extends StatelessWidget {
           themeMode: currentTheme,
           debugShowCheckedModeBanner: false,
           home: UpgradeAlert(
-            upgrader: Upgrader(debugLogging: false),
+            upgrader: Upgrader(
+              debugLogging: false,
+              messages: upgraderMessages,
+            ),
             child: const Initial(),
           ),
         );

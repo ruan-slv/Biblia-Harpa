@@ -32,7 +32,7 @@ class Book {
   factory Book.fromJson(Map<String, dynamic> json) {
     var list = json["chapters"] as List;
     List<AudioData> chapterList =
-        list.map((i) => AudioData.fromJson(i)).toList();
+    list.map((i) => AudioData.fromJson(i)).toList();
     return Book(title: json["title"], chapters: chapterList);
   }
 }
@@ -45,48 +45,57 @@ class Bibleaudiosscreen extends StatefulWidget {
 }
 
 class _BibleaudiosscreenState extends State<Bibleaudiosscreen> {
-  final AudioPlayer _player = AudioPlayer();
-  List<dynamic> _audios = [];
+  // Removido o player de áudio desta tela, pois a lógica de play não era usada aqui.
+
+  // Variáveis para a lista e o filtro
+  List<Book> _allBooks = [];
+  List<Book> _filteredBooks = [];
+  final TextEditingController _searchController = TextEditingController();
+
   bool _isLoading = true;
-  bool _isBuffering = false;
   String? _error;
-  int? _currentIndex;
-  Duration _currentPosition = Duration.zero;
-  Duration _audioDuration = Duration.zero;
 
   @override
   void initState() {
     super.initState();
     _fetchAudios();
-
-    _player.playerStateStream.listen((state) {
-      setState(() {
-        _isBuffering = state.processingState == ProcessingState.buffering ||
-            state.processingState == ProcessingState.loading;
-        if (state.processingState == ProcessingState.completed) {
-          _playNextAudio();
-        }
-      });
-    });
-
-    _player.positionStream.listen((position) {
-      setState(() {
-        _currentPosition = position;
-      });
-    });
-
-    _player.durationStream.listen((duration) {
-      setState(() {
-        _audioDuration = duration ?? Duration.zero;
-      });
-    });
+    // Adiciona um listener para o controller da pesquisa
+    _searchController.addListener(_filterBooks); // Agora vai encontrar o método
   }
 
   @override
   void dispose() {
-    _player.dispose();
+    // Limpa o controller para evitar vazamentos de memória
+    _searchController.removeListener(_filterBooks); // Agora vai encontrar o método
+    _searchController.dispose();
     super.dispose();
   }
+
+  String _normalize(String input) {
+    return input
+        .toLowerCase()
+        .replaceAll(RegExp(r'[áàâãä]'), 'a')
+        .replaceAll(RegExp(r'[éèêë]'), 'e')
+        .replaceAll(RegExp(r'[íìîï]'), 'i')
+        .replaceAll(RegExp(r'[óòôõö]'), 'o')
+        .replaceAll(RegExp(r'[úùûü]'), 'u')
+        .replaceAll(RegExp(r'[ç]'), 'c');
+  }
+
+  // CORREÇÃO: Método renomeado e lógica interna ajustada
+  void _filterBooks() {
+    final query = _searchController.text;
+    setState(() {
+      _filteredBooks = _allBooks
+          .where(
+            (book) =>
+        // Compara o título normalizado do livro com a busca normalizada
+        _normalize(book.title).contains(_normalize(query)),
+      )
+          .toList();
+    });
+  }
+
 
   Future<void> _fetchAudios() async {
     setState(() {
@@ -95,73 +104,24 @@ class _BibleaudiosscreenState extends State<Bibleaudiosscreen> {
     });
 
     try {
-      final String response = await rootBundle.loadString("assets/json/audios.json");
+      final String response =
+      await rootBundle.loadString("assets/json/audios.json");
       final List data = json.decode(response);
 
       List<Book> books = data.map((book) => Book.fromJson(book)).toList();
 
       setState(() {
-        _audios = books;
+        _allBooks = books;
+        _filteredBooks = books; // Inicialmente, a lista filtrada é igual à lista completa
         _isLoading = false;
       });
     } catch (e) {
       setState(() {
         _error =
-            "Esta funcionalidade começou a ser desenvolvida no dia 03/09/2025\nAguarde só mais um pouco, tentaremos finalizar esta funcionalidade até Novembro";
+        "Esta funcionalidade começou a ser desenvolvida no dia 03/09/2025\nAguarde só mais um pouco, tentaremos finalizar esta funcionalidade até Novembro";
         _isLoading = false;
       });
     }
-  }
-
-  Future<void> _playAudio(String url, int index) async {
-    try {
-      setState(() {
-        _isBuffering = true;
-      });
-
-      if (_currentIndex == index) {
-        if (_player.playing) {
-          await _player.pause();
-        } else {
-          await _player.play();
-        }
-      } else {
-        setState(() {
-          _currentIndex = index;
-          _currentPosition = Duration.zero;
-        });
-        await _player.setAudioSource(
-          AudioSource.uri(Uri.parse(url)),
-        );
-        await _player.play();
-      }
-    } catch (e) {
-      setState(() {
-        _isBuffering = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(
-                'Houve um problema ao tocar o áudio')), //Erro ao tocar o áudio: $e
-      );
-    } finally {
-      setState(() {
-        _isBuffering = false;
-      });
-    }
-  }
-
-  void _playNextAudio() {
-    if (_currentIndex == null || _audios.isEmpty) return;
-    final nextIndex = (_currentIndex! + 1) % _audios.length;
-    _playAudio(_audios[nextIndex]['url'], nextIndex);
-  }
-
-  String _formatDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final minutes = twoDigits(duration.inMinutes.remainder(60));
-    final seconds = twoDigits(duration.inSeconds.remainder(60));
-    return "$minutes:$seconds";
   }
 
   @override
@@ -170,31 +130,85 @@ class _BibleaudiosscreenState extends State<Bibleaudiosscreen> {
       return const Center(child: CircularProgressIndicator());
     }
     if (_error != null) {
-      return Center(child: Text(_error!));
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            _error!,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.secondary,
+              fontSize: 16,
+            ),
+          ),
+        ),
+      );
     }
-    return ListView.builder(
-      itemCount: _audios.length,
-      itemBuilder: (context, index) {
-        final book = _audios[index] as Book;
-        return ListTile(
-          trailing: Icon(
-            Icons.list,
-            color: Theme.of(context).colorScheme.secondary,
-          ),
-          title: Text(
-            book.title,
-            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-          ),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => Audiobookchaptersscreen(book: book),
+
+    // A UI agora é uma Column que contém a barra de pesquisa e a lista
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextField(
+            controller: _searchController, // Conecta o controller
+            decoration: InputDecoration(
+              labelText: "Pesquisar livro", // Texto atualizado
+              labelStyle:
+              TextStyle(color: Theme.of(context).colorScheme.secondary),
+              border: const OutlineInputBorder(),
+              prefixIcon: Icon(
+                Icons.search,
+                color: Theme.of(context).colorScheme.secondary,
               ),
-            );
-          },
-        );
-      },
+              suffixIcon: IconButton(
+                onPressed: () {
+                  _searchController.clear(); // Limpa o campo de pesquisa
+                },
+                icon: Icon(
+                  Icons.clear,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              ),
+            ),
+            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+            cursorColor: Theme.of(context).colorScheme.secondary,
+          ),
+        ),
+        // Adicionado Expanded para que a lista ocupe o resto da tela
+        Expanded(
+          child: ListView.builder(
+            itemCount: _filteredBooks.length, // Usa a lista filtrada
+            itemBuilder: (context, index) {
+              final book = _filteredBooks[index]; // Usa a lista filtrada
+              return ListTile(
+                trailing: Icon(
+                  Icons.list,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+                title: Text(
+                  book.title,
+                  style:
+                  TextStyle(color: Theme.of(context).colorScheme.secondary),
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => Audiobookchaptersscreen(book: book),
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

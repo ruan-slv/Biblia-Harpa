@@ -1,5 +1,7 @@
-import 'package:biblia_e_harpa/src/screens/audiosScreen.dart';
+import 'package:biblia_e_harpa/src/screens/bibleAudioWrapper.dart';
+import 'package:biblia_e_harpa/src/screens/harpaAudioScreen.dart';
 import 'package:biblia_e_harpa/src/screens/bibleAudiosScreen.dart';
+import 'package:biblia_e_harpa/src/screens/harpaAudioWrapper.dart';
 import 'package:biblia_e_harpa/src/screens/playlistScreen.dart';
 import 'package:flutter/material.dart';
 
@@ -81,8 +83,8 @@ class _Homeaudioscreen extends State<Homeaudioscreen>
       body: TabBarView(
         controller: _tabController,
         children: const [
-          Bibleaudiosscreen(),
-          AudioScreen(),
+          BibleAudioWrapper(),
+          HarpaAudioWrapper(),
           PlaylistScreen()
         ],
       ),

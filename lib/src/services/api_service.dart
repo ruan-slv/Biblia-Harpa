@@ -11,7 +11,11 @@ class ApiServiceProduto {
       print(data);
       final List produtos = [
         ...data['livros'],
-        ...data['acessorios']
+        ...data['acessorios'],
+        ...data['Roupas'],
+        ...data['Presentes'],
+        ...data['Decoração'],
+        ...data['Jogos'],
       ];
       return produtos.map((item) => ProdutoModel.fromJson(item)).toList();
     } else {

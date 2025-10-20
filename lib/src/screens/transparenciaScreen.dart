@@ -12,10 +12,10 @@ Divisão dos valores recebidos:
 - Contribuição Social: 30%
   Doações de alimentos, roupas, apoio a instituições e ações comunitárias.
 
-- Desenvolvedor: 25%
+- Desenvolvedor: 20%
   Remuneração pelo trabalho de criação, manutenção e suporte do app.
 
-- Terceiros e Prestadores: 15%
+- Terceiros e Prestadores: 20%
   Pagamento de serviços como design, programação, atendimento, etc.
 
 - Crescimento do App: 30%
