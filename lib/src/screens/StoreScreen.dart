@@ -1,37 +1,58 @@
 // lib/src/screens/StoreScreen.dart
 
 import 'package:flutter/material.dart';
-import 'package:biblia_e_harpa/src/services/api_service.dart';
+import 'package:biblia_e_harpa/src/services/api_service.dart'; // Certifique-se que o import está correto
 import '../models/produtoModel.dart';
 import '../components/cardProduto.dart';
 
-// 1. Convertido para StatefulWidget
 class StoreScreen extends StatefulWidget {
-  final List<ProdutoModel> produtos;
-  const StoreScreen({super.key, required this.produtos});
+  const StoreScreen({super.key});
 
   @override
   State<StoreScreen> createState() => _StoreScreenState();
 }
 
 class _StoreScreenState extends State<StoreScreen> {
-  // 2. Variáveis de estado para filtros e listas
   final TextEditingController _searchController = TextEditingController();
-  Future<List<ProdutoModel>>? _produtosFuture;
+
+  // Listas para gerenciar os produtos
   List<ProdutoModel> _allProdutos = [];
   List<ProdutoModel> _filteredProdutos = [];
 
-  // Lista de categorias (pode vir da API no futuro)
-  final List<String> _categorias = ["Todos", "Livros", "Acessórios", "Roupas", "Presentes", "Decoração", "Jogos"];
+  // Variáveis para controlar o estado do carregamento
+  bool _isLoading = true;
+  String? _error;
+
+  final List<String> _categorias = ["Todos", "Livros", "Acessórios", "Roupas", "Presentes"];
   String _categoriaSelecionada = "Todos";
 
   @override
   void initState() {
     super.initState();
     // Inicia o carregamento dos produtos
-    _produtosFuture = ApiServiceProduto.fetchProdutos();
-    // Adiciona listener para o campo de pesquisa
+    _fetchAndSetProdutos();
     _searchController.addListener(_applyFilters);
+  }
+
+  // Método para buscar os produtos da API
+  Future<void> _fetchAndSetProdutos() async {
+    try {
+      final produtos = await ApiServiceProduto.fetchProdutos();
+      if (mounted) {
+        setState(() {
+          _allProdutos = produtos;
+          _filteredProdutos = produtos;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _error = 'Erro ao carregar produtos. Verifique sua conexão.';
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -41,7 +62,6 @@ class _StoreScreenState extends State<StoreScreen> {
     super.dispose();
   }
 
-  // Função para normalizar texto (ignorar acentos e maiúsculas)
   String _normalize(String input) {
     return input
         .toLowerCase()
@@ -53,16 +73,14 @@ class _StoreScreenState extends State<StoreScreen> {
         .replaceAll(RegExp(r'[ç]'), 'c');
   }
 
-  // 3. Função central que aplica ambos os filtros (pesquisa e categoria)
+  // Filtra os produtos com base na busca e na categoria
   void _applyFilters() {
     final query = _searchController.text;
     setState(() {
       _filteredProdutos = _allProdutos.where((produto) {
-        // Filtro de Categoria
         final bool matchesCategory = _categoriaSelecionada == "Todos" ||
             _normalize(produto.categoria) == _normalize(_categoriaSelecionada);
 
-        // Filtro de Pesquisa (no nome e descrição)
         final bool matchesSearch = query.isEmpty ||
             _normalize(produto.nome).contains(_normalize(query)) ||
             _normalize(produto.descricao).contains(_normalize(query));
@@ -72,7 +90,7 @@ class _StoreScreenState extends State<StoreScreen> {
     });
   }
 
-  // Função para mudar a categoria e reaplicar os filtros
+  // Seleciona uma categoria e aplica o filtro
   void _selectCategory(String categoria) {
     setState(() {
       _categoriaSelecionada = categoria;
@@ -80,51 +98,88 @@ class _StoreScreenState extends State<StoreScreen> {
     _applyFilters();
   }
 
+  // Constrói o corpo da tela (grid de produtos ou mensagens de estado)
+  Widget _buildBody() {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_error != null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            _error!,
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: Colors.red, fontSize: 16),
+          ),
+        ),
+      );
+    }
+
+    if (_allProdutos.isEmpty) {
+      return const Center(child: Text('Nenhum produto encontrado.'));
+    }
+
+    if (_filteredProdutos.isEmpty) {
+      return const Center(child: Text('Nenhum produto corresponde à sua busca.'));
+    }
+
+    return GridView.builder(
+      padding: const EdgeInsets.all(12.0),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 12.0,
+        mainAxisSpacing: 12.0,
+        childAspectRatio: 0.70,
+      ),
+      itemCount: _filteredProdutos.length,
+      itemBuilder: (context, index) {
+        final produto = _filteredProdutos[index];
+        return CardProduto(produto: produto);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Barra de Pesquisa
+          // Barra de Pesquisa (no estado inicial, dentro do build)
           Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(12.0),
             child: TextField(
-              controller: _searchController, // Controller conectado
+              controller: _searchController,
               decoration: InputDecoration(
-                labelText: "Pesquisar produto",
-                labelStyle:
-                TextStyle(color: Theme.of(context).colorScheme.secondary),
-                border: const OutlineInputBorder(),
-                prefixIcon: Icon(
-                  Icons.search,
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
+                hintText: "Buscar na Loja",
+                hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
+                prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.primary),
                 suffixIcon: IconButton(
-                  onPressed: () => _searchController.clear(), // Função para limpar
-                  icon: Icon(
-                    Icons.clear,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    _searchController.clear();
+                  },
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
+                filled: true,
+                fillColor: Theme.of(context).colorScheme.surface,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide.none,
                 ),
+                contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
               ),
               style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-              cursorColor: Theme.of(context).colorScheme.secondary,
             ),
           ),
 
-          // 4. Barra de Categorias
+          // Barra de Categorias (no estado inicial, dentro do build)
           SizedBox(
-            height: 50,
+            height: 40,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
               itemCount: _categorias.length,
               itemBuilder: (context, index) {
                 final categoria = _categorias[index];
@@ -135,65 +190,30 @@ class _StoreScreenState extends State<StoreScreen> {
                     label: Text(categoria),
                     selected: isSelected,
                     onSelected: (selected) {
-                      if (selected) {
-                        _selectCategory(categoria);
-                      }
+                      if (selected) _selectCategory(categoria);
                     },
                     backgroundColor: Theme.of(context).colorScheme.surface,
                     selectedColor: Theme.of(context).colorScheme.primary,
                     labelStyle: TextStyle(
-                      color: isSelected
-                          ? Theme.of(context).colorScheme.onPrimary
-                          : Theme.of(context).colorScheme.onSurface,
+                      color: isSelected ? Colors.white : Theme.of(context).colorScheme.secondary,
+                      fontWeight: FontWeight.bold,
                     ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                      side: BorderSide(
+                        color: isSelected ? Colors.transparent : Colors.grey.shade300,
+                      ),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
                   ),
                 );
               },
             ),
           ),
+          const SizedBox(height: 10),
 
-          // Lista de Produtos
           Expanded(
-            child: FutureBuilder<List<ProdutoModel>>(
-              future: _produtosFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        'Erro ao carregar produtos. Verifique sua conexão e tente novamente.',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                    ),
-                  );
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(child: Text('Nenhum produto encontrado.'));
-                }
-
-                // Popula as listas apenas uma vez
-                if (_allProdutos.isEmpty) {
-                  _allProdutos = snapshot.data!;
-                  _filteredProdutos = _allProdutos;
-                }
-
-                if (_filteredProdutos.isEmpty) {
-                  return const Center(child: Text('Nenhum produto corresponde ao seu filtro.'));
-                }
-
-                // A lista agora usa a lista filtrada
-                return ListView.builder(
-                  itemCount: _filteredProdutos.length,
-                  itemBuilder: (context, index) {
-                    final produto = _filteredProdutos[index];
-                    return CardProduto(produto: produto);
-                  },
-                );
-              },
-            ),
+            child: _buildBody(),
           ),
         ],
       ),

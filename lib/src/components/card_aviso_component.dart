@@ -1,6 +1,8 @@
 import 'package:biblia_e_harpa/src/models/avisoModel.dart';
 import 'package:flutter/material.dart';
 
+import '../controllers/fontSizeController.dart';
+
 class CardAvisoComponent extends StatelessWidget {
   final AvisoModel aviso;
   const CardAvisoComponent({super.key, required this.aviso});
@@ -42,29 +44,46 @@ class CardAvisoComponent extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            Text(
-              aviso.titulo,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
+            ValueListenableBuilder<double>(
+              valueListenable: FontSizeController.fontSizeNotifier,
+              builder: (context, fontSize, _) {
+                return Text(
+                  aviso.titulo,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.secondary,
+                    fontSize: fontSize + 4,
+                  ),
+                );
+              },
             ),
             const SizedBox(height: 8.0),
-            Text(
-              aviso.descricao,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.secondary.withOpacity(0.7),
-              ),
-              overflow: TextOverflow.ellipsis, // Adiciona "..." se o texto for muito longo
+            ValueListenableBuilder<double>(
+              valueListenable: FontSizeController.fontSizeNotifier,
+              builder: (context, fontSize, _) {
+                return Text(
+                  aviso.descricao,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.secondary.withOpacity(0.7),
+                    fontSize: fontSize,
+                  ),
+                );
+              },
             ),
             const SizedBox(height: 8.0),
-            Text(
-              aviso.dataPublicacao,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.secondary.withOpacity(0.7),
-              ),
-              maxLines: 3, // Limita o número de linhas para a descrição
-              overflow: TextOverflow.ellipsis, // Adiciona "..." se o texto for muito longo
+            // ValueListenableBuilder para a DATA
+            ValueListenableBuilder<double>(
+              valueListenable: FontSizeController.fontSizeNotifier,
+              builder: (context, fontSize, _) {
+                return Text(
+                  aviso.dataPublicacao,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.secondary.withOpacity(0.7),
+                    fontSize: fontSize - 2,
+                    fontStyle: FontStyle.italic,
+                  ),
+                );
+              },
             ),
           ],
         ),

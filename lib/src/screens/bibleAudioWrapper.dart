@@ -2,6 +2,8 @@ import 'package:biblia_e_harpa/src/screens/bibleAudiosScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
+import '../controllers/fontSizeController.dart';
+
 class BibleAudioWrapper extends StatefulWidget {
   const BibleAudioWrapper({super.key});
 
@@ -67,13 +69,19 @@ class _BibleAudioWrapperState extends State<BibleAudioWrapper> {
               color: Theme.of(context).colorScheme.secondary.withOpacity(0.7),
             ),
             const SizedBox(height: 20),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
-                fontSize: 18,
-              ),
+            ValueListenableBuilder<double>(
+              valueListenable: FontSizeController.fontSizeNotifier,
+              builder: (context, fontSize, _) {
+                return Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
+                    // 3. Usa o valor do controller, com um pequeno ajuste se desejar
+                    fontSize: fontSize,
+                  ),
+                );
+              },
             ),
           ],
         ),

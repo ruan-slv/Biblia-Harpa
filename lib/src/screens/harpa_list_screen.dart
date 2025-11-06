@@ -1,5 +1,5 @@
 import "package:biblia_e_harpa/src/config.dart";
-import "package:biblia_e_harpa/src/content/harpContent.dart";
+import "package:biblia_e_harpa/src/screens/text_harp_screen.dart";
 import "package:biblia_e_harpa/src/controllers/fontSizeController.dart";
 import "package:biblia_e_harpa/src/keys/harpkey.dart";
 import "package:flutter/material.dart";

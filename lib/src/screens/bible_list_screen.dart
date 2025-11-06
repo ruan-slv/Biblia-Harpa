@@ -2,7 +2,7 @@ import 'package:biblia_e_harpa/src/components/appBarComponent.dart';
 import 'package:biblia_e_harpa/src/config.dart';
 import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 import 'package:biblia_e_harpa/src/keys/biblekey.dart';
-import 'package:biblia_e_harpa/src/sizelist/chapterlist.dart';
+import 'package:biblia_e_harpa/src/screens/chapter_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

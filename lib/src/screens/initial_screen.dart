@@ -1,26 +1,27 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:biblia_e_harpa/src/config.dart'; // Certifique-se que suas cores como amberColor, etc., estão aqui ou defina-as abaixo
-import 'package:biblia_e_harpa/src/content/doacao.dart';
-import 'package:biblia_e_harpa/src/devocional/devocionalList.dart';
+import 'package:biblia_e_harpa/src/config.dart'; // Certifiq
+import 'package:biblia_e_harpa/src/models/carousel_item_model.dart';
 import 'package:biblia_e_harpa/src/screens/StoreScreen.dart';
 import 'package:biblia_e_harpa/src/screens/aboutProjectScreen.dart';
 import 'package:biblia_e_harpa/src/screens/harpaAudioScreen.dart';
 import 'package:biblia_e_harpa/src/screens/homeAudioScreen.dart';
 import 'package:biblia_e_harpa/src/screens/informacaoScreen.dart';
 import 'package:biblia_e_harpa/src/screens/informacaoWrapper.dart';
+import 'package:biblia_e_harpa/src/screens/othersScreen.dart';
 import 'package:biblia_e_harpa/src/screens/settingsScreen.dart';
-import 'package:biblia_e_harpa/src/screens/storeWrapper.dart';
-import 'package:biblia_e_harpa/src/sizelist/biblelist.dart';
-import 'package:biblia_e_harpa/src/sizelist/harpalist.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:biblia_e_harpa/src/initial/wallpaperSelectionScreen.dart';
 import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
+import '../screens/storeWrapper.dart';
 
-import '../screens/palavraDiaScreen.dart'; // Se 'palavraDiaScreen.dart' estiver em '../screens/'
+import 'bible_list_screen.dart';
+import 'devocional_list_screen.dart';
+import 'harpa_list_screen.dart';
+import 'palavraDiaScreen.dart'; // Se 'palavraDiaScreen.dart' estiver em '../screens/'
 
 // Data class for Palavra do Dia
 class Data {
@@ -50,11 +51,94 @@ class _InitialState extends State<Initial> {
   Data? palavraAtual;
   DateTime? ultimaAtualizacao;
   int currentPageIndex = 0;
+  /*final List<CarouselItemModel> carouselItens = [
+    CarouselItemModel(
+      "Avalie nosso app",
+      "Ajude-nos a melhorar!",
+      Icons.stars,
+        () {}
+    ),
+    CarouselItemModel(
+        "Compartilhe com amigos",
+        "Espalhe a palavra de Deus",
+        Icons.share,
+            () {}
+    ),
+    CarouselItemModel(
+        "Parcerias",
+        "Seja um parceiro do projeto",
+        Icons.handshake,
+            () {}
+    ),
+    CarouselItemModel(
+        "Suporte",
+        "Entre em contato",
+        Icons.code,
+            () {}
+    ),
+  ];*/
 
   @override
   void initState() {
     super.initState();
     _loadPalavraDoDia();
+  }
+
+  Widget _buildStyledDestination(int index) {
+    final bool isSelected = currentPageIndex == index;
+    final List<IconData> icons = [
+      Icons.home_outlined,
+      Icons.store_outlined,
+      Icons.info_outline,
+    ];
+    final List<IconData> selectedIcons = [
+      Icons.home,
+      Icons.store,
+      Icons.info,
+    ];
+
+    return NavigationDestination(
+      icon: _animatedNavIcon(
+        icon: icons[index],
+        isSelected: false,
+        index: index,
+      ),
+      selectedIcon: _animatedNavIcon(
+        icon: selectedIcons[index],
+        isSelected: true,
+        index: index,
+      ),
+      label: '',
+    );
+  }
+
+  Widget _animatedNavIcon({
+    required IconData icon,
+    required bool isSelected,
+    required int index,
+  }) {
+    return AnimatedScale(
+      scale: isSelected ? 1.0 : 1.0,
+      duration: const Duration(milliseconds: 230),
+      curve: Curves.easeOutCubic,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: EdgeInsets.all(isSelected ? 12 : 14),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadiusGeometry.all(Radius.circular(20.0)),
+          color: isSelected
+              ? Theme.of(context).colorScheme.secondary.withOpacity(0.25)
+              : Colors.transparent,
+        ),
+        child: Icon(
+          icon,
+          size: 26,
+          color: isSelected
+              ? Theme.of(context).colorScheme.onPrimary
+              : Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.7),
+        ),
+      ),
+    );
   }
 
   Future<void> _loadPalavraDoDia() async {
@@ -151,13 +235,12 @@ class _InitialState extends State<Initial> {
                         decoration: BoxDecoration(
                           color: Theme.of(context)
                               .colorScheme
-                              .primary
-                              .withOpacity(0.9),
-                          borderRadius: BorderRadius.circular(12),
+                              .primary,
+                          borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
-                              blurRadius: 6,
+                              color: Theme.of(context).colorScheme.secondary.withOpacity(0.4),
+                              blurRadius: 10,
                               offset: const Offset(0, 3),
                             ),
                           ],
@@ -250,6 +333,76 @@ class _InitialState extends State<Initial> {
                       ),
                     ),
                   ),
+                  /*Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: CarouselSlider(
+                      items: carouselItens.map((item) {
+                        return Builder(
+                          builder: (BuildContext context) {
+                            return GestureDetector(
+                              onTap: item.onTap,
+                              child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                margin: EdgeInsets.symmetric(horizontal: 10),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  borderRadius: BorderRadiusGeometry.circular(20.0),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Theme.of(context).colorScheme.secondary.withOpacity(0.4),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        item.icon,
+                                        size: 36,
+                                        color: Theme.of(context).colorScheme.secondary,
+                                      ),
+                                      const SizedBox(height: 9),
+                                      Text(
+                                        item.title,
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context).colorScheme.secondary,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Text(
+                                        item.subtitle,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Theme.of(context).colorScheme.secondary,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      }).toList(),
+                      options: CarouselOptions(
+                        height: 160,
+                        autoPlay: true,
+                        autoPlayInterval: const Duration(seconds: 5),
+                        autoPlayAnimationDuration: const Duration(milliseconds: 800),
+                        autoPlayCurve: Curves.fastOutSlowIn,
+                        enlargeCenterPage: true,
+                        viewportFraction: 0.8,
+                      ),
+                    ),
+                  ),*/
                   Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Column(
@@ -336,6 +489,7 @@ class _InitialState extends State<Initial> {
 
       StoreWrapper(),
       InformacaoWrapper(),
+      Othersscreen(),
     ];
 
     return Scaffold(
@@ -383,7 +537,7 @@ class _InitialState extends State<Initial> {
               color: Theme.of(context).colorScheme.primary,
             ),
             icon: Icon(
-                Icons.home_outlined,
+              Icons.home_outlined,
               color: Theme.of(context).colorScheme.secondary,
             ),
             label: "Inicio",
@@ -394,7 +548,7 @@ class _InitialState extends State<Initial> {
               color: Theme.of(context).colorScheme.primary,
             ),
             icon: Icon(
-                Icons.store_outlined,
+              Icons.store_outlined,
               color: Theme.of(context).colorScheme.secondary,
             ),
             label: "Loja",
@@ -409,6 +563,17 @@ class _InitialState extends State<Initial> {
               color: Theme.of(context).colorScheme.secondary,
             ),
             label: "Informações",
+          ),
+          NavigationDestination(
+            selectedIcon: Icon(
+              Icons.more_horiz,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            icon: Icon(
+              Icons.more_horiz_outlined,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+            label: "Outros",
           ),
         ],
       ),
@@ -430,12 +595,12 @@ class _InitialState extends State<Initial> {
       child: Container(
         width: double.infinity, // Ocupa toda a largura disponível
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.7),
-          borderRadius: BorderRadius.circular(12), // Um pouco mais arredondado
+          color: Theme.of(context).colorScheme.primary,
+          borderRadius: BorderRadius.circular(20), // Um pouco mais arredondado
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
-              blurRadius: 6,
+              color: Theme.of(context).colorScheme.secondary.withOpacity(0.4),
+              blurRadius: 10,
               offset: const Offset(0, 3),
             ),
           ],

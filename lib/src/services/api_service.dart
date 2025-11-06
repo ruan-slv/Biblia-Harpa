@@ -8,7 +8,6 @@ class ApiServiceProduto {
     final response = await http.get(Uri.parse(baseUrl));
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      print(data);
       final List produtos = [
         ...data['livros'],
         ...data['acessorios'],
@@ -16,7 +15,7 @@ class ApiServiceProduto {
         ...data['Presentes'],
         ...data['Decoração'],
         ...data['Jogos'],
-      ];
+      ].reversed.toList();
       return produtos.map((item) => ProdutoModel.fromJson(item)).toList();
     } else {
       throw Exception("Erro ao carregar produtos da loja");

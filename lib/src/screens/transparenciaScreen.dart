@@ -9,16 +9,16 @@ No Bíblia & Harpa, acreditamos que a fé se expressa também por meio de açõe
 
 Divisão dos valores recebidos:
 
-- Contribuição Social: 30%
+- Contribuição Social: 20%
   Doações de alimentos, roupas, apoio a instituições e ações comunitárias.
 
-- Desenvolvedor: 20%
+- Desenvolvedor: 15%
   Remuneração pelo trabalho de criação, manutenção e suporte do app.
 
 - Terceiros e Prestadores: 20%
-  Pagamento de serviços como design, programação, atendimento, etc.
+  Pagamento de serviços como design, programação, etc.
 
-- Crescimento do App: 30%
+- Crescimento do App: 45%
   Investimentos em tráfego pago, divulgação, melhorias e expansão geral.
 
 Esses percentuais podem variar conforme campanhas específicas ou necessidades emergenciais, mas sempre com prestação de contas clara.

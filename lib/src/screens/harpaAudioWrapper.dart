@@ -1,3 +1,4 @@
+import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 import 'package:biblia_e_harpa/src/screens/harpaAudioScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -52,7 +53,6 @@ class _HarpaAudioWrapperState extends State<HarpaAudioWrapper> {
     );
   }
 
-  // Widget auxiliar para exibir mensagens de erro
   Widget _buildErrorWidget(BuildContext context, String message) {
     return Center(
       child: Padding(
@@ -66,13 +66,18 @@ class _HarpaAudioWrapperState extends State<HarpaAudioWrapper> {
               color: Theme.of(context).colorScheme.secondary.withOpacity(0.7),
             ),
             const SizedBox(height: 20),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
-                fontSize: 18,
-              ),
+            ValueListenableBuilder(
+              valueListenable: FontSizeController.fontSizeNotifier,
+              builder: (context, fontSize, _) {
+                return Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
+                    fontSize: 18,
+                  ),
+                );
+              },
             ),
           ],
         ),

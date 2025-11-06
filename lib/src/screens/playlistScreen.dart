@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:just_audio/just_audio.dart';
@@ -246,11 +247,17 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  'Nenhuma áudio foi adicionado / encontrado.',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
+                ValueListenableBuilder(
+                  valueListenable: FontSizeController.fontSizeNotifier,
+                  builder: (context, fontSize, _) {
+                    return Text(
+                      'Nenhuma áudio foi adicionado / encontrado.',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary,
+                        fontSize: fontSize,
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 8),
                 ElevatedButton(
@@ -258,11 +265,17 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
                   ),
-                  child: Text(
-                    "Adicionar áudio",
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
+                  child: ValueListenableBuilder(
+                    valueListenable: FontSizeController.fontSizeNotifier,
+                    builder: (context, fontSize, _) {
+                      return Text(
+                        "Adicionar áudio",
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary,
+                          fontSize: fontSize,
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],

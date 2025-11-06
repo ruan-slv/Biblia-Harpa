@@ -45,9 +45,6 @@ class Bibleaudiosscreen extends StatefulWidget {
 }
 
 class _BibleaudiosscreenState extends State<Bibleaudiosscreen> {
-  // Removido o player de áudio desta tela, pois a lógica de play não era usada aqui.
-
-  // Variáveis para a lista e o filtro
   List<Book> _allBooks = [];
   List<Book> _filteredBooks = [];
   final TextEditingController _searchController = TextEditingController();
@@ -59,14 +56,12 @@ class _BibleaudiosscreenState extends State<Bibleaudiosscreen> {
   void initState() {
     super.initState();
     _fetchAudios();
-    // Adiciona um listener para o controller da pesquisa
-    _searchController.addListener(_filterBooks); // Agora vai encontrar o método
+    _searchController.addListener(_filterBooks);
   }
 
   @override
   void dispose() {
-    // Limpa o controller para evitar vazamentos de memória
-    _searchController.removeListener(_filterBooks); // Agora vai encontrar o método
+    _searchController.removeListener(_filterBooks);
     _searchController.dispose();
     super.dispose();
   }
@@ -82,15 +77,13 @@ class _BibleaudiosscreenState extends State<Bibleaudiosscreen> {
         .replaceAll(RegExp(r'[ç]'), 'c');
   }
 
-  // CORREÇÃO: Método renomeado e lógica interna ajustada
   void _filterBooks() {
     final query = _searchController.text;
     setState(() {
       _filteredBooks = _allBooks
           .where(
             (book) =>
-        // Compara o título normalizado do livro com a busca normalizada
-        _normalize(book.title).contains(_normalize(query)),
+            _normalize(book.title).contains(_normalize(query)),
       )
           .toList();
     });
@@ -112,13 +105,13 @@ class _BibleaudiosscreenState extends State<Bibleaudiosscreen> {
 
       setState(() {
         _allBooks = books;
-        _filteredBooks = books; // Inicialmente, a lista filtrada é igual à lista completa
+        _filteredBooks = books;
         _isLoading = false;
       });
     } catch (e) {
       setState(() {
         _error =
-        "Esta funcionalidade começou a ser desenvolvida no dia 03/09/2025\nAguarde só mais um pouco, tentaremos finalizar esta funcionalidade até Novembro";
+        "Erro ao listar áudios. Tente novamente mais tarde ou entre em contato com o desenvolvedor para relatar o ocorrido.";
         _isLoading = false;
       });
     }
@@ -133,27 +126,30 @@ class _BibleaudiosscreenState extends State<Bibleaudiosscreen> {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Text(
-            _error!,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.secondary,
-              fontSize: 16,
-            ),
+          child: ValueListenableBuilder<double>(
+            valueListenable: FontSizeController.fontSizeNotifier,
+            builder: (context, fontSize, _) {
+              return Text(
+                _error!,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.secondary,
+                  fontSize: fontSize,
+                ),
+              );
+            },
           ),
         ),
       );
     }
-
-    // A UI agora é uma Column que contém a barra de pesquisa e a lista
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: TextField(
-            controller: _searchController, // Conecta o controller
+            controller: _searchController,
             decoration: InputDecoration(
-              labelText: "Pesquisar livro", // Texto atualizado
+              labelText: "Pesquisar livro",
               labelStyle:
               TextStyle(color: Theme.of(context).colorScheme.secondary),
               border: const OutlineInputBorder(),
@@ -163,7 +159,7 @@ class _BibleaudiosscreenState extends State<Bibleaudiosscreen> {
               ),
               suffixIcon: IconButton(
                 onPressed: () {
-                  _searchController.clear(); // Limpa o campo de pesquisa
+                  _searchController.clear();
                 },
                 icon: Icon(
                   Icons.clear,
@@ -180,21 +176,28 @@ class _BibleaudiosscreenState extends State<Bibleaudiosscreen> {
             cursorColor: Theme.of(context).colorScheme.secondary,
           ),
         ),
-        // Adicionado Expanded para que a lista ocupe o resto da tela
         Expanded(
           child: ListView.builder(
-            itemCount: _filteredBooks.length, // Usa a lista filtrada
+            itemCount: _filteredBooks.length,
             itemBuilder: (context, index) {
-              final book = _filteredBooks[index]; // Usa a lista filtrada
+              final book = _filteredBooks[index];
               return ListTile(
                 trailing: Icon(
                   Icons.list,
                   color: Theme.of(context).colorScheme.secondary,
                 ),
-                title: Text(
-                  book.title,
-                  style:
-                  TextStyle(color: Theme.of(context).colorScheme.secondary),
+                title: ValueListenableBuilder<double>(
+                  valueListenable: FontSizeController.fontSizeNotifier,
+                  builder: (context, fontSize, _) {
+                    return Text(
+                      book.title,
+                      style:
+                      TextStyle(
+                        color: Theme.of(context).colorScheme.secondary,
+                        fontSize: fontSize,
+                      ),
+                    );
+                  },
                 ),
                 onTap: () {
                   Navigator.push(

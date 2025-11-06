@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 import 'package:biblia_e_harpa/src/models/dataAudioModel.dart';
 import 'package:biblia_e_harpa/src/screens/harpaFileScreen.dart';
 import 'package:flutter/material.dart';
@@ -148,11 +149,17 @@ class _HarpaAudioScreenState extends State<HarpaAudioScreen> {
                   Icons.list,
                   color: Theme.of(context).colorScheme.secondary,
                 ),
-                title: Text(
-                  harpa.titulo,
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
-                  ),
+                title: ValueListenableBuilder(
+                  valueListenable: FontSizeController.fontSizeNotifier,
+                  builder: (context, fontSize, _) {
+                    return Text(
+                      harpa.titulo,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary,
+                        fontSize: fontSize,
+                      ),
+                    );
+                  },
                 ),
                 onTap: () {
                   Navigator.push(

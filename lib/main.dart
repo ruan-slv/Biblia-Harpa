@@ -1,7 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 import 'package:biblia_e_harpa/src/controllers/theme_controller.dart';
-import 'package:biblia_e_harpa/src/initial/initial.dart';
+import 'package:biblia_e_harpa/src/screens/initial_screen.dart';
 import 'package:biblia_e_harpa/src/models/music.dart';
 import 'package:biblia_e_harpa/src/theme/theme.dart';
 import 'package:flutter/foundation.dart';
@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final upgraderMessages = UpgraderMessages(code: 'pt');
+    final upgraderMessages = UpgraderMessages(code: 'pt-br');
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: ThemeController.themeNotifier,
       builder: (context, currentTheme, _) {

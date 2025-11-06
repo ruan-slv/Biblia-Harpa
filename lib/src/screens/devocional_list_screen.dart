@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:biblia_e_harpa/src/config.dart';
 import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
+import 'package:biblia_e_harpa/src/screens/text_devocional_Screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../keys/devocionalkey.dart';
-import 'devocionalScreen.dart';
 
 class DevocionalList extends StatefulWidget {
   const DevocionalList({super.key});

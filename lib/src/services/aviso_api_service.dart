@@ -8,8 +8,7 @@ class AvisoServiceAPI {
     final response = await http.get(Uri.parse(baseURL));
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      print(data);
-      final List avisos = [...data["avisos"]];
+      final List avisos = [...data["avisos"]].reversed.toList();
       return avisos.map((item) => AvisoModel.fromJson(item)).toList();
     } else {
       throw Exception("Erro ao carregar os avisos");

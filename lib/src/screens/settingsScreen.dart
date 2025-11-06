@@ -1,6 +1,7 @@
 import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 import 'package:biblia_e_harpa/src/controllers/theme_controller.dart';
 import 'package:biblia_e_harpa/src/screens/aboutProjectScreen.dart';
+import 'package:biblia_e_harpa/src/screens/participantsScreen.dart';
 import 'package:biblia_e_harpa/src/screens/transparenciaScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -254,114 +255,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 Theme.of(context).colorScheme.primary,
                           ),
                         ),
-
-                        // Theme(
-                        //   data: Theme.of(context).copyWith(
-                        //     popupMenuTheme: PopupMenuThemeData(
-                        //       color: Theme.of(context).colorScheme.primary,
-                        //       textStyle: TextStyle(
-                        //         color: Theme.of(context).colorScheme.secondary,
-                        //       ),
-                        //     ),
-                        //   ),
-                        //   child: PopupMenuButton<String>(
-                        //     child: Container(
-                        //       height: 40,
-                        //       width: 200,
-                        //       decoration: BoxDecoration(
-                        //         color: Theme.of(context).colorScheme.primary,
-                        //         borderRadius: BorderRadius.circular(20),
-                        //       ),
-                        //       child: Row(
-                        //         crossAxisAlignment: CrossAxisAlignment.center,
-                        //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        //         children: [
-                        //           Icon(
-                        //             Icons.palette,
-                        //             color:
-                        //                 Theme.of(context).colorScheme.secondary,
-                        //           ),
-                        //           Text(
-                        //             "Selecione um tema",
-                        //             style: TextStyle(
-                        //               color:
-                        //                   Theme.of(context).colorScheme.secondary,
-                        //             ),
-                        //           ),
-                        //         ],
-                        //       ),
-                        //     ),
-                        //     onSelected: (value) async {
-                        //       if (value == "light") {
-                        //         await ThemeController.updateCustomColors(
-                        //           primary: Colors.grey.shade300,
-                        //           secondary: Colors.grey.shade900,
-                        //           background: Colors.grey.shade100,
-                        //         );
-                        //       } else if (value == "dark") {
-                        //         ThemeController.updateCustomColors(
-                        //             primary: Colors.grey.shade700,
-                        //             secondary: Colors.grey.shade100,
-                        //             background: Colors.grey.shade900,
-                        //         );
-                        //       } else if (value == "quente") {
-                        //         await ThemeController.updateCustomColors(
-                        //           primary: Colors.deepOrange.shade300,
-                        //           secondary: Colors.redAccent.shade700,
-                        //           background: Colors.orange.shade100,
-                        //         );
-                        //       } else if (value == "frio") {
-                        //         await ThemeController.updateCustomColors(
-                        //           primary: Colors.blue.shade600,
-                        //           secondary: Colors.white,
-                        //           background: Colors.blueGrey.shade400,
-                        //         );
-                        //       }
-                        //     },
-                        //     itemBuilder: (context) => [
-                        //       PopupMenuItem(
-                        //         value: "light",
-                        //         child: Text(
-                        //           "Tema claro",
-                        //           style: TextStyle(
-                        //             color:
-                        //                 Theme.of(context).colorScheme.secondary,
-                        //           ),
-                        //         ),
-                        //       ),
-                        //       PopupMenuItem(
-                        //         value: "dark",
-                        //         child: Text(
-                        //           "Tema escuro",
-                        //           style: TextStyle(
-                        //             color:
-                        //                 Theme.of(context).colorScheme.secondary,
-                        //           ),
-                        //         ),
-                        //       ),
-                        //       PopupMenuItem(
-                        //         value: "quente",
-                        //         child: Text(
-                        //           "Tema quente",
-                        //           style: TextStyle(
-                        //             color:
-                        //                 Theme.of(context).colorScheme.secondary,
-                        //           ),
-                        //         ),
-                        //       ),
-                        //       PopupMenuItem(
-                        //         value: "frio",
-                        //         child: Text(
-                        //           "Tema frio",
-                        //           style: TextStyle(
-                        //             color:
-                        //                 Theme.of(context).colorScheme.secondary,
-                        //           ),
-                        //         ),
-                        //       )
-                        //     ],
-                        //   ),
-                        // ),
                       ],
                     ),
                   ),
@@ -739,6 +632,69 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Card(
+                  color: Theme.of(context).colorScheme.primary,
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Lista de envolvidos neste projeto",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        ValueListenableBuilder<double>(
+                          valueListenable: FontSizeController.fontSizeNotifier,
+                          builder: (context, fontSize, _) {
+                            return Text(
+                              "Lista de nomes de todos os envolvidos no projeto, seja desenvolvendo ou apoiando de outras formas.",
+                              style: TextStyle(
+                                fontSize: fontSize,
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                 const ParticipantsScreen(),
+                              ),
+                            );
+                          },
+                          icon: Icon(
+                            Icons.info,
+                            color: Theme.of(context).colorScheme.secondary,
+                            size: 20,
+                          ),
+                          label: Text(
+                            "Visualizar lista",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                            Theme.of(context).colorScheme.primary,
                           ),
                         ),
                       ],

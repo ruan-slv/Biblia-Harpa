@@ -1,3 +1,4 @@
+import 'package:biblia_e_harpa/src/controllers/bible_controller.dart';
 import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
@@ -24,6 +25,7 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
   late int currentChapterNumber;
   late List<dynamic> currentVerses;
   final ScrollController _scrollController = ScrollController();
+  final BibleController _bibleController = BibleController();
   List<int> _selectedVerseIndices = [];
   final int _verseSelectionLimit = 10; // Limite de versículos
 
@@ -189,6 +191,8 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
       );
     }
 
+    final chapterId = "${widget.bookName}_$currentChapterNumber";
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -196,6 +200,24 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.secondary,
         actions: [
+          ValueListenableBuilder<List<String>>(
+            valueListenable: _bibleController.textosLidosNotifier,
+            builder: (context, textosLidos, _) {
+              final bool isRead = textosLidos.contains(chapterId);
+              return IconButton(
+                onPressed: () {
+                  _bibleController.toggleReadStatus(chapterId);
+                },
+                icon: Icon(
+                  isRead ? Icons.bookmark_added : Icons.bookmark_add_outlined,
+                  color: isRead
+                      ? Colors.lightBlueAccent
+                      : Theme.of(context).colorScheme.secondary,
+                ),
+                tooltip: isRead ? 'Marcar como não lido' : 'Marcar como lido',
+              );
+            },
+          ),
           if (_selectedVerseIndices.isNotEmpty)
             IconButton(
               onPressed: _clearSelections,
@@ -279,7 +301,10 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
                 padding: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
                   color: _selectedVerseIndices.contains(index)
-                      ? Theme.of(context).colorScheme.primary.withOpacity(0.9) // Cor do tema
+                      ? Theme.of(context)
+                      .colorScheme
+                      .primary
+                      .withOpacity(0.9) // Cor do tema
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(8.0),
                 ),

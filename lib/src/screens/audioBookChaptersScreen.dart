@@ -1,5 +1,6 @@
 // Em: lib/src/screens/audioBookChaptersScreen.dart
 
+import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 import 'package:biblia_e_harpa/src/screens/bibleAudiosScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
@@ -18,7 +19,6 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
   final TextEditingController _searchController = TextEditingController();
   late List<AudioData> _filteredChapters;
 
-  // ESTA VARIÁVEL AGORA É CONTROLADA APENAS PELO PLAYERSTATETREAM
   bool _isCurrentlyBuffering = false;
   int? _currentIndex;
   Duration _currentPosition = Duration.zero;
@@ -30,7 +30,6 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
     _filteredChapters = widget.book.chapters;
     _searchController.addListener(_filterChapters);
 
-    // Listener agora é a ÚNICA fonte da verdade para o estado de buffering
     _player.playerStateStream.listen((state) {
       if (!mounted) return;
       setState(() {
@@ -99,7 +98,6 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
         await _player.play();
       }
     } catch (e) {
-      print("Erro ao tocar áudio: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Houve um problema ao tocar o áudio')),
       );
@@ -183,7 +181,12 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
                                 ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                                 : Icon(isPlaying ? Icons.pause : Icons.play_arrow, color: Theme.of(context).colorScheme.primary),
                           ),
-                          title: Text(chapter.name, style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.secondary)),
+                          title: ValueListenableBuilder(
+                            valueListenable: FontSizeController.fontSizeNotifier,
+                            builder: (context, fontSize, _) {
+                              return Text(chapter.name, style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.secondary, fontSize: fontSize,),);
+                            },
+                          ),
                           onTap: () => _playAudio(chapter.url, originalIndex),
                         ),
                         if (isCurrentlySelected)
@@ -202,8 +205,8 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(_formatDuration(_currentPosition), style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.secondary)),
-                                    Text(_formatDuration(_audioDuration), style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.secondary)),
+                                    Text(_formatDuration(_currentPosition), style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.secondary),),
+                                    Text(_formatDuration(_audioDuration), style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.secondary),),
                                   ],
                                 ),
                               ),

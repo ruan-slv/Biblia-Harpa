@@ -37,8 +37,8 @@ android {
         applicationId = "com.bibleAplication.app"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = 17
-        versionName = "1.0.8"
+        versionCode = 19
+        versionName = "1.0.9"
         ndk {
             abiFilters 'armeabi-v7a', 'arm64-v8a'
         }
