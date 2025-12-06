@@ -251,7 +251,7 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
                   valueListenable: FontSizeController.fontSizeNotifier,
                   builder: (context, fontSize, _) {
                     return Text(
-                      'Nenhuma áudio foi adicionado / encontrado.',
+                      'Vazio',
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.secondary,
                         fontSize: fontSize,

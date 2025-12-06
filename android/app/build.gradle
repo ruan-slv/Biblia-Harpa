@@ -16,14 +16,18 @@ android {
     }
 
     compileOptions {
+        // ✅ Ativa suporte a Java 17
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
+
+        // ✅ Habilita o core library desugaring (necessário para flutter_local_notifications)
+        coreLibraryDesugaringEnabled true
     }
+
     kotlinOptions {
         jvmTarget = "17"
     }
 
-    // Adicione a configuração de assinatura
     signingConfigs {
         release {
             storeFile file("novo-upload.jks")
@@ -37,8 +41,8 @@ android {
         applicationId = "com.bibleAplication.app"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = 19
-        versionName = "1.0.9"
+        versionCode = 20
+        versionName = "1.1.0"
         ndk {
             abiFilters 'armeabi-v7a', 'arm64-v8a'
         }
@@ -46,17 +50,15 @@ android {
 
     buildTypes {
         release {
-            // Use a configuração de assinatura de release
             signingConfig = signingConfigs.release
-            minifyEnabled true // Ativa minificação para reduzir o tamanho
-            shrinkResources true // Remove recursos não utilizados
+            minifyEnabled true
+            shrinkResources true
         }
     }
 
-    // ADICIONADO CONFORME SOLICITADO
     configurations.all {
         resolutionStrategy {
-            force 'androidx.media:media:1.4.3' // Força uma versão específica e estável
+            force 'androidx.media:media:1.4.3'
         }
     }
 }
@@ -65,5 +67,10 @@ flutter {
     source = "../.."
 }
 
-// A seção subprojects foi removida pois o 'configurations.all' já cobre isso de forma mais eficaz
-// e para evitar redundância.
+dependencies {
+    // ✅ Adiciona suporte ao desugaring (necessário para notificações locais)
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+
+    // (opcional, mas recomendado)
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+}

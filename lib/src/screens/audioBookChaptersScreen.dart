@@ -1,9 +1,12 @@
-// Em: lib/src/screens/audioBookChaptersScreen.dart
+// lib/src/screens/audioBookChaptersScreen.dart
 
+import 'dart:io';
 import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 import 'package:biblia_e_harpa/src/screens/bibleAudiosScreen.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:path_provider/path_provider.dart';
 
 class Audiobookchaptersscreen extends StatefulWidget {
   final Book book;
@@ -23,18 +26,25 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
   int? _currentIndex;
   Duration _currentPosition = Duration.zero;
   Duration _audioDuration = Duration.zero;
+  final Map<int, bool> _isDownloading = {};
+  final Set<int> _downloadedChapters = {};
+
+  final DraggableScrollableController _draggableController =
+  DraggableScrollableController();
 
   @override
   void initState() {
     super.initState();
     _filteredChapters = widget.book.chapters;
     _searchController.addListener(_filterChapters);
+    _checkDownloadedChapters();
 
     _player.playerStateStream.listen((state) {
       if (!mounted) return;
       setState(() {
-        _isCurrentlyBuffering = state.processingState == ProcessingState.buffering ||
-            state.processingState == ProcessingState.loading;
+        _isCurrentlyBuffering =
+            state.processingState == ProcessingState.buffering ||
+                state.processingState == ProcessingState.loading;
       });
 
       if (state.processingState == ProcessingState.completed) {
@@ -56,11 +66,156 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
     _player.dispose();
     _searchController.removeListener(_filterChapters);
     _searchController.dispose();
+    _draggableController.dispose();
     super.dispose();
   }
 
+  // --- LÓGICA DE ARQUIVOS LOCAL ---
+
+  // 1. Define o caminho local do arquivo
+  Future<String> _getLocalFilePath(String fileName) async {
+    final directory = await getApplicationDocumentsDirectory();
+    // Cria uma pasta específica para organização
+    final audioDir = Directory('${directory.path}/bible_audios');
+    if (!await audioDir.exists()) {
+      await audioDir.create(recursive: true);
+    }
+    // Sanitiza o nome do arquivo para evitar caracteres inválidos
+    final safeName = fileName.replaceAll(RegExp(r'[^\w\s]+'), '').replaceAll(' ', '_');
+    return '${audioDir.path}/$safeName.mp3';
+  }
+
+  // 2. Verifica quais capítulos já estão baixados
+  Future<void> _checkDownloadedChapters() async {
+    for (int i = 0; i < widget.book.chapters.length; i++) {
+      final path = await _getLocalFilePath(widget.book.chapters[i].name);
+      if (await File(path).exists()) {
+        if (mounted) {
+          setState(() {
+            _downloadedChapters.add(i);
+          });
+        }
+      }
+    }
+  }
+
+  // 3. Realiza o Download
+  Future<void> _downloadAudio(String url, String chapterName, int index) async {
+    if (_isDownloading[index] == true) return; // Evita clique duplo
+
+    setState(() {
+      _isDownloading[index] = true;
+    });
+
+    try {
+      final dio = Dio();
+      final savePath = await _getLocalFilePath(chapterName);
+
+      await dio.download(url, savePath);
+
+      if (mounted) {
+        setState(() {
+          _downloadedChapters.add(index);
+          _isDownloading[index] = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$chapterName baixado com sucesso!')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isDownloading[index] = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Erro ao baixar o áudio.')),
+        );
+      }
+    }
+  }
+
+  // 4. Deletar áudio (opcional, para limpar espaço)
+  Future<void> _deleteAudio(String chapterName, int index) async {
+    try {
+      final path = await _getLocalFilePath(chapterName);
+      final file = File(path);
+      if (await file.exists()) {
+        await file.delete();
+        if (mounted) {
+          setState(() {
+            _downloadedChapters.remove(index);
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Áudio removido do dispositivo.')),
+          );
+        }
+      }
+    } catch (e) {
+      // Erro ao deletar
+    }
+  }
+
+  // --- LÓGICA DE PLAYER MODIFICADA ---
+
+  Future<void> _playAudio(String url, int originalIndex) async {
+    try {
+      if (_currentIndex == originalIndex) {
+        if (_player.playing) {
+          await _player.pause();
+        } else {
+          await _player.play();
+        }
+      } else {
+        setState(() {
+          _currentIndex = originalIndex;
+          _currentPosition = Duration.zero;
+          _audioDuration = Duration.zero;
+          _isCurrentlyBuffering = true;
+        });
+
+        // LÓGICA HÍBRIDA: Local ou Online
+        final chapterName = widget.book.chapters[originalIndex].name;
+        final localPath = await _getLocalFilePath(chapterName);
+        final file = File(localPath);
+
+        if (await file.exists()) {
+          // Toca do arquivo local
+          // print("Tocando do arquivo local: $localPath");
+          await _player.setAudioSource(
+            AudioSource.file(localPath),
+            preload: true,
+          );
+        } else {
+          // Toca da URL (Online)
+          // print("Tocando da URL: $url");
+          await _player.setAudioSource(
+            AudioSource.uri(Uri.parse(url)),
+            preload: true,
+          );
+        }
+
+        await _player.play();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Houve um problema ao tocar o áudio')),
+        );
+        setState(() => _isCurrentlyBuffering = false);
+      }
+    }
+  }
+
+  // ... (O resto dos métodos auxiliares _filterChapters, _normalize, _playNext, etc. permanecem iguais) ...
   String _normalize(String input) {
-    return input.toLowerCase().replaceAll(RegExp(r'[áàâãä]'), 'a').replaceAll(RegExp(r'[éèêë]'), 'e').replaceAll(RegExp(r'[íìîï]'), 'i').replaceAll(RegExp(r'[óòôõö]'), 'o').replaceAll(RegExp(r'[úùûü]'), 'u').replaceAll(RegExp(r'[ç]'), 'c');
+    return input
+        .toLowerCase()
+        .replaceAll(RegExp(r'[áàâãä]'), 'a')
+        .replaceAll(RegExp(r'[éèêë]'), 'e')
+        .replaceAll(RegExp(r'[íìîï]'), 'i')
+        .replaceAll(RegExp(r'[óòôõö]'), 'o')
+        .replaceAll(RegExp(r'[úùûü]'), 'u')
+        .replaceAll(RegExp(r'[ç]'), 'c');
   }
 
   void _filterChapters() {
@@ -72,48 +227,24 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
     });
   }
 
-  // --- FUNÇÃO DE PLAY REATORADA ---
-  Future<void> _playAudio(String url, int originalIndex) async {
-    try {
-      if (_currentIndex == originalIndex) {
-        if (_player.playing) {
-          await _player.pause();
-        } else {
-          await _player.play();
-        }
-      } else {
-        // Mostra o loading MANUALMENTE antes de carregar
-        setState(() {
-          _currentIndex = originalIndex;
-          _currentPosition = Duration.zero;
-          _audioDuration = Duration.zero;
-          _isCurrentlyBuffering = true; // Feedback imediato para o usuário
-        });
-
-        await _player.setAudioSource(
-          AudioSource.uri(Uri.parse(url)),
-          // Preload garante que ele comece a carregar antes de tocar
-          preload: true,
-        );
-        await _player.play();
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Houve um problema ao tocar o áudio')),
-      );
-      // Se der erro, garante que o loading para
-      if (mounted) setState(() => _isCurrentlyBuffering = false);
-    }
-  }
-
   void _playNextAudio() {
     if (_currentIndex == null || widget.book.chapters.isEmpty) return;
     int nextIndexInFullList = _currentIndex! + 1;
     if (nextIndexInFullList >= widget.book.chapters.length) {
-      nextIndexInFullList = 0; // Loop para o início
+      nextIndexInFullList = 0;
     }
     final nextChapter = widget.book.chapters[nextIndexInFullList];
     _playAudio(nextChapter.url, nextIndexInFullList);
+  }
+
+  void _playPreviousAudio() {
+    if (_currentIndex == null || widget.book.chapters.isEmpty) return;
+    int prevIndexInFullList = _currentIndex! - 1;
+    if (prevIndexInFullList < 0) {
+      prevIndexInFullList = widget.book.chapters.length - 1;
+    }
+    final prevChapter = widget.book.chapters[prevIndexInFullList];
+    _playAudio(prevChapter.url, prevIndexInFullList);
   }
 
   String _formatDuration(Duration duration) {
@@ -125,99 +256,305 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
 
   @override
   Widget build(BuildContext context) {
+    final currentChapterName = _currentIndex != null
+        ? widget.book.chapters[_currentIndex!].name
+        : "Selecione um capítulo";
+    final isPlaying = _player.playing;
+
+    // Verifica se o capitulo ATUAL está baixado (para mostrar ícone no player grande)
+    final bool isCurrentDownloaded = _currentIndex != null && _downloadedChapters.contains(_currentIndex);
+
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
         centerTitle: true,
         iconTheme: IconThemeData(color: Theme.of(context).colorScheme.secondary),
-        title: Text(widget.book.title, style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
+        title: Text(
+          widget.book.title,
+          style: TextStyle(
+              color: Theme.of(context).colorScheme.secondary,
+              fontWeight: FontWeight.bold),
+        ),
       ),
-      body: Column(
+      body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                labelText: "Pesquisar capítulo",
-                labelStyle: TextStyle(color: Theme.of(context).colorScheme.secondary),
-                border: const OutlineInputBorder(),
-                prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.secondary),
-                suffixIcon: IconButton(
-                  onPressed: () => _searchController.clear(),
-                  icon: Icon(Icons.clear, color: Theme.of(context).colorScheme.secondary),
-                ),
-                focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary)),
-              ),
-              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-              cursorColor: Theme.of(context).colorScheme.secondary,
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _filteredChapters.length,
-              itemBuilder: (context, index) {
-                final chapter = _filteredChapters[index];
-                final originalIndex = widget.book.chapters.indexOf(chapter);
-                final isCurrentlySelected = _currentIndex == originalIndex;
-                final isPlaying = isCurrentlySelected && _player.playing;
-
-                // A condição de loading agora é dupla: o estado do player OU o clique inicial
-                final showLoading = isCurrentlySelected && _isCurrentlyBuffering;
-
-                return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  color: Theme.of(context).colorScheme.primary,
-                  elevation: isCurrentlySelected ? 6 : 2,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                    child: Column(
-                      children: [
-                        ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: Theme.of(context).colorScheme.secondary,
-                            child: showLoading
-                                ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                                : Icon(isPlaying ? Icons.pause : Icons.play_arrow, color: Theme.of(context).colorScheme.primary),
+          // --- ÁREA DO PLAYER ---
+          Positioned.fill(
+            child: Center(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 20),
+                      // Ícone Grande
+                      Stack(
+                        alignment: Alignment.topRight,
+                        children: [
+                          Container(
+                            width: 180,
+                            height: 180,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.primary,
+                              borderRadius: BorderRadius.circular(30),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 10),
+                                )
+                              ],
+                            ),
+                            child: Icon(
+                              Icons.menu_book_rounded,
+                              size: 80,
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
                           ),
-                          title: ValueListenableBuilder(
-                            valueListenable: FontSizeController.fontSizeNotifier,
-                            builder: (context, fontSize, _) {
-                              return Text(chapter.name, style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.secondary, fontSize: fontSize,),);
-                            },
+                          // Indicador visual se está tocando offline
+                          if (isCurrentDownloaded)
+                            Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: Colors.green,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: Colors.white, width: 2),
+                                ),
+                                child: const Icon(Icons.offline_pin, color: Colors.white, size: 20),
+                              ),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 30),
+                      // ... (Nome, Slider e Controles permanecem IGUAIS) ...
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          currentChapterName,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.secondary,
                           ),
-                          onTap: () => _playAudio(chapter.url, originalIndex),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        if (isCurrentlySelected)
-                          Column(
-                            children: [
-                              Slider(
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        widget.book.title,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Theme.of(context).colorScheme.secondary.withOpacity(0.7),
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      // Slider e Controles (código repetido para brevidade, mantenha o que você já tem)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                        child: Column(
+                          children: [
+                            SliderTheme(
+                              data: SliderTheme.of(context).copyWith(
+                                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8.0),
+                                overlayShape: const RoundSliderOverlayShape(overlayRadius: 16.0),
+                                trackHeight: 4.0,
+                              ),
+                              child: Slider(
                                 value: _currentPosition.inSeconds.toDouble(),
                                 min: 0,
                                 max: _audioDuration.inSeconds.toDouble().clamp(1.0, double.infinity),
-                                onChanged: (value) async => await _player.seek(Duration(seconds: value.toInt())),
+                                onChanged: (value) => _player.seek(Duration(seconds: value.toInt())),
                                 activeColor: Theme.of(context).colorScheme.secondary,
                                 inactiveColor: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(_formatDuration(_currentPosition), style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.secondary),),
-                                    Text(_formatDuration(_audioDuration), style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.secondary),),
-                                  ],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(_formatDuration(_currentPosition), style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.secondary)),
+                                  Text(_formatDuration(_audioDuration), style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.secondary)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          IconButton(icon: const Icon(Icons.replay_10_rounded), iconSize: 32.0, color: Theme.of(context).colorScheme.secondary.withOpacity(0.8), onPressed: () => _player.seek(Duration(seconds: _currentPosition.inSeconds - 10))),
+                          IconButton(icon: const Icon(Icons.skip_previous_rounded), iconSize: 40.0, color: Theme.of(context).colorScheme.secondary, onPressed: _playPreviousAudio),
+                          SizedBox(
+                            width: 70, height: 70,
+                            child: Center(
+                              child: _isCurrentlyBuffering
+                                  ? CircularProgressIndicator(color: Theme.of(context).colorScheme.secondary)
+                                  : InkWell(
+                                borderRadius: BorderRadius.circular(50),
+                                onTap: () { if (_currentIndex != null) isPlaying ? _player.pause() : _player.play(); },
+                                child: Container(
+                                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.secondary, shape: BoxShape.circle, boxShadow: [BoxShadow(color: Theme.of(context).colorScheme.secondary.withOpacity(0.3), blurRadius: 10, spreadRadius: 2)]),
+                                  child: Icon(isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded, size: 40.0, color: Theme.of(context).colorScheme.primary),
                                 ),
                               ),
-                            ],
+                            ),
                           ),
-                      ],
-                    ),
+                          IconButton(icon: const Icon(Icons.skip_next_rounded), iconSize: 40.0, color: Theme.of(context).colorScheme.secondary, onPressed: _playNextAudio),
+                          IconButton(icon: const Icon(Icons.forward_10_rounded), iconSize: 32.0, color: Theme.of(context).colorScheme.secondary.withOpacity(0.8), onPressed: () => _player.seek(Duration(seconds: _currentPosition.inSeconds + 10))),
+                        ],
+                      ),
+                    ],
                   ),
-                );
-              },
+                ),
+              ),
             ),
+          ),
+
+          // --- LISTA DESLIZANTE (BOTTOM SHEET) ---
+          DraggableScrollableSheet(
+            controller: _draggableController,
+            initialChildSize: 0.07,
+            minChildSize: 0.07,
+            maxChildSize: 0.9,
+            builder: (BuildContext context, ScrollController scrollController) {
+              return Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10, spreadRadius: 2, offset: const Offset(0, -2))],
+                ),
+                child: CustomScrollView(
+                  controller: scrollController,
+                  slivers: [
+                    // ... (Cabeçalho e Search permanecem iguais) ...
+                    SliverToBoxAdapter(
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 12),
+                          Container(width: 40, height: 5, decoration: BoxDecoration(color: Theme.of(context).colorScheme.secondary.withOpacity(0.3), borderRadius: BorderRadius.circular(10))),
+                          const SizedBox(height: 8),
+                          Center(child: Text("Lista de Capítulos", style: TextStyle(color: Theme.of(context).colorScheme.secondary.withOpacity(0.8), fontWeight: FontWeight.bold))),
+                          const SizedBox(height: 15),
+                        ],
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: TextField(
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                            hintText: "Pesquisar capítulo...",
+                            hintStyle: TextStyle(color: Theme.of(context).colorScheme.secondary.withOpacity(0.7)),
+                            prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.secondary),
+                            suffixIcon: IconButton(onPressed: () { _searchController.clear(); }, icon: Icon(Icons.clear, color: Theme.of(context).colorScheme.secondary)),
+                            filled: true,
+                            fillColor: Theme.of(context).colorScheme.background.withOpacity(0.5),
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide.none),
+                            contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+                          ),
+                          style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                          cursorColor: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
+                    ),
+                    const SliverToBoxAdapter(child: SizedBox(height: 10)),
+
+                    // Lista de Capítulos
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                            (context, index) {
+                          final chapter = _filteredChapters[index];
+                          final originalIndex = widget.book.chapters.indexOf(chapter);
+                          final isCurrentlySelected = _currentIndex == originalIndex;
+                          final isDownloaded = _downloadedChapters.contains(originalIndex);
+                          final isDownloading = _isDownloading[originalIndex] == true;
+
+                          return Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: isCurrentlySelected
+                                  ? Theme.of(context).colorScheme.secondary.withOpacity(0.1)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: ListTile(
+                              leading: Icon(
+                                isCurrentlySelected && isPlaying
+                                    ? Icons.volume_up_rounded
+                                    : Icons.play_circle_outline_rounded,
+                                color: isCurrentlySelected
+                                    ? Theme.of(context).colorScheme.secondary
+                                    : Theme.of(context).colorScheme.secondary.withOpacity(0.5),
+                                size: 30,
+                              ),
+                              title: ValueListenableBuilder(
+                                valueListenable: FontSizeController.fontSizeNotifier,
+                                builder: (context, fontSize, _) {
+                                  return Text(
+                                    chapter.name,
+                                    style: TextStyle(
+                                      fontWeight: isCurrentlySelected ? FontWeight.bold : FontWeight.normal,
+                                      color: Theme.of(context).colorScheme.secondary,
+                                      fontSize: fontSize,
+                                    ),
+                                  );
+                                },
+                              ),
+                              // AQUI ESTÁ O BOTÃO DE DOWNLOAD
+                              trailing: SizedBox(
+                                width: 40,
+                                height: 40,
+                                child: isDownloading
+                                    ? Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: CircularProgressIndicator(strokeWidth: 2, color: Theme.of(context).colorScheme.secondary),
+                                )
+                                    : IconButton(
+                                  icon: Icon(
+                                    isDownloaded ? Icons.download_done_rounded : Icons.download_rounded,
+                                    color: isDownloaded ? Colors.green : Theme.of(context).colorScheme.secondary.withOpacity(0.5),
+                                  ),
+                                  onPressed: () {
+                                    if (isDownloaded) {
+                                      // Opcional: Perguntar se quer deletar
+                                      _deleteAudio(chapter.name, originalIndex);
+                                    } else {
+                                      _downloadAudio(chapter.url, chapter.name, originalIndex);
+                                    }
+                                  },
+                                ),
+                              ),
+                              onTap: () {
+                                _playAudio(chapter.url, originalIndex);
+                                _draggableController.animateTo(0.07, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+                                if (scrollController.hasClients) {
+                                  scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+                                }
+                              },
+                            ),
+                          );
+                        },
+                        childCount: _filteredChapters.length,
+                      ),
+                    ),
+                    const SliverToBoxAdapter(child: SizedBox(height: 30)),
+                  ],
+                ),
+              );
+            },
           ),
         ],
       ),

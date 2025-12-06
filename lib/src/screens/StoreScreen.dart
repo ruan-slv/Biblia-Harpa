@@ -145,6 +145,20 @@ class _StoreScreenState extends State<StoreScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        centerTitle: true,
+        automaticallyImplyLeading: true,
+        iconTheme:
+        IconThemeData(color: Theme.of(context).colorScheme.secondary),
+        title: Text(
+          "Loja de Afiliado",
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.secondary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: Column(
         children: [
           // Barra de Pesquisa (no estado inicial, dentro do build)
@@ -152,25 +166,29 @@ class _StoreScreenState extends State<StoreScreen> {
             padding: const EdgeInsets.all(12.0),
             child: TextField(
               controller: _searchController,
+              keyboardType: TextInputType.number,
               decoration: InputDecoration(
-                hintText: "Buscar na Loja",
-                hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
-                prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.primary),
+                hintText: "Pesquisar Produto",
+                hintStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary),
+                prefixIcon: Icon(Icons.search,
+                    color: Theme.of(context).colorScheme.secondary),
                 suffixIcon: IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    _searchController.clear();
-                  },
+                  onPressed: () => _searchController.clear(),
+                  icon: Icon(Icons.clear,
+                      color: Theme.of(context).colorScheme.secondary),
                 ),
                 filled: true,
-                fillColor: Theme.of(context).colorScheme.surface,
+                fillColor: Theme.of(context).colorScheme.primary,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
                   borderSide: BorderSide.none,
                 ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+                contentPadding:
+                const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
               ),
               style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+              cursorColor: Theme.of(context).colorScheme.secondary,
             ),
           ),
 

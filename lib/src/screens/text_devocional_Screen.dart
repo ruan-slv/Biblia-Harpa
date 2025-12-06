@@ -1,3 +1,5 @@
+// lib/src/screens/devocional_content_screen.dart
+
 import 'dart:convert';
 import 'package:biblia_e_harpa/src/config.dart';
 import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
@@ -36,6 +38,7 @@ class DevocionalContentScreen extends StatefulWidget {
 class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
   List<TextModel> devocionais = [];
   int currentIndex = 0;
+  bool isRead = false; // Variável para controlar se o atual foi lido
 
   @override
   void initState() {
@@ -46,32 +49,69 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
   Future<void> loadDevocionais() async {
     try {
       final String jsonString =
-          await rootBundle.loadString('assets/json/newDevocionalModel.json');
+      await rootBundle.loadString('assets/json/newDevocionalModel.json');
       final Map<String, dynamic> jsonResponse = jsonDecode(jsonString);
       final List<dynamic> topicDevocionais = jsonResponse[widget.devo] ?? [];
       setState(() {
         devocionais =
             topicDevocionais.map((json) => TextModel.fromJson(json)).toList();
       });
+      // Verifica o status de leitura do primeiro item
+      _checkReadStatus();
     } catch (e) {
-      print('Error loading devotionals: $e');
       setState(() {
         devocionais = [];
       });
     }
   }
 
-  void nextDevocional() {
+  // Verifica se o devocional atual já foi lido
+  Future<void> _checkReadStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    // Chave única: devocional_read_TEMA_INDEX
+    final key = 'devocional_read_${widget.devo}_$currentIndex';
     setState(() {
-      currentIndex = (currentIndex + 1) % devocionais.length;
+      isRead = prefs.getBool(key) ?? false;
     });
   }
 
-  void previousDevocional() {
+  // Alterna entre lido e não lido
+  Future<void> _toggleReadStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'devocional_read_${widget.devo}_$currentIndex';
+
     setState(() {
-      currentIndex =
-          (currentIndex - 1 + devocionais.length) % devocionais.length;
+      isRead = !isRead;
     });
+
+    await prefs.setBool(key, isRead);
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(isRead ? "Marcado como lido" : "Marcado como não lido"),
+          duration: const Duration(seconds: 1),
+        ),
+      );
+    }
+  }
+
+  void nextDevocional() {
+    if (currentIndex < devocionais.length - 1) {
+      setState(() {
+        currentIndex++;
+      });
+      _checkReadStatus(); // Verifica status ao mudar
+    }
+  }
+
+  void previousDevocional() {
+    if (currentIndex > 0) {
+      setState(() {
+        currentIndex--;
+      });
+      _checkReadStatus(); // Verifica status ao mudar
+    }
   }
 
   String _getDataForSharing() {
@@ -81,7 +121,7 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
     final devocionalAtual = devocionais[currentIndex];
     StringBuffer sb = StringBuffer();
 
-    sb.writeln("Tópico do Devocional: ${widget.devo}"); // Título do tema
+    sb.writeln("Tópico do Devocional: ${widget.devo}");
     sb.writeln("\n");
     sb.writeln("📖 versiculo:");
     sb.writeln(devocionalAtual.versiculo);
@@ -117,15 +157,11 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
           title: Text(widget.devo,
               style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
           actions: [
-            SizedBox(
-              width: sizeBtnOptions[0],
-              height: sizeBtnOptions[1],
-              child: IconButton(
-                onPressed: initialDevocional,
-                icon: const Icon(Icons.refresh),
-                color: Theme.of(context).colorScheme.secondary,
-                tooltip: "Reiniciar o devocional",
-              ),
+            IconButton(
+              onPressed: initialDevocional,
+              icon: const Icon(Icons.refresh),
+              color: Theme.of(context).colorScheme.secondary,
+              tooltip: "Reiniciar o devocional",
             ),
           ],
           centerTitle: true,
@@ -139,14 +175,38 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
     final devocional = devocionais[currentIndex];
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
+      // Adiciona um botão flutuante para marcar como lido facilmente
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _toggleReadStatus,
+        backgroundColor: isRead ? Colors.green : Theme.of(context).colorScheme.primary,
+        icon: Icon(
+          isRead ? Icons.check_circle : Icons.circle_outlined,
+          color: isRead ? Colors.white : Theme.of(context).colorScheme.secondary,
+        ),
+        label: Text(
+          isRead ? "Concluído" : "Marcar Lido",
+          style: TextStyle(
+            color: isRead ? Colors.white : Theme.of(context).colorScheme.secondary,
+          ),
+        ),
+      ),
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
         title: Text(widget.devo,
             style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
         iconTheme:
-            IconThemeData(color: Theme.of(context).colorScheme.secondary),
+        IconThemeData(color: Theme.of(context).colorScheme.secondary),
         centerTitle: true,
         actions: [
+          // Botão de marcar lido também na AppBar
+          IconButton(
+            onPressed: _toggleReadStatus,
+            icon: Icon(
+              isRead ? Icons.check_circle : Icons.check_circle_outline,
+              color: isRead ? Colors.green : Theme.of(context).colorScheme.secondary,
+            ),
+            tooltip: isRead ? "Marcar como não lido" : "Marcar como lido",
+          ),
           IconButton(
             onPressed: () {
               final String devocionalText = _getDataForSharing();
@@ -160,146 +220,154 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ValueListenableBuilder<double>(
-                valueListenable: FontSizeController.fontSizeNotifier,
-                builder: (context, fontSize, _) {
-                  return Text(
-                    devocional.versiculo,
-                    style: TextStyle(
-                      fontSize: fontSize,
-                      fontStyle: FontStyle.italic,
-                      color: Theme.of(context).colorScheme.secondary,
+      body: CustomScrollView(
+        slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.all(16.0),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Indicador visual de progresso dentro do tópico
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: Text(
+                        "Devocional ${currentIndex + 1} de ${devocionais.length}",
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Theme.of(context).colorScheme.secondary.withOpacity(0.6),
+                        ),
+                      ),
                     ),
-                    textAlign: TextAlign.center,
-                  );
-                },
-              ),
-              const SizedBox(height: 20),
-              ValueListenableBuilder<double>(
-                valueListenable: FontSizeController.fontSizeNotifier,
-                builder: (context, fontSize, _) {
-                  return Text(
-                    'Reflexão',
-                    style: TextStyle(
-                      fontSize: fontSize + 2, // título pode ser um pouco maior
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.secondary,
+                    ValueListenableBuilder<double>(
+                      valueListenable: FontSizeController.fontSizeNotifier,
+                      builder: (context, fontSize, _) {
+                        return Text(
+                          devocional.versiculo,
+                          style: TextStyle(
+                            fontSize: fontSize,
+                            fontStyle: FontStyle.italic,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                          textAlign: TextAlign.center,
+                        );
+                      },
                     ),
-                    textAlign: TextAlign.center,
-                  );
-                },
-              ),
-              const SizedBox(height: 10),
-              ValueListenableBuilder<double>(
-                valueListenable: FontSizeController.fontSizeNotifier,
-                builder: (context, fontSize, _) {
-                  return Text(
-                    devocional.texto,
-                    style: TextStyle(
-                      fontSize: fontSize,
-                      color: Theme.of(context).colorScheme.secondary,
+                    const SizedBox(height: 20),
+                    ValueListenableBuilder<double>(
+                      valueListenable: FontSizeController.fontSizeNotifier,
+                      builder: (context, fontSize, _) {
+                        return Text(
+                          'Reflexão',
+                          style: TextStyle(
+                            fontSize:
+                            fontSize + 2,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                          textAlign: TextAlign.center,
+                        );
+                      },
                     ),
-                    textAlign: TextAlign.center,
-                  );
-                },
-              ),
-              const SizedBox(height: 20),
-              ValueListenableBuilder<double>(
-                valueListenable: FontSizeController.fontSizeNotifier,
-                builder: (context, fontSize, _) {
-                  return Text(
-                    'Oração',
-                    style: TextStyle(
-                      fontSize: fontSize + 2,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.secondary,
+                    const SizedBox(height: 10),
+                    ValueListenableBuilder<double>(
+                      valueListenable: FontSizeController.fontSizeNotifier,
+                      builder: (context, fontSize, _) {
+                        return Text(
+                          devocional.texto,
+                          style: TextStyle(
+                            fontSize: fontSize,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                          textAlign: TextAlign.center,
+                        );
+                      },
                     ),
-                    textAlign: TextAlign.center,
-                  );
-                },
-              ),
-              const SizedBox(height: 10),
-              ValueListenableBuilder<double>(
-                valueListenable: FontSizeController.fontSizeNotifier,
-                builder: (context, fontSize, _) {
-                  return Text(
-                    devocional.oracao,
-                    style: TextStyle(
-                      fontSize: fontSize,
-                      color: Theme.of(context).colorScheme.secondary,
+                    const SizedBox(height: 20),
+                    ValueListenableBuilder<double>(
+                      valueListenable: FontSizeController.fontSizeNotifier,
+                      builder: (context, fontSize, _) {
+                        return Text(
+                          'Oração',
+                          style: TextStyle(
+                            fontSize: fontSize + 2,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                          textAlign: TextAlign.center,
+                        );
+                      },
                     ),
-                    textAlign: TextAlign.center,
-                  );
-                },
-              ),
-              const SizedBox(height: 20),
-            ],
+                    const SizedBox(height: 10),
+                    ValueListenableBuilder<double>(
+                      valueListenable: FontSizeController.fontSizeNotifier,
+                      builder: (context, fontSize, _) {
+                        return Text(
+                          devocional.oracao,
+                          style: TextStyle(
+                            fontSize: fontSize,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                          textAlign: TextAlign.center,
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 30),
+
+                    // --- BOTÕES DE NAVEGAÇÃO ---
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20.0, bottom: 80), // Bottom extra por causa do FAB
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          ElevatedButton(
+                            onPressed: currentIndex > 0
+                                ? previousDevocional
+                                : null,
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.all(20),
+                              backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                              foregroundColor:
+                              Theme.of(context).colorScheme.secondary,
+                              elevation: 2,
+                            ),
+                            child: Text(
+                              "Anterior",
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: currentIndex < devocionais.length - 1
+                                ? nextDevocional
+                                : null,
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.all(20),
+                              backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                              foregroundColor:
+                              Theme.of(context).colorScheme.secondary,
+                              elevation: 2,
+                            ),
+                            child: Text(
+                              "Próximo",
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ]),
+            ),
           ),
-        ),
-      ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-        color: Colors.transparent,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    spreadRadius: 0.5,
-                    blurRadius: 3,
-                    offset: const Offset(0, 1),
-                  ),
-                ],
-              ),
-              child: ElevatedButton(
-                onPressed: devocionais.length > 1 ? previousDevocional : null,
-                style: ElevatedButton.styleFrom(
-                  shape: const CircleBorder(),
-                  padding: const EdgeInsets.all(12),
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Theme.of(context).colorScheme.secondary,
-                ),
-                child: Icon(Icons.arrow_back,
-                    size: 24, color: Theme.of(context).colorScheme.secondary),
-              ),
-            ),
-            const SizedBox(width: 20),
-            Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    spreadRadius: 0.5,
-                    blurRadius: 3,
-                    offset: const Offset(0, 1),
-                  ),
-                ],
-              ),
-              child: ElevatedButton(
-                onPressed: devocionais.length > 1 ? nextDevocional : null,
-                style: ElevatedButton.styleFrom(
-                  shape: const CircleBorder(),
-                  padding: const EdgeInsets.all(12),
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Theme.of(context).colorScheme.secondary,
-                ),
-                child: Icon(Icons.arrow_forward,
-                    size: 24, color: Theme.of(context).colorScheme.secondary),
-              ),
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }

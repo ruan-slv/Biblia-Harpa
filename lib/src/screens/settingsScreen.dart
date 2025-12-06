@@ -1,12 +1,9 @@
 import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 import 'package:biblia_e_harpa/src/controllers/theme_controller.dart';
 import 'package:biblia_e_harpa/src/screens/aboutProjectScreen.dart';
-import 'package:biblia_e_harpa/src/screens/participantsScreen.dart';
-import 'package:biblia_e_harpa/src/screens/transparenciaScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import "package:in_app_review/in_app_review.dart";
 
@@ -25,21 +22,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
       "https://play.google.com/store/apps/details?id=com.bibleAplication.app&pcampaignid=web_share");
 
   final String _pixKey =
-      "5e32d467-b1e8-4db4-ae93-e6767105b704"; // Nome com underscore e final
+      "5e32d467-b1e8-4db4-ae93-e6767105b704";
   final List<String> _buttonTexts = [
     "Copiar Chave",
     "Chave Copiada!"
-  ]; // Nome com underscore e final
-  String _currentButtonText = "Copiar Chave"; // Estado atual do texto do botão
+  ];
+  String _currentButtonText = "Copiar Chave";
 
   @override
   void initState() {
     super.initState();
-    _currentButtonText = _buttonTexts[0]; // Inicializa o texto do botão
+    _currentButtonText = _buttonTexts[0];
   }
 
   void _copyToClipboard() {
-    // Nome com underscore para método privado
     Clipboard.setData(ClipboardData(text: _pixKey));
     setState(() {
       _currentButtonText = _buttonTexts[1]; // Usa o estado atual
@@ -146,7 +142,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Theme.of(context)
                                             .colorScheme
-                                            .primary,
+                                            .background,
                                       ),
                                       child: Text(
                                         "A-",
@@ -167,7 +163,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Theme.of(context)
                                             .colorScheme
-                                            .primary,
+                                            .background,
                                       ),
                                       child: Text(
                                         "A+",
@@ -252,7 +248,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
-                                Theme.of(context).colorScheme.primary,
+                                Theme.of(context).colorScheme.background,
                           ),
                         ),
                       ],
@@ -313,7 +309,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
-                                Theme.of(context).colorScheme.primary,
+                                Theme.of(context).colorScheme.background,
                           ),
                         ),
                       ],
@@ -374,7 +370,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
-                                Theme.of(context).colorScheme.primary,
+                                Theme.of(context).colorScheme.background,
                           ),
                         ),
                       ],
@@ -442,7 +438,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
-                                Theme.of(context).colorScheme.primary,
+                                Theme.of(context).colorScheme.background,
                           ),
                         ),
                       ],
@@ -505,7 +501,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
-                                Theme.of(context).colorScheme.primary,
+                                Theme.of(context).colorScheme.background,
                           ),
                         ),
                       ],
@@ -568,133 +564,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Card(
-                  color: Theme.of(context).colorScheme.primary,
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Transparência de contribuições do app",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        ValueListenableBuilder<double>(
-                          valueListenable: FontSizeController.fontSizeNotifier,
-                          builder: (context, fontSize, _) {
-                            return Text(
-                              "Veja como a sua contribuição está sendo direcionada",
-                              style: TextStyle(
-                                fontSize: fontSize,
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const TransparenciaScreen(),
-                              ),
-                            );
-                          },
-                          icon: Icon(
-                            Icons.info,
-                            color: Theme.of(context).colorScheme.secondary,
-                            size: 20,
-                          ),
-                          label: Text(
-                            "Acessar Transparência",
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Card(
-                  color: Theme.of(context).colorScheme.primary,
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Lista de envolvidos neste projeto",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        ValueListenableBuilder<double>(
-                          valueListenable: FontSizeController.fontSizeNotifier,
-                          builder: (context, fontSize, _) {
-                            return Text(
-                              "Lista de nomes de todos os envolvidos no projeto, seja desenvolvendo ou apoiando de outras formas.",
-                              style: TextStyle(
-                                fontSize: fontSize,
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                 const ParticipantsScreen(),
-                              ),
-                            );
-                          },
-                          icon: Icon(
-                            Icons.info,
-                            color: Theme.of(context).colorScheme.secondary,
-                            size: 20,
-                          ),
-                          label: Text(
-                            "Visualizar lista",
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                            Theme.of(context).colorScheme.primary,
+                                Theme.of(context).colorScheme.background,
                           ),
                         ),
                       ],

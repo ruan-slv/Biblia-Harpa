@@ -1,12 +1,18 @@
 buildscript {
-    ext.kotlin_version = '1.9.0' // Versão estável do Kotlin (ajuste se necessário)
+    // ✅ Atualiza para Kotlin 2.1.0 (mínimo exigido pelo Flutter)
+    ext.kotlin_version = '2.1.0'
+
     repositories {
         google()
         mavenCentral()
     }
+
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.6.0' // Versão que você especificou
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version" // Adiciona suporte ao Kotlin
+        // ✅ Usa o Android Gradle Plugin atualizado
+        classpath 'com.android.tools.build:gradle:8.6.0'
+
+        // ✅ Plugin Kotlin compatível
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -14,11 +20,13 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://jitpack.io' } // Adiciona suporte a plugins como audio_service
+        // ✅ Mantido: suporte a bibliotecas hospedadas no JitPack (como audio_service)
+        maven { url 'https://jitpack.io' }
     }
 }
 
 rootProject.buildDir = '../build'
+
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
     project.evaluationDependsOn(':app')

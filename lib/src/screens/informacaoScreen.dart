@@ -1,12 +1,12 @@
 // lib/src/screens/informacaoScreen.dart
 
 import 'package:flutter/material.dart';
+// Removemos o SharedPreferences e o NotificationService daqui
 import 'package:biblia_e_harpa/src/models/avisoModel.dart';
-import 'package:biblia_e_harpa/src/services/aviso_api_service.dart'; // Importe o serviço
+import 'package:biblia_e_harpa/src/services/aviso_api_service.dart';
 import '../components/card_aviso_component.dart';
 
 class InformacaoScreen extends StatefulWidget {
-  // Remova 'avisos' do construtor, a tela buscará os próprios dados
   const InformacaoScreen({super.key});
 
   @override
@@ -16,28 +16,27 @@ class InformacaoScreen extends StatefulWidget {
 class _InformacaoScreenState extends State<InformacaoScreen> {
   final TextEditingController _searchController = TextEditingController();
 
-  // Novas variáveis de estado para gerenciar os dados
   bool _isLoading = true;
   String? _error;
   List<AvisoModel> _allAvisos = [];
   List<AvisoModel> _filteredAvisos = [];
 
-  // Variáveis para otimização da UI da pesquisa
   late final Widget _searchBar;
   bool _widgetsInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    // Inicia a busca pelos avisos quando a tela é criada
+    // Apenas busca os dados para exibir na tela
     _fetchAndSetAvisos();
     _searchController.addListener(_filterAvisos);
   }
 
-  // NOVO MÉTODO: Busca os avisos da API e atualiza o estado
+  // Busca avisos apenas para popular a lista visual
   Future<void> _fetchAndSetAvisos() async {
     try {
       final avisos = await AvisoServiceAPI.fetchAvisos();
+
       if (mounted) {
         setState(() {
           _allAvisos = avisos;
@@ -54,6 +53,8 @@ class _InformacaoScreenState extends State<InformacaoScreen> {
       }
     }
   }
+
+  // O método _verificarNovosAvisos foi removido pois agora roda no background_service.dart
 
   @override
   void didChangeDependencies() {
@@ -73,29 +74,32 @@ class _InformacaoScreenState extends State<InformacaoScreen> {
 
   void _buildSearchBar() {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     _searchBar = Padding(
       padding: const EdgeInsets.all(12.0),
       child: TextField(
         controller: _searchController,
         decoration: InputDecoration(
-          hintText: "Pesquisar informação",
-          hintStyle: TextStyle(color: colorScheme.onSurface.withOpacity(0.5)),
-          prefixIcon: Icon(Icons.search, color: colorScheme.primary),
+          hintText: "Pesquisar Informação",
+          hintStyle: TextStyle(
+              color: Theme.of(context).colorScheme.secondary),
+          prefixIcon: Icon(Icons.search,
+              color: Theme.of(context).colorScheme.secondary),
           suffixIcon: IconButton(
             onPressed: () => _searchController.clear(),
-            icon: Icon(Icons.clear, color: colorScheme.secondary),
+            icon: Icon(Icons.clear,
+                color: Theme.of(context).colorScheme.secondary),
           ),
           filled: true,
-          fillColor: colorScheme.surface,
+          fillColor: Theme.of(context).colorScheme.primary,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30.0),
             borderSide: BorderSide.none,
           ),
-          contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+          contentPadding:
+          const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
         ),
-        style: TextStyle(color: colorScheme.secondary),
-        cursorColor: colorScheme.secondary,
+        style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+        cursorColor: Theme.of(context).colorScheme.secondary,
       ),
     );
   }
@@ -133,19 +137,32 @@ class _InformacaoScreenState extends State<InformacaoScreen> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        centerTitle: true,
+        automaticallyImplyLeading: true,
+        iconTheme:
+        IconThemeData(color: Theme.of(context).colorScheme.secondary),
+        title: Text(
+          "Informações e Avisos",
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.secondary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _searchBar,
           Expanded(
-            child: _buildBody(), // Corpo da tela agora é um método separado
+            child: _buildBody(),
           ),
         ],
       ),
     );
   }
 
-  // NOVO WIDGET: Constrói o corpo baseado no estado (loading, error, data)
   Widget _buildBody() {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
@@ -173,7 +190,6 @@ class _InformacaoScreenState extends State<InformacaoScreen> {
     );
   }
 
-  // Widget auxiliar para exibir mensagens (copiado do wrapper)
   Widget _buildErrorWidget(BuildContext context, String message) {
     return Center(
       child: Padding(
