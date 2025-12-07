@@ -12,6 +12,10 @@ import 'package:just_audio_media_kit/just_audio_media_kit.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:upgrader/upgrader.dart';
 
+/*
+ * Arquivo principal que vai realizar a execução da aplicação 
+ */
+
 late final AudioHandler audioHandler;
 
 void main() async {

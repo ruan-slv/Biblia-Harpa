@@ -475,9 +475,7 @@ class _InitialState extends State<Initial> {
       IconData iconData,
       List<Color> gradientColors,
       VoidCallback onPressed, {
-        double? width,
         double? height,
-        double? size,
       }) {
     return GestureDetector(
       onTap: onPressed,
