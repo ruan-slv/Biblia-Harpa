@@ -32,7 +32,7 @@ android {
         release {
             storeFile file("novo-upload.jks")
             storePassword 'Ruan#2006'
-            keyAlias 'upload'
+            keyAlias 'novo-upload'
             keyPassword 'Ruan#2006'
         }
     }
