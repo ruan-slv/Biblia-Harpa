@@ -52,6 +52,11 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
   AudioChapter? _currentAudioChapter;
 
+  // Controle de Filtro (Utiliza lista de índices para referência aos versículos originais)
+  final TextEditingController _fillterKeyWordController =
+      TextEditingController();
+  List<int> _filteredVerseIndices = []; // Lista de índices dos versículos que correspondem ao filtro.
+
   @override
   void initState() {
     super.initState();
@@ -71,12 +76,36 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
 
     // Carrega o áudio para o capítulo inicial
     _loadAudioForChapter(currentChapterNumber);
+    // Inicializa lista filtrada com todos os índices (0 a N-1)
+    _filteredVerseIndices = List<int>.generate(currentVerses.length, (i) => i);
+  }
+
+  // MÉTODO DE FILTRAGEM CORRIGIDO E CENTRALIZADO
+  void _filterKeyWords() {
+    final query = _fillterKeyWordController.text.toLowerCase();
+    setState(() {
+      if (query.isEmpty) {
+        // Se a busca estiver vazia, exibe todos os versículos
+        _filteredVerseIndices =
+            List<int>.generate(currentVerses.length, (i) => i);
+      } else {
+        // Filtra e armazena APENAS os índices que contêm a palavra-chave
+        final List<int> matches = [];
+        for (int i = 0; i < currentVerses.length; i++) {
+          if (currentVerses[i].toString().toLowerCase().contains(query)) {
+            matches.add(i);
+          }
+        }
+        _filteredVerseIndices = matches;
+      }
+    });
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
     _audioPlayer.dispose(); // Libera os recursos do player ao sair
+    _fillterKeyWordController.dispose(); // Adicionado dispose
     super.dispose();
   }
 
@@ -92,7 +121,8 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
         await _audioPlayer.setUrl(audio.url); // Prepara o áudio
         if (mounted) {
           setState(() {
-            _currentAudioChapter = audio; // Atualiza o estado para mostrar o player
+            _currentAudioChapter =
+                audio; // Atualiza o estado para mostrar o player
           });
         }
       } catch (e) {
@@ -110,6 +140,10 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
         currentChapterNumber = newChapterNumber;
         currentVerses = widget.allBookChapters[currentChapterNumber - 1];
         _selectedVerseIndices = [];
+        // Reinicia filtro ao mudar de capítulo
+        _fillterKeyWordController.clear();
+        _filteredVerseIndices =
+            List<int>.generate(currentVerses.length, (i) => i);
       });
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
@@ -155,7 +189,8 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
             TextButton(
               child: Text(
                 "Entendi",
-                style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.secondary),
               ),
               onPressed: () => Navigator.of(context).pop(),
             ),
@@ -191,7 +226,7 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
     List<int> sortedIndices = _selectedVerseIndices.isNotEmpty
         ? (List.from(_selectedVerseIndices)..sort())
         : List<int>.generate(
-        currentVerses.length.clamp(0, _verseSelectionLimit), (i) => i);
+            currentVerses.length.clamp(0, _verseSelectionLimit), (i) => i);
 
     for (int index in sortedIndices) {
       if (index < currentVerses.length) {
@@ -264,8 +299,9 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
                           : Icons.play_circle_filled),
                       iconSize: 48.0,
                       color: Theme.of(context).colorScheme.secondary,
-                      onPressed: () =>
-                      (playing ?? false) ? _audioPlayer.pause() : _audioPlayer.play(),
+                      onPressed: () => (playing ?? false)
+                          ? _audioPlayer.pause()
+                          : _audioPlayer.play(),
                     ),
                     IconButton(
                       icon: const Icon(Icons.stop_circle_outlined),
@@ -280,22 +316,24 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
                 );
               },
             ),
-            StreamBuilder<Duration>(
-              stream: _audioPlayer.positionStream,
-              builder: (context, snapshot) {
-                final position = snapshot.data ?? Duration.zero;
-                final duration = _audioPlayer.duration ?? Duration.zero;
-                return Slider(
-                  value: position.inSeconds
-                      .clamp(0, duration.inSeconds)
-                      .toDouble(),
-                  max: duration.inSeconds.toDouble(),
-                  onChanged: (value) =>
-                      _audioPlayer.seek(Duration(seconds: value.toInt())),
-                  activeColor: Theme.of(context).colorScheme.secondary,
-                  inactiveColor: Colors.grey.withOpacity(0.5),
-                );
-              },
+            Expanded(
+              child: StreamBuilder<Duration>(
+                stream: _audioPlayer.positionStream,
+                builder: (context, snapshot) {
+                  final position = snapshot.data ?? Duration.zero;
+                  final duration = _audioPlayer.duration ?? Duration.zero;
+                  return Slider(
+                    value: position.inSeconds
+                        .clamp(0, duration.inSeconds)
+                        .toDouble(),
+                    max: duration.inSeconds.toDouble(),
+                    onChanged: (value) =>
+                        _audioPlayer.seek(Duration(seconds: value.toInt())),
+                    activeColor: Theme.of(context).colorScheme.secondary,
+                    inactiveColor: Colors.grey.withOpacity(0.5),
+                  );
+                },
+              ),
             ),
           ],
         ),
@@ -333,6 +371,9 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
     }
 
     final chapterId = "${widget.bookName}_$currentChapterNumber";
+    // Variável para verificar se o filtro está ativo E sem resultados
+    final bool noFilterResults = _fillterKeyWordController.text.isNotEmpty &&
+        _filteredVerseIndices.isEmpty;
 
     return Scaffold(
       appBar: AppBar(
@@ -373,7 +414,7 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
                     currentVerses.length < _verseSelectionLimit
                         ? currentVerses.length
                         : _verseSelectionLimit,
-                        (i) => i,
+                    (i) => i,
                   );
                 });
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -389,7 +430,7 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
                   Share.share(
                     chapterText,
                     subject:
-                    "${widget.bookName} - Capítulo $currentChapterNumber",
+                        "${widget.bookName} - Capítulo $currentChapterNumber",
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -409,6 +450,46 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
       body: CustomScrollView(
         controller: _scrollController,
         slivers: [
+          // Campo de Busca/Filtro
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: _fillterKeyWordController,
+                // CORRIGIDO: Tipo de teclado para texto
+                keyboardType: TextInputType.text, 
+                // CORRIGIDO: Chama o filtro ao digitar
+                onChanged: (_) => _filterKeyWords(),
+                decoration: InputDecoration(
+                  hintText: "Pesquisar Palavra-chave",
+                  hintStyle:
+                      TextStyle(color: Theme.of(context).colorScheme.secondary),
+                  prefixIcon: Icon(Icons.search,
+                      color: Theme.of(context).colorScheme.secondary),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      _fillterKeyWordController.clear();
+                      // CORRIGIDO: Chama o filtro ao limpar
+                      _filterKeyWords(); 
+                    },
+                    icon: Icon(Icons.clear,
+                        color: Theme.of(context).colorScheme.secondary),
+                  ),
+                  filled: true,
+                  fillColor: Theme.of(context).colorScheme.primary,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+                ),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.secondary),
+                cursorColor: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+          ),
           SliverToBoxAdapter(
             child: _buildAudioPlayer(),
           ),
@@ -431,134 +512,181 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
               ),
             ),
           ),
-          SliverPadding(
-            padding: const EdgeInsets.all(6.0),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                  if (index == currentVerses.length) {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 30.0, bottom: 20),
-                      child: ValueListenableBuilder<double>(
-                          valueListenable: FontSizeController.fontSizeNotifier,
-                          builder: (context, fontSize, _) {
-                            return Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: [
-                                    ElevatedButton(
-                                      onPressed:
-                                      currentChapterNumber > 1 ? _previousChapter : null,
-                                      style: ElevatedButton.styleFrom(
-                                        padding: const EdgeInsets.all(20),
-                                        backgroundColor: Theme.of(context).colorScheme.primary,
-                                        foregroundColor: Theme.of(context).colorScheme.secondary,
-                                        elevation: 2,
-                                      ),
-                                      child: Text(
-                                          "Anterior",
-                                        style: TextStyle(
-                                          color: Theme.of(context).colorScheme.secondary,
-                                        ),
-                                      ),
-                                    ),
-                                    ElevatedButton(
-                                      onPressed:
-                                      currentChapterNumber < widget.allBookChapters.length
-                                          ? _nextChapter
-                                          : null,
-                                      style: ElevatedButton.styleFrom(
-                                        padding: const EdgeInsets.all(20),
-                                        backgroundColor: Theme.of(context).colorScheme.primary,
-                                        foregroundColor: Theme.of(context).colorScheme.secondary,
-                                        elevation: 2,
-                                      ),
-                                      child: Text(
-                                        "Próximo",
-                                        style: TextStyle(
-                                          color: Theme.of(context).colorScheme.secondary,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            );
-                          },
+          
+          // NOVO: Mensagem de Nenhum Resultado Encontrado
+          if (noFilterResults)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: ValueListenableBuilder<double>(
+                  valueListenable: FontSizeController.fontSizeNotifier,
+                  builder: (context, fontSize, _) {
+                    return Text(
+                      'Nenhum versículo encontrado para "${_fillterKeyWordController.text}" neste capítulo.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: fontSize,
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                     );
-                  }
-
-                  final String verseText = currentVerses[index].toString();
-                  final int verseNumber = index + 1;
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: GestureDetector(
-                      onTap: () => _toggleVerseSelection(index),
-                      child: Container(
-                        padding: const EdgeInsets.all(8.0),
-                        decoration: BoxDecoration(
-                          color: _selectedVerseIndices.contains(index)
-                              ? Theme.of(context)
-                              .colorScheme
-                              .primary
-                              .withOpacity(0.9)
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        child: Column(
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ValueListenableBuilder<double>(
-                                  valueListenable:
-                                  FontSizeController.fontSizeNotifier,
-                                  builder: (context, fontSize, _) {
-                                    return Text(
-                                      "$verseNumber ",
-                                      style: TextStyle(
-                                        fontSize: fontSize,
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary
-                                            .withOpacity(0.9),
-                                      ),
-                                    );
-                                  },
-                                ),
-                                Expanded(
-                                  child: ValueListenableBuilder<double>(
-                                    valueListenable:
-                                    FontSizeController.fontSizeNotifier,
-                                    builder: (context, fontSize, _) {
-                                      return Text(
-                                        verseText,
-                                        style: TextStyle(
-                                          fontSize: fontSize,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .secondary,
-                                          height: 1.4,
-                                        ),
-                                        textAlign: TextAlign.justify,
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-                childCount: currentVerses.length + 1,
+                  },
+                ),
               ),
             ),
+
+          SliverPadding(
+            padding: const EdgeInsets.all(6.0),
+            // CORRIGIDO: Renderiza uma lista vazia se não houver resultados de filtro
+            sliver: noFilterResults
+                ? const SliverToBoxAdapter(child: SizedBox.shrink())
+                : SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        // O último item é o botão de navegação
+                        if (index == _filteredVerseIndices.length) { 
+                          return Padding(
+                            padding:
+                                const EdgeInsets.only(top: 30.0, bottom: 20),
+                            child: ValueListenableBuilder<double>(
+                              valueListenable: FontSizeController.fontSizeNotifier,
+                              builder: (context, fontSize, _) {
+                                return Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        ElevatedButton(
+                                          onPressed: currentChapterNumber > 1
+                                              ? _previousChapter
+                                              : null,
+                                          style: ElevatedButton.styleFrom(
+                                            padding: const EdgeInsets.all(20),
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            foregroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .secondary,
+                                            elevation: 2,
+                                          ),
+                                          child: Text(
+                                            "Anterior",
+                                            style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary,
+                                            ),
+                                          ),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: currentChapterNumber <
+                                                  widget.allBookChapters.length
+                                              ? _nextChapter
+                                              : null,
+                                          style: ElevatedButton.styleFrom(
+                                            padding: const EdgeInsets.all(20),
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            foregroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .secondary,
+                                            elevation: 2,
+                                          ),
+                                          child: Text(
+                                            "Próximo",
+                                            style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                          );
+                        }
+
+                        // CORRIGIDO: Busca o índice real na lista filtrada
+                        final int originalIndex = _filteredVerseIndices[index];
+                        final String verseText =
+                            currentVerses[originalIndex].toString();
+                        final int verseNumber = originalIndex + 1; // Número real do versículo
+                        
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: GestureDetector(
+                            // CORRIGIDO: Usa o índice original para seleção
+                            onTap: () => _toggleVerseSelection(originalIndex),
+                            child: Container(
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                color: _selectedVerseIndices.contains(originalIndex)
+                                    ? Theme.of(context)
+                                        .colorScheme
+                                        .primary
+                                        .withOpacity(0.9)
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      ValueListenableBuilder<double>(
+                                        valueListenable:
+                                            FontSizeController.fontSizeNotifier,
+                                        builder: (context, fontSize, _) {
+                                          return Text(
+                                            "$verseNumber ",
+                                            style: TextStyle(
+                                              fontSize: fontSize,
+                                              fontWeight: FontWeight.bold,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary
+                                                  .withOpacity(0.9),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                      Expanded(
+                                        child: ValueListenableBuilder<double>(
+                                          valueListenable:
+                                              FontSizeController.fontSizeNotifier,
+                                          builder: (context, fontSize, _) {
+                                            return Text(
+                                              verseText,
+                                              style: TextStyle(
+                                                fontSize: fontSize,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .secondary,
+                                                height: 1.4,
+                                              ),
+                                              textAlign: TextAlign.justify,
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      // CORRIGIDO: O childCount usa o tamanho da lista filtrada + 1 (para o botão)
+                      childCount: _filteredVerseIndices.length + 1,
+                    ),
+                  ),
           ),
         ],
       ),
