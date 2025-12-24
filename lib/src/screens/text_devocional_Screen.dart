@@ -49,7 +49,7 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
   Future<void> loadDevocionais() async {
     try {
       final String jsonString =
-      await rootBundle.loadString('assets/json/newDevocionalModel.json');
+          await rootBundle.loadString('assets/json/newDevocionalModel.json');
       final Map<String, dynamic> jsonResponse = jsonDecode(jsonString);
       final List<dynamic> topicDevocionais = jsonResponse[widget.devo] ?? [];
       setState(() {
@@ -129,7 +129,6 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
     sb.writeln(devocionalAtual.texto);
     sb.writeln("\n🙏 Oração:");
     sb.writeln(devocionalAtual.oracao);
-    sb.writeln("\nCompartilhado via App Bíblia e Harpa");
 
     return sb.toString();
   }
@@ -175,27 +174,12 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
     final devocional = devocionais[currentIndex];
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      // Adiciona um botão flutuante para marcar como lido facilmente
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _toggleReadStatus,
-        backgroundColor: isRead ? Colors.green : Theme.of(context).colorScheme.primary,
-        icon: Icon(
-          isRead ? Icons.check_circle : Icons.circle_outlined,
-          color: isRead ? Colors.white : Theme.of(context).colorScheme.secondary,
-        ),
-        label: Text(
-          isRead ? "Concluído" : "Marcar Lido",
-          style: TextStyle(
-            color: isRead ? Colors.white : Theme.of(context).colorScheme.secondary,
-          ),
-        ),
-      ),
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
         title: Text(widget.devo,
             style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
         iconTheme:
-        IconThemeData(color: Theme.of(context).colorScheme.secondary),
+            IconThemeData(color: Theme.of(context).colorScheme.secondary),
         centerTitle: true,
         actions: [
           // Botão de marcar lido também na AppBar
@@ -203,7 +187,9 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
             onPressed: _toggleReadStatus,
             icon: Icon(
               isRead ? Icons.check_circle : Icons.check_circle_outline,
-              color: isRead ? Colors.green : Theme.of(context).colorScheme.secondary,
+              color: isRead
+                  ? Colors.green
+                  : Theme.of(context).colorScheme.secondary,
             ),
             tooltip: isRead ? "Marcar como não lido" : "Marcar como lido",
           ),
@@ -236,7 +222,10 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
                         "Devocional ${currentIndex + 1} de ${devocionais.length}",
                         style: TextStyle(
                           fontSize: 12,
-                          color: Theme.of(context).colorScheme.secondary.withOpacity(0.6),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withOpacity(0.6),
                         ),
                       ),
                     ),
@@ -261,8 +250,7 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
                         return Text(
                           'Reflexão',
                           style: TextStyle(
-                            fontSize:
-                            fontSize + 2,
+                            fontSize: fontSize + 2,
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).colorScheme.secondary,
                           ),
@@ -317,20 +305,21 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
 
                     // --- BOTÕES DE NAVEGAÇÃO ---
                     Padding(
-                      padding: const EdgeInsets.only(top: 20.0, bottom: 80), // Bottom extra por causa do FAB
+                      padding: const EdgeInsets.only(
+                          top: 20.0,
+                          bottom: 80), // Bottom extra por causa do FAB
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           ElevatedButton(
-                            onPressed: currentIndex > 0
-                                ? previousDevocional
-                                : null,
+                            onPressed:
+                                currentIndex > 0 ? previousDevocional : null,
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.all(20),
                               backgroundColor:
-                              Theme.of(context).colorScheme.primary,
+                                  Theme.of(context).colorScheme.primary,
                               foregroundColor:
-                              Theme.of(context).colorScheme.secondary,
+                                  Theme.of(context).colorScheme.secondary,
                               elevation: 2,
                             ),
                             child: Text(
@@ -347,9 +336,9 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.all(20),
                               backgroundColor:
-                              Theme.of(context).colorScheme.primary,
+                                  Theme.of(context).colorScheme.primary,
                               foregroundColor:
-                              Theme.of(context).colorScheme.secondary,
+                                  Theme.of(context).colorScheme.secondary,
                               elevation: 2,
                             ),
                             child: Text(
@@ -360,6 +349,31 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
                             ),
                           ),
                         ],
+                      ),
+                    ),
+                    // Botão Para marcar texto como lido
+                    const SizedBox(height: 5),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.4,
+                      child: FloatingActionButton.extended(
+                        onPressed: _toggleReadStatus,
+                        backgroundColor: isRead
+                            ? Colors.green
+                            : Theme.of(context).colorScheme.primary,
+                        icon: Icon(
+                          isRead ? Icons.check_circle : Icons.circle_outlined,
+                          color: isRead
+                              ? Colors.white
+                              : Theme.of(context).colorScheme.secondary,
+                        ),
+                        label: Text(
+                          isRead ? "Concluído" : "Marcar como lido",
+                          style: TextStyle(
+                            color: isRead
+                                ? Colors.white
+                                : Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
                       ),
                     ),
                   ],

@@ -5,7 +5,6 @@ import 'dart:math';
 
 import 'package:biblia_e_harpa/src/config.dart';
 import 'package:biblia_e_harpa/src/models/carousel_item_model.dart';
-import 'package:biblia_e_harpa/src/screens/StoreScreen.dart';
 import 'package:biblia_e_harpa/src/screens/aboutProjectScreen.dart';
 import 'package:biblia_e_harpa/src/screens/harpaAudioScreen.dart';
 import 'package:biblia_e_harpa/src/screens/homeAudioScreen.dart';
@@ -19,7 +18,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
-import '../screens/storeWrapper.dart';
 
 import '../services/NotificationService.dart';
 import 'bible_list_screen.dart';

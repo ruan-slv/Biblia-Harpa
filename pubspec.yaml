@@ -1,7 +1,7 @@
 name: biblia_e_harpa
 description: "Projeto voltado para desenvolvimento de bíblia e harpa sem conexão com a internet"
 publish_to: 'none'
-version: 1.1.0+21
+version: 1.1.1+21
 environment:
   sdk: ^3.5.4
 
