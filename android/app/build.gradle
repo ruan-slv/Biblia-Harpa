@@ -30,9 +30,9 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("novo-upload.jks")
+            storeFile file("upload-keystore.jks")
             storePassword 'Ruan#2006'
-            keyAlias 'novo-upload'
+            keyAlias 'upload'
             keyPassword 'Ruan#2006'
         }
     }
@@ -42,7 +42,7 @@ android {
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = 21
-        versionName = "1.1.0"
+        versionName = "1.1.1"
         ndk {
             abiFilters 'armeabi-v7a', 'arm64-v8a'
         }
