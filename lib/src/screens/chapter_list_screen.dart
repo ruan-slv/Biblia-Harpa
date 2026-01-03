@@ -1,6 +1,7 @@
 // lib/src/screens/chapter_list_screen.dart
 
 import 'dart:convert';
+import 'package:biblia_e_harpa/src/components/appBarComponent.dart';
 import 'package:biblia_e_harpa/src/controllers/bible_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -92,16 +93,11 @@ class _ChapterListScreenState extends State<ChapterListScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
+      appBar: CustomAppBar(
+        title: widget.name,
         centerTitle: true,
         automaticallyImplyLeading: true,
-        iconTheme: IconThemeData(color: Theme.of(context).colorScheme.secondary),
-        title: Text(
-          widget.name,
-          style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-        ),
-        bottom: TabBar(
+        tabBar: TabBar(
           controller: _tabController,
           labelColor: Theme.of(context).colorScheme.secondary,
           unselectedLabelColor: Theme.of(context).colorScheme.onSurface,

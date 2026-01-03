@@ -133,17 +133,10 @@ class _BibleListState extends State<BibleList> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
+      appBar: CustomAppBar(
+        title: "Biblia Cristã",
         centerTitle: true,
         automaticallyImplyLeading: true,
-        iconTheme: IconThemeData(
-          color: Theme.of(context).colorScheme.secondary,
-        ),
-        title: Text(
-          'Biblia Cristã',
-          style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-        ),
         actions: [
           SizedBox(
             width: sizeBtnOptions[0],

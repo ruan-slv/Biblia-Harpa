@@ -1,6 +1,7 @@
 // lib/src/screens/textBibleScreen.dart
 
 import 'dart:convert';
+import 'package:biblia_e_harpa/src/components/appBarComponent.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:biblia_e_harpa/src/controllers/bible_controller.dart';
@@ -376,11 +377,11 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
         _filteredVerseIndices.isEmpty;
 
     return Scaffold(
-      appBar: AppBar(
+      backgroundColor: Theme.of(context).colorScheme.background,
+      appBar: CustomAppBar(
+        title: '${widget.bookName} - Cap. $currentChapterNumber',
         centerTitle: true,
-        title: Text('${widget.bookName} - Cap. $currentChapterNumber'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Theme.of(context).colorScheme.secondary,
+        automaticallyImplyLeading: true,
         actions: [
           ValueListenableBuilder<List<String>>(
             valueListenable: _bibleController.textosLidosNotifier,
@@ -446,7 +447,6 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
           ),
         ],
       ),
-      backgroundColor: Theme.of(context).colorScheme.background,
       body: CustomScrollView(
         controller: _scrollController,
         slivers: [
