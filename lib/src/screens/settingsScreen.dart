@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-import "package:in_app_review/in_app_review.dart";
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -21,12 +20,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final Uri play_store_url = Uri.parse(
       "https://play.google.com/store/apps/details?id=com.bibleAplication.app&pcampaignid=web_share");
 
-  final String _pixKey =
-      "5e32d467-b1e8-4db4-ae93-e6767105b704";
-  final List<String> _buttonTexts = [
-    "Copiar Chave",
-    "Chave Copiada!"
-  ];
+  final String _pixKey = "5e32d467-b1e8-4db4-ae93-e6767105b704";
+  final List<String> _buttonTexts = ["Copiar Chave", "Chave Copiada!"];
   String _currentButtonText = "Copiar Chave";
 
   @override
@@ -52,6 +47,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
+  Future<void> _startSupport() async {
+    // Corrigi o erro de digitação de "Suport" para "Support"
+    const email = "suporte.biblia.noads@gmail.com";
+    const subject =
+        "Suporte - Aplicativo Bíblia"; // Opcional: Assunto do e-mail
+    const body = "Olá, gostaria de ajuda com..."; // Opcional: Corpo do e-mail
+
+    // Criamos a URI usando o esquema mailto
+    final Uri emailLaunchUri = Uri(
+      scheme: 'mailto',
+      path: email,
+      query: encodeQueryParameters(<String, String>{
+        'subject': subject,
+        'body': body,
+      }),
+    );
+
+    try {
+      // Para mailto, o modo externalApplication é o mais recomendado
+      await launchUrl(emailLaunchUri, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      // Caso o dispositivo não tenha app de e-mail configurado
+      debugPrint("Não foi possível abrir o e-mail: $e");
+    }
+
+    if (context.mounted) Navigator.of(context).pop();
+  }
+
+// Função auxiliar para codificar corretamente espaços e caracteres especiais na URL
+  String? encodeQueryParameters(Map<String, String> params) {
+    return params.entries
+        .map((MapEntry<String, String> e) =>
+            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+        .join('&');
+  }
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeMode>(
@@ -60,20 +91,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         final isDark = currentTheme == ThemeMode.dark;
         return Scaffold(
           backgroundColor: Theme.of(context).colorScheme.background,
-          appBar: AppBar(
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            centerTitle: true,
-            automaticallyImplyLeading: true,
-            iconTheme:
-                IconThemeData(color: Theme.of(context).colorScheme.secondary),
-            title: Text(
-              "Configurações",
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
           body: SingleChildScrollView(
             padding:
                 const EdgeInsets.only(top: 40, left: 16, right: 16, bottom: 16),
@@ -88,7 +105,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       color: Theme.of(context).colorScheme.primary,
                       elevation: 3,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                          borderRadius: BorderRadius.circular(20)),
                       child: Padding(
                         padding: const EdgeInsets.all(16),
                         child: Column(
@@ -189,7 +206,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   color: Theme.of(context).colorScheme.primary,
                   elevation: 3,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(20)),
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(
@@ -260,7 +277,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   color: Theme.of(context).colorScheme.primary,
                   elevation: 3,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(20)),
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(
@@ -321,14 +338,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   color: Theme.of(context).colorScheme.primary,
                   elevation: 3,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(20)),
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Verificar Atualizações",
+                          "Verificar Atualizações e avaliar app",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
@@ -340,7 +357,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           valueListenable: FontSizeController.fontSizeNotifier,
                           builder: (context, fontSize, _) {
                             return Text(
-                              "Verifique se há novas atualizações disponíveis na Play store.",
+                              "Avalie nosso app ou Verifique se há novas atualizações disponíveis na Play store.",
                               style: TextStyle(
                                 fontSize: fontSize,
                                 color: Theme.of(context).colorScheme.secondary,
@@ -382,7 +399,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   color: Theme.of(context).colorScheme.primary,
                   elevation: 3,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(20)),
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(
@@ -414,7 +431,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           valueListenable: FontSizeController.fontSizeNotifier,
                           builder: (context, fontSize, _) {
                             return Text(
-                              "Esta é a única chave pix para doações\n$_pixKey",
+                              "Esta é a única chave pix para doações (Ruan): \n$_pixKey",
                               style: TextStyle(
                                 fontSize: fontSize,
                                 color: Theme.of(context).colorScheme.secondary,
@@ -450,7 +467,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   color: Theme.of(context).colorScheme.primary,
                   elevation: 3,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(20)),
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(
@@ -513,14 +530,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   color: Theme.of(context).colorScheme.primary,
                   elevation: 3,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(20)),
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Avaliação do app",
+                          "Suporte",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
@@ -532,7 +549,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           valueListenable: FontSizeController.fontSizeNotifier,
                           builder: (context, fontSize, _) {
                             return Text(
-                              "Nos ajude a alcançar boas notas na Playstore para alcançarmos mais pessoas atraves de uma avaliação.",
+                              "Entre em contato para solicitar suporte ou nos dar um feedback.",
                               style: TextStyle(
                                 fontSize: fontSize,
                                 color: Theme.of(context).colorScheme.secondary,
@@ -542,22 +559,50 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         const SizedBox(height: 12),
                         ElevatedButton.icon(
-                          onPressed: () async {
-                            final InAppReview inAppReview =
-                                InAppReview.instance;
-                            if (await inAppReview.isAvailable()) {
-                              inAppReview.openStoreListing(
-                                appStoreId: "com.bibleAplication.app",
-                              );
-                            }
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.background,
+                                  title: Text(
+                                    "Suporte",
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary),
+                                  ),
+                                  content: Text(
+                                    "E-mail: suporte.biblia.noads@gmail.com",
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary),
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: Text(
+                                        "Entre em contato",
+                                        style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .secondary),
+                                      ),
+                                      onPressed: () => _startSupport(),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
                           },
                           icon: Icon(
-                            Icons.star,
+                            Icons.help,
                             color: Theme.of(context).colorScheme.secondary,
                             size: 20,
                           ),
                           label: Text(
-                            "Avaliar app",
+                            "Solicitar suporte",
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.secondary,
                             ),

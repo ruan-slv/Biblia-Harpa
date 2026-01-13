@@ -1,7 +1,7 @@
 // lib/src/screens/devocional_content_screen.dart
 
 import 'dart:convert';
-import 'package:biblia_e_harpa/src/config.dart';
+
 import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -26,9 +26,11 @@ class TextModel {
 }
 
 class DevocionalContentScreen extends StatefulWidget {
-  const DevocionalContentScreen({super.key, required this.devo});
+  const DevocionalContentScreen(
+      {super.key, required this.devo, this.initialIndex = 0});
 
   final String devo;
+  final int initialIndex;
 
   @override
   _DevocionalContentScreenState createState() =>
@@ -56,8 +58,25 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
         devocionais =
             topicDevocionais.map((json) => TextModel.fromJson(json)).toList();
       });
-      // Verifica o status de leitura do primeiro item
+
+      // Aplica índice inicial (garantindo limites)
+      int idx = widget.initialIndex;
+      if (idx < 0) idx = 0;
+      if (devocionais.isNotEmpty && idx >= devocionais.length)
+        idx = devocionais.length - 1;
+      setState(() {
+        currentIndex = devocionais.isNotEmpty ? idx : 0;
+      });
+
+      // Salva a posição atual e verifica o status de leitura
+      await _saveLastIndex();
       _checkReadStatus();
+
+      // Atualiza histórico de tópicos acessados (usa último lido salvo)
+      final prefs = await SharedPreferences.getInstance();
+      final int lastReadForTopic =
+          prefs.getInt('devocional_last_read_${widget.devo}') ?? -1;
+      await _addOrUpdateHistory(lastReadForTopic);
     } catch (e) {
       setState(() {
         devocionais = [];
@@ -85,6 +104,15 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
     });
 
     await prefs.setBool(key, isRead);
+    if (isRead) {
+      await prefs.setInt('devocional_last_read_${widget.devo}', currentIndex);
+      await _addOrUpdateHistory(currentIndex);
+    } else {
+      await prefs.remove('devocional_last_read_${widget.devo}');
+      await _addOrUpdateHistory(-1);
+    }
+
+    await _saveLastIndex();
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -101,6 +129,7 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
       setState(() {
         currentIndex++;
       });
+      _saveLastIndex();
       _checkReadStatus(); // Verifica status ao mudar
     }
   }
@@ -110,6 +139,7 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
       setState(() {
         currentIndex--;
       });
+      _saveLastIndex();
       _checkReadStatus(); // Verifica status ao mudar
     }
   }
@@ -144,6 +174,30 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
   Future<void> _saveLastIndex() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('lastDevocionalIndex', currentIndex);
+    await prefs.setString('lastDevocionalTopic', widget.devo);
+  }
+
+  // Mantém histórico de tópicos acessados e do índice/último lido
+  Future<void> _addOrUpdateHistory(int lastReadIndex) async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? histStr = prefs.getString('devocional_history');
+    List<dynamic> list =
+        histStr != null ? jsonDecode(histStr) as List<dynamic> : [];
+
+    // Remove se já existir
+    list.removeWhere((e) => e['topic'] == widget.devo);
+
+    // Insere no topo
+    list.insert(0, {
+      'topic': widget.devo,
+      'lastReadIndex': lastReadIndex,
+      'timestamp': DateTime.now().toIso8601String(),
+    });
+
+    // Limita histórico razoavelmente
+    if (list.length > 50) list = list.sublist(0, 50);
+
+    await prefs.setString('devocional_history', jsonEncode(list));
   }
 
   @override

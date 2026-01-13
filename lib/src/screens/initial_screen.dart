@@ -4,26 +4,18 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:biblia_e_harpa/src/config.dart';
-import 'package:biblia_e_harpa/src/models/carousel_item_model.dart';
-import 'package:biblia_e_harpa/src/screens/aboutProjectScreen.dart';
-import 'package:biblia_e_harpa/src/screens/harpaAudioScreen.dart';
 import 'package:biblia_e_harpa/src/screens/homeAudioScreen.dart';
-import 'package:biblia_e_harpa/src/screens/informacaoScreen.dart';
-import 'package:biblia_e_harpa/src/screens/informacaoWrapper.dart';
-import 'package:biblia_e_harpa/src/screens/other_Screen.dart';
+
 import 'package:biblia_e_harpa/src/screens/settingsScreen.dart';
-// IMPORTANTE: Importe o serviço que criamos
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
-
-import '../services/NotificationService.dart';
+import 'package:biblia_e_harpa/src/screens/text_devocional_Screen.dart';
+import 'package:biblia_e_harpa/src/keys/devocionalkey.dart';
 import 'bible_list_screen.dart';
 import 'devocional_list_screen.dart';
 import 'harpa_list_screen.dart';
-import 'palavraDiaScreen.dart';
 
 // Data class for Palavra do Dia
 class Data {
@@ -57,68 +49,7 @@ class _InitialState extends State<Initial> {
   @override
   void initState() {
     super.initState();
-    // Inicializa o serviço de notificação
-    NotificationService().init();
     _loadPalavraDoDia();
-  }
-
-  Widget _buildStyledDestination(int index) {
-    // ... (Código mantido igual)
-    final bool isSelected = currentPageIndex == index;
-    final List<IconData> icons = [
-      Icons.home_outlined,
-      Icons.store_outlined,
-      Icons.info_outline,
-    ];
-    final List<IconData> selectedIcons = [
-      Icons.home,
-      Icons.store,
-      Icons.info,
-    ];
-
-    return NavigationDestination(
-      icon: _animatedNavIcon(
-        icon: icons[index],
-        isSelected: false,
-        index: index,
-      ),
-      selectedIcon: _animatedNavIcon(
-        icon: selectedIcons[index],
-        isSelected: true,
-        index: index,
-      ),
-      label: '',
-    );
-  }
-
-  Widget _animatedNavIcon({
-    required IconData icon,
-    required bool isSelected,
-    required int index,
-  }) {
-    // ... (Código mantido igual)
-    return AnimatedScale(
-      scale: isSelected ? 1.0 : 1.0,
-      duration: const Duration(milliseconds: 230),
-      curve: Curves.easeOutCubic,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: EdgeInsets.all(isSelected ? 12 : 14),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadiusGeometry.all(Radius.circular(20.0)),
-          color: isSelected
-              ? Theme.of(context).colorScheme.secondary.withOpacity(0.25)
-              : Colors.transparent,
-        ),
-        child: Icon(
-          icon,
-          size: 26,
-          color: isSelected
-              ? Theme.of(context).colorScheme.onPrimary
-              : Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.7),
-        ),
-      ),
-    );
   }
 
   Future<void> _loadPalavraDoDia() async {
@@ -174,19 +105,9 @@ class _InitialState extends State<Initial> {
       // --- NOVO: Agenda a notificação para o dia seguinte ---
       // Como a palavra acabou de mudar, agendamos um lembrete para amanhã
       // para avisar que haverá uma NOVA palavra novamente.
-      await NotificationService().agendarNotificacaoParaAmanha();
-
     } catch (e) {
       //_mostrarErro("Erro ao carregar palavra salva: ${e.toString()}");
     }
-  }
-
-  void _mostrarErro(String mensagem) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(mensagem),
-      ),
-    );
   }
 
   void _compartilharPalavra() {
@@ -195,16 +116,179 @@ class _InitialState extends State<Initial> {
     }
   }
 
+  // Abre o próximo devocional não lido (mesma lógica anterior)
+  Future<void> _openNextUnread() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? lastTopic = prefs.getString('lastDevocionalTopic');
+    final int lastIndex = prefs.getInt('lastDevocionalIndex') ?? -1;
+
+    try {
+      final String jsonString = await DefaultAssetBundle.of(context)
+          .loadString('assets/json/newDevocionalModel.json');
+      final Map<String, dynamic> jsonResponse = jsonDecode(jsonString);
+
+      String? foundTopic;
+      int foundIndex = -1;
+
+      // Primeiro tenta continuar no mesmo tópico
+      if (lastTopic != null && jsonResponse.containsKey(lastTopic)) {
+        final List<dynamic> items = jsonResponse[lastTopic] ?? [];
+        for (int i = lastIndex + 1; i < items.length; i++) {
+          final bool isRead =
+              prefs.getBool('devocional_read_${lastTopic}_$i') ?? false;
+          if (!isRead) {
+            foundTopic = lastTopic;
+            foundIndex = i;
+            break;
+          }
+        }
+      }
+
+      // Se não encontrou, procura pelo primeiro não lido em todos os tópicos
+      if (foundTopic == null) {
+        for (String topic in topicos) {
+          final List<dynamic> items = jsonResponse[topic] ?? [];
+          for (int i = 0; i < items.length; i++) {
+            final bool isRead =
+                prefs.getBool('devocional_read_${topic}_$i') ?? false;
+            if (!isRead) {
+              foundTopic = topic;
+              foundIndex = i;
+              break;
+            }
+          }
+          if (foundTopic != null) break;
+        }
+      }
+
+      if (foundTopic != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DevocionalContentScreen(
+                devo: foundTopic!, initialIndex: foundIndex),
+          ),
+        );
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('Nenhum devocional não lido encontrado'),
+                duration: Duration(seconds: 2)),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Erro ao localizar devocional: ${e.toString()}'),
+              duration: const Duration(seconds: 2)),
+        );
+      }
+    }
+  }
+
+  // Mostra menu com opção automática e histórico de tópicos acessados
+  Future<void> _continuarLendo() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? histStr = prefs.getString('devocional_history');
+    List<dynamic> history =
+        histStr != null ? jsonDecode(histStr) as List<dynamic> : [];
+
+    // Carrega JSON para obter tamanhos dos tópicos
+    Map<String, dynamic> jsonResponse = {};
+    try {
+      final String jsonString = await DefaultAssetBundle.of(context)
+          .loadString('assets/json/newDevocionalModel.json');
+      jsonResponse = jsonDecode(jsonString);
+    } catch (_) {}
+
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: const Text('Próximo não lido'),
+                subtitle:
+                    const Text('Avança para o próximo devocional não lido'),
+                leading: const Icon(Icons.auto_fix_high),
+                onTap: () {
+                  Navigator.pop(context);
+                  _openNextUnread();
+                },
+              ),
+              const Divider(height: 1),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Row(
+                  children: [
+                    const Text('Histórico',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    const Spacer(),
+                    Text('${history.length}')
+                  ],
+                ),
+              ),
+              if (history.isEmpty)
+                Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text('Nenhum tópico acessado ainda',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary))),
+              Flexible(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: history.length,
+                  itemBuilder: (context, index) {
+                    final entry = history[index] as Map<String, dynamic>;
+                    final String topic = entry['topic'] ?? '';
+                    final int lastRead = (entry['lastReadIndex'] ?? -1) as int;
+                    final List<dynamic> items = jsonResponse[topic] ?? [];
+                    final int nextIndex =
+                        (lastRead >= 0 && lastRead < items.length - 1)
+                            ? lastRead + 1
+                            : (lastRead >= 0 ? lastRead : 0);
+                    final bool completed =
+                        items.isNotEmpty && lastRead >= items.length - 1;
+                    return ListTile(
+                      title: Text(topic),
+                      subtitle: Text(completed
+                          ? 'Concluído (${items.length}/${items.length})'
+                          : 'Continuar em ${nextIndex + 1} de ${items.length}'),
+                      trailing: completed
+                          ? const Icon(Icons.check_circle, color: Colors.green)
+                          : null,
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => DevocionalContentScreen(
+                                    devo: topic, initialIndex: nextIndex)));
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // ... (O resto do método build permanece exatamente o mesmo)
-    final screenSize = MediaQuery.of(context).size;
     final List<Widget> pages = [
       SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final minContentHeight = 600.0;
-
             final content = ConstrainedBox(
               constraints: BoxConstraints(
                 minHeight: constraints.maxHeight,
@@ -220,13 +304,11 @@ class _InitialState extends State<Initial> {
                       child: Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .primary,
+                          color: Theme.of(context).colorScheme.primary,
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                              color: Colors.black.withOpacity(0.3),
                               blurRadius: 10,
                               offset: const Offset(0, 3),
                             ),
@@ -237,11 +319,12 @@ class _InitialState extends State<Initial> {
                           child: Stack(
                             children: [
                               Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Palavra do Dia",
+                                    palavraAtual?.versiculo.isNotEmpty == true
+                                        ? palavraAtual!.versiculo
+                                        : "versiculo não encontrado",
                                     style: TextStyle(
                                       color: Theme.of(context)
                                           .colorScheme
@@ -254,7 +337,7 @@ class _InitialState extends State<Initial> {
                                   const SizedBox(height: 12),
                                   ValueListenableBuilder<double>(
                                     valueListenable:
-                                    FontSizeController.fontSizeNotifier,
+                                        FontSizeController.fontSizeNotifier,
                                     builder: (context, fontSize, _) {
                                       return Text(
                                         palavraAtual?.texto ??
@@ -266,24 +349,11 @@ class _InitialState extends State<Initial> {
                                               .colorScheme
                                               .secondary,
                                         ),
-                                        textAlign: TextAlign.center,
+                                        textAlign: TextAlign.justify,
                                       );
                                     },
                                   ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    palavraAtual?.versiculo.isNotEmpty == true
-                                        ? palavraAtual!.versiculo
-                                        : "versiculo não encontrado",
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: 10),
+                                  const SizedBox(height: 20),
                                   ElevatedButton.icon(
                                     onPressed: _compartilharPalavra,
                                     icon: Icon(
@@ -302,7 +372,8 @@ class _InitialState extends State<Initial> {
                                     ),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Theme.of(context)
-                                          .colorScheme.background,
+                                          .colorScheme
+                                          .background,
                                     ),
                                   ),
                                 ],
@@ -317,6 +388,9 @@ class _InitialState extends State<Initial> {
                     padding: const EdgeInsets.all(20.0),
                     child: Column(
                       children: [
+                        _buildMenuCard(context, 'Continuar lendo',
+                            Icons.read_more, gradienteAudios, _continuarLendo),
+                        const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -325,8 +399,8 @@ class _InitialState extends State<Initial> {
                                 context,
                                 'Bíblia',
                                 Icons.menu_book_rounded,
-                                gradienteBiblia,
-                                    () => Navigator.push(
+                                gradienteAudios,
+                                () => Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => const BibleList()),
@@ -339,8 +413,8 @@ class _InitialState extends State<Initial> {
                                 context,
                                 'Harpa',
                                 Icons.music_note,
-                                gradienteHarpa,
-                                    () => Navigator.push(
+                                gradienteAudios,
+                                () => Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => const HarpaList()),
@@ -358,12 +432,12 @@ class _InitialState extends State<Initial> {
                                 context,
                                 'Devocional',
                                 Icons.auto_stories,
-                                gradienteDevocional,
-                                    () => Navigator.push(
+                                gradienteAudios,
+                                () => Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                      const DevocionalList()),
+                                          const DevocionalList()),
                                 ),
                               ),
                             ),
@@ -374,11 +448,11 @@ class _InitialState extends State<Initial> {
                                 'Áudios',
                                 Icons.headphones_outlined,
                                 gradienteAudios,
-                                    () => Navigator.push(
+                                () => Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                      const Homeaudioscreen()),
+                                          const Homeaudioscreen()),
                                 ),
                               ),
                             ),
@@ -396,9 +470,7 @@ class _InitialState extends State<Initial> {
           },
         ),
       ),
-
-      OtherScreen(),
-      OtherScreen(),
+      SettingsScreen(),
     ];
 
     return Scaffold(
@@ -413,21 +485,6 @@ class _InitialState extends State<Initial> {
           ),
         ),
         centerTitle: false,
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.settings,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-            tooltip: "Configurações",
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SettingsScreen()),
-              );
-            },
-          ),
-        ],
       ),
       body: pages[currentPageIndex],
       bottomNavigationBar: NavigationBar(
@@ -453,14 +510,14 @@ class _InitialState extends State<Initial> {
           ),
           NavigationDestination(
             selectedIcon: Icon(
-              Icons.more_horiz_rounded,
+              Icons.settings,
               color: Theme.of(context).colorScheme.primary,
             ),
             icon: Icon(
-              Icons.more_horiz_rounded,
+              Icons.settings_outlined,
               color: Theme.of(context).colorScheme.secondary,
             ),
-            label: "Outros",
+            label: "Configurações",
           ),
         ],
       ),
@@ -468,31 +525,31 @@ class _InitialState extends State<Initial> {
   }
 
   Widget _buildMenuCard(
-      BuildContext context,
-      String title,
-      IconData iconData,
-      List<Color> gradientColors,
-      VoidCallback onPressed, {
-        double? height,
-      }) {
+    BuildContext context,
+    String title,
+    IconData iconData,
+    List<Color> gradientColors,
+    VoidCallback onPressed, {
+    double? height,
+  }) {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
         width: double.infinity,
+        height: height, // permite passar altura opcional
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.primary,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+              color: Colors.black.withOpacity(0.3),
               blurRadius: 10,
               offset: const Offset(0, 3),
             ),
           ],
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-              vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: 16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -503,15 +560,11 @@ class _InitialState extends State<Initial> {
                     gradient: LinearGradient(
                       colors: gradientColors.length >= 2
                           ? gradientColors
-                          : [
-                        gradientColors.first,
-                        gradientColors.first
-                      ],
+                          : [gradientColors.first, gradientColors.first],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      stops: gradientColors.length == 3
-                          ? [0.0, 0.5, 1.0]
-                          : null,
+                      stops:
+                          gradientColors.length == 3 ? [0.0, 0.5, 1.0] : null,
                     ),
                     shape: BoxShape.circle,
                     boxShadow: [
@@ -522,8 +575,7 @@ class _InitialState extends State<Initial> {
                     ]),
                 child: Icon(
                   iconData,
-                  color: Colors
-                      .white,
+                  color: Colors.white,
                   size: 32,
                 ),
               ),

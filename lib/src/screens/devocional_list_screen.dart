@@ -17,7 +17,8 @@ class DevocionalList extends StatefulWidget {
 class _DevocionalListState extends State<DevocionalList> {
   List<String> filteredDevocionalTopic = [];
   final TextEditingController _filterController = TextEditingController();
-  final String _jsonPath = "assets/json/newDevocionalModel.json"; // Certifique-se que é o JSON correto
+  final String _jsonPath =
+      "assets/json/newDevocionalModel.json"; // Certifique-se que é o JSON correto
 
   // Armazena a estrutura completa do JSON para saber quantos itens tem em cada tópico
   Map<String, dynamic> fullDevocionalData = {};
@@ -95,7 +96,7 @@ class _DevocionalListState extends State<DevocionalList> {
     setState(() {
       filteredDevocionalTopic = topicos
           .where((devo) =>
-          devo.toLowerCase().contains(_filterController.text.toLowerCase()))
+              devo.toLowerCase().contains(_filterController.text.toLowerCase()))
           .toList();
     });
   }
@@ -110,8 +111,8 @@ class _DevocionalListState extends State<DevocionalList> {
             // keyboardType: TextInputType.number, // Removido pois busca é por texto
             decoration: InputDecoration(
               hintText: "Pesquisar Tema",
-              hintStyle: TextStyle(
-                  color: Theme.of(context).colorScheme.secondary),
+              hintStyle:
+                  TextStyle(color: Theme.of(context).colorScheme.secondary),
               prefixIcon: Icon(Icons.search,
                   color: Theme.of(context).colorScheme.secondary),
               suffixIcon: IconButton(
@@ -126,7 +127,7 @@ class _DevocionalListState extends State<DevocionalList> {
                 borderSide: BorderSide.none,
               ),
               contentPadding:
-              const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+                  const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
             ),
             style: TextStyle(color: Theme.of(context).colorScheme.secondary),
             cursorColor: Theme.of(context).colorScheme.secondary,
@@ -140,9 +141,12 @@ class _DevocionalListState extends State<DevocionalList> {
               final double progress = topicsProgress[devocionalTopic] ?? 0.0;
               final int percentage = (progress * 100).toInt();
 
-              return Card( // Usando Card para ficar visualmente melhor com a barra
+              return Card(
+                // Usando Card para ficar visualmente melhor com a barra
                 margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                color: Theme.of(context).colorScheme.background, // Transparente ou cor de fundo
+                color: Theme.of(context)
+                    .colorScheme
+                    .background, // Transparente ou cor de fundo
                 elevation: 0,
                 child: InkWell(
                   onTap: () async {
@@ -150,8 +154,8 @@ class _DevocionalListState extends State<DevocionalList> {
                     await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            DevocionalContentScreen(devo: devocionalTopic),
+                        builder: (context) => DevocionalContentScreen(
+                            devo: devocionalTopic, initialIndex: 0),
                       ),
                     );
                     _refreshProgress(); // Atualiza ao voltar
@@ -162,21 +166,29 @@ class _DevocionalListState extends State<DevocionalList> {
                       children: [
                         ListTile(
                           leading: Icon(
-                            progress >= 1.0 ? Icons.check_circle : Icons.menu_book_rounded,
-                            color: progress >= 1.0 ? Colors.green : Theme.of(context).colorScheme.secondary,
+                            progress >= 1.0
+                                ? Icons.check_circle
+                                : Icons.menu_book_rounded,
+                            color: progress >= 1.0
+                                ? Colors.green
+                                : Theme.of(context).colorScheme.secondary,
                           ),
                           title: ValueListenableBuilder<double>(
-                            valueListenable: FontSizeController.fontSizeNotifier,
+                            valueListenable:
+                                FontSizeController.fontSizeNotifier,
                             builder: (context, fontSize, _) {
                               return Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
                                     child: Text(
                                       devocionalTopic,
                                       style: TextStyle(
                                         fontSize: fontSize,
-                                        color: Theme.of(context).colorScheme.secondary,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -185,7 +197,10 @@ class _DevocionalListState extends State<DevocionalList> {
                                     "$percentage%",
                                     style: TextStyle(
                                       fontSize: fontSize * 0.8,
-                                      color: Theme.of(context).colorScheme.secondary.withOpacity(0.7),
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary
+                                          .withOpacity(0.7),
                                     ),
                                   ),
                                 ],
@@ -198,16 +213,22 @@ class _DevocionalListState extends State<DevocionalList> {
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           child: LinearProgressIndicator(
                             value: progress,
-                            backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                            backgroundColor: Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withOpacity(0.5),
                             valueColor: AlwaysStoppedAnimation<Color>(
-                                progress >= 1.0 ? Colors.green : Theme.of(context).colorScheme.secondary
-                            ),
+                                progress >= 1.0
+                                    ? Colors.green
+                                    : Theme.of(context).colorScheme.secondary),
                             minHeight: 4,
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
                         const SizedBox(height: 8),
-                        Divider(height: 1, color: Theme.of(context).colorScheme.primary),
+                        Divider(
+                            height: 1,
+                            color: Theme.of(context).colorScheme.primary),
                       ],
                     ),
                   ),
@@ -229,7 +250,7 @@ class _DevocionalListState extends State<DevocionalList> {
         centerTitle: true,
         automaticallyImplyLeading: true,
         iconTheme:
-        IconThemeData(color: Theme.of(context).colorScheme.secondary),
+            IconThemeData(color: Theme.of(context).colorScheme.secondary),
         title: Text("Devocional",
             style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
       ),
