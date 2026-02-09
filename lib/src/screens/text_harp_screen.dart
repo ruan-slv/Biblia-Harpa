@@ -3,6 +3,8 @@
 import 'dart:convert';
 import 'package:biblia_e_harpa/src/config.dart';
 import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
+import 'package:biblia_e_harpa/src/keys/harpkey.dart';
+import 'package:biblia_e_harpa/src/services/share_audio_source.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
@@ -107,6 +109,8 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
     }
   }
 
+  ShareAudioSource? shareAudioSource = ShareAudioSource();
+
   // Widget do Player
   Widget _buildAudioPlayer() {
     // Se não tem áudio e não está carregando, mostra o card de "verificando/vazio"
@@ -133,95 +137,104 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
         padding: const EdgeInsets.all(12.0),
         child: _isLoadingAudio
             ? Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              "Carregando áudio...",
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
-                fontSize: 14,
-              ),
-            )
-          ],
-        )
-            : Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            StreamBuilder<PlayerState>(
-              stream: _audioPlayer.playerStateStream,
-              builder: (context, snapshot) {
-                final playerState = snapshot.data;
-                final processingState = playerState?.processingState;
-                final playing = playerState?.playing;
-
-                if (processingState == ProcessingState.loading ||
-                    processingState == ProcessingState.buffering) {
-                  return Padding(
-                    padding: const EdgeInsets.all(12.0),
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 24,
+                    height: 24,
                     child: CircularProgressIndicator(
+                      strokeWidth: 2,
                       color: Theme.of(context).colorScheme.secondary,
                     ),
-                  );
-                }
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    "Carregando áudio...",
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary,
+                      fontSize: 14,
+                    ),
+                  )
+                ],
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  StreamBuilder<PlayerState>(
+                    stream: _audioPlayer.playerStateStream,
+                    builder: (context, snapshot) {
+                      final playerState = snapshot.data;
+                      final processingState = playerState?.processingState;
+                      final playing = playerState?.playing;
 
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      icon: Icon((playing ?? false)
-                          ? Icons.pause_circle_filled
-                          : Icons.play_circle_filled),
-                      iconSize: 48.0,
-                      color: Theme.of(context).colorScheme.secondary,
-                      onPressed: () => (playing ?? false)
-                          ? _audioPlayer.pause()
-                          : _audioPlayer.play(),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.stop_circle_outlined),
-                      iconSize: 48.0,
-                      color: Theme.of(context).colorScheme.secondary,
-                      onPressed: () {
-                        _audioPlayer.stop();
-                        _audioPlayer.seek(Duration.zero);
+                      if (processingState == ProcessingState.loading ||
+                          processingState == ProcessingState.buffering) {
+                        return Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: CircularProgressIndicator(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        );
+                      }
+
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.share),
+                            iconSize: 48.0,
+                            color: Theme.of(context).colorScheme.secondary,
+                            onPressed: () => shareAudioSource?.shareAudioSource(
+                              widget.harp,
+                              widget.audioUrl!,
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon((playing ?? false)
+                                ? Icons.pause_circle_filled
+                                : Icons.play_circle_filled),
+                            iconSize: 48.0,
+                            color: Theme.of(context).colorScheme.secondary,
+                            onPressed: () => (playing ?? false)
+                                ? _audioPlayer.pause()
+                                : _audioPlayer.play(),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.stop_circle_outlined),
+                            iconSize: 48.0,
+                            color: Theme.of(context).colorScheme.secondary,
+                            onPressed: () {
+                              _audioPlayer.stop();
+                              _audioPlayer.seek(Duration.zero);
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                  Expanded(
+                    child: StreamBuilder<Duration>(
+                      stream: _audioPlayer.positionStream,
+                      builder: (context, snapshot) {
+                        final position = snapshot.data ?? Duration.zero;
+                        final duration = _audioPlayer.duration ?? Duration.zero;
+                        return Slider(
+                          value: position.inSeconds
+                              .clamp(0, duration.inSeconds)
+                              .toDouble(),
+                          max: duration.inSeconds > 0
+                              ? duration.inSeconds.toDouble()
+                              : 1.0,
+                          onChanged: (value) => _audioPlayer
+                              .seek(Duration(seconds: value.toInt())),
+                          activeColor: Theme.of(context).colorScheme.secondary,
+                          inactiveColor: Colors.grey.withOpacity(0.5),
+                        );
                       },
                     ),
-                  ],
-                );
-              },
-            ),
-            Expanded(
-              child: StreamBuilder<Duration>(
-                stream: _audioPlayer.positionStream,
-                builder: (context, snapshot) {
-                  final position = snapshot.data ?? Duration.zero;
-                  final duration = _audioPlayer.duration ?? Duration.zero;
-                  return Slider(
-                    value: position.inSeconds
-                        .clamp(0, duration.inSeconds)
-                        .toDouble(),
-                    max: duration.inSeconds > 0
-                        ? duration.inSeconds.toDouble()
-                        : 1.0,
-                    onChanged: (value) => _audioPlayer
-                        .seek(Duration(seconds: value.toInt())),
-                    activeColor: Theme.of(context).colorScheme.secondary,
-                    inactiveColor: Colors.grey.withOpacity(0.5),
-                  );
-                },
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -237,7 +250,7 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
           style: TextStyle(color: Theme.of(context).colorScheme.secondary),
         ),
         iconTheme:
-        IconThemeData(color: Theme.of(context).colorScheme.secondary),
+            IconThemeData(color: Theme.of(context).colorScheme.secondary),
         centerTitle: true,
       ),
       body: Padding(
@@ -262,8 +275,8 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
             }
 
             final harpText = snapshot.data!.firstWhere(
-                  (text) =>
-              text.hino.toLowerCase().trim() ==
+              (text) =>
+                  text.hino.toLowerCase().trim() ==
                   widget.harp.toLowerCase().trim(),
               orElse: () => TextModel(hino: '', coro: '', verses: {}),
             );
@@ -275,34 +288,9 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _buildAudioPlayer(), // Player no topo
-                    const SizedBox(height: 15),
-                    Text(
-                      "** CORO **",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 10),
-                    ValueListenableBuilder<double>(
-                      valueListenable: FontSizeController.fontSizeNotifier,
-                      builder: (context, fontSize, _) {
-                        return Text(
-                          harpText.coro,
-                          style: TextStyle(
-                            fontSize: fontSize,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                          textAlign: TextAlign.center,
-                        );
-                      },
-                    ),
                     const SizedBox(height: 30),
                     ...harpText.verses.entries.map(
-                          (entry) => Padding(
+                      (entry) => Padding(
                         padding: const EdgeInsets.only(bottom: 30.0),
                         child: Column(
                           children: [
@@ -317,14 +305,31 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
                             ),
                             ValueListenableBuilder<double>(
                               valueListenable:
-                              FontSizeController.fontSizeNotifier,
+                                  FontSizeController.fontSizeNotifier,
                               builder: (context, fontSize, _) {
                                 return Text(
                                   entry.value,
                                   style: TextStyle(
                                     fontSize: fontSize,
                                     color:
-                                    Theme.of(context).colorScheme.secondary,
+                                        Theme.of(context).colorScheme.secondary,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 30.0),
+                            ValueListenableBuilder<double>(
+                              valueListenable:
+                                  FontSizeController.fontSizeNotifier,
+                              builder: (context, fontSize, _) {
+                                return Text(
+                                  harpText.coro,
+                                  style: TextStyle(
+                                    fontSize: fontSize,
+                                    fontWeight: FontWeight.bold,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
                                   ),
                                   textAlign: TextAlign.center,
                                 );

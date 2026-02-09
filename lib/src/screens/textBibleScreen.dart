@@ -56,7 +56,8 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
   // Controle de Filtro (Utiliza lista de índices para referência aos versículos originais)
   final TextEditingController _fillterKeyWordController =
       TextEditingController();
-  List<int> _filteredVerseIndices = []; // Lista de índices dos versículos que correspondem ao filtro.
+  List<int> _filteredVerseIndices =
+      []; // Lista de índices dos versículos que correspondem ao filtro.
 
   @override
   void initState() {
@@ -457,7 +458,7 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
               child: TextField(
                 controller: _fillterKeyWordController,
                 // CORRIGIDO: Tipo de teclado para texto
-                keyboardType: TextInputType.text, 
+                keyboardType: TextInputType.text,
                 // CORRIGIDO: Chama o filtro ao digitar
                 onChanged: (_) => _filterKeyWords(),
                 decoration: InputDecoration(
@@ -470,7 +471,7 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
                     onPressed: () {
                       _fillterKeyWordController.clear();
                       // CORRIGIDO: Chama o filtro ao limpar
-                      _filterKeyWords(); 
+                      _filterKeyWords();
                     },
                     icon: Icon(Icons.clear,
                         color: Theme.of(context).colorScheme.secondary),
@@ -512,7 +513,7 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
               ),
             ),
           ),
-          
+
           // NOVO: Mensagem de Nenhum Resultado Encontrado
           if (noFilterResults)
             SliverToBoxAdapter(
@@ -543,12 +544,13 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
                         // O último item é o botão de navegação
-                        if (index == _filteredVerseIndices.length) { 
+                        if (index == _filteredVerseIndices.length) {
                           return Padding(
                             padding:
                                 const EdgeInsets.only(top: 30.0, bottom: 20),
                             child: ValueListenableBuilder<double>(
-                              valueListenable: FontSizeController.fontSizeNotifier,
+                              valueListenable:
+                                  FontSizeController.fontSizeNotifier,
                               builder: (context, fontSize, _) {
                                 return Column(
                                   children: [
@@ -616,8 +618,9 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
                         final int originalIndex = _filteredVerseIndices[index];
                         final String verseText =
                             currentVerses[originalIndex].toString();
-                        final int verseNumber = originalIndex + 1; // Número real do versículo
-                        
+                        final int verseNumber =
+                            originalIndex + 1; // Número real do versículo
+
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 16.0),
                           child: GestureDetector(
@@ -626,7 +629,8 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
                             child: Container(
                               padding: const EdgeInsets.all(8.0),
                               decoration: BoxDecoration(
-                                color: _selectedVerseIndices.contains(originalIndex)
+                                color: _selectedVerseIndices
+                                        .contains(originalIndex)
                                     ? Theme.of(context)
                                         .colorScheme
                                         .primary
@@ -637,7 +641,8 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
                               child: Column(
                                 children: [
                                   Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       ValueListenableBuilder<double>(
                                         valueListenable:
@@ -658,8 +663,8 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
                                       ),
                                       Expanded(
                                         child: ValueListenableBuilder<double>(
-                                          valueListenable:
-                                              FontSizeController.fontSizeNotifier,
+                                          valueListenable: FontSizeController
+                                              .fontSizeNotifier,
                                           builder: (context, fontSize, _) {
                                             return Text(
                                               verseText,
