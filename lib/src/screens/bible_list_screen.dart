@@ -1,14 +1,16 @@
 // lib/src/screens/bible_list_screen.dart
 
 import 'dart:convert';
+import 'package:biblia_e_harpa/src/services/bible_download_service.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:biblia_e_harpa/src/components/appBarComponent.dart';
 import 'package:biblia_e_harpa/src/config.dart';
 import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 import 'package:biblia_e_harpa/src/keys/biblekey.dart';
 import 'package:biblia_e_harpa/src/screens/chapter_list_screen.dart';
-import 'package:biblia_e_harpa/src/screens/textBibleScreen.dart'; // Importa o modelo AudioChapter
+import 'package:biblia_e_harpa/src/screens/textBibleScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BibleList extends StatefulWidget {
@@ -19,32 +21,44 @@ class BibleList extends StatefulWidget {
 }
 
 class _BibleListState extends State<BibleList> {
+  final BibleDownloadService _downloadService = BibleDownloadService();
+  bool _isDownloading = false;
   List<String> filteredBible = [];
   final TextEditingController _searchController = TextEditingController();
   String _jsonPath = 'assets/json/acf.json';
-
-  // Lista para armazenar todos os livros em áudio
   List<Map<String, dynamic>> _audioBooks = [];
 
   @override
   void initState() {
     super.initState();
     _loadSelectedVersion();
-    _loadAudioBooks(); // Carrega a lista de áudios
+    _loadAudioBooks();
     filteredBible = books;
     _searchController.addListener(_filterBible);
   }
 
   Future<void> _loadSelectedVersion() async {
     final prefs = await SharedPreferences.getInstance();
+    String version = prefs.getString("selectedVersion") ?? "acf.json";
+
     if (mounted) {
-      setState(() {
-        _jsonPath = 'assets/json/${prefs.getString('selectedVersion') ?? 'acf.json'}';
-      });
+      if (BibleDownloadService.assetVersions.contains(version)) {
+        setState(() {
+          _jsonPath = "assets/json/$version";
+        });
+      } else {
+        await _updateInternalPath(version);
+      }
     }
   }
 
-  // Método para carregar a lista de áudios do JSON
+  Future<void> _updateInternalPath(String fileName) async {
+    final directory = await getApplicationDocumentsDirectory();
+    setState(() {
+      _jsonPath = "${directory.path}/$fileName";
+    });
+  }
+
   Future<void> _loadAudioBooks() async {
     try {
       final String response = await rootBundle.loadString("assets/json/audios.json");
@@ -55,57 +69,50 @@ class _BibleListState extends State<BibleList> {
         });
       }
     } catch (e) {
-      // Erro ao carregar áudios, o app funcionará sem eles.
+      debugPrint("Erro ao carregar áudios: $e");
     }
-  }
-
-  @override
-  void dispose() {
-    _searchController.removeListener(_filterBible);
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  String _normalize(String input) {
-    return input.toLowerCase().replaceAll(RegExp(r'[áàâãä]'), 'a').replaceAll(RegExp(r'[éèêë]'), 'e').replaceAll(RegExp(r'[íìîï]'), 'i').replaceAll(RegExp(r'[óòôõö]'), 'o').replaceAll(RegExp(r'[úùûü]'), 'u').replaceAll(RegExp(r'[ç]'), 'c');
   }
 
   void _filterBible() {
     setState(() {
-      filteredBible = books.where((book) => _normalize(book).contains(_normalize(_searchController.text))).toList();
+      filteredBible = books
+          .where((book) => book.toLowerCase().contains(_searchController.text.toLowerCase()))
+          .toList();
     });
   }
 
   void _onMenuItemSelected(String value) async {
     final prefs = await SharedPreferences.getInstance();
-    String newVersion = 'acf.json';
-    switch (value) {
-      case "ACF":
-        newVersion = 'acf.json';
-        break;
-      case 'NVI':
-        newVersion = 'nvi.json';
-        break;
-      case 'AA':
-        newVersion = 'aa.json';
-        break;
+    String fileName = value.contains(".json") ? value : "$value.json";
+
+    if (!BibleDownloadService.assetVersions.contains(fileName)) {
+      bool jaBaixado = await _downloadService.isDownloaded(fileName);
+      if (!jaBaixado) {
+        setState(() => _isDownloading = true);
+        bool sucesso = await _downloadService.downloadVersion(fileName);
+        if (mounted) setState(() => _isDownloading = false);
+
+        if (!sucesso) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Erro ao descarregar do Drive. Verifique a internet.")),
+            );
+          }
+          return;
+        }
+      }
     }
-    await prefs.setString('selectedVersion', newVersion);
-    if (mounted) {
-      setState(() {
-        _jsonPath = 'assets/json/$newVersion';
-      });
-    }
+
+    await prefs.setString("selectedVersion", fileName);
+    _loadSelectedVersion();
   }
 
-  // Método com a lógica de navegação centralizada
   void _navigateToBook(String bookName) {
     List<AudioChapter>? audioChaptersForBook;
     try {
-      // Encontra o livro de áudio correspondente na lista _audioBooks
       final audioBookData = _audioBooks.firstWhere(
             (audioBook) => audioBook['title'] == bookName,
-        orElse: () => {}, // Retorna um mapa vazio se não encontrar
+        orElse: () => {},
       );
 
       if (audioBookData.isNotEmpty) {
@@ -113,17 +120,16 @@ class _BibleListState extends State<BibleList> {
         audioChaptersForBook = chaptersList.map((c) => AudioChapter.fromJson(c)).toList();
       }
     } catch (e) {
-      // Ignora erros, o app continuará sem áudio para este livro.
+      debugPrint("Erro ao processar áudio: $e");
     }
 
-    // Navega para a tela da lista de capítulos, passando os dados do áudio
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => ChapterListScreen(
           name: bookName,
           jsonPath: _jsonPath,
-          audioChapters: audioChaptersForBook, // Passando os dados do áudio
+          audioChapters: audioChaptersForBook,
         ),
       ),
     );
@@ -134,58 +140,32 @@ class _BibleListState extends State<BibleList> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: CustomAppBar(
-        title: "Biblia Cristã",
+        title: "Bíblia Cristã",
         centerTitle: true,
         automaticallyImplyLeading: true,
         actions: [
-          SizedBox(
-            width: sizeBtnOptions[0],
-            height: sizeBtnOptions[1],
-            child: Theme(
-              data: Theme.of(context).copyWith(
-                popupMenuTheme: PopupMenuThemeData(
-                  color: Theme.of(context).colorScheme.primary,
-                  textStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                ),
-              ),
-              child: PopupMenuButton<String>(
-                icon: Icon(
-                  Icons.more_vert,
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
-                onSelected: _onMenuItemSelected,
-                itemBuilder: (BuildContext context) {
-                  return [
-                    PopupMenuItem<String>(
-                      value: "ACF",
-                      child: Text(
-                        "Almeida Corrigida Fiel",
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary),
-                      ),
-                    ),
-                    PopupMenuItem<String>(
-                      value: "NVI",
-                      child: Text(
-                        "Nova Versão Internacional",
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary),
-                      ),
-                    ),
-                    PopupMenuItem<String>(
-                      value: "AA",
-                      child: Text(
-                        "Almeida Atualizada",
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary),
-                      ),
-                    ),
-                  ];
-                },
-              ),
-            ),
+          if (_isDownloading)
+            const Center(child: Padding(padding: EdgeInsets.all(8.0), child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))),
+          PopupMenuButton<String>(
+            icon: Icon(Icons.more_vert, color: Theme.of(context).colorScheme.secondary),
+            onSelected: _onMenuItemSelected,
+            itemBuilder: (context) => [
+              const PopupMenuItem(enabled: false, child: Text("Português 🇧🇷", style: TextStyle(fontWeight: FontWeight.bold))),
+              const PopupMenuItem(value: "acf", child: Text("Almeida Corrigida Fiel")),
+              const PopupMenuItem(value: "nvi", child: Text("Nova Versão Internacional")),
+              const PopupMenuItem(value: "aa", child: Text("Almeida Atualizada")),
+              /*
+              const PopupMenuDivider(),
+              const PopupMenuItem(enabled: false, child: Text("English 🇺🇸", style: TextStyle(fontWeight: FontWeight.bold))),
+              const PopupMenuItem(value: "en_kjv", child: Text("King James Version")),
+              const PopupMenuItem(value: "en_bbe", child: Text("Bible in Basic English")),
+              const PopupMenuDivider(),
+              const PopupMenuItem(enabled: false, child: Text("Outros Idiomas", style: TextStyle(fontWeight: FontWeight.bold))),
+              const PopupMenuItem(value: "es_rvr", child: Text("Español 🇪🇸")),
+              const PopupMenuItem(value: "de_schlachter", child: Text("Deutsch 🇩🇪")),
+              const PopupMenuItem(value: "fr_apee", child: Text("Français 🇫🇷")),
+              */
+            ],
           ),
         ],
       ),
@@ -197,21 +177,10 @@ class _BibleListState extends State<BibleList> {
               controller: _searchController,
               decoration: InputDecoration(
                 hintText: "Pesquisar livro",
-                hintStyle: TextStyle(color: Theme.of(context).colorScheme.secondary),
                 prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.secondary),
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    _searchController.clear();
-                  },
-                  icon: Icon(Icons.clear,
-                      color: Theme.of(context).colorScheme.secondary),
-                ),
                 filled: true,
                 fillColor: Theme.of(context).colorScheme.primary,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                  borderSide: BorderSide.none,
-                ),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide.none),
                 contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
               ),
               style: TextStyle(color: Theme.of(context).colorScheme.secondary),
@@ -224,8 +193,7 @@ class _BibleListState extends State<BibleList> {
               itemBuilder: (context, index) {
                 final bookName = filteredBible[index];
                 return ListTile(
-                  leading: Icon(Icons.menu_book_rounded,
-                      color: Theme.of(context).colorScheme.secondary),
+                  leading: Icon(Icons.menu_book_rounded, color: Theme.of(context).colorScheme.secondary),
                   title: ValueListenableBuilder<double>(
                     valueListenable: FontSizeController.fontSizeNotifier,
                     builder: (context, fontSize, _) {
@@ -238,10 +206,7 @@ class _BibleListState extends State<BibleList> {
                       );
                     },
                   ),
-                  onTap: () {
-                    // Chama o novo método de navegação
-                    _navigateToBook(bookName);
-                  },
+                  onTap: () => _navigateToBook(bookName),
                 );
               },
             ),

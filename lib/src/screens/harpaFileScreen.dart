@@ -1,7 +1,9 @@
 // Em: lib/src/screens/harpaFileScreen.dart
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
+import 'package:share_plus/share_plus.dart';
 import '../models/dataAudioModel.dart';
 import 'package:dio/dio.dart';
 import 'dart:io';
@@ -87,7 +89,8 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
       await audioDir.create(recursive: true);
     }
     // Limpeza rigorosa do nome do arquivo
-    final safeName = fileName.replaceAll(RegExp(r'[^\w\s]+'), '').replaceAll(' ', '_');
+    final safeName =
+        fileName.replaceAll(RegExp(r'[^\w\s]+'), '').replaceAll(' ', '_');
     return '${audioDir.path}/$safeName.mp3';
   }
 
@@ -117,7 +120,7 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
       // Garante URL válida para download direto (Google Drive fix)
       String url = _currentHarpa.hinoURL;
       if (url.contains('drive.google.com') && !url.contains('&confirm=')) {
-        if(url.contains('?')) {
+        if (url.contains('?')) {
           url = '$url&confirm=t';
         } else {
           url = '$url?confirm=t';
@@ -132,7 +135,8 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
           _isDownloading = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${_currentHarpa.titulo} baixado com sucesso!')),
+          SnackBar(
+              content: Text('${_currentHarpa.titulo} baixado com sucesso!')),
         );
       }
     } catch (e) {
@@ -141,7 +145,8 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
           _isDownloading = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Erro ao baixar o áudio. Verifique a conexão.')),
+          const SnackBar(
+              content: Text('Erro ao baixar o áudio. Verifique a conexão.')),
         );
       }
     }
@@ -210,7 +215,7 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
         headers: {
           // User-Agent antigo que funcionava
           'User-Agent':
-          'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36'
+              'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36'
         },
       );
 
@@ -223,7 +228,7 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
         final dio = Dio();
         dio.options.headers = {
           'User-Agent':
-          'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36',
+              'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36',
         };
 
         final savePath = await _getLocalFilePath(_currentHarpa.titulo);
@@ -276,6 +281,44 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
     return "$minutes:$seconds";
   }
 
+  Future<void> _shareAudio(DataAudioModel audio) async {
+    try {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Preparando áudio para compartilhar...'),
+            duration: Duration(seconds: 2)),
+      );
+
+      final localPath = await _getLocalFilePath(audio.titulo);
+      XFile fileToShare;
+
+      // Se o arquivo existe localmente, usa ele. Se não, baixa temporariamente.
+      if (localPath.isNotEmpty && await File(localPath).exists()) {
+        fileToShare = XFile(localPath);
+      } else {
+        final response = await http.get(Uri.parse(audio.hinoURL));
+        final tempDir = await getTemporaryDirectory();
+        final tempFile = File(
+            '${tempDir.path}/${audio.titulo.replaceAll(RegExp(r'[^\w\s]+'), '').replaceAll(' ', '_')}.mp3');
+
+        await tempFile.writeAsBytes(response.bodyBytes);
+        fileToShare = XFile(tempFile.path);
+      }
+
+      await Share.shareXFiles(
+        [fileToShare],
+        text: 'Ouça este louvor da harpa cristã: ${audio.titulo}',
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text("Não foi possível compartilhar o áudio.")),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final playerState = _playerState;
@@ -292,39 +335,50 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
         elevation: 0,
-        iconTheme: IconThemeData(color: Theme.of(context).colorScheme.secondary),
+        iconTheme:
+            IconThemeData(color: Theme.of(context).colorScheme.secondary),
         title: Text(
           _currentHarpa.titulo,
-          style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: Theme.of(context).colorScheme.secondary,
+              fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         actions: [
           _isDownloading
               ? Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                color: Theme.of(context).colorScheme.secondary,
-                strokeWidth: 2,
-              ),
-            ),
-          )
+                  padding: const EdgeInsets.all(12.0),
+                  child: SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      color: Theme.of(context).colorScheme.secondary,
+                      strokeWidth: 2,
+                    ),
+                  ),
+                )
               : IconButton(
-            icon: Icon(
-              _isDownloaded ? Icons.download_done : Icons.download,
-              color: _isDownloaded ? Colors.green : Theme.of(context).colorScheme.secondary,
-            ),
-            tooltip: _isDownloaded ? "Hino baixado (Toque para remover)" : "Baixar hino",
-            onPressed: () {
-              if (_isDownloaded) {
-                _deleteAudio();
-              } else {
-                _downloadAudio();
-              }
-            },
-          ),
+                  icon: Icon(
+                    _isDownloaded ? Icons.download_done : Icons.download,
+                    color: _isDownloaded
+                        ? Colors.green
+                        : Theme.of(context).colorScheme.secondary,
+                  ),
+                  tooltip: _isDownloaded
+                      ? "Hino baixado (Toque para remover)"
+                      : "Baixar hino",
+                  onPressed: () {
+                    if (_isDownloaded) {
+                      _deleteAudio();
+                    } else {
+                      _downloadAudio();
+                    }
+                  },
+                ),
+          IconButton(
+              onPressed: () => _shareAudio(_currentHarpa),
+              icon: Icon(Icons.share,
+                  color: Theme.of(context).colorScheme.secondary)),
         ],
       ),
       body: SafeArea(
@@ -348,9 +402,16 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.primary,
                           borderRadius: BorderRadius.circular(20),
-                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10, offset: const Offset(0, 5))],
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 10,
+                                offset: const Offset(0, 5))
+                          ],
                         ),
-                        child: Icon(Icons.music_note_rounded, size: 100, color: Theme.of(context).colorScheme.secondary),
+                        child: Icon(Icons.music_note_rounded,
+                            size: 100,
+                            color: Theme.of(context).colorScheme.secondary),
                       ),
                       if (_isDownloaded)
                         Padding(
@@ -360,9 +421,10 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
                             decoration: BoxDecoration(
                                 color: Colors.green,
                                 shape: BoxShape.circle,
-                                border: Border.all(color: Colors.white, width: 2)
-                            ),
-                            child: const Icon(Icons.offline_pin, color: Colors.white, size: 20),
+                                border:
+                                    Border.all(color: Colors.white, width: 2)),
+                            child: const Icon(Icons.offline_pin,
+                                color: Colors.white, size: 20),
                           ),
                         ),
                     ],
@@ -370,11 +432,20 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
                   const SizedBox(height: 30),
                   Text(_currentHarpa.titulo,
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.secondary),
+                      style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.secondary),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis),
                   const SizedBox(height: 8),
-                  Text("Harpa Cristã", style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.secondary.withOpacity(0.7))),
+                  Text("Harpa Cristã",
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withOpacity(0.7))),
                 ],
               ),
 
@@ -384,16 +455,24 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
                 children: [
                   SliderTheme(
                     data: SliderTheme.of(context).copyWith(
-                      thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8.0),
-                      overlayShape: const RoundSliderOverlayShape(overlayRadius: 16.0),
+                      thumbShape:
+                          const RoundSliderThumbShape(enabledThumbRadius: 8.0),
+                      overlayShape:
+                          const RoundSliderOverlayShape(overlayRadius: 16.0),
                     ),
                     child: Slider(
                       value: _currentPosition.inSeconds.toDouble(),
                       min: 0,
-                      max: _audioDuration.inSeconds.toDouble().clamp(1.0, double.infinity),
-                      onChanged: (value) => _player.seek(Duration(seconds: value.toInt())),
+                      max: _audioDuration.inSeconds
+                          .toDouble()
+                          .clamp(1.0, double.infinity),
+                      onChanged: (value) =>
+                          _player.seek(Duration(seconds: value.toInt())),
                       activeColor: Theme.of(context).colorScheme.secondary,
-                      inactiveColor: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                      inactiveColor: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withOpacity(0.3),
                     ),
                   ),
                   Padding(
@@ -401,8 +480,16 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(_formatDuration(_currentPosition), style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.secondary)),
-                        Text(_formatDuration(_audioDuration), style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.secondary)),
+                        Text(_formatDuration(_currentPosition),
+                            style: TextStyle(
+                                fontSize: 12,
+                                color:
+                                    Theme.of(context).colorScheme.secondary)),
+                        Text(_formatDuration(_audioDuration),
+                            style: TextStyle(
+                                fontSize: 12,
+                                color:
+                                    Theme.of(context).colorScheme.secondary)),
                       ],
                     ),
                   ),
@@ -417,15 +504,22 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
                       IconButton(
                         icon: const Icon(Icons.replay_10_rounded),
                         iconSize: 28.0,
-                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.8),
-                        onPressed: () => _player.seek(Duration(seconds: _currentPosition.inSeconds - 10)),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.8),
+                        onPressed: () => _player.seek(
+                            Duration(seconds: _currentPosition.inSeconds - 10)),
                       ),
                       IconButton(
                         icon: const Icon(Icons.skip_previous_rounded),
                         iconSize: 36.0,
                         color: hasPrevious
                             ? Theme.of(context).colorScheme.secondary
-                            : Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                            : Theme.of(context)
+                                .colorScheme
+                                .secondary
+                                .withOpacity(0.3),
                         onPressed: hasPrevious ? _playPrevious : null,
                       ),
                       SizedBox(
@@ -434,32 +528,43 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
                         child: Center(
                           child: isLoading
                               ? CircularProgressIndicator(
-                            color: Theme.of(context).colorScheme.secondary,
-                          )
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                )
                               : InkWell(
-                            borderRadius: BorderRadius.circular(50),
-                            onTap: () {
-                              isPlaying ? _player.pause() : _player.play();
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.secondary,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
-                                    blurRadius: 10,
-                                    spreadRadius: 2,
-                                  )
-                                ],
-                              ),
-                              child: Icon(
-                                isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                                size: 40.0,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                          ),
+                                  borderRadius: BorderRadius.circular(50),
+                                  onTap: () {
+                                    isPlaying
+                                        ? _player.pause()
+                                        : _player.play();
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
+                                      shape: BoxShape.circle,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondary
+                                              .withOpacity(0.3),
+                                          blurRadius: 10,
+                                          spreadRadius: 2,
+                                        )
+                                      ],
+                                    ),
+                                    child: Icon(
+                                      isPlaying
+                                          ? Icons.pause_rounded
+                                          : Icons.play_arrow_rounded,
+                                      size: 40.0,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                    ),
+                                  ),
+                                ),
                         ),
                       ),
                       IconButton(
@@ -467,14 +572,21 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
                         iconSize: 36.0,
                         color: hasNext
                             ? Theme.of(context).colorScheme.secondary
-                            : Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                            : Theme.of(context)
+                                .colorScheme
+                                .secondary
+                                .withOpacity(0.3),
                         onPressed: hasNext ? _playNext : null,
                       ),
                       IconButton(
                         icon: const Icon(Icons.forward_10_rounded),
                         iconSize: 28.0,
-                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.8),
-                        onPressed: () => _player.seek(Duration(seconds: _currentPosition.inSeconds + 10)),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.8),
+                        onPressed: () => _player.seek(
+                            Duration(seconds: _currentPosition.inSeconds + 10)),
                       ),
                     ],
                   ),

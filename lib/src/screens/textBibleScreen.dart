@@ -59,6 +59,8 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
   List<int> _filteredVerseIndices =
       []; // Lista de índices dos versículos que correspondem ao filtro.
 
+  bool _isAutoScrollEnabled = false;
+
   @override
   void initState() {
     super.initState();
@@ -80,6 +82,24 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
     _loadAudioForChapter(currentChapterNumber);
     // Inicializa lista filtrada com todos os índices (0 a N-1)
     _filteredVerseIndices = List<int>.generate(currentVerses.length, (i) => i);
+
+    _audioPlayer.positionStream.listen((position) {
+      if (_isAutoScrollEnabled && _audioPlayer.duration != null) {
+        _syncScrollWithAudio(position, _audioPlayer.duration!);
+      }
+    });
+  }
+
+  void _syncScrollWithAudio(Duration position, Duration total) {
+    if (!_scrollController.hasClients) return;
+
+    double percentage = position.inMilliseconds / total.inMilliseconds;
+
+    double maxScroll = _scrollController.position.maxScrollExtent;
+    double targetScroll = maxScroll * percentage;
+
+    _scrollController.animateTo(targetScroll,
+        duration: const Duration(milliseconds: 500), curve: Curves.linear);
   }
 
   // MÉTODO DE FILTRAGEM CORRIGIDO E CENTRALIZADO
@@ -352,6 +372,27 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
           title: Text(widget.bookName),
           backgroundColor: Theme.of(context).colorScheme.primary,
           foregroundColor: Theme.of(context).colorScheme.secondary,
+          actions: [
+            // Botão de Auto-Scroll (Vazio)
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  _isAutoScrollEnabled = !_isAutoScrollEnabled;
+                });
+
+                if (_isAutoScrollEnabled && !_audioPlayer.playing) {
+                  _audioPlayer.play();
+                }
+              },
+              icon: Icon(
+                _isAutoScrollEnabled
+                    ? Icons.auto_stories
+                    : Icons.auto_stories_outlined,
+                color: _isAutoScrollEnabled ? Colors.orangeAccent : null,
+              ),
+              tooltip: 'Acompanhamento Automático',
+            ),
+          ],
         ),
         backgroundColor: Theme.of(context).colorScheme.background,
         body: Center(
@@ -384,6 +425,26 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
         centerTitle: true,
         automaticallyImplyLeading: true,
         actions: [
+          // BOTÃO DE AUTO-SCROLL (Acompanhamento Automático)
+          IconButton(
+            onPressed: () {
+              setState(() {
+                _isAutoScrollEnabled = !_isAutoScrollEnabled;
+              });
+
+              // Se ativar o scroll e o áudio não estiver tocando, inicia o play
+              if (_isAutoScrollEnabled && !_audioPlayer.playing && _currentAudioChapter != null) {
+                _audioPlayer.play();
+              }
+            },
+            icon: Icon(
+              _isAutoScrollEnabled
+                  ? Icons.auto_stories
+                  : Icons.auto_stories_outlined,
+              color: _isAutoScrollEnabled ? Colors.orangeAccent : null,
+            ),
+            tooltip: 'Acompanhamento Automático',
+          ),
           ValueListenableBuilder<List<String>>(
             valueListenable: _bibleController.textosLidosNotifier,
             builder: (context, textosLidos, _) {

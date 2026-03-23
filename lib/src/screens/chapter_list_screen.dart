@@ -1,6 +1,7 @@
 // lib/src/screens/chapter_list_screen.dart
 
 import 'dart:convert';
+import 'dart:io';
 import 'package:biblia_e_harpa/src/components/appBarComponent.dart';
 import 'package:biblia_e_harpa/src/controllers/bible_controller.dart';
 import 'package:flutter/material.dart';
@@ -11,25 +12,23 @@ import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 class ChapterListScreen extends StatefulWidget {
   final String name;
   final String jsonPath;
-  // Recebe a lista de capítulos de áudio
   final List<AudioChapter>? audioChapters;
 
   const ChapterListScreen({
     super.key,
     required this.name,
     required this.jsonPath,
-    this.audioChapters, // Torna o parâmetro opcional
+    this.audioChapters,
   });
 
   @override
   State<ChapterListScreen> createState() => _ChapterListScreenState();
 }
 
-class _ChapterListScreenState extends State<ChapterListScreen>
-    with SingleTickerProviderStateMixin {
+class _ChapterListScreenState extends State<ChapterListScreen> with SingleTickerProviderStateMixin {
   late Future<Map<String, dynamic>> _bibleData;
-  final TextEditingController _searchController = TextEditingController();
   final BibleController _bibleController = BibleController();
+  final TextEditingController _searchController = TextEditingController();
   List<List<dynamic>> _allChapters = [];
   List<int> _filteredChapterNumbers = [];
   late TabController _tabController;
@@ -38,54 +37,43 @@ class _ChapterListScreenState extends State<ChapterListScreen>
   void initState() {
     super.initState();
     _bibleData = _loadBibleData(widget.name);
-    _searchController.addListener(_filterChapters);
     _tabController = TabController(length: 2, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _searchController.removeListener(_filterChapters);
-    _searchController.dispose();
-    _tabController.dispose();
-    super.dispose();
-  }
-
-  Future<Map<String, dynamic>> _loadBibleData(String name) async {
-    try {
-      String jsonString = await rootBundle.loadString(widget.jsonPath);
-      final List<dynamic> bibleData = json.decode(jsonString);
-      final bookData = bibleData.firstWhere(
-            (book) => book['name'] == name,
-        orElse: () => null,
-      );
-      if (bookData != null) {
-        return bookData as Map<String, dynamic>;
-      } else {
-        throw Exception("Livro com a abreviação '$name' não encontrado.");
-      }
-    } catch (e) {
-      return {};
-    }
+    _searchController.addListener(_filterChapters);
   }
 
   void _filterChapters() {
-    final query = _searchController.text.trim();
-    if (mounted) {
-      setState(() {
-        if (query.isEmpty) {
-          _filteredChapterNumbers =
-          List<int>.generate(_allChapters.length, (index) => index + 1);
+    final query = _searchController.text;
+    setState(() {
+      if (query.isEmpty) {
+        _filteredChapterNumbers = List<int>.generate(_allChapters.length, (i) => i + 1);
+      } else {
+        _filteredChapterNumbers = List<int>.generate(_allChapters.length, (i) => i + 1)
+            .where((n) => n.toString().contains(query))
+            .toList();
+      }
+    });
+  }
+
+  Future<Map<String, dynamic>> _loadBibleData(String bookName) async {
+    try {
+      String jsonString;
+      if (widget.jsonPath.startsWith('assets/')) {
+        jsonString = await rootBundle.loadString(widget.jsonPath);
+      } else {
+        final file = File(widget.jsonPath);
+        if (await file.exists()) {
+          jsonString = await file.readAsString();
         } else {
-          final List<int> tempFilteredList = [];
-          for (int i = 0; i < _allChapters.length; i++) {
-            final chapterNumber = i + 1;
-            if (chapterNumber.toString().contains(query)) {
-              tempFilteredList.add(chapterNumber);
-            }
-          }
-          _filteredChapterNumbers = tempFilteredList;
+          throw Exception("Ficheiro não encontrado.");
         }
-      });
+      }
+
+      final List<dynamic> bibleData = json.decode(jsonString);
+      final bookData = bibleData.firstWhere((book) => book['name'] == bookName, orElse: () => null);
+      return bookData != null ? bookData as Map<String, dynamic> : {};
+    } catch (e) {
+      debugPrint("Erro ao carregar capítulos: $e");
+      return {};
     }
   }
 
@@ -102,185 +90,126 @@ class _ChapterListScreenState extends State<ChapterListScreen>
           labelColor: Theme.of(context).colorScheme.secondary,
           unselectedLabelColor: Theme.of(context).colorScheme.onSurface,
           indicatorColor: Theme.of(context).colorScheme.secondary,
-          tabs: const [
-            Tab(text: "Todos"),
-            Tab(text: "Marcados como Lido"),
-          ],
+          indicatorSize: TabBarIndicatorSize.tab,
+          labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+          unselectedLabelStyle:
+          const TextStyle(fontWeight: FontWeight.normal),
+          tabs: const [Tab(text: "Todos"), Tab(text: "Lidos")],
         ),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _searchController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                hintText: "Pesquisar Capítulo",
-                hintStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.secondary),
-                prefixIcon: Icon(Icons.search,
-                    color: Theme.of(context).colorScheme.secondary),
-                suffixIcon: IconButton(
-                  onPressed: () => _searchController.clear(),
-                  icon: Icon(Icons.clear,
-                      color: Theme.of(context).colorScheme.secondary),
+      body: FutureBuilder<Map<String, dynamic>>(
+        future: _bibleData,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator());
+          if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text("Erro ao carregar capítulos."));
+          }
+
+          if (_allChapters.isEmpty) {
+            final chaptersData = snapshot.data!["chapters"] as List? ?? [];
+            _allChapters = chaptersData.map((c) => List<dynamic>.from(c as List)).toList();
+            _filteredChapterNumbers = List<int>.generate(_allChapters.length, (i) => i + 1);
+          }
+
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: _searchController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    hintText: "Buscar capítulo",
+                    prefixIcon: const Icon(Icons.search),
+                    filled: true,
+                    fillColor: Theme.of(context).colorScheme.primary,
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide.none),
+                  ),
                 ),
-                filled: true,
-                fillColor: Theme.of(context).colorScheme.primary,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding:
-                const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
               ),
-              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-              cursorColor: Theme.of(context).colorScheme.secondary,
-            ),
-          ),
-          Expanded(
-            child: FutureBuilder<Map<String, dynamic>>(
-              future: _bibleData,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasError ||
-                    !snapshot.hasData ||
-                    snapshot.data!.isEmpty) {
-                  return const Center(
-                      child: Text("Nenhum texto foi encontrado"));
-                }
-
-                if (_allChapters.isEmpty &&
-                    snapshot.data!.containsKey('chapters')) {
-                  final chaptersData =
-                      snapshot.data!["chapters"] as List? ?? [];
-                  _allChapters = chaptersData
-                      .map((c) => List<dynamic>.from(c as List))
-                      .toList();
-                  _filteredChapterNumbers =
-                  List<int>.generate(_allChapters.length, (i) => i + 1);
-                }
-
-                return TabBarView(
+              Expanded(
+                child: TabBarView(
                   controller: _tabController,
                   children: [
-                    // Aba "Todos"
                     _buildChapterGrid(_filteredChapterNumbers),
-
-                    // Aba "Marcados como Lido"
-                    ValueListenableBuilder<List<String>>(
-                      valueListenable: _bibleController.textosLidosNotifier,
-                      builder: (context, lidos, _) {
-                        final readChaptersForThisBook = lidos
-                            .where((id) => id.startsWith("${widget.name}_"))
-                            .map((id) {
-                          return int.tryParse(id.split('_').last) ?? 0;
-                        }).where((num) => num > 0).toList();
-
-                        final filteredReadChapters = readChaptersForThisBook
-                            .where(
-                                (num) => _filteredChapterNumbers.contains(num))
-                            .toList();
-
-                        return _buildChapterGrid(filteredReadChapters);
-                      },
-                    ),
+                    _buildReadChaptersTab(),
                   ],
-                );
-              },
-            ),
-          ),
-        ],
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 
-  // A ALTERAÇÃO ESTÁ NESTA FUNÇÃO
+  Widget _buildReadChaptersTab() {
+    return ValueListenableBuilder<List<String>>(
+      valueListenable: _bibleController.textosLidosNotifier,
+      builder: (context, lidos, _) {
+        final readChapters = lidos
+            .where((id) => id.startsWith("${widget.name}_"))
+            .map((id) => int.tryParse(id.split('_').last) ?? 0)
+            .where((n) => n > 0).toList();
+        return _buildChapterGrid(readChapters);
+      },
+    );
+  }
+
   Widget _buildChapterGrid(List<int> chaptersToShow) {
-    if (chaptersToShow.isEmpty) {
-      return Center(
-        child: Text(
-          'Nenhum capítulo encontrado.',
-          style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-        ),
-      );
-    }
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      // Usamos um ValueListenableBuilder para reconstruir a grade quando a lista de 'lidos' mudar
-      child: ValueListenableBuilder<List<String>>(
-        valueListenable: _bibleController.textosLidosNotifier,
-        builder: (context, lidos, child) {
-          return GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 6,
-              crossAxisSpacing: 4.0,
-              mainAxisSpacing: 4.0,
-              childAspectRatio: 1.0,
-            ),
-            itemCount: chaptersToShow.length,
-            itemBuilder: (context, index) {
-              final int chapterNumber = chaptersToShow[index];
+    if (chaptersToShow.isEmpty) return const Center(child: Text("Nenhum capítulo disponível."));
 
-              // Verifica se o capítulo atual está marcado como lido
-              final String chapterId = "${widget.name}_$chapterNumber";
-              final bool isRead = lidos.contains(chapterId);
+    return ValueListenableBuilder<List<String>>(
+      valueListenable: _bibleController.textosLidosNotifier,
+      builder: (context, lidos, _) {
+        return GridView.builder(
+          padding: const EdgeInsets.all(10),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 6,
+            crossAxisSpacing: 4,
+            mainAxisSpacing: 4,
+          ),
+          itemCount: chaptersToShow.length,
+          itemBuilder: (context, index) {
+            final chapterNumber = chaptersToShow[index];
+            final bool isRead = lidos.contains("${widget.name}_$chapterNumber");
 
-              return ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Textbiblescreen(
-                        bookName: widget.name,
-                        jsonPath: widget.jsonPath,
-                        initialChapterNumber: chapterNumber,
-                        allBookChapters: _allChapters,
-                        audioChapters: widget.audioChapters,
-                      ),
+            return ElevatedButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => Textbiblescreen(
+                  bookName: widget.name,
+                  jsonPath: widget.jsonPath,
+                  initialChapterNumber: chapterNumber,
+                  allBookChapters: _allChapters,
+                  audioChapters: widget.audioChapters,
+                )));
+              },
+              style: ButtonStyle(
+                padding: WidgetStateProperty.all(EdgeInsets.zero),
+                minimumSize: WidgetStateProperty.all(const Size(30, 30)),
+                side: WidgetStateProperty.all(const BorderSide(color: Colors.blueGrey, width: 0.5)),
+                shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(7.0))),
+                backgroundColor: WidgetStateProperty.all(
+                  isRead ? Colors.blue.withOpacity(0.7) : Theme.of(context).colorScheme.primary,
+                ),
+                foregroundColor: WidgetStateProperty.all(Theme.of(context).colorScheme.secondary),
+              ),
+              child: ValueListenableBuilder<double>(
+                valueListenable: FontSizeController.fontSizeNotifier,
+                builder: (context, fontSize, _) {
+                  return Text(
+                    "$chapterNumber",
+                    style: TextStyle(
+                      fontSize: fontSize,
+                      fontWeight: isRead ? FontWeight.bold : FontWeight.normal,
                     ),
                   );
                 },
-                style: ButtonStyle(
-                  padding: WidgetStateProperty.all(EdgeInsets.zero),
-                  minimumSize: WidgetStateProperty.all(const Size(30, 30)),
-                  side: WidgetStateProperty.all(
-                    const BorderSide(color: Colors.blueGrey, width: 0.5),
-                  ),
-                  shape: WidgetStateProperty.all(
-                    RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(7.0)),
-                  ),
-                  // AQUI ESTÁ A LÓGICA DA COR
-                  backgroundColor: WidgetStateProperty.all(
-                    isRead
-                        ? Colors.blue.withOpacity(0.7) // Se lido, fica verde
-                        : Theme.of(context).colorScheme.primary, // Senão, cor padrão
-                  ),
-                  foregroundColor: WidgetStateProperty.all(
-                      Theme.of(context).colorScheme.secondary),
-                ),
-                child: ValueListenableBuilder<double>(
-                  valueListenable: FontSizeController.fontSizeNotifier,
-                  builder: (context, fontSize, _) {
-                    return Text(
-                      "$chapterNumber",
-                      style: TextStyle(
-                        fontSize: fontSize,
-                        fontWeight: isRead ? FontWeight.bold : FontWeight.normal,
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                    );
-                  },
-                ),
-              );
-            },
-          );
-        },
-      ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

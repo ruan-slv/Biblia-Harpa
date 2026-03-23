@@ -282,6 +282,44 @@ class _InitialState extends State<Initial> {
     );
   }
 
+  Future<dynamic> _alert() {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor:
+          Theme.of(context).colorScheme.background,
+          title: Text(
+            "Aviso",
+            style: TextStyle(
+                color: Theme.of(context)
+                    .colorScheme
+                    .secondary),
+          ),
+          content: Text(
+            "Está funcionalidade está em desenvolvimento. Aguarde até a próxima atualização que ocorrerá em setembro.",
+            style: TextStyle(
+                color: Theme.of(context)
+                    .colorScheme
+                    .secondary),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                "Entendi",
+                style: TextStyle(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .secondary),
+              ),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // ... (O resto do método build permanece exatamente o mesmo)
@@ -388,9 +426,6 @@ class _InitialState extends State<Initial> {
                     padding: const EdgeInsets.all(20.0),
                     child: Column(
                       children: [
-                        _buildMenuCard(context, 'Continuar lendo',
-                            Icons.read_more, gradienteAudios, _continuarLendo),
-                        const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -455,6 +490,19 @@ class _InitialState extends State<Initial> {
                                           const Homeaudioscreen()),
                                 ),
                               ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildMenuCard(context, 'Continuar lendo',
+                                  Icons.read_more, gradienteAudios, _continuarLendo),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _buildMenuCard(context, 'Quiz', Icons.start, gradienteAudios, _alert),
                             ),
                           ],
                         ),

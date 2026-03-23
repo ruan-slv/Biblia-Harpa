@@ -20,31 +20,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final Uri play_store_url = Uri.parse(
       "https://play.google.com/store/apps/details?id=com.bibleAplication.app&pcampaignid=web_share");
 
-  final String _pixKey = "5e32d467-b1e8-4db4-ae93-e6767105b704";
-  final List<String> _buttonTexts = ["Copiar Chave", "Chave Copiada!"];
-  String _currentButtonText = "Copiar Chave";
-
   @override
   void initState() {
     super.initState();
-    _currentButtonText = _buttonTexts[0];
-  }
-
-  void _copyToClipboard() {
-    Clipboard.setData(ClipboardData(text: _pixKey));
-    setState(() {
-      _currentButtonText = _buttonTexts[1]; // Usa o estado atual
-    });
-
-    Future.delayed(const Duration(seconds: 3), () {
-      // Reduzido o tempo para feedback mais rápido
-      if (mounted) {
-        // Verifica se o widget ainda está montado
-        setState(() {
-          _currentButtonText = _buttonTexts[0];
-        });
-      }
-    });
   }
 
   Future<void> _startSupport() async {
@@ -381,74 +359,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           label: Text(
                             "Verificar",
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.background,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Card(
-                  color: Theme.of(context).colorScheme.primary,
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Apoiar o projeto",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        ValueListenableBuilder<double>(
-                          valueListenable: FontSizeController.fontSizeNotifier,
-                          builder: (context, fontSize, _) {
-                            return Text(
-                              "Faça parte do projeto com uma doação para ajudar no desenvolvimento e manutenção do aplicativo.",
-                              style: TextStyle(
-                                fontSize: fontSize,
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        ValueListenableBuilder<double>(
-                          valueListenable: FontSizeController.fontSizeNotifier,
-                          builder: (context, fontSize, _) {
-                            return Text(
-                              "Esta é a única chave pix para doações (Ruan): \n$_pixKey",
-                              style: TextStyle(
-                                fontSize: fontSize,
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        ElevatedButton.icon(
-                          onPressed: () => _copyToClipboard(),
-                          icon: Icon(
-                            Icons.copy,
-                            color: Theme.of(context).colorScheme.secondary,
-                            size: 20,
-                          ),
-                          label: Text(
-                            _currentButtonText,
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.secondary,
                             ),

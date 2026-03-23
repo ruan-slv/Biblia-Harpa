@@ -41,23 +41,47 @@ class HarpContentScreen extends StatefulWidget {
 
 class _HarpContentScreenState extends State<HarpContentScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
+  final ScrollController _scrollController = ScrollController(); // Adicionado para controlar o scroll
   bool _isLoadingAudio = false;
   bool _hasAudio = false;
+  bool _isAutoScrollEnabled = false; // Estado para o acompanhamento automático
 
   @override
   void initState() {
     super.initState();
     _loadAudio();
+
+    // Listener para sincronizar o scroll com a posição do áudio em tempo real
+    _audioPlayer.positionStream.listen((position) {
+      if (_isAutoScrollEnabled && _audioPlayer.duration != null) {
+        _syncScrollWithAudio(position, _audioPlayer.duration!);
+      }
+    });
   }
 
   @override
   void dispose() {
+    _scrollController.dispose(); // Limpeza do controlador de scroll
     _audioPlayer.dispose();
     super.dispose();
   }
 
+  // Método que calcula a posição do scroll baseada na percentagem do áudio
+  void _syncScrollWithAudio(Duration position, Duration total) {
+    if (!_scrollController.hasClients) return;
+
+    double percentage = position.inMilliseconds / total.inMilliseconds;
+    double maxScroll = _scrollController.position.maxScrollExtent;
+    double targetScroll = maxScroll * percentage;
+
+    _scrollController.animateTo(
+      targetScroll,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.linear,
+    );
+  }
+
   Future<void> _loadAudio() async {
-    // 1. Se não tem URL, marca como sem áudio
     if (widget.audioUrl == null || widget.audioUrl!.isEmpty) {
       if (mounted) {
         setState(() {
@@ -68,7 +92,6 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
       return;
     }
 
-    // 2. Inicia carregamento
     if (mounted) {
       setState(() {
         _hasAudio = true;
@@ -80,14 +103,13 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
       await _audioPlayer.setUrl(widget.audioUrl!);
       if (mounted) {
         setState(() {
-          _isLoadingAudio = false; // Sucesso
+          _isLoadingAudio = false;
         });
       }
     } catch (e) {
-      // 3. Erro ao carregar
       if (mounted) {
         setState(() {
-          _hasAudio = false; // Esconde o player
+          _hasAudio = false;
           _isLoadingAudio = false;
         });
       }
@@ -111,20 +133,8 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
 
   ShareAudioSource? shareAudioSource = ShareAudioSource();
 
-  // Widget do Player
   Widget _buildAudioPlayer() {
-    // Se não tem áudio e não está carregando, mostra o card de "verificando/vazio"
-    // conforme você solicitou, ou esconde se preferir.
-    // Aqui estou mostrando o card com loading estático como "estado neutro" se desejar,
-    // mas pela lógica do _loadAudio, se _hasAudio for false, é pq falhou ou não tem.
-
     if (!_hasAudio && !_isLoadingAudio) {
-      // Se falhou ou não tem url, retornamos vazio para não poluir a tela
-      // Ou retornamos o card de erro/vazio se preferir.
-      // Vou manter vazio para não mostrar card quebrado, mas se quiser o card fixo:
-      /*
-       return Card(... seu código do card com loading ...);
-       */
       return const SizedBox.shrink();
     }
 
@@ -181,7 +191,7 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           IconButton(
-                            icon: Icon(Icons.share),
+                            icon: const Icon(Icons.share),
                             iconSize: 48.0,
                             color: Theme.of(context).colorScheme.secondary,
                             onPressed: () => shareAudioSource?.shareAudioSource(
@@ -252,6 +262,28 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
         iconTheme:
             IconThemeData(color: Theme.of(context).colorScheme.secondary),
         centerTitle: true,
+        actions: [
+          // Botão adicionado na AppBar para disparar o scroll automático
+          IconButton(
+            onPressed: () {
+              setState(() {
+                _isAutoScrollEnabled = !_isAutoScrollEnabled;
+              });
+
+              // Inicia o áudio se ativar o scroll e houver áudio disponível
+              if (_isAutoScrollEnabled && !_audioPlayer.playing && _hasAudio) {
+                _audioPlayer.play();
+              }
+            },
+            icon: Icon(
+              _isAutoScrollEnabled
+                  ? Icons.auto_stories
+                  : Icons.auto_stories_outlined,
+              color: _isAutoScrollEnabled ? Colors.orangeAccent : null,
+            ),
+            tooltip: 'Acompanhamento Automático',
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -259,19 +291,13 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
           future: loadTexts(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return const Center(child: CircularProgressIndicator());
             }
             if (snapshot.hasError) {
-              return const Center(
-                child: Text('Erro ao carregar os textos.'),
-              );
+              return const Center(child: Text('Erro ao carregar os textos.'));
             }
             if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(
-                child: Text('Nenhum texto encontrado.'),
-              );
+              return const Center(child: Text('Nenhum texto encontrado.'));
             }
 
             final harpText = snapshot.data!.firstWhere(
@@ -282,12 +308,13 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
             );
 
             return SingleChildScrollView(
+              controller: _scrollController, // Vinculação do controlador aqui
               child: SizedBox(
                 width: double.infinity,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildAudioPlayer(), // Player no topo
+                    _buildAudioPlayer(),
                     const SizedBox(height: 30),
                     ...harpText.verses.entries.map(
                       (entry) => Padding(
@@ -304,15 +331,13 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
                               textAlign: TextAlign.center,
                             ),
                             ValueListenableBuilder<double>(
-                              valueListenable:
-                                  FontSizeController.fontSizeNotifier,
+                              valueListenable: FontSizeController.fontSizeNotifier,
                               builder: (context, fontSize, _) {
                                 return Text(
                                   entry.value,
                                   style: TextStyle(
                                     fontSize: fontSize,
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
+                                    color: Theme.of(context).colorScheme.secondary,
                                   ),
                                   textAlign: TextAlign.center,
                                 );
@@ -320,16 +345,14 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
                             ),
                             const SizedBox(height: 30.0),
                             ValueListenableBuilder<double>(
-                              valueListenable:
-                                  FontSizeController.fontSizeNotifier,
+                              valueListenable: FontSizeController.fontSizeNotifier,
                               builder: (context, fontSize, _) {
                                 return Text(
                                   harpText.coro,
                                   style: TextStyle(
                                     fontSize: fontSize,
                                     fontWeight: FontWeight.bold,
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
+                                    color: Theme.of(context).colorScheme.secondary,
                                   ),
                                   textAlign: TextAlign.center,
                                 );
