@@ -1,7 +1,8 @@
+import 'package:biblia_e_harpa/src/components/appBarComponent.dart';
 import 'package:biblia_e_harpa/src/components/button_component.dart';
 import 'package:biblia_e_harpa/src/screens/aboutProjectScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // Necessário para Clipboard
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class OtherScreen extends StatefulWidget {
@@ -12,190 +13,187 @@ class OtherScreen extends StatefulWidget {
 }
 
 class _OtherScreenState extends State<OtherScreen> {
-  // --- Lógica copiada e adaptada da SettingsScreen ---
-  final String _pixKey = "5e32d467-b1e8-4db4-ae93-e6767105b704";
-  final List<String> _buttonTexts = ["Copiar Chave", "Chave Copiada!"];
-  String _currentButtonText = "Copiar Chave";
+  static const String _pixKey = "5e32d467-b1e8-4db4-ae93-e6767105b704";
+  static const String _supportPhone = "5527988045322";
 
-  @override
-  void initState() {
-    super.initState();
-    _currentButtonText = _buttonTexts[0];
+  Future<void> _copyToClipboard() async {
+    await Clipboard.setData(const ClipboardData(text: _pixKey));
   }
 
-  // Método para copiar a chave Pix
-  // Precisamos passar o StateSetter do Dialog para atualizar o texto DENTRO do diálogo
-  void _copyToClipboard(StateSetter setStateDialog) {
-    Clipboard.setData(ClipboardData(text: _pixKey));
-
-    setStateDialog(() {
-      _currentButtonText = _buttonTexts[1];
-    });
-
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
-        setStateDialog(() {
-          _currentButtonText = _buttonTexts[0];
-        });
-      }
-    });
-  }
-
-  Future<void> _startSuport() async {
-    const phoneNumber = "5527988045322";
+  Future<void> _openWhatsAppSupport() async {
     const message = "Olá, vim pelo App Bíblia e Harpa e preciso de suporte.";
+    final uri = Uri.parse(
+      "https://wa.me/$_supportPhone?text=${Uri.encodeComponent(message)}",
+    );
 
-    final Uri whatsappURL = Uri.parse(
-        "https://wa.me/$phoneNumber?text=${Uri.encodeComponent(message)}");
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
 
-    try {
-      if (await canLaunchUrl(whatsappURL)) {
-        await launchUrl(
-          whatsappURL,
-          mode: LaunchMode.externalApplication,
+  Future<void> _showSupportDialog() async {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return showDialog(
+      context: context,
+      builder: (context) {
+        String copyButtonText = "Copiar chave Pix";
+
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              backgroundColor: colorScheme.background,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
+              title: Text(
+                "Apoiar o projeto",
+                style: TextStyle(
+                  color: colorScheme.secondary,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Sua ajuda contribui com manutenção, melhorias e continuidade do aplicativo.",
+                    style: TextStyle(
+                      color: colorScheme.secondary.withOpacity(0.82),
+                      height: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  Text(
+                    "Chave Pix (Ruan)",
+                    style: TextStyle(
+                      color: colorScheme.secondary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  SelectableText(
+                    _pixKey,
+                    style: TextStyle(
+                      color: colorScheme.secondary,
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () async {
+                    await _copyToClipboard();
+                    setStateDialog(() {
+                      copyButtonText = "Chave copiada";
+                    });
+                    Future.delayed(const Duration(seconds: 3), () {
+                      if (context.mounted) {
+                        setStateDialog(() {
+                          copyButtonText = "Copiar chave Pix";
+                        });
+                      }
+                    });
+                  },
+                  child: Text(
+                    copyButtonText,
+                    style: TextStyle(color: colorScheme.secondary),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    "Fechar",
+                    style: TextStyle(color: colorScheme.secondary),
+                  ),
+                ),
+              ],
+            );
+          },
         );
-      }
-    } catch (_) {}
-
-    if (context.mounted) Navigator.of(context).pop();
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      backgroundColor: colorScheme.background,
+      appBar: const CustomAppBar(
+        title: "Mais opções",
+        centerTitle: false,
+      ),
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
+        children: [
+          Container(
+            padding: const EdgeInsets.all(22),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  colorScheme.primary,
+                  colorScheme.surface,
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(28),
+            ),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ButtonComponent(
-                  title: "Política de privacidade",
-                  icon: Icon(Icons.info),
-                  description:
-                      "Leia sobre a nossa política de privacidade e informações importantes do app!",
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Aboutprojectscreen(),
-                      ),
-                    );
-                  },
+                Text(
+                  "Central do projeto",
+                  style: TextStyle(
+                    color: colorScheme.secondary,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-                // BOTÃO DE APOIO MODIFICADO
-                ButtonComponent(
-                  title: "Apoio",
-                  icon: Icon(Icons.handshake),
-                  description: "Seja um apoiador do projeto para nos ajudar.",
-                  onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          // StatefulBuilder é necessário para atualizar o texto do botão DENTRO do Dialog
-                          return StatefulBuilder(
-                              builder: (context, setStateDialog) {
-                            return AlertDialog(
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.background,
-                              title: Text(
-                                "Apoio",
-                                style: TextStyle(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .secondary),
-                              ),
-                              content: Column(
-                                mainAxisSize: MainAxisSize
-                                    .min, // Importante para o dialog não ocupar a tela toda
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Nos ajude com uma doação voluntária, qualquer valor é bem vindo!",
-                                    style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary),
-                                  ),
-                                  const SizedBox(height: 20),
-                                  Text(
-                                    "Chave Pix (Ruan):",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary),
-                                  ),
-                                  SelectableText(
-                                    // Permite selecionar o texto manualmente também
-                                    _pixKey,
-                                    style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary,
-                                        fontSize: 12),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Center(
-                                    child: ElevatedButton.icon(
-                                      onPressed: () =>
-                                          _copyToClipboard(setStateDialog),
-                                      icon: Icon(
-                                        Icons.copy,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary,
-                                        size: 20,
-                                      ),
-                                      label: Text(
-                                        _currentButtonText,
-                                        style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .secondary,
-                                        ),
-                                      ),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: Text(
-                                    "Fechar",
-                                    style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary),
-                                  ),
-                                ),
-                              ],
-                            );
-                          });
-                        });
-                  },
-                ),
-                ButtonComponent(
-                  title: "Suporte",
-                  icon: Icon(Icons.people),
-                  description:
-                      "Entre em contato diretamente com o desenvolvedor para tirar suas dúvidas e dificuldades.",
-                  onPressed: () {
-                    
-                  },
+                const SizedBox(height: 8),
+                Text(
+                  "Acesse informações importantes, apoio financeiro e canal direto com o desenvolvedor.",
+                  style: TextStyle(
+                    color: colorScheme.secondary.withOpacity(0.8),
+                    height: 1.45,
+                  ),
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 18),
+          ButtonComponent(
+            title: "Sobre e privacidade",
+            icon: const Icon(Icons.info_outline_rounded),
+            description:
+                "Leia a proposta do aplicativo e a política de privacidade em uma tela dedicada.",
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const Aboutprojectscreen(),
+                ),
+              );
+            },
+          ),
+          ButtonComponent(
+            title: "Apoio",
+            icon: const Icon(Icons.volunteer_activism_outlined),
+            description:
+                "Abra a chave Pix do projeto e faça uma contribuição voluntária, se desejar.",
+            onPressed: _showSupportDialog,
+          ),
+          ButtonComponent(
+            title: "Suporte",
+            icon: const Icon(Icons.support_agent_outlined),
+            description:
+                "Entre em contato com o desenvolvedor pelo WhatsApp para dúvidas e feedbacks.",
+            onPressed: _openWhatsAppSupport,
+          ),
+        ],
       ),
     );
   }

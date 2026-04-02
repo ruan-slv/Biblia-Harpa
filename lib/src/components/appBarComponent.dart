@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../config.dart'; // Importa as constantes de cores e tamanhos
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -18,18 +17,25 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return AppBar(
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      centerTitle: centerTitle ?? false,
+      backgroundColor: colorScheme.surface,
+      centerTitle: centerTitle ?? true,
       automaticallyImplyLeading: automaticallyImplyLeading ?? false,
       iconTheme: IconThemeData(
-        color: Theme.of(context).colorScheme.secondary,
+        color: colorScheme.secondary,
       ),
       title: Text(
         title,
-        style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+        style: TextStyle(
+          color: colorScheme.secondary,
+          fontWeight: FontWeight.w700,
+        ),
       ),
       actions: actions,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
       bottom: tabBar,
     );
   }

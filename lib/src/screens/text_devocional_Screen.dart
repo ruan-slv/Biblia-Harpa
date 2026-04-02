@@ -42,6 +42,135 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
   int currentIndex = 0;
   bool isRead = false; // Variável para controlar se o atual foi lido
 
+  Widget _buildBottomBar(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final canGoBack = currentIndex > 0;
+    final canGoNext = currentIndex < devocionais.length - 1;
+
+    return SafeArea(
+      top: false,
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+        decoration: BoxDecoration(
+          color: colorScheme.surface,
+          border: Border(
+            top: BorderSide(color: colorScheme.secondary.withOpacity(0.08)),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: colorScheme.secondary.withOpacity(0.06),
+              blurRadius: 18,
+              offset: const Offset(0, -6),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            InkWell(
+              onTap: _toggleReadStatus,
+              borderRadius: BorderRadius.circular(20),
+              child: Ink(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
+                decoration: BoxDecoration(
+                  color: isRead
+                      ? Colors.green.withOpacity(0.16)
+                      : colorScheme.primary,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: isRead
+                        ? Colors.green.withOpacity(0.45)
+                        : colorScheme.secondary.withOpacity(0.08),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      height: 42,
+                      width: 42,
+                      decoration: BoxDecoration(
+                        color: isRead ? Colors.green : colorScheme.secondary,
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Icon(
+                        isRead
+                            ? Icons.check_rounded
+                            : Icons.radio_button_unchecked_rounded,
+                        color: isRead ? Colors.white : colorScheme.primary,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            isRead
+                                ? "Devocional concluído"
+                                : "Marcar como lido",
+                            style: TextStyle(
+                              color: colorScheme.secondary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            isRead
+                                ? "Toque para marcar como não lido."
+                                : "Toque para marcar como lido.",
+                            style: TextStyle(
+                              color: colorScheme.secondary.withOpacity(0.72),
+                              height: 1.3,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: FilledButton.tonalIcon(
+                    onPressed: canGoBack ? previousDevocional : null,
+                    icon: const Icon(Icons.chevron_left_rounded),
+                    label: const Text("Anterior"),
+                    style: FilledButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      backgroundColor: colorScheme.primary,
+                      foregroundColor: colorScheme.secondary,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: FilledButton.icon(
+                    onPressed: canGoNext ? nextDevocional : null,
+                    label: const Text("Próximo"),
+                    icon: const Icon(Icons.chevron_right_rounded),
+                    style: FilledButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      backgroundColor: colorScheme.secondary,
+                      foregroundColor: colorScheme.primary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -236,17 +365,6 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
             IconThemeData(color: Theme.of(context).colorScheme.secondary),
         centerTitle: true,
         actions: [
-          // Botão de marcar lido também na AppBar
-          IconButton(
-            onPressed: _toggleReadStatus,
-            icon: Icon(
-              isRead ? Icons.check_circle : Icons.check_circle_outline,
-              color: isRead
-                  ? Colors.green
-                  : Theme.of(context).colorScheme.secondary,
-            ),
-            tooltip: isRead ? "Marcar como não lido" : "Marcar como lido",
-          ),
           IconButton(
             onPressed: () {
               final String devocionalText = _getDataForSharing();
@@ -260,10 +378,11 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
           ),
         ],
       ),
+      bottomNavigationBar: _buildBottomBar(context),
       body: CustomScrollView(
         slivers: [
           SliverPadding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 Column(
@@ -355,81 +474,7 @@ class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
                         );
                       },
                     ),
-                    const SizedBox(height: 30),
-
-                    // --- BOTÕES DE NAVEGAÇÃO ---
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 20.0,
-                          bottom: 80), // Bottom extra por causa do FAB
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          ElevatedButton(
-                            onPressed:
-                                currentIndex > 0 ? previousDevocional : null,
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.all(20),
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.primary,
-                              foregroundColor:
-                                  Theme.of(context).colorScheme.secondary,
-                              elevation: 2,
-                            ),
-                            child: Text(
-                              "Anterior",
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
-                            ),
-                          ),
-                          ElevatedButton(
-                            onPressed: currentIndex < devocionais.length - 1
-                                ? nextDevocional
-                                : null,
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.all(20),
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.primary,
-                              foregroundColor:
-                                  Theme.of(context).colorScheme.secondary,
-                              elevation: 2,
-                            ),
-                            child: Text(
-                              "Próximo",
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Botão Para marcar texto como lido
-                    const SizedBox(height: 5),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.4,
-                      child: FloatingActionButton.extended(
-                        onPressed: _toggleReadStatus,
-                        backgroundColor: isRead
-                            ? Colors.green
-                            : Theme.of(context).colorScheme.primary,
-                        icon: Icon(
-                          isRead ? Icons.check_circle : Icons.circle_outlined,
-                          color: isRead
-                              ? Colors.white
-                              : Theme.of(context).colorScheme.secondary,
-                        ),
-                        label: Text(
-                          isRead ? "Concluído" : "Marcar como lido",
-                          style: TextStyle(
-                            color: isRead
-                                ? Colors.white
-                                : Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                      ),
-                    ),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ]),
