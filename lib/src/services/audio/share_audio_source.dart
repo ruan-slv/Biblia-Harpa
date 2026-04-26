@@ -7,9 +7,11 @@ class ShareAudioSource {
     audio.writeln(text);
     audio.writeln(url);
 
-    Share.share(
-      text,
-      subject: url,
+    SharePlus.instance.share(
+      ShareParams(
+        text: audio.toString(),
+        subject: text,
+      ),
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
-import '../models/music.dart';
+import '../../models/audio/music.dart';
 
 class MusicService {
   late final Box<Music> _musicBox;
@@ -12,7 +12,7 @@ class MusicService {
       debugPrint('Box "musicas" inicializada com sucesso. Tamanho: ${_musicBox.length}');
     } catch (e) {
       debugPrint('Erro ao inicializar Box "musicas": $e');
-      rethrow; // Lança o erro para depuração
+      rethrow;
     }
   }
 

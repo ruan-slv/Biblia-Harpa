@@ -2,11 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
-import 'package:biblia_e_harpa/src/models/dataAudioModel.dart';
-import 'package:biblia_e_harpa/src/screens/harpaFileScreen.dart';
+import 'package:biblia_e_harpa/src/models/audio/dataAudioModel.dart';
+import 'package:biblia_e_harpa/src/screens/harpa_file_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
+
+import '../components/appBarComponent.dart';
 
 class HarpaAudioScreen extends StatefulWidget {
   final bool isOffline;
@@ -117,21 +119,10 @@ class _HarpaAudioScreenState extends State<HarpaAudioScreen> {
 
   PreferredSizeWidget? _showAppBarIfOffline() {
     if (widget.isOffline) {
-      return AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
+      return CustomAppBar(
         automaticallyImplyLeading: true,
-        centerTitle: true,
-        iconTheme: IconThemeData(
-          color: Theme.of(context).colorScheme.secondary,
-        ),
-        title: Text(
-          "Hinos Baixados (Offline)",
-          style: TextStyle(
-              color: Theme.of(context).colorScheme.secondary,
-              fontSize: 18,
-              fontWeight: FontWeight.bold
-          ),
-        ),
+        centerTitle: false,
+        title: "Hinos Baixados (Offline)",
       );
     }
     return null;
@@ -140,7 +131,7 @@ class _HarpaAudioScreenState extends State<HarpaAudioScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: _showAppBarIfOffline(),
       body: _buildContent(),
     );

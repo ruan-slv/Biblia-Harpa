@@ -17,6 +17,7 @@ class AppSectionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final isWide = MediaQuery.sizeOf(context).width >= 920;
 
     return Card(
       child: Padding(
@@ -54,7 +55,7 @@ class AppSectionCard extends StatelessWidget {
                       Text(
                         subtitle,
                         style: TextStyle(
-                          color: colorScheme.secondary.withOpacity(0.82),
+                          color: colorScheme.secondary.withValues(alpha:0.82),
                           height: 1.4,
                         ),
                       ),
@@ -64,7 +65,15 @@ class AppSectionCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            child,
+            isWide
+                ? Align(
+                    alignment: Alignment.centerLeft,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 720),
+                      child: child,
+                    ),
+                  )
+                : child,
           ],
         ),
       ),

@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import "package:flutter/services.dart" show rootBundle;
 import 'package:path_provider/path_provider.dart';
 
+import '../components/appBarComponent.dart';
+
 // ... (Classes AudioData e Book permanecem as mesmas) ...
 class AudioData {
   final String name;
@@ -167,21 +169,10 @@ class _BibleaudiosscreenState extends State<Bibleaudiosscreen> {
 
   PreferredSizeWidget? _showAppBarIfOffline() {
     if (widget.isOffline) {
-      return AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
+      return CustomAppBar(
         automaticallyImplyLeading: true,
-        centerTitle: true,
-        iconTheme: IconThemeData(
-          color: Theme.of(context).colorScheme.secondary,
-        ),
-        title: Text(
-          "Áudios Baixados (Offline)",
-          style: TextStyle(
-              color: Theme.of(context).colorScheme.secondary,
-              fontSize: 18,
-              fontWeight: FontWeight.bold
-          ),
-        ),
+        centerTitle: false,
+        title: "Áudios Baixados (Offline)",
       );
     }
     return null;
@@ -190,7 +181,7 @@ class _BibleaudiosscreenState extends State<Bibleaudiosscreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: _showAppBarIfOffline(),
       body: _buildContent(),
     );

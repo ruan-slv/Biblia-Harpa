@@ -20,7 +20,7 @@ class Customtheme {
   ThemeData toThemeData() {
     final baseSurface = surface ??
         (brightness == Brightness.dark
-            ? Color.alphaBlend(Colors.white.withOpacity(0.03), background)
+            ? Color.alphaBlend(Colors.white.withValues(alpha:0.03), background)
             : Colors.white);
     final baseAccent = accent ??
         Color.lerp(primary, secondary, brightness == Brightness.dark ? 0.7 : 0.5)!;

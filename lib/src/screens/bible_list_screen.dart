@@ -1,13 +1,11 @@
-// lib/src/screens/bible_list_screen.dart
-
 import 'dart:convert';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart';
 import 'package:biblia_e_harpa/src/components/appBarComponent.dart';
 import 'package:biblia_e_harpa/src/config.dart';
 import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 import 'package:biblia_e_harpa/src/keys/biblekey.dart';
 import 'package:biblia_e_harpa/src/screens/chapter_list_screen.dart';
-import 'package:biblia_e_harpa/src/screens/textBibleScreen.dart'; // Importa o modelo AudioChapter
+import 'package:biblia_e_harpa/src/screens/textBibleScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,14 +21,13 @@ class _BibleListState extends State<BibleList> {
   final TextEditingController _searchController = TextEditingController();
   String _jsonPath = 'assets/json/acf.json';
 
-  // Lista para armazenar todos os livros em áudio
   List<Map<String, dynamic>> _audioBooks = [];
 
   @override
   void initState() {
     super.initState();
     _loadSelectedVersion();
-    _loadAudioBooks(); // Carrega a lista de áudios
+    _loadAudioBooks();
     filteredBible = books;
     _searchController.addListener(_filterBible);
   }
@@ -44,7 +41,6 @@ class _BibleListState extends State<BibleList> {
     }
   }
 
-  // Método para carregar a lista de áudios do JSON
   Future<void> _loadAudioBooks() async {
     try {
       final String response = await rootBundle.loadString("assets/json/audios.json");
@@ -54,9 +50,7 @@ class _BibleListState extends State<BibleList> {
           _audioBooks = List<Map<String, dynamic>>.from(data);
         });
       }
-    } catch (e) {
-      // Erro ao carregar áudios, o app funcionará sem eles.
-    }
+    } catch (_) {}
   }
 
   @override
@@ -98,32 +92,27 @@ class _BibleListState extends State<BibleList> {
     }
   }
 
-  // Método com a lógica de navegação centralizada
   void _navigateToBook(String bookName) {
     List<AudioChapter>? audioChaptersForBook;
     try {
-      // Encontra o livro de áudio correspondente na lista _audioBooks
       final audioBookData = _audioBooks.firstWhere(
             (audioBook) => audioBook['title'] == bookName,
-        orElse: () => {}, // Retorna um mapa vazio se não encontrar
+        orElse: () => {},
       );
 
       if (audioBookData.isNotEmpty) {
         var chaptersList = audioBookData["chapters"] as List;
         audioChaptersForBook = chaptersList.map((c) => AudioChapter.fromJson(c)).toList();
       }
-    } catch (e) {
-      // Ignora erros, o app continuará sem áudio para este livro.
-    }
+    } catch (_) {}
 
-    // Navega para a tela da lista de capítulos, passando os dados do áudio
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => ChapterListScreen(
           name: bookName,
           jsonPath: _jsonPath,
-          audioChapters: audioChaptersForBook, // Passando os dados do áudio
+          audioChapters: audioChaptersForBook,
         ),
       ),
     );
@@ -132,10 +121,10 @@ class _BibleListState extends State<BibleList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: CustomAppBar(
         title: "Biblia Cristã",
-        centerTitle: true,
+        centerTitle: false,
         automaticallyImplyLeading: true,
         actions: [
           SizedBox(
@@ -190,64 +179,69 @@ class _BibleListState extends State<BibleList> {
         ],
       ),
       body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: "Pesquisar livro",
-                hintStyle: TextStyle(color: Theme.of(context).colorScheme.secondary),
-                prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.secondary),
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    _searchController.clear();
-                  },
-                  icon: Icon(Icons.clear,
-                      color: Theme.of(context).colorScheme.secondary),
-                ),
-                filled: true,
-                fillColor: Theme.of(context).colorScheme.primary,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
-              ),
-              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-              cursorColor: Theme.of(context).colorScheme.secondary,
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: filteredBible.length,
-              itemBuilder: (context, index) {
-                final bookName = filteredBible[index];
-                return ListTile(
-                  leading: Icon(Icons.menu_book_rounded,
-                      color: Theme.of(context).colorScheme.secondary),
-                  title: ValueListenableBuilder<double>(
-                    valueListenable: FontSizeController.fontSizeNotifier,
-                    builder: (context, fontSize, _) {
-                      return Text(
-                        bookName,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary,
-                          fontSize: fontSize,
-                        ),
-                      );
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: "Pesquisar livro",
+                  hintStyle: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                  prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.secondary),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      _searchController.clear();
                     },
+                    icon: Icon(Icons.clear,
+                        color: Theme.of(context).colorScheme.secondary),
                   ),
-                  onTap: () {
-                    // Chama o novo método de navegação
-                    _navigateToBook(bookName);
-                  },
-                );
-              },
+                  filled: true,
+                  fillColor: Theme.of(context).colorScheme.primary,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+                ),
+                style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                cursorColor: Theme.of(context).colorScheme.secondary,
+              ),
             ),
-          ),
-        ],
-      ),
+            const SizedBox(height: 12),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.only(top: 10, bottom: 4, left: 10, right: 10),
+                itemCount: filteredBible.length,
+                itemBuilder: (context, index) {
+                  final bookName = filteredBible[index];
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 4),
+                    child: ListTile(
+                      leading: Icon(Icons.menu_book_rounded,
+                          color: Theme.of(context).colorScheme.secondary),
+                      title: ValueListenableBuilder<double>(
+                        valueListenable: FontSizeController.fontSizeNotifier,
+                        builder: (context, fontSize, _) {
+                          return Text(
+                            bookName,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                              fontSize: fontSize,
+                            ),
+                          );
+                        },
+                      ),
+                      onTap: () {
+                        _navigateToBook(bookName);
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+
     );
   }
 }

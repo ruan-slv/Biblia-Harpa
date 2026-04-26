@@ -15,31 +15,11 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  static const String _pixKey = "5e32d467-b1e8-4db4-ae93-e6767105b704";
   static const String _supportEmail = "suporte.biblia.noads@gmail.com";
 
   final Uri _playStoreUrl = Uri.parse(
     "https://play.google.com/store/apps/details?id=com.bibleAplication.app&pcampaignid=web_share",
   );
-
-  String _copyButtonText = "Copiar chave";
-
-  Future<void> _copyToClipboard() async {
-    await Clipboard.setData(const ClipboardData(text: _pixKey));
-
-    if (!mounted) return;
-
-    setState(() {
-      _copyButtonText = "Chave copiada";
-    });
-
-    Future.delayed(const Duration(seconds: 3), () {
-      if (!mounted) return;
-      setState(() {
-        _copyButtonText = "Copiar chave";
-      });
-    });
-  }
 
   Future<void> _startSupport() async {
     const subject = "Suporte - Aplicativo Bíblia";
@@ -135,134 +115,151 @@ class _SettingsScreenState extends State<SettingsScreen> {
           valueListenable: FontSizeController.fontSizeNotifier,
           builder: (context, fontSize, _) {
             return Scaffold(
-              backgroundColor: colorScheme.background,
+              backgroundColor: colorScheme.surface,
               body: ListView(
-                padding: const EdgeInsets.fromLTRB(16, 40, 16, 24),
+                padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 25.0),
                 children: [
-                  AppSectionCard(
-                    icon: Icons.format_size_rounded,
-                    title: "Tamanho da fonte",
-                    subtitle:
-                        "Defina um tamanho confortável para leitura em todas as telas de texto.",
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                   Column(
                       children: [
-                        Text(
-                          "Tamanho atual: ${fontSize.toStringAsFixed(0)} pt",
-                          style: TextStyle(color: colorScheme.secondary),
+                        AppSectionCard(
+                          icon: Icons.format_size_rounded,
+                          title: "Tamanho da fonte",
+                          subtitle:
+                              "Defina um tamanho confortável para leitura em todas as telas de texto.",
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Tamanho atual: ${fontSize.toStringAsFixed(0)} pt",
+                                style: TextStyle(color: colorScheme.secondary),
+                              ),
+                              const SizedBox(height: 12),
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      FontSizeController.setFontSize(
+                                        (fontSize - 2).clamp(16.0, 30.0),
+                                      );
+                                    },
+                                    child: const Text("A-"),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      FontSizeController.setFontSize(
+                                        (fontSize + 2).clamp(16.0, 30.0),
+                                      );
+                                    },
+                                    child: const Text("A+"),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                        const SizedBox(height: 12),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                FontSizeController.setFontSize(
-                                  (fontSize - 2).clamp(16.0, 30.0),
-                                );
-                              },
-                              child: const Text("A-"),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                FontSizeController.setFontSize(
-                                  (fontSize + 2).clamp(16.0, 30.0),
-                                );
-                              },
-                              child: const Text("A+"),
-                            ),
-                          ],
+                        const SizedBox(height: 16),
+                        AppSectionCard(
+                          icon: isDark
+                              ? Icons.dark_mode_rounded
+                              : Icons.light_mode_rounded,
+                          title: "Tema do aplicativo",
+                          subtitle:
+                              "Alterne entre os modos claro e escuro conforme o ambiente e sua preferência.",
+                          child: Wrap(
+                            spacing: 12,
+                            runSpacing: 12,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              SizedBox(
+                                width:  280,
+                                child: Text(
+                                  isDark
+                                      ? "Modo escuro ativo"
+                                      : "Modo claro ativo",
+                                  style: TextStyle(
+                                    color: colorScheme.secondary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              ElevatedButton.icon(
+                                onPressed: ThemeController.toggleTheme,
+                                icon:
+                                    Icon(isDark ? Icons.sunny : Icons.brightness_2),
+                                label: Text(isDark ? "Usar claro" : "Usar escuro"),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        AppSectionCard(
+                          icon: Icons.share_outlined,
+                          title: "Compartilhar app",
+                          subtitle:
+                              "Envie o aplicativo para familiares e amigos e ajude mais pessoas a alcançarem esse conteúdo.",
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              SharePlus.instance.share(
+                                ShareParams(
+                                  text:
+                                      "📖✨ Descubra uma nova forma de se conectar com a Palavra de Deus!\n\n"
+                                      "Baixe agora nosso aplicativo gratuito de leitura bíblica e tenha acesso a versiculos, harpa e muito mais, tudo na palma da sua mão de forma ofline e sem anúncios.\n\n"
+                                      "🔗 Acesse aqui: $_playStoreUrl",
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.share),
+                            label: const Text("Compartilhar"),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        AppSectionCard(
+                          icon: Icons.system_update_alt_rounded,
+                          title: "Atualizações e avaliação",
+                          subtitle:
+                              "Abra a Play Store para verificar novas versões e avaliar o aplicativo.",
+                          child: ElevatedButton.icon(
+                            onPressed: _openStore,
+                            icon: const Icon(Icons.open_in_new_rounded),
+                            label: const Text("Abrir Play Store"),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        AppSectionCard(
+                          icon: Icons.privacy_tip_outlined,
+                          title: "Sobre o app e privacidade",
+                          subtitle:
+                              "Veja informações do projeto e leia a política de privacidade em uma tela dedicada.",
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const Aboutprojectscreen(),
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.info_outline_rounded),
+                            label: const Text("Abrir informações"),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        AppSectionCard(
+                          icon: Icons.support_agent_rounded,
+                          title: "Suporte",
+                          subtitle:
+                              "Entre em contato por e-mail para pedir ajuda ou enviar feedback.",
+                          child: ElevatedButton.icon(
+                            onPressed: _showSupportDialog,
+                            icon: const Icon(Icons.mail_outline_rounded),
+                            label: const Text("Solicitar suporte"),
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  AppSectionCard(
-                    icon: isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
-                    title: "Tema do aplicativo",
-                    subtitle:
-                        "Alterne entre os modos claro e escuro conforme o ambiente e sua preferência.",
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            isDark ? "Modo escuro ativo" : "Modo claro ativo",
-                            style: TextStyle(
-                              color: colorScheme.secondary,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        ElevatedButton.icon(
-                          onPressed: ThemeController.toggleTheme,
-                          icon: Icon(isDark ? Icons.sunny : Icons.brightness_2),
-                          label: Text(isDark ? "Usar claro" : "Usar escuro"),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  AppSectionCard(
-                    icon: Icons.share_outlined,
-                    title: "Compartilhar app",
-                    subtitle:
-                        "Envie o aplicativo para familiares e amigos e ajude mais pessoas a alcançarem esse conteúdo.",
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        Share.share(
-                          "📖✨ Descubra uma nova forma de se conectar com a Palavra de Deus!\n\n"
-                          "Baixe agora nosso aplicativo gratuito de leitura bíblica e tenha acesso a versiculos, harpa e muito mais, tudo na palma da sua mão de forma ofline e sem anúncios.\n\n"
-                          "🔗 Acesse aqui: $_playStoreUrl",
-                        );
-                      },
-                      icon: const Icon(Icons.share),
-                      label: const Text("Compartilhar"),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  AppSectionCard(
-                    icon: Icons.system_update_alt_rounded,
-                    title: "Atualizações e avaliação",
-                    subtitle:
-                        "Abra a Play Store para verificar novas versões e avaliar o aplicativo.",
-                    child: ElevatedButton.icon(
-                      onPressed: _openStore,
-                      icon: const Icon(Icons.open_in_new_rounded),
-                      label: const Text("Abrir Play Store"),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  AppSectionCard(
-                    icon: Icons.privacy_tip_outlined,
-                    title: "Sobre o app e privacidade",
-                    subtitle:
-                        "Veja informações do projeto e leia a política de privacidade em uma tela dedicada.",
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const Aboutprojectscreen(),
-                          ),
-                        );
-                      },
-                      icon: const Icon(Icons.info_outline_rounded),
-                      label: const Text("Abrir informações"),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  AppSectionCard(
-                    icon: Icons.support_agent_rounded,
-                    title: "Suporte",
-                    subtitle:
-                        "Entre em contato por e-mail para pedir ajuda ou enviar feedback.",
-                    child: ElevatedButton.icon(
-                      onPressed: _showSupportDialog,
-                      icon: const Icon(Icons.mail_outline_rounded),
-                      label: const Text("Solicitar suporte"),
-                    ),
-                  ),
+
                 ],
               ),
             );

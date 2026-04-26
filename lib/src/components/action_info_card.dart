@@ -26,7 +26,7 @@ class ActionInfoCard extends StatelessWidget {
     final colors = gradientColors ??
         [
           colorScheme.secondary,
-          colorScheme.secondary.withOpacity(0.82),
+          colorScheme.secondary.withValues(alpha:0.82),
         ];
 
     return Material(
@@ -40,7 +40,7 @@ class ActionInfoCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
-                color: colorScheme.secondary.withOpacity(0.08),
+                color: colorScheme.secondary.withValues(alpha:0.08),
                 blurRadius: 18,
                 offset: const Offset(0, 8),
               ),
@@ -85,7 +85,7 @@ class ActionInfoCard extends StatelessWidget {
                     textAlign:
                         centerContent ? TextAlign.center : TextAlign.start,
                     style: TextStyle(
-                      color: colorScheme.secondary.withOpacity(0.8),
+                      color: colorScheme.secondary.withValues(alpha:0.8),
                       height: 1.45,
                     ),
                   ),

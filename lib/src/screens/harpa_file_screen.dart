@@ -1,12 +1,11 @@
-// Em: lib/src/screens/harpaFileScreen.dart
-
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-import '../models/dataAudioModel.dart';
+import '../components/appBarComponent.dart';
+import '../models/audio/dataAudioModel.dart';
 import 'package:dio/dio.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
-import 'package:connectivity_plus/connectivity_plus.dart'; // Importante para verificar conexão
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class Harpafilescreen extends StatefulWidget {
   final List<DataAudioModel> allHarpas;
@@ -288,16 +287,11 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
     final hasNext = _currentIndex < widget.allHarpas.length - 1;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        elevation: 0,
-        iconTheme: IconThemeData(color: Theme.of(context).colorScheme.secondary),
-        title: Text(
-          _currentHarpa.titulo,
-          style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      appBar: CustomAppBar(
+        title: _currentHarpa.titulo,
+        centerTitle: false,
+        automaticallyImplyLeading: true,
         actions: [
           _isDownloading
               ? Padding(
@@ -328,9 +322,7 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
         ],
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-          child: Column(
+        child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -348,7 +340,7 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.primary,
                           borderRadius: BorderRadius.circular(20),
-                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10, offset: const Offset(0, 5))],
+                          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha:0.2), blurRadius: 10, offset: const Offset(0, 5))],
                         ),
                         child: Icon(Icons.music_note_rounded, size: 100, color: Theme.of(context).colorScheme.secondary),
                       ),
@@ -374,7 +366,7 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis),
                   const SizedBox(height: 8),
-                  Text("Harpa Cristã", style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.secondary.withOpacity(0.7))),
+                  Text("Harpa Cristã", style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.secondary.withValues(alpha:0.7))),
                 ],
               ),
 
@@ -393,7 +385,7 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
                       max: _audioDuration.inSeconds.toDouble().clamp(1.0, double.infinity),
                       onChanged: (value) => _player.seek(Duration(seconds: value.toInt())),
                       activeColor: Theme.of(context).colorScheme.secondary,
-                      inactiveColor: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                      inactiveColor: Theme.of(context).colorScheme.secondary.withValues(alpha:0.3),
                     ),
                   ),
                   Padding(
@@ -417,7 +409,7 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
                       IconButton(
                         icon: const Icon(Icons.replay_10_rounded),
                         iconSize: 28.0,
-                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.8),
+                        color: Theme.of(context).colorScheme.secondary.withValues(alpha:0.8),
                         onPressed: () => _player.seek(Duration(seconds: _currentPosition.inSeconds - 10)),
                       ),
                       IconButton(
@@ -425,7 +417,7 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
                         iconSize: 36.0,
                         color: hasPrevious
                             ? Theme.of(context).colorScheme.secondary
-                            : Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                            : Theme.of(context).colorScheme.secondary.withValues(alpha:0.3),
                         onPressed: hasPrevious ? _playPrevious : null,
                       ),
                       SizedBox(
@@ -447,7 +439,7 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                                    color: Theme.of(context).colorScheme.secondary.withValues(alpha:0.3),
                                     blurRadius: 10,
                                     spreadRadius: 2,
                                   )
@@ -467,13 +459,13 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
                         iconSize: 36.0,
                         color: hasNext
                             ? Theme.of(context).colorScheme.secondary
-                            : Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                            : Theme.of(context).colorScheme.secondary.withValues(alpha:0.3),
                         onPressed: hasNext ? _playNext : null,
                       ),
                       IconButton(
                         icon: const Icon(Icons.forward_10_rounded),
                         iconSize: 28.0,
-                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.8),
+                        color: Theme.of(context).colorScheme.secondary.withValues(alpha:0.8),
                         onPressed: () => _player.seek(Duration(seconds: _currentPosition.inSeconds + 10)),
                       ),
                     ],
@@ -484,7 +476,7 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
             ],
           ),
         ),
-      ),
+
     );
   }
 }

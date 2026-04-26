@@ -23,7 +23,7 @@ class _BibleAudioWrapperState extends State<BibleAudioWrapper> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       // Opcional: Se você quiser uma AppBar nesta tela de carregamento/erro
       body: FutureBuilder<List<ConnectivityResult>>(
         future: _connectivityFuture,
@@ -70,7 +70,7 @@ class _BibleAudioWrapperState extends State<BibleAudioWrapper> {
             Icon(
               Icons.wifi_off,
               size: 60,
-              color: Theme.of(context).colorScheme.secondary.withOpacity(0.7),
+              color: Theme.of(context).colorScheme.secondary.withValues(alpha:0.7),
             ),
             const SizedBox(height: 20),
             ValueListenableBuilder<double>(

@@ -1,14 +1,12 @@
-// lib/src/screens/harpa_list_screen.dart
-
 import 'dart:convert';
+import "package:biblia_e_harpa/src/components/appBarComponent.dart";
 import "package:biblia_e_harpa/src/config.dart";
 import "package:biblia_e_harpa/src/screens/text_harp_screen.dart";
 import "package:biblia_e_harpa/src/controllers/fontSizeController.dart";
 import "package:biblia_e_harpa/src/keys/harpkey.dart";
-// Certifique-se de que o caminho do seu modelo está correto aqui:
-import 'package:biblia_e_harpa/src/models/dataAudioModel.dart';
+import 'package:biblia_e_harpa/src/models/audio/dataAudioModel.dart';
 import "package:flutter/material.dart";
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart';
 import "package:shared_preferences/shared_preferences.dart";
 
 class HarpaList extends StatefulWidget {
@@ -26,7 +24,6 @@ class _HarpaListState extends State<HarpaList>
   final TextEditingController _searchController = TextEditingController();
   late TabController _tabController;
 
-  // Lista para armazenar os objetos de áudio carregados do audiosHarpa.json
   List<DataAudioModel> _audioList = [];
 
   @override
@@ -119,144 +116,128 @@ class _HarpaListState extends State<HarpaList>
 
   Widget _buildHarpList(List<String> harpList) {
     return ListView.builder(
-      itemCount: harpList.length,
-      itemBuilder: (context, index) {
-        final hino = harpList[index];
-        final isFavorite = favoriteHarps.contains(hino);
+        padding: const EdgeInsets.only(top: 10, bottom: 4, left: 10, right: 10),
+        itemCount: harpList.length,
+        itemBuilder: (context, index) {
+          final hino = harpList[index];
+          final isFavorite = favoriteHarps.contains(hino);
 
-        return ListTile(
-          leading: const Icon(Icons.menu_book_rounded),
-          title: ValueListenableBuilder<double>(
-            valueListenable: FontSizeController.fontSizeNotifier,
-            builder: (context, fontSize, _) {
-              return Text(
-                hino,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.secondary,
-                  fontSize: fontSize,
-                ),
-              );
-            },
-          ),
-          trailing: IconButton(
-            icon: Icon(
-              isFavorite ? Icons.favorite : Icons.favorite_border_outlined,
-              color: isFavorite ? redColor : cinzaClaro,
-            ),
-            onPressed: () => _toggleFavorite(hino),
-          ),
-          onTap: () {
-            String? audioUrl;
-
-            // Se a lista de áudios foi carregada
-            if (_audioList.isNotEmpty) {
-              int hymnNumber = _getHymnNumber(hino);
-
-              // Verifica se o número é válido dentro da lista
-              // (hino 1 é indice 0)
-              if (hymnNumber > 0 && hymnNumber <= _audioList.length) {
-                // Assume-se que seu DataAudioModel tem um campo 'url' ou 'link'
-                // Ajuste '.url' abaixo se o nome no seu model for diferente
-                audioUrl = _audioList[hymnNumber - 1].hinoURL;
-              }
-            }
-
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HarpContentScreen(
-                  harp: hino,
-                  audioUrl: audioUrl,
-                ),
+          return Card(
+            margin: const EdgeInsets.symmetric(vertical: 4),
+            child: ListTile(
+              leading: const Icon(Icons.menu_book_rounded),
+              title: ValueListenableBuilder<double>(
+                valueListenable: FontSizeController.fontSizeNotifier,
+                builder: (context, fontSize, _) {
+                  return Text(
+                    hino,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary,
+                      fontSize: fontSize,
+                    ),
+                  );
+                },
               ),
-            );
-          },
-        );
-      },
-    );
+              trailing: IconButton(
+                icon: Icon(
+                  isFavorite ? Icons.favorite : Icons.favorite_border_outlined,
+                  color: isFavorite ? redColor : cinzaClaro,
+                ),
+                onPressed: () => _toggleFavorite(hino),
+              ),
+              onTap: () {
+                String? audioUrl;
+
+                if (_audioList.isNotEmpty) {
+                  int hymnNumber = _getHymnNumber(hino);
+                  if (hymnNumber > 0 && hymnNumber <= _audioList.length) {
+                    audioUrl = _audioList[hymnNumber - 1].hinoURL;
+                  }
+                }
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HarpContentScreen(
+                      harp: hino,
+                      audioUrl: audioUrl,
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        centerTitle: true,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      appBar: CustomAppBar(
+        centerTitle: false,
         automaticallyImplyLeading: true,
-        iconTheme:
-        IconThemeData(color: Theme.of(context).colorScheme.secondary),
-        title: Text(
-          "Harpa Cristã",
-          style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(46.0),
-          child: Container(
-            color: Theme.of(context).colorScheme.primary,
-            child: TabBar(
+        title: "Harpa Cristã",
+        tabBar: TabBar(
               controller: _tabController,
               labelColor: Theme.of(context).colorScheme.secondary,
               unselectedLabelColor: Theme.of(context).colorScheme.onSurface,
               indicatorColor: Theme.of(context).colorScheme.secondary,
-              indicatorSize: TabBarIndicatorSize.tab,
-              labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-              unselectedLabelStyle:
-              const TextStyle(fontWeight: FontWeight.normal),
               tabs: const [
                 Tab(text: "Todos"),
                 Tab(text: "Favoritos"),
               ],
-            ),
-          ),
         ),
       ),
       body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: "Pesquisar Hino",
-                hintStyle: TextStyle(
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
-                prefixIcon: Icon(Icons.search,
-                    color: Theme.of(context).colorScheme.secondary),
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.clear,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: "Pesquisar Hino",
+                  hintStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                  prefixIcon: Icon(Icons.search,
                       color: Theme.of(context).colorScheme.secondary),
-                  onPressed: () {
-                    _searchController.clear();
-                    setState(() {
-                      filteredHarps = harps;
-                    });
-                  },
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.clear,
+                        color: Theme.of(context).colorScheme.secondary),
+                    onPressed: () {
+                      _searchController.clear();
+                      setState(() {
+                        filteredHarps = harps;
+                      });
+                    },
+                  ),
+                  filled: true,
+                  fillColor: Theme.of(context).colorScheme.primary,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
                 ),
-                filled: true,
-                fillColor: Theme.of(context).colorScheme.primary,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+                style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                cursorColor: Theme.of(context).colorScheme.secondary,
               ),
-              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-              cursorColor: Theme.of(context).colorScheme.secondary,
             ),
-          ),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                _buildHarpList(filteredHarps),
-                _buildHarpList(favoriteHarps.toList()),
-              ],
+            const SizedBox(height: 12),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildHarpList(filteredHarps),
+                  _buildHarpList(favoriteHarps.toList()),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
+
     );
   }
 }

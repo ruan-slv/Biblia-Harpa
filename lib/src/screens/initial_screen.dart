@@ -1,39 +1,16 @@
-// lib/src/screens/initial_screen.dart
-
-import 'dart:convert';
-import 'dart:math';
-
-import 'package:biblia_e_harpa/src/components/action_info_card.dart';
 import 'package:biblia_e_harpa/src/config.dart';
+import 'package:biblia_e_harpa/src/core/alert.dart';
+import 'package:biblia_e_harpa/src/models/initial_model.dart';
 import 'package:biblia_e_harpa/src/screens/homeAudioScreen.dart';
 import 'package:biblia_e_harpa/src/screens/settingsScreen.dart';
+import 'package:biblia_e_harpa/src/services/initial_service.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
-import 'package:biblia_e_harpa/src/screens/text_devocional_Screen.dart';
-import 'package:biblia_e_harpa/src/keys/devocionalkey.dart';
+import '../components/appBarComponent.dart';
 import '../components/buildMenuCard.dart';
 import 'bible_list_screen.dart';
 import 'devocional_list_screen.dart';
 import 'harpa_list_screen.dart';
-
-// Data class for Palavra do Dia
-class Data {
-  final int id;
-  final String texto;
-  final String versiculo;
-
-  Data({required this.id, required this.texto, required this.versiculo});
-
-  factory Data.fromJson(Map<String, dynamic> json) {
-    return Data(
-      id: json["id"] ?? 0,
-      texto: json["texto"] ?? "Texto indisponível",
-      versiculo: json["versiculo"] ?? "versiculo indisponível",
-    );
-  }
-}
 
 class Initial extends StatefulWidget {
   const Initial({super.key});
@@ -43,79 +20,29 @@ class Initial extends StatefulWidget {
 }
 
 class _InitialState extends State<Initial> {
-  Data? palavraAtual;
-  DateTime? ultimaAtualizacao;
+  DayWord? currentWord;
+  DateTime? lastDataUpdate;
   int currentPageIndex = 0;
+
+  final InitialService _service = InitialService();
+  final Alert _alert = Alert();
 
   @override
   void initState() {
     super.initState();
-    _loadPalavraDoDia();
+    _loadDayWord();
   }
 
-  Future<void> _loadPalavraDoDia() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String? lastUpdate = prefs.getString("last_update");
-    final String? palavraSalva = prefs.getString("palavra_atual");
-
-    final now = DateTime.now();
-    final precisaAtualizar = lastUpdate == null ||
-        DateTime.parse(lastUpdate).difference(now).inDays.abs() >= 1;
-
-    if (!precisaAtualizar && palavraSalva != null) {
-      try {
-        final Map<String, dynamic> json = jsonDecode(palavraSalva);
-        setState(() {
-          palavraAtual = Data.fromJson(json);
-          ultimaAtualizacao = DateTime.parse(lastUpdate);
-        });
-      } catch (e) {
-        //_mostrarErro("Erro ao carregar palavra salva: ${e.toString()}");
-      }
-      return;
-    }
-
-    // --- AQUI COMEÇA A LÓGICA DE ATUALIZAÇÃO ---
-    try {
-      final String jsonString = await DefaultAssetBundle.of(context)
-          .loadString("assets/json/palavraDoDia.json");
-      final List<dynamic> jsonResponse = jsonDecode(jsonString)["palavraDoDia"];
-
-      if (jsonResponse.isEmpty) {
-        setState(() {
-          palavraAtual = Data(
-            id: 0,
-            texto: "Nenhuma palavra disponível",
-            versiculo: "",
-          );
-        });
-        return;
-      }
-
-      final randomIndex = Random().nextInt(jsonResponse.length);
-      final selectedPalavra = jsonResponse[randomIndex];
-
-      setState(() {
-        palavraAtual = Data.fromJson(selectedPalavra);
-        ultimaAtualizacao = now;
-      });
-
-      await prefs.setString("last_update", now.toIso8601String());
-      await prefs.setString("palavra_atual", jsonEncode(selectedPalavra));
-
-      // --- NOVO: Agenda a notificação para o dia seguinte ---
-      // Como a palavra acabou de mudar, agendamos um lembrete para amanhã
-      // para avisar que haverá uma NOVA palavra novamente.
-    } catch (e) {
-      //_mostrarErro("Erro ao carregar palavra salva: ${e.toString()}");
-    }
+  Future<void> _loadDayWord() async {
+    final (word, lastUpdate) = await _service.loadDayWord(context);
+    setState(() {
+      currentWord = word;
+      lastDataUpdate = lastUpdate;
+    });
   }
 
-  void _compartilharPalavra() {
-    if (palavraAtual != null) {
-      Share.share("${palavraAtual!.texto} \n ${palavraAtual!.versiculo}");
-    }
-  }
+  ColorScheme colorScheme(BuildContext context) => Theme.of(context).colorScheme;
+
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +76,7 @@ class _InitialState extends State<Initial> {
                         borderRadius: BorderRadius.circular(28),
                         boxShadow: [
                           BoxShadow(
-                            color: colorScheme.secondary.withOpacity(0.08),
+                            color: colorScheme.secondary.withValues(alpha: 0.08),
                             blurRadius: 18,
                             offset: const Offset(0, 10),
                           ),
@@ -160,8 +87,8 @@ class _InitialState extends State<Initial> {
                         children: [
                           const SizedBox(height: 18),
                           Text(
-                            palavraAtual?.versiculo.isNotEmpty == true
-                                ? palavraAtual!.versiculo
+                            currentWord?.reference.isNotEmpty == true
+                                ? currentWord!.reference
                                 : "Versículo não encontrado",
                             style: TextStyle(
                               color: colorScheme.secondary,
@@ -174,12 +101,12 @@ class _InitialState extends State<Initial> {
                             valueListenable: FontSizeController.fontSizeNotifier,
                             builder: (context, fontSize, _) {
                               return Text(
-                                palavraAtual?.texto ??
+                                currentWord?.text ??
                                     "Palavra do dia não encontrada",
                                 style: TextStyle(
                                   fontSize: fontSize,
                                   fontStyle: FontStyle.italic,
-                                  color: colorScheme.secondary.withOpacity(0.92),
+                                  color: colorScheme.secondary.withValues(alpha: 0.92),
                                   height: 1.55,
                                 ),
                                 textAlign: TextAlign.justify,
@@ -188,7 +115,7 @@ class _InitialState extends State<Initial> {
                           ),
                           const SizedBox(height: 20),
                           ElevatedButton.icon(
-                            onPressed: _compartilharPalavra,
+                            onPressed: () => _service.shareDayWord(currentWord),
                             icon: const Icon(Icons.share_outlined),
                             label: const Text("Compartilhar"),
                           ),
@@ -285,6 +212,22 @@ class _InitialState extends State<Initial> {
                             ),
                           ],
                         ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: buildMenuCard(
+                                context,
+                                title: 'Quiz bíblico',
+                                description: 'Acesse o atalho do quiz na próxima atualização.',
+                                iconData: Icons.quiz_outlined,
+                                gradientColors: gradienteAudios,
+                                onPressed: () => _alert.alert(context),
+                                compact: true,
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -301,18 +244,9 @@ class _InitialState extends State<Initial> {
     ];
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
-      appBar: AppBar(
-        backgroundColor: colorScheme.surface,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        title: Text(
-          "Bíblia e Harpa",
-          style: TextStyle(
-            color: colorScheme.secondary,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
+      backgroundColor: colorScheme.surface,
+      appBar: CustomAppBar(
+        title: "Bíblia e Harpa",
         centerTitle: false,
       ),
       body: pages[currentPageIndex],

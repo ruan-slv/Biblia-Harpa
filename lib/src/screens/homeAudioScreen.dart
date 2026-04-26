@@ -1,9 +1,9 @@
 import 'package:biblia_e_harpa/src/screens/bibleAudioWrapper.dart';
-import 'package:biblia_e_harpa/src/screens/harpaAudioScreen.dart';
-import 'package:biblia_e_harpa/src/screens/bibleAudiosScreen.dart';
 import 'package:biblia_e_harpa/src/screens/harpaAudioWrapper.dart';
 import 'package:biblia_e_harpa/src/screens/playlistScreen.dart';
 import 'package:flutter/material.dart';
+
+import '../components/appBarComponent.dart';
 
 class Homeaudioscreen extends StatefulWidget {
   const Homeaudioscreen({super.key});
@@ -46,20 +46,12 @@ class _Homeaudioscreen extends State<Homeaudioscreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      appBar: CustomAppBar(
         automaticallyImplyLeading: true,
-        iconTheme:
-            IconThemeData(color: Theme.of(context).colorScheme.secondary),
-        title: Text(
-            "Áudios",
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.secondary,
-          ),
-        ),
-        centerTitle: true,
-        bottom: TabBar(
+        title: "Áudios",
+        centerTitle: false,
+        tabBar: TabBar(
           controller: _tabController,
           labelColor: Theme.of(context)
               .colorScheme
@@ -81,13 +73,13 @@ class _Homeaudioscreen extends State<Homeaudioscreen>
         ),
       ),
       body: TabBarView(
-        controller: _tabController,
-        children: const [
-          BibleAudioWrapper(),
-          HarpaAudioWrapper(),
-          PlaylistScreen()
-        ],
-      ),
+          controller: _tabController,
+          children: const [
+            BibleAudioWrapper(),
+            HarpaAudioWrapper(),
+            PlaylistScreen()
+          ],
+        ),
       floatingActionButton: _buildFab(),
     );
   }

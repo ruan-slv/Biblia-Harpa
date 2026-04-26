@@ -1,13 +1,15 @@
-// lib/src/screens/audioBookChaptersScreen.dart
-
 import 'dart:io';
 import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 import 'package:biblia_e_harpa/src/screens/bibleAudiosScreen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
+
+import '../components/appBarComponent.dart';
 
 class Audiobookchaptersscreen extends StatefulWidget {
   final Book book;
@@ -27,6 +29,7 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
   int? _currentIndex;
   Duration _currentPosition = Duration.zero;
   Duration _audioDuration = Duration.zero;
+  double _volume = 1.0;
   final Map<int, bool> _isDownloading = {};
   final Set<int> _downloadedChapters = {};
 
@@ -57,6 +60,8 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
     _player.durationStream.listen((duration) {
       if (mounted) setState(() => _audioDuration = duration ?? Duration.zero);
     });
+
+    _player.setVolume(_volume);
   }
 
   @override
@@ -190,7 +195,54 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
     }
   }
 
-  // --- LÓGICA DE PLAYER MODIFICADA ---
+  Future<void> _shareAudio(AudioData audio) async {
+    try {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Preparando áudio para compartilhar...'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      final localPath = await _getLocalFilePath(audio.name);
+      XFile fileToShare;
+
+      if (localPath.isNotEmpty && await File(localPath).exists()) {
+        fileToShare = XFile(localPath);
+      } else {
+        final response = await http.get(Uri.parse(audio.url));
+        final tempDir = await getTemporaryDirectory();
+        final tempFile = File(
+          '${tempDir.path}/${audio.name.replaceAll(RegExp(r'[^\w\s]+'), '').replaceAll(' ', '_')}.mp3',
+        );
+
+        await tempFile.writeAsBytes(response.bodyBytes);
+        fileToShare = XFile(tempFile.path);
+      }
+
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [fileToShare],
+          text: 'Ouça este trecho da Bíblia: ${audio.name} - ${widget.book.title}',
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Não foi possível compartilhar o áudio.")),
+      );
+    }
+  }
+
+  Future<void> _updateVolume(double newVolume) async {
+    final normalizedVolume = newVolume.clamp(0.0, 1.0);
+    await _player.setVolume(normalizedVolume);
+    if (!mounted) return;
+    setState(() {
+      _volume = normalizedVolume;
+    });
+  }
 
   Future<void> _playAudio(String url, int originalIndex) async {
     try {
@@ -319,7 +371,7 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
                         color: Theme.of(ctx)
                             .colorScheme
                             .secondary
-                            .withOpacity(0.3),
+                            .withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(10))),
                 const SizedBox(height: 8),
                 Center(
@@ -328,7 +380,7 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
                             color: Theme.of(ctx)
                                 .colorScheme
                                 .secondary
-                                .withOpacity(0.8),
+                                .withValues(alpha: 0.8),
                             fontWeight: FontWeight.bold))),
                 const SizedBox(height: 15),
                 Padding(
@@ -341,7 +393,7 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
                           color: Theme.of(ctx)
                               .colorScheme
                               .secondary
-                              .withOpacity(0.7)),
+                              .withValues(alpha: 0.7)),
                       prefixIcon: Icon(Icons.search,
                           color: Theme.of(ctx).colorScheme.secondary),
                       suffixIcon: IconButton(
@@ -352,7 +404,7 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
                               color: Theme.of(ctx).colorScheme.secondary)),
                       filled: true,
                       fillColor:
-                          Theme.of(ctx).colorScheme.background.withOpacity(0.5),
+                          Theme.of(ctx).colorScheme.surface.withValues(alpha: 0.5),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0),
                           borderSide: BorderSide.none),
@@ -388,7 +440,7 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
                               ? Theme.of(context)
                                   .colorScheme
                                   .secondary
-                                  .withOpacity(0.1)
+                                  .withValues(alpha: 0.1)
                               : Colors.transparent,
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -402,7 +454,7 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
                                 : Theme.of(context)
                                     .colorScheme
                                     .secondary
-                                    .withOpacity(0.5),
+                                    .withValues(alpha: 0.5),
                             size: 30,
                           ),
                           title: ValueListenableBuilder(
@@ -445,7 +497,7 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
                                           : Theme.of(context)
                                               .colorScheme
                                               .secondary
-                                              .withOpacity(0.5),
+                                              .withValues(alpha: 0.5),
                                     ),
                                     onPressed: () {
                                       if (isDownloaded) {
@@ -490,21 +542,14 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        centerTitle: true,
-        iconTheme:
-            IconThemeData(color: Theme.of(context).colorScheme.secondary),
-        title: Text(
-          widget.book.title,
-          style: TextStyle(
-              color: Theme.of(context).colorScheme.secondary,
-              fontWeight: FontWeight.bold),
-        ),
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      appBar: CustomAppBar(
+        centerTitle: false,
+        automaticallyImplyLeading: true,
+        title: widget.book.title,
       ),
       body: Stack(
-        children: [
+          children: [
           // --- ÁREA DO PLAYER ---
           Positioned.fill(
             child: Center(
@@ -528,7 +573,7 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
                               borderRadius: BorderRadius.circular(30),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
+                                  color: Colors.black.withValues(alpha: 0.1),
                                   blurRadius: 20,
                                   offset: const Offset(0, 10),
                                 )
@@ -582,20 +627,55 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
                           color: Theme.of(context)
                               .colorScheme
                               .secondary
-                              .withOpacity(0.7),
+                              .withValues(alpha: 0.7),
                         ),
                       ),
                       const SizedBox(height: 10),
                       ElevatedButton(
                         onPressed: () => _buildDrawer(),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green),
                         child: Text(
                           'Selecionar',
                           style: TextStyle(
                               color: Theme.of(context).colorScheme.secondary),
                         ),
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green),
                       ),
+                      const SizedBox(height: 14),
+                      if (_currentIndex != null)
+                        Wrap(
+                          alignment: WrapAlignment.center,
+                          spacing: 10,
+                          runSpacing: 10,
+                          children: [
+                            OutlinedButton.icon(
+                              onPressed: () =>
+                                  _shareAudio(widget.book.chapters[_currentIndex!]),
+                              icon: const Icon(Icons.share_outlined),
+                              label: const Text('Compartilhar'),
+                            ),
+                            OutlinedButton.icon(
+                              onPressed: isCurrentDownloaded
+                                  ? () => _deleteAudio(
+                                      widget.book.chapters[_currentIndex!].name,
+                                      _currentIndex!,
+                                    )
+                                  : () => _downloadAudio(
+                                      widget.book.chapters[_currentIndex!].url,
+                                      widget.book.chapters[_currentIndex!].name,
+                                      _currentIndex!,
+                                    ),
+                              icon: Icon(
+                                isCurrentDownloaded
+                                    ? Icons.delete_outline_rounded
+                                    : Icons.download_rounded,
+                              ),
+                              label: Text(
+                                isCurrentDownloaded ? 'Remover download' : 'Baixar',
+                              ),
+                            ),
+                          ],
+                        ),
                       const SizedBox(height: 30),
                       // Slider e Controles (código repetido para brevidade, mantenha o que você já tem)
                       Padding(
@@ -623,7 +703,7 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
                                 inactiveColor: Theme.of(context)
                                     .colorScheme
                                     .secondary
-                                    .withOpacity(0.3),
+                                    .withValues(alpha: 0.3),
                               ),
                             ),
                             Padding(
@@ -652,6 +732,60 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.primary,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                onPressed: () => _updateVolume(_volume - 0.1),
+                                icon: const Icon(Icons.volume_down_rounded),
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      'Volume ${(_volume * 100).round()}%',
+                                      style: TextStyle(
+                                        color: Theme.of(context).colorScheme.secondary,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Slider(
+                                      value: _volume,
+                                      min: 0,
+                                      max: 1,
+                                      divisions: 10,
+                                      activeColor:
+                                          Theme.of(context).colorScheme.secondary,
+                                      inactiveColor: Theme.of(context)
+                                          .colorScheme
+                                          .secondary
+                                          .withValues(alpha: 0.24),
+                                      onChanged: _updateVolume,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () => _updateVolume(_volume + 0.1),
+                                icon: const Icon(Icons.volume_up_rounded),
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -662,7 +796,7 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
                               color: Theme.of(context)
                                   .colorScheme
                                   .secondary
-                                  .withOpacity(0.8),
+                                  .withValues(alpha: 0.8),
                               onPressed: () => _player.seek(Duration(
                                   seconds: _currentPosition.inSeconds - 10))),
                           IconButton(
@@ -682,10 +816,11 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
                                   : InkWell(
                                       borderRadius: BorderRadius.circular(50),
                                       onTap: () {
-                                        if (_currentIndex != null)
+                                        if (_currentIndex != null) {
                                           isPlaying
                                               ? _player.pause()
                                               : _player.play();
+                                        }
                                       },
                                       child: Container(
                                         decoration: BoxDecoration(
@@ -698,7 +833,7 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
                                                   color: Theme.of(context)
                                                       .colorScheme
                                                       .secondary
-                                                      .withOpacity(0.3),
+                                                      .withValues(alpha: 0.3),
                                                   blurRadius: 10,
                                                   spreadRadius: 2)
                                             ]),
@@ -725,7 +860,7 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
                               color: Theme.of(context)
                                   .colorScheme
                                   .secondary
-                                  .withOpacity(0.8),
+                                  .withValues(alpha: 0.8),
                               onPressed: () => _player.seek(Duration(
                                   seconds: _currentPosition.inSeconds + 10))),
                         ],
@@ -737,7 +872,8 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
             ),
           ),
         ],
-      ),
+        ),
+
     );
   }
 }

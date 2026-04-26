@@ -3,13 +3,12 @@ import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:biblia_e_harpa/src/config.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:watcher/watcher.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../models/music.dart';
-import '../services/musicService.dart';
+import '../models/audio/music.dart';
+import '../services/audio/musicService.dart';
 
 class PlaylistScreen extends StatefulWidget {
   const PlaylistScreen({super.key});
@@ -228,7 +227,7 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       floatingActionButton: FloatingActionButton(
         onPressed: _pickMusicFile,
         tooltip: 'Adicionar Música',
@@ -239,11 +238,11 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
         ),
       ),
       body: ValueListenableBuilder<Box<Music>>(
-        valueListenable: Hive.box<Music>('musicas').listenable(),
-        builder: (context, box, _) {
-          if (box.isEmpty) {
-            return Center(
-                child: Column(
+          valueListenable: Hive.box<Music>('musicas').listenable(),
+          builder: (context, box, _) {
+            if (box.isEmpty) {
+              return Center(
+                  child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -280,101 +279,101 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
                 ),
               ],
             ));
-          }
-          final musics = box.values.toList();
-          //debugPrint('Músicas carregadas: ${musics.length}');
-          return ListView.builder(
-            itemCount: musics.length,
-            itemBuilder: (context, index) {
-              final music = musics[index];
-              final isPlaying = _isPlaying && _currentPlayingIndex == index;
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                color: isPlaying ? Colors.green[50] : Colors.white,
-                elevation: isPlaying ? 6 : 2,
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4),
-                  child: Column(
-                    children: [
-                      ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Colors.green[200],
-                          child: Icon(
-                            isPlaying ? Icons.music_note : Icons.library_music,
-                            color: Colors.white,
+            }
+            final musics = box.values.toList();
+            return ListView.builder(
+              itemCount: musics.length,
+              itemBuilder: (context, index) {
+                final music = musics[index];
+                final isPlaying = _isPlaying && _currentPlayingIndex == index;
+                return Card(
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  color: isPlaying ? Colors.green[50] : Colors.white,
+                  elevation: isPlaying ? 6 : 2,
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4),
+                    child: Column(
+                      children: [
+                        ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: Colors.green[200],
+                            child: Icon(
+                              isPlaying ? Icons.music_note : Icons.library_music,
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                        title: Text(
-                          music.title,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color:
-                                isPlaying ? Colors.green[800] : Colors.black87,
+                          title: Text(
+                            music.title,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color:
+                                  isPlaying ? Colors.green[800] : Colors.black87,
+                            ),
                           ),
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: Icon(
-                                  isPlaying ? Icons.pause : Icons.play_arrow,
-                                  color: Colors.green[800]),
-                              onPressed: () =>
-                                  _playMusic(music.filePath, index),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete,
-                                  color: Colors.redAccent),
-                              onPressed: () => _removeMusic(index),
-                            ),
-                          ],
-                        ),
-                      ),
-                      if (isPlaying)
-                        Column(
-                          children: [
-                            Slider(
-                              value: _currentPosition.inSeconds.toDouble(),
-                              min: 0,
-                              max: _musicDuration.inSeconds.toDouble() > 0
-                                  ? _musicDuration.inSeconds.toDouble()
-                                  : 1,
-                              onChanged: (value) async {
-                                await player
-                                    .seek(Duration(seconds: value.toInt()));
-                              },
-                              activeColor: Colors.green,
-                              inactiveColor: Colors.green[100],
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    _formatDuration(_currentPosition),
-                                    style: const TextStyle(fontSize: 12),
-                                  ),
-                                  Text(
-                                    _formatDuration(_musicDuration),
-                                    style: const TextStyle(fontSize: 12),
-                                  ),
-                                ],
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: Icon(
+                                    isPlaying ? Icons.pause : Icons.play_arrow,
+                                    color: Colors.green[800]),
+                                onPressed: () =>
+                                    _playMusic(music.filePath, index),
                               ),
-                            ),
-                          ],
+                              IconButton(
+                                icon: const Icon(Icons.delete,
+                                    color: Colors.redAccent),
+                                onPressed: () => _removeMusic(index),
+                              ),
+                            ],
+                          ),
                         ),
-                    ],
+                        if (isPlaying)
+                          Column(
+                            children: [
+                              Slider(
+                                value: _currentPosition.inSeconds.toDouble(),
+                                min: 0,
+                                max: _musicDuration.inSeconds.toDouble() > 0
+                                    ? _musicDuration.inSeconds.toDouble()
+                                    : 1,
+                                onChanged: (value) async {
+                                  await player
+                                      .seek(Duration(seconds: value.toInt()));
+                                },
+                                activeColor: Colors.green,
+                                inactiveColor: Colors.green[100],
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      _formatDuration(_currentPosition),
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                    Text(
+                                      _formatDuration(_musicDuration),
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
-          );
-        },
-      ),
+                );
+              },
+            );
+          },
+        ),
+
     );
   }
 }

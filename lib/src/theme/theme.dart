@@ -43,13 +43,13 @@ ThemeData _buildTheme({
     scaffoldBackgroundColor: background,
     canvasColor: background,
     cardColor: primary,
-    dividerColor: accent.withOpacity(0.18),
+    dividerColor: accent.withValues(alpha:0.18),
     appBarTheme: AppBarTheme(
       backgroundColor: surface,
       foregroundColor: secondary,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
-      centerTitle: true,
+      centerTitle: false,
       titleTextStyle: TextStyle(
         color: secondary,
         fontSize: 20,
@@ -60,7 +60,7 @@ ThemeData _buildTheme({
     cardTheme: CardThemeData(
       color: primary,
       elevation: 2,
-      shadowColor: Colors.black.withOpacity(brightness == Brightness.dark ? 0.3 : 0.08),
+      shadowColor: Colors.black.withValues(alpha:brightness == Brightness.dark ? 0.3 : 0.08),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       margin: EdgeInsets.zero,
     ),
@@ -80,23 +80,23 @@ ThemeData _buildTheme({
       ),
       trackColor: WidgetStateProperty.resolveWith(
         (states) => states.contains(WidgetState.selected)
-            ? accent.withOpacity(0.35)
-            : secondary.withOpacity(0.18),
+            ? accent.withValues(alpha:0.35)
+            : secondary.withValues(alpha:0.18),
       ),
     ),
     sliderTheme: SliderThemeData(
       activeTrackColor: accent,
-      inactiveTrackColor: accent.withOpacity(0.22),
+      inactiveTrackColor: accent.withValues(alpha:0.22),
       thumbColor: accent,
-      overlayColor: accent.withOpacity(0.14),
+      overlayColor: accent.withValues(alpha:0.14),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: surface,
-      hintStyle: TextStyle(color: secondary.withOpacity(0.55)),
+      hintStyle: TextStyle(color: secondary.withValues(alpha:0.55)),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: BorderSide(color: accent.withOpacity(0.12)),
+        borderSide: BorderSide(color: accent.withValues(alpha:0.12)),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
@@ -104,7 +104,7 @@ ThemeData _buildTheme({
       ),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: BorderSide(color: accent.withOpacity(0.12)),
+        borderSide: BorderSide(color: accent.withValues(alpha:0.12)),
       ),
     ),
     textTheme: TextTheme(

@@ -25,7 +25,7 @@ class _HarpaAudioWrapperState extends State<HarpaAudioWrapper> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: FutureBuilder<List<ConnectivityResult>>(
         future: _connectivityFuture,
         builder: (context, snapshot) {
@@ -67,7 +67,7 @@ class _HarpaAudioWrapperState extends State<HarpaAudioWrapper> {
             Icon(
               Icons.wifi_off_rounded,
               size: 60,
-              color: Theme.of(context).colorScheme.secondary.withOpacity(0.7),
+              color: Theme.of(context).colorScheme.secondary.withValues(alpha:0.7),
             ),
             const SizedBox(height: 20),
             ValueListenableBuilder<double>(

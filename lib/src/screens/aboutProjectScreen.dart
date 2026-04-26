@@ -29,14 +29,14 @@ Este app surgiu em dezembro de 2024 e publicado na playstore em junho de 2025, c
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: colorScheme.background,
+        backgroundColor: colorScheme.surface,
         appBar: CustomAppBar(
           title: "Sobre o App",
           automaticallyImplyLeading: true,
-          centerTitle: true,
+          centerTitle: false,
           tabBar: TabBar(
             labelColor: colorScheme.secondary,
-            unselectedLabelColor: colorScheme.secondary.withOpacity(0.65),
+            unselectedLabelColor: colorScheme.secondary.withValues(alpha:0.65),
             indicatorColor: colorScheme.secondary,
             indicatorSize: TabBarIndicatorSize.tab,
             labelStyle: const TextStyle(fontWeight: FontWeight.w700),

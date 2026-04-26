@@ -1,10 +1,6 @@
-// lib/src/screens/text_harp_screen.dart
-
 import 'dart:convert';
-import 'package:biblia_e_harpa/src/config.dart';
 import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
-import 'package:biblia_e_harpa/src/keys/harpkey.dart';
-import 'package:biblia_e_harpa/src/services/share_audio_source.dart';
+import 'package:biblia_e_harpa/src/services/audio/share_audio_source.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
@@ -130,7 +126,7 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
 
     return Card(
       margin: const EdgeInsets.only(bottom: 20.0),
-      color: Theme.of(context).colorScheme.primary.withOpacity(0.9),
+      color: Theme.of(context).colorScheme.primary.withValues(alpha:0.9),
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
@@ -228,7 +224,7 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
                           onChanged: (value) => _audioPlayer
                               .seek(Duration(seconds: value.toInt())),
                           activeColor: Theme.of(context).colorScheme.secondary,
-                          inactiveColor: Colors.grey.withOpacity(0.5),
+                          inactiveColor: Colors.grey.withValues(alpha:0.5),
                         );
                       },
                     ),
@@ -242,7 +238,7 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
         title: Text(
@@ -251,11 +247,9 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
         ),
         iconTheme:
             IconThemeData(color: Theme.of(context).colorScheme.secondary),
-        centerTitle: true,
+        centerTitle: false,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: FutureBuilder<List<TextModel>>(
+      body: FutureBuilder<List<TextModel>>(
           future: loadTexts(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -283,68 +277,67 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
 
             return SingleChildScrollView(
               child: SizedBox(
-                width: double.infinity,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildAudioPlayer(), // Player no topo
-                    const SizedBox(height: 30),
-                    ...harpText.verses.entries.map(
-                      (entry) => Padding(
-                        padding: const EdgeInsets.only(bottom: 30.0),
-                        child: Column(
-                          children: [
-                            Text(
-                              entry.key,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.secondary,
+                  width: double.infinity,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildAudioPlayer(),
+                      const SizedBox(height: 30),
+                      ...harpText.verses.entries.map(
+                        (entry) => Padding(
+                          padding: const EdgeInsets.only(bottom: 30.0),
+                          child: Column(
+                            children: [
+                              Text(
+                                entry.key,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.secondary,
+                                ),
+                                textAlign: TextAlign.center,
                               ),
-                              textAlign: TextAlign.center,
-                            ),
-                            ValueListenableBuilder<double>(
-                              valueListenable:
-                                  FontSizeController.fontSizeNotifier,
-                              builder: (context, fontSize, _) {
-                                return Text(
-                                  entry.value,
-                                  style: TextStyle(
-                                    fontSize: fontSize,
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                );
-                              },
-                            ),
-                            const SizedBox(height: 30.0),
-                            ValueListenableBuilder<double>(
-                              valueListenable:
-                                  FontSizeController.fontSizeNotifier,
-                              builder: (context, fontSize, _) {
-                                return Text(
-                                  harpText.coro,
-                                  style: TextStyle(
-                                    fontSize: fontSize,
-                                    fontWeight: FontWeight.bold,
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                );
-                              },
-                            ),
-                          ],
+                              ValueListenableBuilder<double>(
+                                valueListenable:
+                                    FontSizeController.fontSizeNotifier,
+                                builder: (context, fontSize, _) {
+                                  return Text(
+                                    entry.value,
+                                    style: TextStyle(
+                                      fontSize: fontSize,
+                                      color:
+                                          Theme.of(context).colorScheme.secondary,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 30.0),
+                              ValueListenableBuilder<double>(
+                                valueListenable:
+                                    FontSizeController.fontSizeNotifier,
+                                builder: (context, fontSize, _) {
+                                  return Text(
+                                    harpText.coro,
+                                    style: TextStyle(
+                                      fontSize: fontSize,
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          Theme.of(context).colorScheme.secondary,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
             );
           },
-        ),
       ),
     );
   }

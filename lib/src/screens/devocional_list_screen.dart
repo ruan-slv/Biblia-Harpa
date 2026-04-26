@@ -194,7 +194,7 @@ class _DevocionalListState extends State<DevocionalList> {
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
@@ -210,7 +210,7 @@ class _DevocionalListState extends State<DevocionalList> {
                 width: 48,
                 height: 5,
                 decoration: BoxDecoration(
-                  color: colorScheme.secondary.withOpacity(0.22),
+                  color: colorScheme.secondary.withValues(alpha: 0.22),
                   borderRadius: BorderRadius.circular(999),
                 ),
               ),
@@ -226,7 +226,7 @@ class _DevocionalListState extends State<DevocionalList> {
                 subtitle: Text(
                   'Avança para o próximo devocional não lido',
                   style: TextStyle(
-                    color: colorScheme.secondary.withOpacity(0.72),
+                    color: colorScheme.secondary.withValues(alpha: 0.72),
                   ),
                 ),
                 leading: Icon(Icons.auto_fix_high, color: colorScheme.secondary),
@@ -235,7 +235,7 @@ class _DevocionalListState extends State<DevocionalList> {
                   _openNextUnread();
                 },
               ),
-              Divider(height: 1, color: colorScheme.secondary.withOpacity(0.08)),
+              Divider(height: 1, color: colorScheme.secondary.withValues(alpha: 0.08)),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
@@ -274,7 +274,7 @@ class _DevocionalListState extends State<DevocionalList> {
                   child: Text(
                     'Nenhum tópico acessado ainda',
                     style: TextStyle(
-                      color: colorScheme.secondary.withOpacity(0.76),
+                      color: colorScheme.secondary.withValues(alpha: 0.76),
                     ),
                   ),
                 ),
@@ -320,12 +320,12 @@ class _DevocionalListState extends State<DevocionalList> {
                           ? 'Concluído (${items.length}/${items.length})'
                           : 'Continuar em ${nextIndex + 1} de ${items.length}',
                         style: TextStyle(
-                          color: colorScheme.secondary.withOpacity(0.72),
+                          color: colorScheme.secondary.withValues(alpha: 0.72),
                         ),
                       ),
                       trailing: Icon(
                         Icons.chevron_right_rounded,
-                        color: colorScheme.secondary.withOpacity(0.55),
+                        color: colorScheme.secondary.withValues(alpha: 0.55),
                       ),
                       onTap: () {
                         Navigator.pop(context);
@@ -350,190 +350,201 @@ class _DevocionalListState extends State<DevocionalList> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextField(
-            controller: _filterController,
-            decoration: InputDecoration(
-              hintText: "Pesquisar livro",
-              hintStyle: TextStyle(color: Theme.of(context).colorScheme.secondary),
-              prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.secondary),
-              suffixIcon: IconButton(
-                onPressed: () {
-                  _filterController.clear();
-                },
-                icon: Icon(Icons.clear,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: TextField(
+              controller: _filterController,
+              decoration: InputDecoration(
+                hintText: "Pesquisar livro",
+                hintStyle:
+                    TextStyle(color: Theme.of(context).colorScheme.secondary),
+                prefixIcon: Icon(Icons.search,
                     color: Theme.of(context).colorScheme.secondary),
-              ),
-              filled: true,
-              fillColor: Theme.of(context).colorScheme.primary,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.0),
-                borderSide: BorderSide.none,
-              ),
-              contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
-            ),
-            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-            cursorColor: Theme.of(context).colorScheme.secondary,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-          child: buildMenuCard(
-            context,
-            title: 'Continuar lendo',
-            description:
-                'Abra o próximo devocional não lido ou retome rapidamente um tema recente.',
-            iconData: Icons.read_more_rounded,
-            gradientColors: gradienteDevocional,
-            onPressed: _continuarLendo,
-          ),
-        ),
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
-            itemCount: devoList.length,
-            itemBuilder: (context, index) {
-              final devocionalTopic = devoList[index];
-              final double progress = topicsProgress[devocionalTopic] ?? 0.0;
-              final int percentage = (progress * 100).toInt();
-
-              return Container(
-                margin: const EdgeInsets.symmetric(vertical: 6),
-                decoration: BoxDecoration(
-                  color: colorScheme.primary,
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: [
-                    BoxShadow(
-                      color: colorScheme.secondary.withOpacity(0.05),
-                      blurRadius: 14,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(24),
-                  onTap: () async {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DevocionalContentScreen(
-                            devo: devocionalTopic, initialIndex: 0),
-                      ),
-                    );
-                    _refreshProgress();
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    _filterController.clear();
                   },
-                  child: Padding(
-                    padding: const EdgeInsets.all(14),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
+                  icon: Icon(Icons.clear,
+                      color: Theme.of(context).colorScheme.secondary),
+                ),
+                filled: true,
+                fillColor: Theme.of(context).colorScheme.primary,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+              ),
+              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+              cursorColor: Theme.of(context).colorScheme.secondary,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: buildMenuCard(
+              context,
+              title: 'Continuar lendo',
+              description:
+                  'Abra o próximo devocional não lido ou retome rapidamente um tema recente.',
+              iconData: Icons.read_more_rounded,
+              gradientColors: gradienteDevocional,
+              onPressed: _continuarLendo,
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.only(top: 10, bottom: 4, left: 10, right: 10),
+              itemCount: devoList.length,
+              itemBuilder: (context, index) {
+                final devocionalTopic = devoList[index];
+                final double progress = topicsProgress[devocionalTopic] ?? 0.0;
+                final int percentage = (progress * 100).toInt();
+
+                return Container(
+                  margin: const EdgeInsets.symmetric(vertical: 6),
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: colorScheme.secondary.withValues(alpha: 0.05),
+                        blurRadius: 14,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(24),
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DevocionalContentScreen(
+                              devo: devocionalTopic,
+                              initialIndex: 0,
+                            ),
+                          ),
+                        );
+                        _refreshProgress();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(14),
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              height: 48,
-                              width: 48,
-                              decoration: BoxDecoration(
-                                color: colorScheme.surface,
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Icon(
-                                progress >= 1.0
-                                    ? Icons.check_circle_rounded
-                                    : Icons.auto_stories_rounded,
-                                color: progress >= 1.0
-                                    ? Colors.green
-                                    : colorScheme.secondary,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: ValueListenableBuilder<double>(
-                                valueListenable: FontSizeController.fontSizeNotifier,
-                                builder: (context, fontSize, _) {
-                                  return Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  height: 48,
+                                  width: 48,
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.surface,
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: Icon(
+                                    progress >= 1.0
+                                        ? Icons.check_circle_rounded
+                                        : Icons.auto_stories_rounded,
+                                    color: progress >= 1.0
+                                        ? Colors.green
+                                        : colorScheme.secondary,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: ValueListenableBuilder<double>(
+                                    valueListenable:
+                                        FontSizeController.fontSizeNotifier,
+                                    builder: (context, fontSize, _) {
+                                      return Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          Expanded(
-                                            child: Text(
-                                              devocionalTopic,
-                                              style: TextStyle(
-                                                fontSize: fontSize,
-                                                color: colorScheme.secondary,
-                                                fontWeight: FontWeight.w600,
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  devocionalTopic,
+                                                  style: TextStyle(
+                                                    fontSize: fontSize,
+                                                    color:
+                                                        colorScheme.secondary,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
                                               ),
-                                            ),
+                                              const SizedBox(width: 8),
+                                              Text(
+                                                "$percentage%",
+                                                style: TextStyle(
+                                                  fontSize: fontSize * 0.8,
+                                                  color: colorScheme.secondary
+                                                      .withValues(alpha:0.7),
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                          const SizedBox(width: 8),
+                                          const SizedBox(height: 6),
                                           Text(
-                                            "$percentage%",
+                                            progress >= 1.0
+                                                ? "Tema concluído"
+                                                : "Toque para iniciar ou continuar a leitura",
                                             style: TextStyle(
-                                              fontSize: fontSize * 0.8,
                                               color: colorScheme.secondary
-                                                  .withOpacity(0.7),
-                                              fontWeight: FontWeight.w600,
+                                                  .withValues(alpha:0.72),
                                             ),
                                           ),
                                         ],
-                                      ),
-                                      const SizedBox(height: 6),
-                                      Text(
-                                        progress >= 1.0
-                                            ? "Tema concluído"
-                                            : "Toque para iniciar ou continuar a leitura",
-                                        style: TextStyle(
-                                          color: colorScheme.secondary
-                                              .withOpacity(0.72),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 14),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(999),
+                              child: LinearProgressIndicator(
+                                value: progress,
+                                backgroundColor: colorScheme.surface,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  progress >= 1.0
+                                      ? Colors.green
+                                      : gradienteDevocional.first,
+                                ),
+                                minHeight: 8,
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 14),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(999),
-                          child: LinearProgressIndicator(
-                            value: progress,
-                            backgroundColor: colorScheme.surface,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              progress >= 1.0
-                                  ? Colors.green
-                                  : gradienteDevocional.first,
-                            ),
-                            minHeight: 8,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: const CustomAppBar(
         title: "Devocional",
-        centerTitle: true,
+        centerTitle: false,
         automaticallyImplyLeading: true,
       ),
       body: _buildTemasTab(filteredDevocionalTopic),
