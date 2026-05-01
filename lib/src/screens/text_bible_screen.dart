@@ -252,26 +252,13 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Padding(
           padding: const EdgeInsets.all(12.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Text(
-                "Verificando áudio...",
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.secondary,
-                  fontSize: 14,
-                ),
-              )
-            ],
+          child: SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
           ),
         ),
       );
@@ -282,7 +269,7 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(5.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -304,7 +291,7 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
                       icon: Icon((playing ?? false)
                           ? Icons.pause_circle_filled
                           : Icons.play_circle_filled),
-                      iconSize: 48.0,
+                      iconSize: 40.0,
                       color: Theme.of(context).colorScheme.secondary,
                       onPressed: () => (playing ?? false)
                           ? _audioPlayer.pause()
@@ -312,7 +299,7 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
                     ),
                     IconButton(
                       icon: const Icon(Icons.stop_circle_outlined),
-                      iconSize: 48.0,
+                      iconSize: 40.0,
                       color: Theme.of(context).colorScheme.secondary,
                       onPressed: () {
                         _audioPlayer.stop();
@@ -353,59 +340,18 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
     final colorScheme = Theme.of(context).colorScheme;
     if (widget.allBookChapters.isEmpty) {
       return Scaffold(
-        appBar: AppBar(
-          centerTitle: false,
-          title: Text(widget.bookName),
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          foregroundColor: Theme.of(context).colorScheme.secondary,
-          actions: [
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  _isAutoScrollEnabled = !_isAutoScrollEnabled;
-                });
-
-                if (_isAutoScrollEnabled && !_audioPlayer.playing) {
-                  _audioPlayer.play();
-                }
-              },
-              icon: Icon(
-                _isAutoScrollEnabled
-                    ? Icons.auto_stories
-                    : Icons.auto_stories_outlined,
-                color: _isAutoScrollEnabled ? Colors.orangeAccent : null,
-              ),
-              tooltip: 'Acompanhamento automático',
-            ),
-          ],
-        ),
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        body: Center(
-          child: ValueListenableBuilder<double>(
-            valueListenable: FontSizeController.fontSizeNotifier,
-            builder: (context, fontSize, _) {
-              return Text(
-                'Nenhum capítulo disponível para este livro.',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.secondary,
-                  fontSize: fontSize,
-                ),
-                textAlign: TextAlign.center,
-              );
-            },
-          ),
-        ),
+        body: const CircularProgressIndicator(),
       );
     }
 
-    final chapterId = "${widget.bookName}_$currentChapterNumber";
+    final chapterId = "${widget.bookName} $currentChapterNumber";
     final bool noFilterResults = _fillterKeyWordController.text.isNotEmpty &&
         _filteredVerseIndices.isEmpty;
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: CustomAppBar(
-        title: widget.bookName,
+        title: chapterId,
         centerTitle: false,
         automaticallyImplyLeading: true,
         actions: [
@@ -433,7 +379,6 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
             IconButton(
               onPressed: _clearSelections,
               icon: const Icon(Icons.clear),
-              tooltip: 'Limpar seleções',
             ),
           IconButton(
             onPressed: () {
@@ -449,7 +394,7 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text(
-                        '10 primeiros versículos selecionados para compartilhamento.'),
+                        '15 primeiros versículos selecionados para compartilhamento.'),
                     duration: Duration(seconds: 2),
                   ),
                 );
@@ -459,20 +404,17 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
                   SharePlus.instance.share(
                     ShareParams(
                       text: chapterText,
-                      subject: "${widget.bookName}: $currentChapterNumber",
-                    ),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                          'Não há versículos para compartilhar neste capítulo.'),
+                      subject: chapterId,
                     ),
                   );
                 }
               }
             },
-            icon: const Icon(Icons.share),
+            icon: Icon(
+              _selectedVerseIndices.isEmpty
+                  ? Icons.share
+                  : Icons.send,
+            ),
           ),
         ],
       ),
@@ -597,26 +539,6 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
           SliverToBoxAdapter(
             child: _buildAudioPlayer(),
           ),
-          SliverToBoxAdapter(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 25, bottom: 10),
-                child: ValueListenableBuilder(
-                  valueListenable: FontSizeController.fontSizeNotifier,
-                  builder: (context, fontSize, _) {
-                    return Text(
-                      "Capítulo $currentChapterNumber de ${widget.allBookChapters.length}",
-                      style: TextStyle(
-                        fontSize: fontSize * 1.13,
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-          ),
-
           if (noFilterResults)
             SliverToBoxAdapter(
               child: Padding(

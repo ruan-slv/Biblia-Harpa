@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 
+import '../components/appBarComponent.dart';
+
 class TextModel {
   final String hino;
   final String coro;
@@ -25,7 +27,7 @@ class HarpContentScreen extends StatefulWidget {
   const HarpContentScreen({
     super.key,
     required this.harp,
-    this.audioUrl, // Recebe a URL do áudio
+    this.audioUrl,
   });
 
   final String harp;
@@ -39,6 +41,7 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
   bool _isLoadingAudio = false;
   bool _hasAudio = false;
+  ShareAudioSource? shareAudioSource = ShareAudioSource();
 
   @override
   void initState() {
@@ -53,7 +56,6 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
   }
 
   Future<void> _loadAudio() async {
-    // 1. Se não tem URL, marca como sem áudio
     if (widget.audioUrl == null || widget.audioUrl!.isEmpty) {
       if (mounted) {
         setState(() {
@@ -64,7 +66,6 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
       return;
     }
 
-    // 2. Inicia carregamento
     if (mounted) {
       setState(() {
         _hasAudio = true;
@@ -76,14 +77,13 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
       await _audioPlayer.setUrl(widget.audioUrl!);
       if (mounted) {
         setState(() {
-          _isLoadingAudio = false; // Sucesso
+          _isLoadingAudio = false;
         });
       }
     } catch (e) {
-      // 3. Erro ao carregar
       if (mounted) {
         setState(() {
-          _hasAudio = false; // Esconde o player
+          _hasAudio = false;
           _isLoadingAudio = false;
         });
       }
@@ -105,53 +105,22 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
     }
   }
 
-  ShareAudioSource? shareAudioSource = ShareAudioSource();
-
-  // Widget do Player
   Widget _buildAudioPlayer() {
-    // Se não tem áudio e não está carregando, mostra o card de "verificando/vazio"
-    // conforme você solicitou, ou esconde se preferir.
-    // Aqui estou mostrando o card com loading estático como "estado neutro" se desejar,
-    // mas pela lógica do _loadAudio, se _hasAudio for false, é pq falhou ou não tem.
-
-    if (!_hasAudio && !_isLoadingAudio) {
-      // Se falhou ou não tem url, retornamos vazio para não poluir a tela
-      // Ou retornamos o card de erro/vazio se preferir.
-      // Vou manter vazio para não mostrar card quebrado, mas se quiser o card fixo:
-      /*
-       return Card(... seu código do card com loading ...);
-       */
-      return const SizedBox.shrink();
-    }
-
     return Card(
-      margin: const EdgeInsets.only(bottom: 20.0),
-      color: Theme.of(context).colorScheme.primary.withValues(alpha:0.9),
+      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.9),
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: _isLoadingAudio
-            ? Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    "Carregando áudio...",
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
-                      fontSize: 14,
-                    ),
-                  )
-                ],
+            ? SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
               )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -177,19 +146,10 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           IconButton(
-                            icon: Icon(Icons.share),
-                            iconSize: 48.0,
-                            color: Theme.of(context).colorScheme.secondary,
-                            onPressed: () => shareAudioSource?.shareAudioSource(
-                              widget.harp,
-                              widget.audioUrl!,
-                            ),
-                          ),
-                          IconButton(
                             icon: Icon((playing ?? false)
                                 ? Icons.pause_circle_filled
                                 : Icons.play_circle_filled),
-                            iconSize: 48.0,
+                            iconSize: 40.0,
                             color: Theme.of(context).colorScheme.secondary,
                             onPressed: () => (playing ?? false)
                                 ? _audioPlayer.pause()
@@ -197,7 +157,7 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
                           ),
                           IconButton(
                             icon: const Icon(Icons.stop_circle_outlined),
-                            iconSize: 48.0,
+                            iconSize: 40.0,
                             color: Theme.of(context).colorScheme.secondary,
                             onPressed: () {
                               _audioPlayer.stop();
@@ -224,7 +184,7 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
                           onChanged: (value) => _audioPlayer
                               .seek(Duration(seconds: value.toInt())),
                           activeColor: Theme.of(context).colorScheme.secondary,
-                          inactiveColor: Colors.grey.withValues(alpha:0.5),
+                          inactiveColor: Colors.grey.withValues(alpha: 0.5),
                         );
                       },
                     ),
@@ -237,17 +197,14 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text(
-          widget.harp,
-          style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-        ),
-        iconTheme:
-            IconThemeData(color: Theme.of(context).colorScheme.secondary),
+      backgroundColor: colorScheme.surface,
+      appBar: CustomAppBar(
+        title: widget.harp,
         centerTitle: false,
+        automaticallyImplyLeading: true,
       ),
       body: FutureBuilder<List<TextModel>>(
           future: loadTexts(),
@@ -258,13 +215,19 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
               );
             }
             if (snapshot.hasError) {
-              return const Center(
-                child: Text('Erro ao carregar os textos.'),
+              return Center(
+                child: Text(
+                  'Erro ao carregar os textos.',
+                  style: TextStyle(color: colorScheme.secondary),
+                ),
               );
             }
             if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(
-                child: Text('Nenhum texto encontrado.'),
+              return Center(
+                child: Text(
+                  'Nenhum texto encontrado.',
+                  style: TextStyle(color: colorScheme.secondary),
+                ),
               );
             }
 
@@ -275,67 +238,90 @@ class _HarpContentScreenState extends State<HarpContentScreen> {
               orElse: () => TextModel(hino: '', coro: '', verses: {}),
             );
 
-            return SingleChildScrollView(
-              child: SizedBox(
-                  width: double.infinity,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildAudioPlayer(),
-                      const SizedBox(height: 30),
-                      ...harpText.verses.entries.map(
-                        (entry) => Padding(
-                          padding: const EdgeInsets.only(bottom: 30.0),
-                          child: Column(
-                            children: [
-                              Text(
-                                entry.key,
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).colorScheme.secondary,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              ValueListenableBuilder<double>(
-                                valueListenable:
-                                    FontSizeController.fontSizeNotifier,
-                                builder: (context, fontSize, _) {
-                                  return Text(
-                                    entry.value,
-                                    style: TextStyle(
-                                      fontSize: fontSize,
-                                      color:
-                                          Theme.of(context).colorScheme.secondary,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  );
-                                },
-                              ),
-                              const SizedBox(height: 30.0),
-                              ValueListenableBuilder<double>(
-                                valueListenable:
-                                    FontSizeController.fontSizeNotifier,
-                                builder: (context, fontSize, _) {
-                                  return Text(
-                                    harpText.coro,
-                                    style: TextStyle(
-                                      fontSize: fontSize,
-                                      fontWeight: FontWeight.bold,
-                                      color:
-                                          Theme.of(context).colorScheme.secondary,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+            final verseEntries = harpText.verses.entries.toList();
+            final hasChorus = harpText.coro.trim().isNotEmpty &&
+                harpText.coro.trim().toLowerCase() != 'não possui coro';
+
+            return Center(
+              child: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: _buildAudioPlayer(),
                   ),
-                ),
+                  SliverPadding(
+                    padding: const EdgeInsets.all(6.0),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          if (index == verseEntries.length) {
+                            return const SizedBox(height: 24);
+                          }
+
+                          final entry = verseEntries[index];
+
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    entry.key,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: colorScheme.secondary
+                                          .withValues(alpha: 0.9),
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  ValueListenableBuilder<double>(
+                                    valueListenable:
+                                        FontSizeController.fontSizeNotifier,
+                                    builder: (context, fontSize, _) {
+                                      return Text(
+                                        entry.value,
+                                        style: TextStyle(
+                                          fontSize: fontSize,
+                                          color: colorScheme.secondary,
+                                          height: 1.5,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      );
+                                    },
+                                  ),
+                                  if (hasChorus) ...[
+                                    const SizedBox(height: 24),
+                                    ValueListenableBuilder<double>(
+                                      valueListenable:
+                                          FontSizeController.fontSizeNotifier,
+                                      builder: (context, fontSize, _) {
+                                        return Text(
+                                          harpText.coro,
+                                          style: TextStyle(
+                                            fontSize: fontSize,
+                                            fontWeight: FontWeight.bold,
+                                            color: colorScheme.secondary,
+                                            height: 1.5,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                        childCount: verseEntries.length + 1,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             );
           },
       ),
