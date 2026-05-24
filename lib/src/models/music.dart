@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 
-part 'music.g.dart'; // 👈 necessário para build_runner gerar o MusicAdapter
+part 'music.g.dart';
 
 @HiveType(typeId: 0)
 class Music extends HiveObject {

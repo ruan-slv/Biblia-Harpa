@@ -1,27 +1,32 @@
 import 'package:biblia_e_harpa/src/components/app_section_card.dart';
-import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
-import 'package:biblia_e_harpa/src/controllers/theme_controller.dart';
-import 'package:biblia_e_harpa/src/screens/aboutProjectScreen.dart';
+import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => SettingsController(),
+      child: _SettingsView(),
+    );
+  }
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+class _SettingsView extends StatelessWidget {
+  _SettingsView();
+
   static const String _supportEmail = "suporte.biblia.noads@gmail.com";
 
   final Uri _playStoreUrl = Uri.parse(
     "https://play.google.com/store/apps/details?id=com.bibleAplication.app&pcampaignid=web_share",
   );
 
-  Future<void> _startSupport() async {
+  Future<void> _startSupport(BuildContext context) async {
     const subject = "Suporte - Aplicativo Bíblia";
     const body = "Olá, gostaria de ajuda com...";
 
@@ -54,14 +59,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
         .join('&');
   }
 
-  Future<void> _showSupportDialog() async {
+  Future<void> _showSupportDialog(BuildContext context) async {
     final colorScheme = Theme.of(context).colorScheme;
 
     return showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: colorScheme.background,
+          backgroundColor: colorScheme.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
           ),
@@ -78,7 +83,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: _startSupport,
+              onPressed: () => _startSupport(context),
               child: Text(
                 "Entrar em contato",
                 style: TextStyle(color: colorScheme.secondary),
@@ -105,16 +110,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: ThemeController.themeNotifier,
-      builder: (context, currentTheme, _) {
-        final isDark = currentTheme == ThemeMode.dark;
-        final colorScheme = Theme.of(context).colorScheme;
-
-        return ValueListenableBuilder<double>(
-          valueListenable: FontSizeController.fontSizeNotifier,
-          builder: (context, fontSize, _) {
-            return Scaffold(
+    final colorScheme = Theme.of(context).colorScheme;
+    return Consumer<SettingsController>(
+      builder: (context, controller, _) {
+        return Scaffold(
               backgroundColor: colorScheme.surface,
               body: ListView(
                 padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 25.0),
@@ -130,7 +129,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Tamanho atual: ${fontSize.toStringAsFixed(0)} pt",
+                                "Tamanho atual: ${controller.fontSize.toStringAsFixed(0)} pt",
                                 style: TextStyle(color: colorScheme.secondary),
                               ),
                               const SizedBox(height: 12),
@@ -139,19 +138,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 runSpacing: 8,
                                 children: [
                                   ElevatedButton(
-                                    onPressed: () {
-                                      FontSizeController.setFontSize(
-                                        (fontSize - 2).clamp(16.0, 30.0),
-                                      );
-                                    },
+                                    onPressed: context.read<SettingsController>().decreaseFontSize,
                                     child: const Text("A-"),
                                   ),
                                   ElevatedButton(
-                                    onPressed: () {
-                                      FontSizeController.setFontSize(
-                                        (fontSize + 2).clamp(16.0, 30.0),
-                                      );
-                                    },
+                                    onPressed: context.read<SettingsController>().increaseFontSize,
                                     child: const Text("A+"),
                                   ),
                                 ],
@@ -161,7 +152,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         const SizedBox(height: 16),
                         AppSectionCard(
-                          icon: isDark
+                          icon: controller.isDark
                               ? Icons.dark_mode_rounded
                               : Icons.light_mode_rounded,
                           title: "Tema do aplicativo",
@@ -175,7 +166,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               SizedBox(
                                 width:  280,
                                 child: Text(
-                                  isDark
+                                  controller.isDark
                                       ? "Modo escuro ativo"
                                       : "Modo claro ativo",
                                   style: TextStyle(
@@ -185,10 +176,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 ),
                               ),
                               ElevatedButton.icon(
-                                onPressed: ThemeController.toggleTheme,
+                                onPressed: context.read<SettingsController>().toggleTheme,
                                 icon:
-                                    Icon(isDark ? Icons.sunny : Icons.brightness_2),
-                                label: Text(isDark ? "Usar claro" : "Usar escuro"),
+                                    Icon(controller.isDark ? Icons.sunny : Icons.brightness_2),
+                                label: Text(controller.isDark ? "Usar claro" : "Usar escuro"),
                               ),
                             ],
                           ),
@@ -228,21 +219,62 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         const SizedBox(height: 16),
                         AppSectionCard(
-                          icon: Icons.privacy_tip_outlined,
-                          title: "Sobre o app e privacidade",
+                          icon: Icons.coffee_rounded,
+                          title: "Apoiar projeto",
                           subtitle:
-                              "Veja informações do projeto e leia a política de privacidade em uma tela dedicada.",
+                              "Apoie este projeto voluntário da forma que preferir.",
                           child: ElevatedButton.icon(
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const Aboutprojectscreen(),
-                                ),
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    backgroundColor: colorScheme.surface,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(24),
+                                    ),
+                                    title: Text(
+                                      "Apoio",
+                                      style: TextStyle(
+                                        color: colorScheme.secondary,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    content: Text(
+                                      "Nos apoie compartilhando o nosso app com 2 conhecidos. Nossa prioridade é chegar a mais pessoas.",
+                                      style: TextStyle(color: colorScheme.secondary),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          SharePlus.instance.share(
+                                            ShareParams(
+                                              text:
+                                              "📖✨ Descubra uma nova forma de se conectar com a Palavra de Deus!\n\n"
+                                                  "Baixe agora nosso aplicativo gratuito de leitura bíblica e tenha acesso a versiculos, harpa e muito mais, tudo na palma da sua mão de forma ofline e sem anúncios.\n\n"
+                                                  "🔗 Acesse aqui: $_playStoreUrl",
+                                            ),
+                                          );
+                                        },
+                                        child: Text(
+                                          "Compartilhar app",
+                                          style: TextStyle(color: colorScheme.secondary),
+                                        ),
+                                      ),
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: Text(
+                                          "Fechar",
+                                          style: TextStyle(color: colorScheme.secondary),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
                               );
                             },
                             icon: const Icon(Icons.info_outline_rounded),
-                            label: const Text("Abrir informações"),
+                            label: const Text("Ver mais"),
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -252,7 +284,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           subtitle:
                               "Entre em contato por e-mail para pedir ajuda ou enviar feedback.",
                           child: ElevatedButton.icon(
-                            onPressed: _showSupportDialog,
+                            onPressed: () => _showSupportDialog(context),
                             icon: const Icon(Icons.mail_outline_rounded),
                             label: const Text("Solicitar suporte"),
                           ),
@@ -263,8 +295,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ],
               ),
             );
-          },
-        );
       },
     );
   }

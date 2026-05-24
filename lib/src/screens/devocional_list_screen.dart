@@ -1,14 +1,14 @@
 import 'dart:convert';
-import 'package:biblia_e_harpa/src/components/appBarComponent.dart';
-import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
+import 'package:biblia_e_harpa/src/components/app_bar_component.dart';
+import 'package:biblia_e_harpa/src/controllers/font_size_controller.dart';
 import 'package:biblia_e_harpa/src/screens/text_devocional_Screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../components/buildMenuCard.dart';
+import '../components/build_menu_card.dart';
 import '../config.dart';
-import '../keys/devocionalkey.dart';
+import '../keys/devocional_key.dart';
 
 class DevocionalList extends StatefulWidget {
   const DevocionalList({super.key});
@@ -21,12 +21,10 @@ class _DevocionalListState extends State<DevocionalList> {
   List<String> filteredDevocionalTopic = [];
   final TextEditingController _filterController = TextEditingController();
   final String _jsonPath =
-      "assets/json/newDevocionalModel.json"; // Certifique-se que é o JSON correto
+      "assets/json/newDevocionalModel.json";
 
-  // Armazena a estrutura completa do JSON para saber quantos itens tem em cada tópico
   Map<String, dynamic> fullDevocionalData = {};
 
-  // Armazena o progresso de cada tópico (0.0 a 1.0)
   Map<String, double> topicsProgress = {};
 
   @override
@@ -37,7 +35,6 @@ class _DevocionalListState extends State<DevocionalList> {
     _loadDataAndProgress();
   }
 
-  // Quando voltar da tela de leitura, atualiza o progresso
   void _refreshProgress() {
     _calculateAllProgress();
   }
@@ -49,7 +46,6 @@ class _DevocionalListState extends State<DevocionalList> {
     super.dispose();
   }
 
-  // Carrega o JSON e depois calcula o progresso
   Future<void> _loadDataAndProgress() async {
     try {
       final String response = await rootBundle.loadString(_jsonPath);
@@ -61,12 +57,9 @@ class _DevocionalListState extends State<DevocionalList> {
         });
         await _calculateAllProgress();
       }
-    } catch (e) {
-      print("Erro ao carregar JSON para progresso: $e");
-    }
+    } catch (_) {}
   }
 
-  // Calcula o progresso para todos os tópicos
   Future<void> _calculateAllProgress() async {
     final prefs = await SharedPreferences.getInstance();
     Map<String, double> tempProgress = {};
@@ -80,7 +73,6 @@ class _DevocionalListState extends State<DevocionalList> {
 
       int readCount = 0;
       for (int i = 0; i < items.length; i++) {
-        // Usa a mesma chave definida na tela de conteúdo
         bool isRead = prefs.getBool('devocional_read_${topic}_$i') ?? false;
         if (isRead) readCount++;
       }
@@ -104,7 +96,6 @@ class _DevocionalListState extends State<DevocionalList> {
     });
   }
 
-  // Abre o próximo devocional não lido (mesma lógica anterior)
   Future<void> _openNextUnread() async {
     final prefs = await SharedPreferences.getInstance();
     final String? lastTopic = prefs.getString('lastDevocionalTopic');
@@ -118,7 +109,6 @@ class _DevocionalListState extends State<DevocionalList> {
       String? foundTopic;
       int foundIndex = -1;
 
-      // Primeiro tenta continuar no mesmo tópico
       if (lastTopic != null && jsonResponse.containsKey(lastTopic)) {
         final List<dynamic> items = jsonResponse[lastTopic] ?? [];
         for (int i = lastIndex + 1; i < items.length; i++) {
@@ -132,7 +122,6 @@ class _DevocionalListState extends State<DevocionalList> {
         }
       }
 
-      // Se não encontrou, procura pelo primeiro não lido em todos os tópicos
       if (foundTopic == null) {
         for (String topic in topicos) {
           final List<dynamic> items = jsonResponse[topic] ?? [];
@@ -177,14 +166,12 @@ class _DevocionalListState extends State<DevocionalList> {
     }
   }
 
-  // Mostra menu com opção automática e histórico de tópicos acessados
   Future<void> _continuarLendo() async {
     final prefs = await SharedPreferences.getInstance();
     final String? histStr = prefs.getString('devocional_history');
     List<dynamic> history =
     histStr != null ? jsonDecode(histStr) as List<dynamic> : [];
 
-    // Carrega JSON para obter tamanhos dos tópicos
     Map<String, dynamic> jsonResponse = {};
     try {
       final String jsonString = await DefaultAssetBundle.of(context)

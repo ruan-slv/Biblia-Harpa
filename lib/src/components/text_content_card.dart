@@ -1,4 +1,4 @@
-import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
+import 'package:biblia_e_harpa/src/controllers/font_size_controller.dart';
 import 'package:flutter/material.dart';
 
 class TextContentCard extends StatelessWidget {

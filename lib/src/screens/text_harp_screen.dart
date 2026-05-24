@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
-import 'package:biblia_e_harpa/src/services/audio/share_audio_source.dart';
+import 'package:biblia_e_harpa/src/controllers/font_size_controller.dart';
+import 'package:biblia_e_harpa/src/services/share_audio_source.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 
-import '../components/appBarComponent.dart';
+import '../components/app_bar_component.dart';
 
 class TextModel {
   final String hino;

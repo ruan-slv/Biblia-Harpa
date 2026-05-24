@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
-import 'package:biblia_e_harpa/src/screens/bibleAudiosScreen.dart';
+import 'package:biblia_e_harpa/src/controllers/font_size_controller.dart';
+import 'package:biblia_e_harpa/src/screens/bible_audios_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -9,7 +9,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../components/appBarComponent.dart';
+import '../components/app_bar_component.dart';
 
 class Audiobookchaptersscreen extends StatefulWidget {
   final Book book;
@@ -72,34 +72,24 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
 
     super.dispose();
   }
-
-  // --- LÓGICA DE ARQUIVOS LOCAL ---
-
-  // 1. Define o caminho local do arquivo
   Future<String> _getLocalFilePath(String fileName) async {
-    // Em web não usamos o sistema de arquivos local
     if (kIsWeb) return '';
 
     try {
       final directory = await getApplicationDocumentsDirectory();
-      // Cria uma pasta específica para organização
       final audioDir = Directory('${directory.path}/bible_audios');
       if (!await audioDir.exists()) {
         await audioDir.create(recursive: true);
       }
-      // Sanitiza o nome do arquivo para evitar caracteres inválidos
       final safeName =
           fileName.replaceAll(RegExp(r'[^\w\s]+'), '').replaceAll(' ', '_');
       return '${audioDir.path}/$safeName.mp3';
     } catch (e) {
-      // Se o plugin/path estiver indisponível, retornamos vazia e usamos URL
       return '';
     }
   }
 
-  // 2. Verifica quais capítulos já estão baixados
   Future<void> _checkDownloadedChapters() async {
-    if (kIsWeb) return; // não verificamos arquivos locais na web
     try {
       for (int i = 0; i < widget.book.chapters.length; i++) {
         final path = await _getLocalFilePath(widget.book.chapters[i].name);
@@ -112,12 +102,9 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
           }
         }
       }
-    } catch (e) {
-      // ignore errors accessing filesystem
-    }
+    } catch (_) {}
   }
 
-  // 3. Realiza o Download
   Future<void> _downloadAudio(String url, String chapterName, int index) async {
     if (kIsWeb) {
       if (mounted) {
@@ -129,7 +116,7 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
       return;
     }
 
-    if (_isDownloading[index] == true) return; // Evita clique duplo
+    if (_isDownloading[index] == true) return;
 
     setState(() {
       _isDownloading[index] = true;
@@ -162,8 +149,6 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
       }
     }
   }
-
-  // 4. Deletar áudio (opcional, para limpar espaço)
   Future<void> _deleteAudio(String chapterName, int index) async {
     if (kIsWeb) {
       if (mounted) {
@@ -190,9 +175,7 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
           );
         }
       }
-    } catch (e) {
-      // Erro ao deletar
-    }
+    } catch (_) {}
   }
 
   Future<void> _shareAudio(AudioData audio) async {
@@ -260,7 +243,6 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
           _isCurrentlyBuffering = true;
         });
 
-        // LÓGICA HÍBRIDA: Local ou Online
         final chapterName = widget.book.chapters[originalIndex].name;
         bool usedLocal = false;
         try {
@@ -275,9 +257,7 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
               usedLocal = true;
             }
           }
-        } catch (e) {
-          // erro no acesso ao arquivo local, iremos usar URL
-        }
+        } catch (_) {}
 
         if (!usedLocal) {
           await _player.setAudioSource(
@@ -298,7 +278,6 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
     }
   }
 
-  // ... (O resto dos métodos auxiliares _filterChapters, _normalize, _playNext, etc. permanecem iguais) ...
   String _normalize(String input) {
     return input
         .toLowerCase()
@@ -474,7 +453,6 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
                               );
                             },
                           ),
-                          // AQUI ESTÁ O BOTÃO DE DOWNLOAD
                           trailing: SizedBox(
                             width: 40,
                             height: 40,
@@ -501,7 +479,6 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
                                     ),
                                     onPressed: () {
                                       if (isDownloaded) {
-                                        // Opcional: Perguntar se quer deletar
                                         _deleteAudio(
                                             chapter.name, originalIndex);
                                       } else {
@@ -535,8 +512,6 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
         ? widget.book.chapters[_currentIndex!].name
         : "Selecione um capítulo";
     final isPlaying = _player.playing;
-
-    // Verifica se o capitulo ATUAL está baixado (para mostrar ícone no player grande)
     final bool isCurrentDownloaded =
         _currentIndex != null && _downloadedChapters.contains(_currentIndex);
 
@@ -550,7 +525,6 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
       ),
       body: Stack(
           children: [
-          // --- ÁREA DO PLAYER ---
           Positioned.fill(
             child: Center(
               child: SingleChildScrollView(
@@ -561,7 +535,6 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const SizedBox(height: 20),
-                      // Ícone Grande
                       Stack(
                         alignment: Alignment.topRight,
                         children: [
@@ -585,7 +558,6 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
                               color: Theme.of(context).colorScheme.secondary,
                             ),
                           ),
-                          // Indicador visual se está tocando offline
                           if (isCurrentDownloaded)
                             Padding(
                               padding: const EdgeInsets.all(12.0),
@@ -604,7 +576,6 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
                         ],
                       ),
                       const SizedBox(height: 30),
-                      // ... (Nome, Slider e Controles permanecem IGUAIS) ...
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
@@ -677,7 +648,6 @@ class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
                           ],
                         ),
                       const SizedBox(height: 30),
-                      // Slider e Controles (código repetido para brevidade, mantenha o que você já tem)
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24.0),
                         child: Column(

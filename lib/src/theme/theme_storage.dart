@@ -1,4 +1,4 @@
-import 'package:biblia_e_harpa/src/theme/customTheme.dart';
+import 'package:biblia_e_harpa/src/theme/custom_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

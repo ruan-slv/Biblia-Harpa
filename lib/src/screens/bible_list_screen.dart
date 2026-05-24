@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import 'package:biblia_e_harpa/src/components/appBarComponent.dart';
+import 'package:biblia_e_harpa/src/components/app_bar_component.dart';
 import 'package:biblia_e_harpa/src/config.dart';
-import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
-import 'package:biblia_e_harpa/src/keys/biblekey.dart';
+import 'package:biblia_e_harpa/src/controllers/bible_controller.dart';
+import 'package:biblia_e_harpa/src/controllers/font_size_controller.dart';
+import 'package:biblia_e_harpa/src/keys/bible_key.dart';
 import 'package:biblia_e_harpa/src/screens/chapter_list_screen.dart';
 import 'package:biblia_e_harpa/src/screens/text_bible_screen.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ class _BibleListState extends State<BibleList> {
   List<String> filteredBible = [];
   final TextEditingController _searchController = TextEditingController();
   String _jsonPath = 'assets/json/acf.json';
+  final BibleController _bibleController = BibleController();
 
   List<Map<String, dynamic>> _audioBooks = [];
 
@@ -228,6 +230,27 @@ class _BibleListState extends State<BibleList> {
                               color: Theme.of(context).colorScheme.secondary,
                               fontSize: fontSize,
                             ),
+                          );
+                        },
+                      ),
+                      trailing: ValueListenableBuilder<List<String>>(
+                        valueListenable: _bibleController.textosLidosNotifier,
+                        builder: (context, lidos, _) {
+                          final bool hasAnyReadChapter = lidos.any(
+                            (id) =>
+                                id.startsWith("${bookName}_") ||
+                                id.startsWith("${bookName} "),
+                          );
+                          return Icon(
+                            hasAnyReadChapter
+                                ? Icons.check_circle
+                                : Icons.check_circle_outline,
+                            color: hasAnyReadChapter
+                                ? Colors.green
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .secondary
+                                    .withValues(alpha: 0.35),
                           );
                         },
                       ),

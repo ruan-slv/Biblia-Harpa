@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
-import 'package:biblia_e_harpa/src/models/audio/dataAudioModel.dart';
+import 'package:biblia_e_harpa/src/controllers/font_size_controller.dart';
+import 'package:biblia_e_harpa/src/models/data_audio_model.dart';
 import 'package:biblia_e_harpa/src/screens/harpa_file_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../components/appBarComponent.dart';
+import '../components/app_bar_component.dart';
 
 class HarpaAudioScreen extends StatefulWidget {
   final bool isOffline;
@@ -61,8 +61,6 @@ class _HarpaAudioScreenState extends State<HarpaAudioScreen> {
       _filtrarHarpa = _allHarpas.where((audio) => _normalize(audio.titulo).contains(_normalize(query))).toList();
     });
   }
-
-  // Retorna o caminho padrão para um hino da harpa
   Future<String> _getLocalFilePath(String hinoTitle) async {
     final directory = await getApplicationDocumentsDirectory();
     final audioDir = Directory('${directory.path}/harpa_audios');
@@ -84,7 +82,6 @@ class _HarpaAudioScreenState extends State<HarpaAudioScreen> {
       final List data = jsonData["audios"];
       List<DataAudioModel> harpaAudio = data.map((audio) => DataAudioModel.fromJson(audio)).toList();
 
-      // LÓGICA DE FILTRO OFFLINE
       if (widget.isOffline) {
         List<DataAudioModel> offlineHinos = [];
         for (var hino in harpaAudio) {

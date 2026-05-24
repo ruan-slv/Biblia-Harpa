@@ -1,9 +1,9 @@
-import 'package:biblia_e_harpa/src/screens/bibleAudioWrapper.dart';
-import 'package:biblia_e_harpa/src/screens/harpaAudioWrapper.dart';
-import 'package:biblia_e_harpa/src/screens/playlistScreen.dart';
+import 'package:biblia_e_harpa/src/screens/bible_audio_wrapper.dart';
+import 'package:biblia_e_harpa/src/screens/harpa_audio_wrapper.dart';
+import 'package:biblia_e_harpa/src/screens/playlist_screen.dart';
 import 'package:flutter/material.dart';
 
-import '../components/appBarComponent.dart';
+import '../components/app_bar_component.dart';
 
 class Homeaudioscreen extends StatefulWidget {
   const Homeaudioscreen({super.key});

@@ -1,16 +1,13 @@
-// lib/src/screens/bibleAudiosScreen.dart
-
 import 'dart:convert';
 import 'dart:io';
-import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
-import 'package:biblia_e_harpa/src/screens/audioBookChaptersScreen.dart';
+import 'package:biblia_e_harpa/src/controllers/font_size_controller.dart';
+import 'package:biblia_e_harpa/src/screens/audio_book_chapters_screen.dart';
 import 'package:flutter/material.dart';
 import "package:flutter/services.dart" show rootBundle;
 import 'package:path_provider/path_provider.dart';
 
-import '../components/appBarComponent.dart';
+import '../components/app_bar_component.dart';
 
-// ... (Classes AudioData e Book permanecem as mesmas) ...
 class AudioData {
   final String name;
   final String url;
@@ -84,7 +81,6 @@ class _BibleaudiosscreenState extends State<Bibleaudiosscreen> {
   void _filterBooks() {
     final query = _searchController.text;
     setState(() {
-      // A lista base para a filtragem já é a correta (ou todos os livros, ou só os offline)
       _filteredBooks = _allBooks
           .where(
             (book) => _normalize(book.title).contains(_normalize(query)),
@@ -92,8 +88,6 @@ class _BibleaudiosscreenState extends State<Bibleaudiosscreen> {
           .toList();
     });
   }
-
-  // >>>>>>>>>>>>>> MÉTODO _fetchAudios MODIFICADO <<<<<<<<<<<<<<<<
   Future<void> _fetchAudios() async {
     setState(() {
       _isLoading = true;
@@ -106,7 +100,6 @@ class _BibleaudiosscreenState extends State<Bibleaudiosscreen> {
       final List data = json.decode(response);
       List<Book> books = data.map((book) => Book.fromJson(book)).toList();
 
-      // Se estiver no modo offline, filtra os livros antes de exibi-los
       if (widget.isOffline) {
         List<Book> offlineBooks = [];
         for (var book in books) {
@@ -115,17 +108,15 @@ class _BibleaudiosscreenState extends State<Bibleaudiosscreen> {
             offlineBooks.add(book);
           }
         }
-        // A lista principal (_allBooks) conterá apenas os livros com downloads
         books = offlineBooks;
       }
 
       if (mounted) {
         setState(() {
           _allBooks = books;
-          _filteredBooks = books; // Inicia a lista filtrada com o mesmo conteúdo
+          _filteredBooks = books;
           _isLoading = false;
 
-          // Se estiver offline e não encontrar nenhum áudio baixado, mostra uma mensagem
           if (widget.isOffline && books.isEmpty) {
             _error = "Nenhum áudio foi baixado para ser acessado offline.";
           }
@@ -141,9 +132,6 @@ class _BibleaudiosscreenState extends State<Bibleaudiosscreen> {
     }
   }
 
-  // >>>>>>>>>>>>>> NOVOS MÉTODOS AUXILIARES <<<<<<<<<<<<<<<<
-
-  // Retorna o caminho padrão para um arquivo de áudio
   Future<String> _getLocalFilePath(String fileName) async {
     final directory = await getApplicationDocumentsDirectory();
     final audioDir = Directory('${directory.path}/bible_audios');
@@ -154,19 +142,15 @@ class _BibleaudiosscreenState extends State<Bibleaudiosscreen> {
     return '${audioDir.path}/$safeName.mp3';
   }
 
-  // Verifica se um livro específico tem pelo menos um capítulo baixado
   Future<bool> _checkIfBookHasDownloads(Book book) async {
     for (var chapter in book.chapters) {
       final path = await _getLocalFilePath(chapter.name);
       if (await File(path).exists()) {
-        return true; // Encontrou um, já pode retornar true
+        return true;
       }
     }
-    return false; // Não encontrou nenhum capítulo baixado para este livro
+    return false;
   }
-
-  // --- O resto do código permanece o mesmo ---
-
   PreferredSizeWidget? _showAppBarIfOffline() {
     if (widget.isOffline) {
       return CustomAppBar(

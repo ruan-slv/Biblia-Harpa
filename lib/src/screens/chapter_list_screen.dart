@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'package:biblia_e_harpa/src/components/appBarComponent.dart';
+import 'package:biblia_e_harpa/src/components/app_bar_component.dart';
 import 'package:biblia_e_harpa/src/controllers/bible_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:biblia_e_harpa/src/screens/text_bible_screen.dart';
-import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
+import 'package:biblia_e_harpa/src/controllers/font_size_controller.dart';
 
 class ChapterListScreen extends StatefulWidget {
   final String name;

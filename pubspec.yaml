@@ -28,6 +28,7 @@ dependencies:
   audio_session: ^0.1.18
   connectivity_plus: ^6.0.3
   sqflite: ^2.4.2
+  sqflite_common_ffi: ^2.3.4+4
   path: ^1.9.1
   provider: ^6.1.5+1
 
@@ -47,11 +48,11 @@ flutter:
     - assets/json/acf.json
     - assets/json/aa.json
     - assets/json/nvi.json
-    - assets/json/devocional.json
     - assets/json/newDevocionalModel.json
     - assets/json/palavraDoDia.json
     - assets/json/audios.json
     - assets/json/audiosHarpa.json
+    - assets/json/quizz.json
 
 flutter_icons:
   image_path: "assets/images/newLogoIcon.png"

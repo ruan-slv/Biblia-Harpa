@@ -1,8 +1,8 @@
-import 'package:biblia_e_harpa/src/components/appBarComponent.dart';
+import 'package:biblia_e_harpa/src/components/app_bar_component.dart';
 import 'package:biblia_e_harpa/src/components/bottombar.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:biblia_e_harpa/src/controllers/bible_controller.dart';
-import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
+import 'package:biblia_e_harpa/src/controllers/font_size_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -176,6 +176,23 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
     }
   }
 
+  Future<void> _toggleCurrentChapterRead() async {
+    final newId = "${widget.bookName}_$currentChapterNumber";
+    final legacyId = "${widget.bookName} $currentChapterNumber";
+
+    if (_bibleController.isRead(legacyId) && !_bibleController.isRead(newId)) {
+      await _bibleController.unsaveAsRead(legacyId);
+      await _bibleController.saveAsRead(newId);
+      return;
+    }
+
+    if (_bibleController.isRead(newId) && _bibleController.isRead(legacyId)) {
+      await _bibleController.unsaveAsRead(legacyId);
+    }
+
+    await _bibleController.toggleReadStatus(newId);
+  }
+
   void _showSelectionLimitWarning() {
     if (ModalRoute.of(context)?.isCurrent != true) return;
 
@@ -344,14 +361,15 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
       );
     }
 
-    final chapterId = "${widget.bookName} $currentChapterNumber";
+    final chapterId = "${widget.bookName}_$currentChapterNumber";
+    final chapterTitle = "${widget.bookName} $currentChapterNumber";
     final bool noFilterResults = _fillterKeyWordController.text.isNotEmpty &&
         _filteredVerseIndices.isEmpty;
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: CustomAppBar(
-        title: chapterId,
+        title: chapterTitle,
         centerTitle: false,
         automaticallyImplyLeading: true,
         actions: [
@@ -404,7 +422,7 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
                   SharePlus.instance.share(
                     ShareParams(
                       text: chapterText,
-                      subject: chapterId,
+                      subject: chapterTitle,
                     ),
                   );
                 }
@@ -421,14 +439,15 @@ class _TextbiblescreenState extends State<Textbiblescreen> {
       bottomNavigationBar: ValueListenableBuilder<List<String>>(
         valueListenable: _bibleController.textosLidosNotifier,
         builder: (context, textosLidos, _) {
-          final bool isRead = textosLidos.contains(chapterId);
+          final bool isRead =
+              textosLidos.contains(chapterId) || textosLidos.contains(chapterTitle);
           return BottomBar(
             canGoBack: currentChapterNumber > 1,
             canGoNext: currentChapterNumber < widget.allBookChapters.length,
             onPrevious: _previousChapter,
             onNext: _nextChapter,
             topChild: InkWell(
-              onTap: () => _bibleController.toggleReadStatus(chapterId),
+              onTap: _toggleCurrentChapterRead,
               borderRadius: BorderRadius.circular(20),
               child: Ink(
                 padding: const EdgeInsets.symmetric(

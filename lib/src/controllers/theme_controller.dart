@@ -7,7 +7,6 @@ class ThemeController {
 
   static const _themeKey = 'theme_mode';
 
-  // Chame isso no início do app para carregar o tema salvo
   static Future<void> loadTheme() async {
     final prefs = await SharedPreferences.getInstance();
     final savedTheme = prefs.getString(_themeKey);
@@ -17,11 +16,10 @@ class ThemeController {
     } else if (savedTheme == 'light') {
       themeNotifier.value = ThemeMode.light;
     } else {
-      themeNotifier.value = ThemeMode.light; // default
+      themeNotifier.value = ThemeMode.light;
     }
   }
 
-  // Alterna e salva
   static Future<void> toggleTheme() async {
     final prefs = await SharedPreferences.getInstance();
 

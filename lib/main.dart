@@ -1,8 +1,9 @@
 import 'package:audio_service/audio_service.dart';
-import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
+import 'package:biblia_e_harpa/src/controllers/font_size_controller.dart';
 import 'package:biblia_e_harpa/src/controllers/theme_controller.dart';
+import 'package:biblia_e_harpa/src/models/music.dart';
+import 'package:biblia_e_harpa/src/models/quiz_hive_model.dart';
 import 'package:biblia_e_harpa/src/screens/initial_screen.dart';
-import 'package:biblia_e_harpa/src/models/audio/music.dart';
 import 'package:biblia_e_harpa/src/theme/theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -21,19 +22,20 @@ void main() async {
   JustAudioMediaKit.ensureInitialized(windows: true);
 
   if (!kIsWeb) {
-    final dir = await getApplicationDocumentsDirectory();
-    //Hive.init(dir.path);
+    await getApplicationDocumentsDirectory();
   }
 
   Hive.registerAdapter(MusicAdapter());
+  Hive.registerAdapter(QuizOptionHiveAdapter());
+  Hive.registerAdapter(QuizQuestionHiveAdapter());
   await Hive.openBox<Music>("musicas");
+  await Hive.openBox<QuizQuestionHive>('quiz');
 
   if (!kIsWeb) {
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   }
 
   await ThemeController.loadTheme();
-  //audioHandler = await initAudioHandler();
 
   runApp(const MyApp());
 }
@@ -65,87 +67,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-/*
-import 'package:biblia_e_harpa/src/provider/ola_provider.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (_) => OlaProvider(),
-      child: const MyApp(),
-    ),
-  );
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: const HomePage(),
-    );
-  }
-}
-
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  final controller = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    Future.microtask(() =>
-        Provider.of<OlaProvider>(context, listen: false).carregar());
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final provider = Provider.of<OlaProvider>(context);
-
-    return Scaffold(
-      appBar: AppBar(title: const Text('SQLite + Provider')),
-      body: Column(
-        children: [
-          TextField(
-            controller: controller,
-            decoration: const InputDecoration(labelText: 'Digite algo'),
-          ),
-
-          ElevatedButton(
-            onPressed: () {
-              provider.adicionar(controller.text);
-              controller.clear();
-            },
-            child: const Text('Adicionar'),
-          ),
-
-          ElevatedButton(
-            onPressed: provider.limpar,
-            child: const Text('Limpar'),
-          ),
-
-          Expanded(
-            child: ListView.builder(
-              itemCount: provider.mensagens.length,
-              itemBuilder: (_, index) {
-                return ListTile(
-                  title: Text(provider.mensagens[index]),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}*/

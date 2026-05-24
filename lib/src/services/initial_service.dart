@@ -1,9 +1,3 @@
-/**
- * Modify: 17/04/2026 ;
- * Ruan Gustavo Soares da Silva ;
- * Files service into initial screen ;
- */
-
 import 'dart:convert';
 import 'dart:math';
 import 'package:biblia_e_harpa/src/models/initial_model.dart';
@@ -11,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Service into Initial screen ;
 class InitialService {
 
   Future<(DayWord?, DateTime?)> loadDayWord(BuildContext context) async {

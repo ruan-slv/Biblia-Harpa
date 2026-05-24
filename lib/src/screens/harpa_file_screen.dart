@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-import '../components/appBarComponent.dart';
-import '../models/audio/dataAudioModel.dart';
+import '../components/app_bar_component.dart';
+import '../models/data_audio_model.dart';
 import 'package:dio/dio.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
@@ -24,16 +24,13 @@ class Harpafilescreen extends StatefulWidget {
 class _HarpafilescreenState extends State<Harpafilescreen> {
   final AudioPlayer _player = AudioPlayer();
 
-  // Variáveis de controle da lista
   late int _currentIndex;
   late DataAudioModel _currentHarpa;
 
-  // Estado do Player
   PlayerState? _playerState;
   Duration _currentPosition = Duration.zero;
   Duration _audioDuration = Duration.zero;
 
-  // Controle de Download
   bool _isDownloading = false;
   bool _isDownloaded = false;
 
@@ -41,17 +38,14 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
   void initState() {
     super.initState();
 
-    // Inicializa com os dados passados
     _currentIndex = widget.initialIndex;
     _currentHarpa = widget.allHarpas[_currentIndex];
 
-    // Configura listeners
     _player.playerStateStream.listen((state) {
       if (!mounted) return;
       setState(() {
         _playerState = state;
       });
-      // Se terminar, toca o próximo automaticamente
       if (state.processingState == ProcessingState.completed) {
         _playNext();
       }
@@ -65,7 +59,6 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
       if (mounted) setState(() => _audioDuration = d ?? Duration.zero);
     });
 
-    // Verifica downloads e inicia o play
     _checkIfDownloaded();
     _loadAndPlayAudio();
   }
@@ -76,21 +69,16 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
     super.dispose();
   }
 
-  // --- LÓGICA DE ARQUIVOS LOCAL ---
-
-  // 1. Define o caminho local do arquivo
   Future<String> _getLocalFilePath(String fileName) async {
     final directory = await getApplicationDocumentsDirectory();
     final audioDir = Directory('${directory.path}/harpa_audios');
     if (!await audioDir.exists()) {
       await audioDir.create(recursive: true);
     }
-    // Limpeza rigorosa do nome do arquivo
     final safeName = fileName.replaceAll(RegExp(r'[^\w\s]+'), '').replaceAll(' ', '_');
     return '${audioDir.path}/$safeName.mp3';
   }
 
-  // 2. Verifica se o hino atual já está baixado
   Future<void> _checkIfDownloaded() async {
     final path = await _getLocalFilePath(_currentHarpa.titulo);
     final exists = await File(path).exists();
@@ -100,8 +88,6 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
       });
     }
   }
-
-  // 3. Realiza o Download
   Future<void> _downloadAudio() async {
     if (_isDownloading) return;
 
@@ -113,7 +99,6 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
       final dio = Dio();
       final savePath = await _getLocalFilePath(_currentHarpa.titulo);
 
-      // Garante URL válida para download direto (Google Drive fix)
       String url = _currentHarpa.hinoURL;
       if (url.contains('drive.google.com') && !url.contains('&confirm=')) {
         if(url.contains('?')) {
@@ -146,7 +131,6 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
     }
   }
 
-  // 4. Deletar áudio
   Future<void> _deleteAudio() async {
     try {
       final path = await _getLocalFilePath(_currentHarpa.titulo);
@@ -162,9 +146,7 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
           );
         }
       }
-    } catch (e) {
-      // Erro silencioso ou log
-    }
+    } catch (_) {}
   }
 
   Future<void> _loadAndPlayAudio() async {
@@ -181,7 +163,6 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
       final localFile = File(path);
       final hasLocal = await localFile.exists();
 
-      // --- OFFLINE: só toca o que está baixado ---
       if (!hasInternet) {
         if (hasLocal) {
           await _player.setAudioSource(AudioSource.file(path));
@@ -191,11 +172,8 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
           throw Exception("Sem internet e sem arquivo offline.");
         }
       }
-
-      // --- ONLINE MODE ---
       String url = _currentHarpa.hinoURL;
 
-      // Correção Google Drive — sempre transformar em URL de download direto
       if (url.contains("drive.google.com")) {
         final idMatch = RegExp(r"/d/([^/]+)/").firstMatch(url);
         if (idMatch != null) {
@@ -207,7 +185,6 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
       final onlineSource = AudioSource.uri(
         Uri.parse(url),
         headers: {
-          // User-Agent antigo que funcionava
           'User-Agent':
           'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36'
         },
@@ -217,7 +194,6 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
       await _player.play();
       return;
     } catch (e) {
-      // --- FALLBACK: tentar baixar e tocar local ---
       try {
         final dio = Dio();
         dio.options.headers = {
@@ -244,14 +220,12 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
     }
   }
 
-  // --- FUNÇÕES DE NAVEGAÇÃO ---
   void _playNext() {
     if (_currentIndex < widget.allHarpas.length - 1) {
       setState(() {
         _currentIndex++;
         _currentHarpa = widget.allHarpas[_currentIndex];
       });
-      // Checa se o novo hino tem download e toca
       _checkIfDownloaded();
       _loadAndPlayAudio();
     }
@@ -326,7 +300,6 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // --- GRUPO SUPERIOR ---
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -370,7 +343,6 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
                 ],
               ),
 
-              // --- GRUPO INFERIOR ---
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -401,7 +373,6 @@ class _HarpafilescreenState extends State<Harpafilescreen> {
 
                   const SizedBox(height: 20),
 
-                  // --- CONTROLES DE REPRODUÇÃO ---
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     crossAxisAlignment: CrossAxisAlignment.center,

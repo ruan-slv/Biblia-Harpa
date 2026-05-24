@@ -1,17 +1,16 @@
-import 'package:biblia_e_harpa/src/screens/bibleAudiosScreen.dart';
+import 'package:biblia_e_harpa/src/screens/harpa_audio_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import '../controllers/font_size_controller.dart';
 
-import '../controllers/fontSizeController.dart';
-
-class BibleAudioWrapper extends StatefulWidget {
-  const BibleAudioWrapper({super.key});
+class HarpaAudioWrapper extends StatefulWidget {
+  const HarpaAudioWrapper({super.key});
 
   @override
-  State<BibleAudioWrapper> createState() => _BibleAudioWrapperState();
+  State<HarpaAudioWrapper> createState() => _HarpaAudioWrapperState();
 }
 
-class _BibleAudioWrapperState extends State<BibleAudioWrapper> {
+class _HarpaAudioWrapperState extends State<HarpaAudioWrapper> {
   late final Future<List<ConnectivityResult>> _connectivityFuture;
 
   @override
@@ -24,34 +23,24 @@ class _BibleAudioWrapperState extends State<BibleAudioWrapper> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      // Opcional: Se você quiser uma AppBar nesta tela de carregamento/erro
       body: FutureBuilder<List<ConnectivityResult>>(
         future: _connectivityFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-
           if (snapshot.hasError) {
             return _buildErrorWidget(
                 context, "Erro ao verificar a conexão. Tente novamente.");
           }
 
-          if (snapshot.hasData) {
-            final connectivityResult = snapshot.data!;
-            // Se TEM internet
-            if (!connectivityResult.contains(ConnectivityResult.none)) {
-              // Aqui retornamos a tela principal.
-              // OBS: A Bibleaudiosscreen provavelmente já tem seu próprio Scaffold,
-              // então ela vai cobrir o Scaffold atual, o que é normal.
-              return Bibleaudiosscreen(isOffline: false);
-            }
+          if (snapshot.hasData && !snapshot.data!.contains(ConnectivityResult.none)) {
+            return const HarpaAudioScreen(isOffline: false);
           }
 
-          // Se NÃO TEM internet
           return _buildErrorWidget(
             context,
-            "Sem conexão com a internet. Conecte-se para baixar novos áudios ou acesse seus downloads.",
+            "Sem conexão com a internet. Conecte-se para baixar novos hinos ou acesse seus downloads.",
             showOfflineButton: true,
           );
         },
@@ -59,8 +48,7 @@ class _BibleAudioWrapperState extends State<BibleAudioWrapper> {
     );
   }
 
-  Widget _buildErrorWidget(BuildContext context, String message,
-      {bool showOfflineButton = false}) {
+  Widget _buildErrorWidget(BuildContext context, String message, {bool showOfflineButton = false}) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -68,7 +56,7 @@ class _BibleAudioWrapperState extends State<BibleAudioWrapper> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.wifi_off,
+              Icons.wifi_off_rounded,
               size: 60,
               color: Theme.of(context).colorScheme.secondary.withValues(alpha:0.7),
             ),
@@ -93,19 +81,19 @@ class _BibleAudioWrapperState extends State<BibleAudioWrapper> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => Bibleaudiosscreen(isOffline: true),
+                      builder: (context) => const HarpaAudioScreen(isOffline: true),
                     ),
                   );
                 },
                 icon: Icon(
-                  Icons.offline_pin,
+                  Icons.download_done_rounded,
                   color: Theme.of(context).colorScheme.secondary,
                 ),
                 label: ValueListenableBuilder<double>(
                   valueListenable: FontSizeController.fontSizeNotifier,
                   builder: (context, fontSize, _) {
                     return Text(
-                      "Áudios Baixados",
+                      "Hinos Baixados",
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.secondary,
                         fontSize: fontSize * 0.9,

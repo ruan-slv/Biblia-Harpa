@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
+import 'package:biblia_e_harpa/src/controllers/font_size_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:just_audio/just_audio.dart';
@@ -7,8 +7,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:watcher/watcher.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../models/audio/music.dart';
-import '../services/audio/musicService.dart';
+import '../models/music.dart';
+import '../services/music_service.dart';
 
 class PlaylistScreen extends StatefulWidget {
   const PlaylistScreen({super.key});

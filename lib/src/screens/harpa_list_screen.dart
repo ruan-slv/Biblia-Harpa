@@ -1,10 +1,10 @@
 import 'dart:convert';
-import "package:biblia_e_harpa/src/components/appBarComponent.dart";
+import "package:biblia_e_harpa/src/components/app_bar_component.dart";
 import "package:biblia_e_harpa/src/config.dart";
 import "package:biblia_e_harpa/src/screens/text_harp_screen.dart";
-import "package:biblia_e_harpa/src/controllers/fontSizeController.dart";
-import "package:biblia_e_harpa/src/keys/harpkey.dart";
-import 'package:biblia_e_harpa/src/models/audio/dataAudioModel.dart';
+import "package:biblia_e_harpa/src/controllers/font_size_controller.dart";
+import "package:biblia_e_harpa/src/keys/harp_key.dart";
+import 'package:biblia_e_harpa/src/models/data_audio_model.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/services.dart';
 import "package:shared_preferences/shared_preferences.dart";
@@ -32,20 +32,16 @@ class _HarpaListState extends State<HarpaList>
     filteredHarps = harps;
     _searchController.addListener(_filterHarps);
     _loadFavorites();
-
-    // Carrega os áudios usando a lógica do seu arquivo HarpaAudioScreen
     _fetchAudioHarpa();
 
     _tabController = TabController(length: 2, vsync: this);
   }
 
-  // Lógica trazida da sua HarpaAudioScreen
   Future<void> _fetchAudioHarpa() async {
     try {
       final String response = await rootBundle.loadString("assets/json/audiosHarpa.json");
       final Map<String, dynamic> jsonData = json.decode(response);
 
-      // Acessa a chave "audios" conforme seu arquivo original
       final List data = jsonData["audios"];
 
       if (mounted) {
@@ -53,9 +49,7 @@ class _HarpaListState extends State<HarpaList>
           _audioList = data.map((audio) => DataAudioModel.fromJson(audio)).toList();
         });
       }
-    } catch (e) {
-      // print("Erro ao carregar audiosHarpa.json: $e");
-    }
+    } catch (_) {}
   }
 
   Future<void> _loadFavorites() async {
@@ -100,8 +94,6 @@ class _HarpaListState extends State<HarpaList>
           .toList();
     });
   }
-
-  // Extrai o número do hino (ex: "1 - Chuvas..." retorna 1)
   int _getHymnNumber(String hinoString) {
     try {
       final match = RegExp(r'^(\d+)').firstMatch(hinoString.trim());

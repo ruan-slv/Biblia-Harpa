@@ -1,24 +1,22 @@
-// lib/src/screens/harpaAudioWrapper.dart
-
-import 'package:biblia_e_harpa/src/screens/harpaAudioScreen.dart';
+import 'package:biblia_e_harpa/src/screens/bible_audios_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import '../controllers/fontSizeController.dart';
 
-class HarpaAudioWrapper extends StatefulWidget {
-  const HarpaAudioWrapper({super.key});
+import '../controllers/font_size_controller.dart';
+
+class BibleAudioWrapper extends StatefulWidget {
+  const BibleAudioWrapper({super.key});
 
   @override
-  State<HarpaAudioWrapper> createState() => _HarpaAudioWrapperState();
+  State<BibleAudioWrapper> createState() => _BibleAudioWrapperState();
 }
 
-class _HarpaAudioWrapperState extends State<HarpaAudioWrapper> {
+class _BibleAudioWrapperState extends State<BibleAudioWrapper> {
   late final Future<List<ConnectivityResult>> _connectivityFuture;
 
   @override
   void initState() {
     super.initState();
-    // Inicia a verificação de conectividade
     _connectivityFuture = Connectivity().checkConnectivity();
   }
 
@@ -29,27 +27,25 @@ class _HarpaAudioWrapperState extends State<HarpaAudioWrapper> {
       body: FutureBuilder<List<ConnectivityResult>>(
         future: _connectivityFuture,
         builder: (context, snapshot) {
-          // 1. Enquanto verifica, mostra um progresso
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          // 2. Se a verificação falhou
           if (snapshot.hasError) {
             return _buildErrorWidget(
                 context, "Erro ao verificar a conexão. Tente novamente.");
           }
 
-          // 3. Se a verificação foi concluída e TEM internet
-          if (snapshot.hasData && !snapshot.data!.contains(ConnectivityResult.none)) {
-            // Chama a tela da Harpa no modo ONLINE
-            return const HarpaAudioScreen(isOffline: false);
+          if (snapshot.hasData) {
+            final connectivityResult = snapshot.data!;
+            if (!connectivityResult.contains(ConnectivityResult.none)) {
+              return Bibleaudiosscreen(isOffline: false);
+            }
           }
 
-          // 4. Se não tem conexão, mostra a tela de erro com o botão de downloads
           return _buildErrorWidget(
             context,
-            "Sem conexão com a internet. Conecte-se para baixar novos hinos ou acesse seus downloads.",
+            "Sem conexão com a internet. Conecte-se para baixar novos áudios ou acesse seus downloads.",
             showOfflineButton: true,
           );
         },
@@ -57,7 +53,8 @@ class _HarpaAudioWrapperState extends State<HarpaAudioWrapper> {
     );
   }
 
-  Widget _buildErrorWidget(BuildContext context, String message, {bool showOfflineButton = false}) {
+  Widget _buildErrorWidget(BuildContext context, String message,
+      {bool showOfflineButton = false}) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -65,7 +62,7 @@ class _HarpaAudioWrapperState extends State<HarpaAudioWrapper> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.wifi_off_rounded,
+              Icons.wifi_off,
               size: 60,
               color: Theme.of(context).colorScheme.secondary.withValues(alpha:0.7),
             ),
@@ -83,28 +80,26 @@ class _HarpaAudioWrapperState extends State<HarpaAudioWrapper> {
                 );
               },
             ),
-            // Se showOfflineButton for true, mostra o botão
             if (showOfflineButton) ...[
               const SizedBox(height: 30),
               ElevatedButton.icon(
                 onPressed: () {
-                  // Navega para a tela da Harpa no modo OFFLINE
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const HarpaAudioScreen(isOffline: true),
+                      builder: (context) => Bibleaudiosscreen(isOffline: true),
                     ),
                   );
                 },
                 icon: Icon(
-                  Icons.download_done_rounded,
+                  Icons.offline_pin,
                   color: Theme.of(context).colorScheme.secondary,
                 ),
                 label: ValueListenableBuilder<double>(
                   valueListenable: FontSizeController.fontSizeNotifier,
                   builder: (context, fontSize, _) {
                     return Text(
-                      "Hinos Baixados",
+                      "Áudios Baixados",
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.secondary,
                         fontSize: fontSize * 0.9,
