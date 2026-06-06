@@ -1,13 +1,12 @@
 plugins {
     id "com.android.application"
-    id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
 }
 
 android {
     namespace = "com.bibleAplication.app"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "25.1.8937393"
+    ndkVersion = "28.2.13676358"
 
     packagingOptions {
         jniLibs {
@@ -72,5 +71,5 @@ dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
 
     // (opcional, mas recomendado)
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
 }
