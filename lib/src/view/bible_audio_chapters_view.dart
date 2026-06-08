@@ -97,6 +97,9 @@ class _AudioBookChaptersView extends StatelessWidget {
                                   await SharePlus.instance.share(
                                     ShareParams(
                                       text: 'Ouça este trecho da Bíblia: ${chapter.name} - ${book.title}',
+                                      files: [
+                                        XFile(path),
+                                      ],
                                     ),
                                   );
                                 } catch (_) {
