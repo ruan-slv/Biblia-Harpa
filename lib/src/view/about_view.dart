@@ -9,15 +9,9 @@ class AboutView extends StatelessWidget {
   const AboutView({super.key});
 
   static const String _aboutText = '''
-Este app surgiu em dezembro de 2024 e publicado na playstore em junho de 2025, criado por um estudante de tecnologia que frequentemente enfrentava problemas ao utilizar aplicativos biblicos durante a rotina por conta de muitos anúncios e produtos pagos que chegavam em momentos importantes.
+Este aplicativo nasceu em dezembro de 2024 e foi publicado na Google Play Store em junho de 2025. Ele foi criado por um estudante de tecnologia que enfrentava interrupções ao usar aplicativos bíblicos em sua rotina, devido ao excesso de anúncios e ofertas de produtos pagos em momentos importantes.
 
-Como forma de contornar esta situação foi criado este app, onde foi pensado em fornecer um executável com diversas ferramentas improvisadas a fim de reduzir custo e permitir que seja disponibilizado um aplicativo sincero, onde possuem poucas versões de bíblia e somente uma versão de áudio entre outros, porém disponibilizando ao mesmo tempo um ambiente onde é prezado pelo momento de leitura de conteúdos sagrados.
-
-Nesta atualização de Abril será removida a área de doações, pois com muito esforço e apoio de outros usuários deste aplicativo, conseguimos cobrir o custo ao decorrer deste projeto e o desenvolvimento será continuado de forma voluntária.
-
-Este é um aplicativo simples, mas entregue de coração ao evangelho de Deus.
-
-Somente um aviso: Nem todas as sugestões dadas pelos usuários serão possível inserir no app, mas faremos o melhor possível para que gostem deste projeto. Amém!
+Como forma de contornar essa situação, este app foi desenvolvido para oferecer uma experiência simples, funcional e totalmente gratuita. O foco principal é otimizar os custos de manutenção para garantir um espaço tranquilo, focado exclusivamente na leitura e reflexão de conteúdos sagrados. Por ser um projeto independente e focado na simplicidade, ele conta atualmente com poucas versões da Bíblia e apenas uma opção de áudio.
 ''';
 
   @override

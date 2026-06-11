@@ -11,11 +11,11 @@ class ProposalsView extends StatelessWidget {
   static const String _proposalText = '''
 A proposta principal deste aplicativo é oferecer um ambiente amigável para leitura e apoio devocional, sem anúncios e sem produtos pagos que atrapalhem momentos importantes de reflexão, estudo e comunhão.
 
-Este projeto segue com desenvolvimento voluntário, sem rede financeira fixa e sem apoio externo permanente. Ainda assim, a intenção é continuar melhorando o aplicativo de forma responsável, buscando alcançar o máximo possível de pessoas com uma experiência simples, respeitosa e funcional.
+Este projeto segue com desenvolvimento voluntário e sem fins lucrativos. Ainda assim, a intenção é continuar melhorando o aplicativo de forma responsável, buscando alcançar o máximo possível de pessoas com uma experiência simples, respeitosa e funcional.
 
-As melhorias serão entregues por atualização, sempre com foco em estabilidade, utilidade prática e cuidado com quem utiliza o app no dia a dia. A partir desta atualização de setembro, o número de atualizações anuais será reduzido para uma por ano, evitando sobrecarga no desenvolvimento e permitindo mais atenção à otimização e à segurança, especialmente em aparelhos antigos, que representam parte importante dos usuários.
+Além do Android, a intenção é fornecer versões multiplataforma (incluindo sistemas de desktop e iOS), tornando a ferramenta disponível onde você preferir estudar.
 
-Este aplicativo também foi desenvolvido como parte de aprendizado e pesquisa por um estudante de Sistemas de Informação, unindo estudo técnico com a intenção de entregar uma ferramenta acessível e útil para o público cristão.
+Para viabilizar essas mudanças de forma sustentável, a frequência de atualizações será organizada em duas edições anuais. Esse equilíbrio entre o tempo de desenvolvimento e a complexidade do app evita a sobrecarga na programação e permite mais atenção à otimização e à segurança, especialmente em aparelhos antigos, que representam 1/3 dos usuários.
 ''';
 
   @override
