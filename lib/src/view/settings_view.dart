@@ -1,6 +1,7 @@
 import 'package:biblia_e_harpa/src/view/component/app_section_card.dart';
 import 'package:biblia_e_harpa/src/view_model/settings_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -18,12 +19,27 @@ class _SettingsContent extends StatelessWidget {
   _SettingsContent();
 
   static const String _supportEmail = "suporte.biblia.noads@gmail.com";
+  static const String _apoia_se_url = "https://apoia.se/friendapp";
+  static const String _play_store_url = "https://play.google.com/store/apps/details?id=com.bibleAplication.app&pcampaignid=web_share";
+  static const String _pix_key = "5e32d467-b1e8-4db4-ae93-e6767105b704";
 
-  final Uri _playStoreUrl = Uri.parse(
-    "https://play.google.com/store/apps/details?id=com.bibleAplication.app&pcampaignid=web_share",
-  );
+  final Uri _playStoreUrl = Uri.parse(_play_store_url);
+  final Uri _apoiase = Uri.parse(_apoia_se_url);
 
-  Future<void> _startSupport(BuildContext context) async {
+  void copyPixKey(BuildContext context) {
+    Clipboard.setData(const ClipboardData(text: _pix_key));
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Chave PIX copiada com sucesso!"),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
+  Future<void> _startSupport(BuildContext context)
+  async {
     const subject = "Suporte - Aplicativo Bíblia";
     const body = "Olá, gostaria de ajuda com...";
 
@@ -99,8 +115,8 @@ class _SettingsContent extends StatelessWidget {
     );
   }
 
-  Future<void> _openStore() async {
-    if (!await launchUrl(_playStoreUrl, mode: LaunchMode.externalApplication)) {
+  Future<void> _openExternal(Uri url) async {
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       throw Exception("Não foi possível abrir a Play Store");
     }
   }
@@ -210,7 +226,7 @@ class _SettingsContent extends StatelessWidget {
                     subtitle:
                         "Abra a Play Store para verificar novas versões e avaliar o aplicativo.",
                     child: ElevatedButton.icon(
-                      onPressed: _openStore,
+                      onPressed: () async => await _openExternal(_playStoreUrl),
                       icon: const Icon(Icons.open_in_new_rounded),
                       label: const Text("Abrir Play Store"),
                     ),
@@ -239,7 +255,7 @@ class _SettingsContent extends StatelessWidget {
                                 ),
                               ),
                               content: Text(
-                                "Nos apoie compartilhando o nosso app com 2 conhecidos. Nossa prioridade é chegar a mais pessoas.",
+                                "Nos apoie compartilhando este aplicativo com cinco conhecidos. Nossa prioridade é alcançar mais pessoas. Caso queira contribuir com a manutenção da infraestrutura e com a expansão do app para Desktop e iOS, considere fazer uma doação. (sugestão: Não doe valores acima de R\$ 5 reais, pois desejamos apenas o mínimo para funcionamento.).",
                                 style: TextStyle(color: colorScheme.secondary),
                               ),
                               actions: [
@@ -255,6 +271,21 @@ class _SettingsContent extends StatelessWidget {
                                   },
                                   child: Text(
                                     "Compartilhar app",
+                                    style: TextStyle(color: colorScheme.secondary),
+                                  ),
+                                ),
+                                TextButton(
+                                  // Dispara uma janela externa para Apoia.se
+                                  onPressed: () async => await _openExternal(_apoiase),
+                                  child: Text(
+                                    "Apoio mensal",
+                                    style: TextStyle(color: colorScheme.secondary),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () => copyPixKey(context),
+                                  child: Text(
+                                    "Apoio único",
                                     style: TextStyle(color: colorScheme.secondary),
                                   ),
                                 ),
