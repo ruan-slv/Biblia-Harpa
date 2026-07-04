@@ -28,6 +28,7 @@ class _SettingsContent extends StatelessWidget {
 
   void copyPixKey(BuildContext context) {
     Clipboard.setData(const ClipboardData(text: _pix_key));
+    Navigator.pop(context);
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

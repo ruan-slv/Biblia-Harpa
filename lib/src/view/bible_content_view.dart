@@ -223,8 +223,7 @@ class _TextBibleView extends StatelessWidget {
                             padding: const EdgeInsets.only(bottom: 16.0),
                             child: GestureDetector(
                               onTap: () async {
-                                final ok =
-                                    viewModel.toggleVerseSelection(originalIndex);
+                                final ok = viewModel.toggleVerseSelection(originalIndex);
                                 if (!ok) await SelectionLimitDialog.show(context);
                               },
                               child: Container(

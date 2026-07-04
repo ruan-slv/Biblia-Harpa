@@ -22,7 +22,7 @@ class BibleContentViewModel extends ChangeNotifier {
     required this.allBookChapters,
     required this.audioChapters,
     required int initialChapterNumber,
-    this.verseSelectionLimit = 15,
+    this.verseSelectionLimit = 20,
   }) {
     _setChapter(initialChapterNumber);
     _applyKeywordFilter();

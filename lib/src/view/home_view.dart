@@ -10,6 +10,7 @@ import 'package:biblia_e_harpa/src/view/settings_view.dart';
 import 'package:biblia_e_harpa/src/view_model/service/daily_word_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'component/app_bar_component.dart';
 import 'component/build_menu_card.dart';
 import 'devotional_list_view.dart';
@@ -26,9 +27,17 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   int currentPageIndex = 0;
+  static const String _trello_url = "https://trello.com/invite/b/6a257f7eb5d6c92e1ac39338/ATTIe26d78db57fb98d7a92c34ce273086d724E8BB99/biblia-e-harpa";
+  final Uri _trello = Uri.parse(_trello_url);
 
   final DailyWordService _service = DailyWordService();
   late final DailyWordViewModel _dailyWordViewModel;
+
+  Future<void> _openExternal(Uri url) async {
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      throw Exception("Não foi possível abrir a página");
+    }
+  }
 
   @override
   void initState() {
@@ -317,6 +326,22 @@ class _HomeViewState extends State<HomeView> {
                             ),
                           ],
                         ),
+                          const SizedBox(height: 12),
+              Row(
+              children: [
+              Expanded(
+              child: buildMenuCard(
+              context,
+              title: 'Acompanhar Sugestões',
+              description: 'Acompanhe as sugestões aprovadas para próximas atualizações do aplicativo.',
+              iconData: Icons.settings_suggest_outlined,
+              gradientColors: gradienteAudios,
+                onPressed: () async => await _openExternal(_trello),
+              compact: true,
+              ),
+              ),
+              ],
+              ),
                         ],
                       ),
                     ),
