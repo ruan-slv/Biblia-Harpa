@@ -49,3 +49,4 @@ texts
 .vs/
 .env
 /build
+*.pem
