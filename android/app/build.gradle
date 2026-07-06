@@ -3,6 +3,12 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace = "com.bibleAplication.app"
     compileSdk = flutter.compileSdkVersion
@@ -18,8 +24,6 @@ android {
         // ✅ Ativa suporte a Java 17
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
-
-        // ✅ Habilita o core library desugaring (necessário para flutter_local_notifications)
         coreLibraryDesugaringEnabled true
     }
 
@@ -29,10 +33,12 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("upload-keystore.jks")
-            storePassword 'Ruan#2006'
-            keyAlias 'upload'
-            keyPassword 'Ruan#2006'
+            if (keystoreProperties.size() > 0) {
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
         }
     }
 
@@ -67,9 +73,6 @@ flutter {
 }
 
 dependencies {
-    // ✅ Adiciona suporte ao desugaring (necessário para notificações locais)
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
-
-    // (opcional, mas recomendado)
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
 }

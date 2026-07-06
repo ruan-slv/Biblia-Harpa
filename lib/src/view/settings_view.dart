@@ -2,6 +2,7 @@ import 'package:biblia_e_harpa/src/view/component/app_section_card.dart';
 import 'package:biblia_e_harpa/src/view_model/settings_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -18,16 +19,25 @@ class SettingsView extends StatelessWidget {
 class _SettingsContent extends StatelessWidget {
   _SettingsContent();
 
-  static const String _supportEmail = "suporte.biblia.noads@gmail.com";
-  static const String _apoia_se_url = "https://apoia.se/friendapp";
-  static const String _play_store_url = "https://play.google.com/store/apps/details?id=com.bibleAplication.app&pcampaignid=web_share";
-  static const String _pix_key = "5e32d467-b1e8-4db4-ae93-e6767105b704";
+  /*static const String _supportEmail = "suporte.biblia.noads@gmail.com";
+  static const String _apoiaSeURL = "https://apoia.se/friendapp";
+  static const String _playStoreURL =
+      "https://play.google.com/store/apps/details?id=com.bibleAplication.app&pcampaignid=web_share";
+  static const String _pixKey = "5e32d467-b1e8-4db4-ae93-e6767105b704";*/
 
-  final Uri _playStoreUrl = Uri.parse(_play_store_url);
-  final Uri _apoiase = Uri.parse(_apoia_se_url);
+  static final String _supportEmail = dotenv.env["SUPPORT_EMAIL"] ?? "Email de suporte não encontrado!";
+  static final String _apoiaSeURL = dotenv.env["APOIASE_URL"] ?? "Link de apoio não encontrado!";
+  static final String _playStoreURL = dotenv.env["PLAYSTORE_URL"] ?? "";
+  static final String _pixKey = dotenv.env["PIX_KEY"] ?? "";
+
+
+
+
+  final Uri _playStoreUrl = Uri.parse(_playStoreURL);
+  final Uri _apoiase = Uri.parse(_apoiaSeURL);
 
   void copyPixKey(BuildContext context) {
-    Clipboard.setData(const ClipboardData(text: _pix_key));
+    Clipboard.setData(ClipboardData(text: _pixKey));
     Navigator.pop(context);
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -39,17 +49,14 @@ class _SettingsContent extends StatelessWidget {
     }
   }
 
-  Future<void> _startSupport(BuildContext context)
-  async {
-    const subject = "Suporte - Aplicativo Bíblia";
-    const body = "Olá, gostaria de ajuda com...";
+  Future<void> _startSupport(BuildContext context) async {
+    const subject = "Pedido de suporte";
 
     final uri = Uri(
       scheme: 'mailto',
       path: _supportEmail,
       query: _encodeQueryParameters({
         'subject': subject,
-        'body': body,
       }),
     );
 
@@ -130,7 +137,8 @@ class _SettingsContent extends StatelessWidget {
         return Scaffold(
           backgroundColor: colorScheme.surface,
           body: ListView(
-            padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 25.0),
+            padding:
+                const EdgeInsets.symmetric(vertical: 15.0, horizontal: 25.0),
             children: [
               Column(
                 children: [
@@ -194,8 +202,9 @@ class _SettingsContent extends StatelessWidget {
                           icon: Icon(viewModel.isDarkMode
                               ? Icons.sunny
                               : Icons.brightness_2),
-                          label: Text(
-                              viewModel.isDarkMode ? "Usar claro" : "Usar escuro"),
+                          label: Text(viewModel.isDarkMode
+                              ? "Usar claro"
+                              : "Usar escuro"),
                         ),
                       ],
                     ),
@@ -210,7 +219,8 @@ class _SettingsContent extends StatelessWidget {
                       onPressed: () {
                         SharePlus.instance.share(
                           ShareParams(
-                            text: "📖✨ Descubra uma nova forma de se conectar com a Palavra de Deus!\n\n"
+                            text:
+                                "📖✨ Descubra uma nova forma de se conectar com a Palavra de Deus!\n\n"
                                 "Baixe agora nosso aplicativo gratuito de leitura bíblica e tenha acesso a versiculos, harpa e muito mais, tudo na palma da sua mão de forma ofline e sem anúncios.\n\n"
                                 "🔗 Acesse aqui: $_playStoreUrl",
                           ),
@@ -264,7 +274,8 @@ class _SettingsContent extends StatelessWidget {
                                   onPressed: () {
                                     SharePlus.instance.share(
                                       ShareParams(
-                                        text: "📖✨ Descubra uma nova forma de se conectar com a Palavra de Deus!\n\n"
+                                        text:
+                                            "📖✨ Descubra uma nova forma de se conectar com a Palavra de Deus!\n\n"
                                             "Baixe agora nosso aplicativo gratuito de leitura bíblica e tenha acesso a versiculos, harpa e muito mais, tudo na palma da sua mão de forma ofline e sem anúncios.\n\n"
                                             "🔗 Acesse aqui: $_playStoreUrl",
                                       ),
@@ -272,29 +283,34 @@ class _SettingsContent extends StatelessWidget {
                                   },
                                   child: Text(
                                     "Compartilhar app",
-                                    style: TextStyle(color: colorScheme.secondary),
+                                    style:
+                                        TextStyle(color: colorScheme.secondary),
                                   ),
                                 ),
                                 TextButton(
                                   // Dispara uma janela externa para Apoia.se
-                                  onPressed: () async => await _openExternal(_apoiase),
+                                  onPressed: () async =>
+                                      await _openExternal(_apoiase),
                                   child: Text(
                                     "Apoio mensal",
-                                    style: TextStyle(color: colorScheme.secondary),
+                                    style:
+                                        TextStyle(color: colorScheme.secondary),
                                   ),
                                 ),
                                 TextButton(
                                   onPressed: () => copyPixKey(context),
                                   child: Text(
                                     "Apoio único",
-                                    style: TextStyle(color: colorScheme.secondary),
+                                    style:
+                                        TextStyle(color: colorScheme.secondary),
                                   ),
                                 ),
                                 TextButton(
                                   onPressed: () => Navigator.pop(context),
                                   child: Text(
                                     "Fechar",
-                                    style: TextStyle(color: colorScheme.secondary),
+                                    style:
+                                        TextStyle(color: colorScheme.secondary),
                                   ),
                                 ),
                               ],

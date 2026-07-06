@@ -47,3 +47,5 @@ texts
 *.jks
 *.keystore
 .vs/
+.env
+/build

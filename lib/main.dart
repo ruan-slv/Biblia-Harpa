@@ -8,6 +8,7 @@ import 'package:biblia_e_harpa/src/view_model/bible_providers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:just_audio_media_kit/just_audio_media_kit.dart';
 import 'package:path_provider/path_provider.dart';
@@ -19,7 +20,7 @@ late final AudioHandler audioHandler;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-  
+
   JustAudioMediaKit.ensureInitialized(windows: true);
 
   if (!kIsWeb) {
@@ -38,6 +39,7 @@ void main() async {
 
   final settingsViewModel = SettingsViewModel();
   await settingsViewModel.initialize();
+  await dotenv.load(fileName: ".env");
 
   runApp(
     MultiProvider(
