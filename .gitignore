@@ -50,3 +50,6 @@ texts
 .env
 /build
 *.pem
+/.idea
+/.vscode
+/android

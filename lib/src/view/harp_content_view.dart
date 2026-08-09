@@ -1,10 +1,13 @@
 import 'dart:convert';
+import 'package:biblia_e_harpa/src/model/data_audio_model.dart';
 import 'package:biblia_e_harpa/src/view_model/settings_view_model.dart';
+import 'package:biblia_e_harpa/src/view_model/service/continue_reading_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
 import 'component/app_bar_component.dart';
+import 'component/bottombar.dart';
 
 class HarpTextModel {
   final String hino;
@@ -27,22 +30,28 @@ class HarpContentView extends StatefulWidget {
     super.key,
     required this.harp,
     this.audioUrl,
+    this.audioHymns = const [],
   });
 
   final String harp;
   final String? audioUrl;
+  final List<DataAudioModel> audioHymns;
 
   @override
   State<HarpContentView> createState() => _HarpContentViewState();
 }
 
 class _HarpContentViewState extends State<HarpContentView> {
+  static const _continueReadingService = ContinueReadingService();
   final AudioPlayer _audioPlayer = AudioPlayer();
   bool _isLoadingAudio = false;
+  late final Future<List<HarpTextModel>> _textsFuture;
 
   @override
   void initState() {
     super.initState();
+    _textsFuture = loadTexts();
+    _continueReadingService.saveHarp(hymn: widget.harp);
     _loadAudio();
   }
 
@@ -97,6 +106,51 @@ class _HarpContentViewState extends State<HarpContentView> {
     } catch (_) {
       return [];
     }
+  }
+
+  int _hymnNumber(String hymn) {
+    final match = RegExp(r'^(\d+)').firstMatch(hymn.trim());
+    return match == null ? 0 : int.parse(match.group(1)!);
+  }
+
+  String? _audioUrlFor(HarpTextModel hymn) {
+    final hymnNumber = _hymnNumber(hymn.hino);
+
+    for (final audio in widget.audioHymns) {
+      if (_hymnNumber(audio.titulo) == hymnNumber) return audio.hinoURL;
+    }
+
+    return null;
+  }
+
+  void _openHymn(HarpTextModel hymn) {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) => HarpContentView(
+          harp: hymn.hino,
+          audioUrl: _audioUrlFor(hymn),
+          audioHymns: widget.audioHymns,
+        ),
+      ),
+    );
+  }
+
+  Scaffold _buildScaffold({
+    required Widget body,
+    Widget? bottomNavigationBar,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Scaffold(
+      backgroundColor: colorScheme.surface,
+      appBar: CustomAppBar(
+        title: widget.harp,
+        centerTitle: false,
+        automaticallyImplyLeading: true,
+      ),
+      body: body,
+      bottomNavigationBar: bottomNavigationBar,
+    );
   }
 
   Widget _buildAudioPlayer() {
@@ -194,120 +248,133 @@ class _HarpContentViewState extends State<HarpContentView> {
     final colorScheme = Theme.of(context).colorScheme;
     final settings = context.watch<SettingsViewModel>();
 
-    return Scaffold(
-      backgroundColor: colorScheme.surface,
-      appBar: CustomAppBar(
-        title: widget.harp,
-        centerTitle: false,
-        automaticallyImplyLeading: true,
-      ),
-      body: FutureBuilder<List<HarpTextModel>>(
-          future: loadTexts(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            if (snapshot.hasError) {
-              return Center(
-                child: Text(
-                  'Erro ao carregar os textos.',
-                  style: TextStyle(color: colorScheme.secondary),
+    return FutureBuilder<List<HarpTextModel>>(
+      future: _textsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return _buildScaffold(
+            body: const Center(child: CircularProgressIndicator()),
+          );
+        }
+        if (snapshot.hasError) {
+          return _buildScaffold(
+            body: Center(
+              child: Text(
+                'Erro ao carregar os textos.',
+                style: TextStyle(color: colorScheme.secondary),
+              ),
+            ),
+          );
+        }
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return _buildScaffold(
+            body: Center(
+              child: Text(
+                'Nenhum texto encontrado.',
+                style: TextStyle(color: colorScheme.secondary),
+              ),
+            ),
+          );
+        }
+
+        final hymns = snapshot.data!;
+        final currentIndex = hymns.indexWhere(
+          (text) =>
+              text.hino.toLowerCase().trim() ==
+              widget.harp.toLowerCase().trim(),
+        );
+        final harpText = currentIndex == -1
+            ? HarpTextModel(hino: '', coro: '', verses: {})
+            : hymns[currentIndex];
+
+        final verseEntries = harpText.verses.entries.toList();
+        final hasChorus = harpText.coro.trim().isNotEmpty &&
+            harpText.coro.trim().toLowerCase() != 'não possui coro';
+
+        return _buildScaffold(
+          bottomNavigationBar: BottomBar(
+            canGoBack: currentIndex > 0,
+            canGoNext: currentIndex >= 0 && currentIndex < hymns.length - 1,
+            onPrevious: currentIndex > 0
+                ? () => _openHymn(hymns[currentIndex - 1])
+                : null,
+            onNext: currentIndex >= 0 && currentIndex < hymns.length - 1
+                ? () => _openHymn(hymns[currentIndex + 1])
+                : null,
+            previousLabel: 'Hino anterior',
+            nextLabel: 'Próximo hino',
+          ),
+          body: Center(
+            child: CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: _buildAudioPlayer(),
                 ),
-              );
-            }
-            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(
-                child: Text(
-                  'Nenhum texto encontrado.',
-                  style: TextStyle(color: colorScheme.secondary),
-                ),
-              );
-            }
+                SliverPadding(
+                  padding: const EdgeInsets.all(6.0),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        if (index == verseEntries.length) {
+                          return const SizedBox(height: 24);
+                        }
 
-            final harpText = snapshot.data!.firstWhere(
-              (text) =>
-                  text.hino.toLowerCase().trim() ==
-                  widget.harp.toLowerCase().trim(),
-              orElse: () => HarpTextModel(hino: '', coro: '', verses: {}),
-            );
+                        final entry = verseEntries[index];
 
-            final verseEntries = harpText.verses.entries.toList();
-            final hasChorus = harpText.coro.trim().isNotEmpty &&
-                harpText.coro.trim().toLowerCase() != 'não possui coro';
-
-            return Center(
-              child: CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: _buildAudioPlayer(),
-                  ),
-                  SliverPadding(
-                    padding: const EdgeInsets.all(6.0),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          if (index == verseEntries.length) {
-                            return const SizedBox(height: 24);
-                          }
-
-                          final entry = verseEntries[index];
-
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 16.0),
-                            child: Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    entry.key,
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: colorScheme.secondary
-                                          .withValues(alpha: 0.9),
-                                    ),
-                                    textAlign: TextAlign.center,
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              children: [
+                                Text(
+                                  entry.key,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: colorScheme.secondary
+                                        .withValues(alpha: 0.9),
                                   ),
-                                  const SizedBox(height: 12),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  entry.value,
+                                  style: TextStyle(
+                                    fontSize: settings.fontSize,
+                                    color: colorScheme.secondary,
+                                    height: 1.5,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                if (hasChorus) ...[
+                                  const SizedBox(height: 24),
                                   Text(
-                                    entry.value,
+                                    harpText.coro,
                                     style: TextStyle(
                                       fontSize: settings.fontSize,
+                                      fontWeight: FontWeight.bold,
                                       color: colorScheme.secondary,
                                       height: 1.5,
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
-                                  if (hasChorus) ...[
-                                    const SizedBox(height: 24),
-                                    Text(
-                                      harpText.coro,
-                                      style: TextStyle(
-                                        fontSize: settings.fontSize,
-                                        fontWeight: FontWeight.bold,
-                                        color: colorScheme.secondary,
-                                        height: 1.5,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
                                 ],
-                              ),
+                              ],
                             ),
-                          );
-                        },
-                        childCount: verseEntries.length + 1,
-                      ),
+                          ),
+                        );
+                      },
+                      childCount: verseEntries.length + 1,
                     ),
                   ),
-                ],
-              ),
-            );
-          },
-      ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

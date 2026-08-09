@@ -6,12 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class QuizView extends StatelessWidget {
-  const QuizView({super.key});
+  /// Cria a tela do quiz, podendo retomar a partir de [initialQuestionIndex].
+  const QuizView({super.key, this.initialQuestionIndex = 0});
+
+  /// Índice inicial usado ao retomar um quiz salvo.
+  final int initialQuestionIndex;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => QuizViewModel()..loadQuestions(),
+      create: (_) => QuizViewModel(initialQuestionIndex: initialQuestionIndex)
+        ..loadQuestions(),
       child: const _QuizViewContent(),
     );
   }
@@ -89,7 +94,8 @@ class _QuizViewContent extends StatelessWidget {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton.icon(
-                          onPressed: context.read<QuizViewModel>().loadQuestions,
+                          onPressed:
+                              context.read<QuizViewModel>().loadQuestions,
                           icon: const Icon(Icons.refresh_rounded),
                           label: const Text('Tentar novamente'),
                         ),
@@ -191,7 +197,8 @@ class _QuizViewContent extends StatelessWidget {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 16,
-                            color: colorScheme.secondary.withValues(alpha: 0.75),
+                            color:
+                                colorScheme.secondary.withValues(alpha: 0.75),
                             height: 1.45,
                           ),
                         ),
@@ -273,14 +280,17 @@ class _QuizViewContent extends StatelessWidget {
                           final question = viewModel.questions[index];
                           return Container(
                             margin: EdgeInsets.only(
-                              bottom: index == viewModel.questions.length - 1 ? 0 : 12,
+                              bottom: index == viewModel.questions.length - 1
+                                  ? 0
+                                  : 12,
                             ),
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
                               color: colorScheme.surface,
                               borderRadius: BorderRadius.circular(18),
                               border: Border.all(
-                                color: colorScheme.secondary.withValues(alpha: 0.08),
+                                color: colorScheme.secondary
+                                    .withValues(alpha: 0.08),
                               ),
                             ),
                             child: Column(
@@ -291,7 +301,8 @@ class _QuizViewContent extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700,
-                                    color: colorScheme.secondary.withValues(alpha: 0.6),
+                                    color: colorScheme.secondary
+                                        .withValues(alpha: 0.6),
                                   ),
                                 ),
                                 const SizedBox(height: 8),
@@ -306,7 +317,8 @@ class _QuizViewContent extends StatelessWidget {
                                 Text(
                                   'Referência: ${question.reference}',
                                   style: TextStyle(
-                                    color: colorScheme.secondary.withValues(alpha: 0.74),
+                                    color: colorScheme.secondary
+                                        .withValues(alpha: 0.74),
                                     height: 1.35,
                                   ),
                                 ),
@@ -342,7 +354,8 @@ class _QuizViewContent extends StatelessWidget {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: CustomAppBar(
-        title: 'Quizz Bíblico ${viewModel.current + 1}/${viewModel.questions.length}',
+        title:
+            'Quizz Bíblico ${viewModel.current + 1}/${viewModel.questions.length}',
         centerTitle: false,
         automaticallyImplyLeading: true,
       ),
@@ -385,7 +398,8 @@ class _QuizViewContent extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
-                                color: colorScheme.secondary.withValues(alpha: 0.72),
+                                color: colorScheme.secondary
+                                    .withValues(alpha: 0.72),
                               ),
                             ),
                           ],
@@ -421,7 +435,8 @@ class _QuizViewContent extends StatelessWidget {
                               color: colorScheme.surface,
                               borderRadius: BorderRadius.circular(18),
                               border: Border.all(
-                                color: colorScheme.secondary.withValues(alpha: 0.08),
+                                color: colorScheme.secondary
+                                    .withValues(alpha: 0.08),
                               ),
                             ),
                             child: Column(
@@ -432,7 +447,8 @@ class _QuizViewContent extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700,
-                                    color: colorScheme.secondary.withValues(alpha: 0.6),
+                                    color: colorScheme.secondary
+                                        .withValues(alpha: 0.6),
                                   ),
                                 ),
                                 const SizedBox(height: 6),

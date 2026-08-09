@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Barra de navegação reutilizável para avançar e retornar entre conteúdos.
 class BottomBar extends StatelessWidget {
   const BottomBar({
     super.key,

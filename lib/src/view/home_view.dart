@@ -8,6 +8,12 @@ import 'package:biblia_e_harpa/src/view/about_view.dart';
 import 'package:biblia_e_harpa/src/view/home_audio_view.dart';
 import 'package:biblia_e_harpa/src/view/settings_view.dart';
 import 'package:biblia_e_harpa/src/view_model/service/daily_word_service.dart';
+import 'package:biblia_e_harpa/src/view_model/service/bible_text_assets_service.dart';
+import 'package:biblia_e_harpa/src/view_model/bible_list_view_model.dart';
+import 'package:biblia_e_harpa/src/view_model/service/continue_reading_service.dart';
+import 'package:biblia_e_harpa/src/view/bible_content_view.dart';
+import 'package:biblia_e_harpa/src/view/devotional_content_view.dart';
+import 'package:biblia_e_harpa/src/view/harp_content_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -27,16 +33,228 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   int currentPageIndex = 0;
-  static const String _trello_url = "https://trello.com/invite/b/6a257f7eb5d6c92e1ac39338/ATTIe26d78db57fb98d7a92c34ce273086d724E8BB99/biblia-e-harpa";
-  final Uri _trello = Uri.parse(_trello_url);
+  static const String _trelloUrl =
+      "https://trello.com/invite/b/6a257f7eb5d6c92e1ac39338/ATTIe26d78db57fb98d7a92c34ce273086d724E8BB99/biblia-e-harpa";
+  final Uri _trello = Uri.parse(_trelloUrl);
 
   final DailyWordService _service = DailyWordService();
+  static const _continueReadingService = ContinueReadingService();
   late final DailyWordViewModel _dailyWordViewModel;
 
   Future<void> _openExternal(Uri url) async {
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       throw Exception("Não foi possível abrir a página");
     }
+  }
+
+  Future<void> _resume(ContinueReadingEntry entry) async {
+    switch (entry.type) {
+      case ContinueReadingType.devotional:
+        final topic = entry.data['topic'] as String?;
+        if (topic == null) return;
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => DevotionalContentView(
+              devo: topic,
+              initialIndex: entry.position,
+            ),
+          ),
+        );
+        return;
+      case ContinueReadingType.bible:
+        final bookName = entry.data['bookName'] as String?;
+        final jsonPath = entry.data['jsonPath'] as String?;
+        if (bookName == null || jsonPath == null) return;
+
+        final book = await context.read<BibleTextAssetsService>().loadBook(
+              bookName: bookName,
+              jsonAssetPath: jsonPath,
+            );
+        if (!mounted || book == null) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                  content: Text('Não foi possível retomar a Bíblia.')),
+            );
+          }
+          return;
+        }
+
+        final audioChapters = context
+            .read<BibleListViewModel>()
+            .findAudioChaptersForBook(bookName);
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => BibleContentView(
+              bookName: bookName,
+              jsonPath: jsonPath,
+              initialChapterNumber: entry.position + 1,
+              allBookChapters: book.chapters,
+              audioChapters: audioChapters,
+            ),
+          ),
+        );
+        return;
+      case ContinueReadingType.harp:
+        final hymn = entry.data['hymn'] as String?;
+        if (hymn == null) return;
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => HarpContentView(harp: hymn)),
+        );
+        return;
+      case ContinueReadingType.quiz:
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => QuizView(initialQuestionIndex: entry.position),
+          ),
+        );
+        return;
+    }
+  }
+
+  IconData _continueIcon(ContinueReadingType type) {
+    return switch (type) {
+      ContinueReadingType.devotional => Icons.auto_stories_rounded,
+      ContinueReadingType.bible => Icons.menu_book_rounded,
+      ContinueReadingType.harp => Icons.music_note_rounded,
+      ContinueReadingType.quiz => Icons.quiz_outlined,
+    };
+  }
+
+  Future<void> _showContinueReading() async {
+    final entries = await _continueReadingService.loadEntries();
+    if (!mounted) return;
+
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (sheetContext) {
+        final colorScheme = Theme.of(sheetContext).colorScheme;
+        return SafeArea(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.sizeOf(sheetContext).height * .7,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 10),
+                Container(
+                  width: 48,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: colorScheme.secondary.withValues(alpha: .22),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                ListTile(
+                  leading:
+                      Icon(Icons.auto_fix_high, color: colorScheme.secondary),
+                  title: Text(
+                    'Próximo devocional não lido',
+                    style: TextStyle(
+                      color: colorScheme.secondary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  subtitle: Text(
+                    'Avança para a próxima leitura disponível',
+                    style: TextStyle(
+                      color: colorScheme.secondary.withValues(alpha: .72),
+                    ),
+                  ),
+                  onTap: () async {
+                    Navigator.of(sheetContext).pop();
+                    final entry = await _continueReadingService
+                        .findNextUnreadDevotional();
+                    if (!mounted) return;
+                    if (entry == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content:
+                              Text('Nenhum devocional não lido encontrado.'),
+                        ),
+                      );
+                      return;
+                    }
+                    await _resume(entry);
+                  },
+                ),
+                Divider(
+                  height: 1,
+                  color: colorScheme.secondary.withValues(alpha: .08),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Continuar de onde parou',
+                      style: TextStyle(
+                        color: colorScheme.secondary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+                if (entries.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                    child: Text(
+                      'Nenhuma leitura ou atividade recente.',
+                      style: TextStyle(
+                        color: colorScheme.secondary.withValues(alpha: .72),
+                      ),
+                    ),
+                  )
+                else
+                  Flexible(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: entries.length,
+                      itemBuilder: (_, index) {
+                        final entry = entries[index];
+                        return ListTile(
+                          leading: Icon(
+                            _continueIcon(entry.type),
+                            color: colorScheme.secondary,
+                          ),
+                          title: Text(
+                            entry.title,
+                            style: TextStyle(
+                              color: colorScheme.secondary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          subtitle: Text(
+                            entry.subtitle,
+                            style: TextStyle(
+                              color:
+                                  colorScheme.secondary.withValues(alpha: .72),
+                            ),
+                          ),
+                          trailing: Icon(
+                            Icons.chevron_right_rounded,
+                            color: colorScheme.secondary.withValues(alpha: .55),
+                          ),
+                          onTap: () {
+                            Navigator.of(sheetContext).pop();
+                            _resume(entry);
+                          },
+                        );
+                      },
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -50,8 +268,8 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
-  ColorScheme colorScheme(BuildContext context) => Theme.of(context).colorScheme;
-
+  ColorScheme colorScheme(BuildContext context) =>
+      Theme.of(context).colorScheme;
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +308,8 @@ class _HomeViewState extends State<HomeView> {
                               borderRadius: BorderRadius.circular(28),
                               boxShadow: [
                                 BoxShadow(
-                                  color: colorScheme.secondary.withValues(alpha: 0.08),
+                                  color: colorScheme.secondary
+                                      .withValues(alpha: 0.08),
                                   blurRadius: 18,
                                   offset: const Offset(0, 10),
                                 ),
@@ -119,7 +338,8 @@ class _HomeViewState extends State<HomeView> {
                                       style: TextStyle(
                                         fontSize: settings.fontSize,
                                         fontStyle: FontStyle.italic,
-                                        color: colorScheme.secondary.withValues(alpha: 0.92),
+                                        color: colorScheme.secondary
+                                            .withValues(alpha: 0.92),
                                         height: 1.55,
                                       ),
                                       textAlign: TextAlign.justify,
@@ -140,23 +360,35 @@ class _HomeViewState extends State<HomeView> {
                     ),
                     const SizedBox(height: 20),
                     Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                      child: buildMenuCard(
+                        context,
+                        title: 'Continuar lendo',
+                        description:
+                            'Retome Devocional, Bíblia, Harpa ou Quiz de onde parou.',
+                        iconData: Icons.read_more_rounded,
+                        gradientColors: gradienteDevocional,
+                        onPressed: _showContinueReading,
+                      ),
+                    ),
+                    Padding(
                       padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                        Text(
-                          "Atalhos principais",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                            color: colorScheme.secondary,
+                          Text(
+                            "Atalhos principais",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              color: colorScheme.secondary,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 14),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: buildMenuCard(
+                          const SizedBox(height: 14),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: buildMenuCard(
                                   context,
                                   title: 'Bíblia',
                                   iconData: Icons.menu_book_rounded,
@@ -164,184 +396,195 @@ class _HomeViewState extends State<HomeView> {
                                   onPressed: () => Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => BibleFeature.bibleList()),
+                                        builder: (context) =>
+                                            BibleFeature.bibleList()),
                                   ),
                                   compact: true,
                                   centerContent: true,
                                 ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: buildMenuCard(
-                                context,
-                                title: 'Harpa',
-                                iconData: Icons.music_note_rounded,
-                                gradientColors: gradienteHarpa,
-                                onPressed: () => Navigator.push(
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: buildMenuCard(
                                   context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const HarpListView()),
+                                  title: 'Harpa',
+                                  iconData: Icons.music_note_rounded,
+                                  gradientColors: gradienteHarpa,
+                                  onPressed: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const HarpListView()),
+                                  ),
+                                  compact: true,
+                                  centerContent: true,
                                 ),
-                                compact: true,
-                                centerContent: true,
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: buildMenuCard(
-                                context,
-                                title: 'Devocional',
-                                iconData: Icons.auto_stories_rounded,
-                                gradientColors: gradienteDevocional,
-                                onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const DevotionalListView()),
-                                ),
-                                compact: true,
-                                centerContent: true,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: buildMenuCard(
-                                context,
-                                title: 'Áudios',
-                                iconData: Icons.headphones_outlined,
-                                gradientColors: gradienteAudios,
-                                onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const HomeAudioView()),
-                                ),
-                                compact: true,
-                                centerContent: true,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: buildMenuCard(
-                                context,
-                                title: 'Quiz bíblico',
-                                description: 'Acesse o atalho do quiz na próxima atualização.',
-                                iconData: Icons.quiz_outlined,
-                                gradientColors: gradienteAudios,
-                                onPressed: () => Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) => const QuizView()),
-                                ),
-                                compact: true,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 14),
-                        Text(
-                          "Atalhos informativos",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                            color: colorScheme.secondary,
+                            ],
                           ),
-                        ),
-                        const SizedBox(height: 14),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: buildMenuCard(
-                                context,
-                                title: 'Direitos',
-                                iconData: Icons.priority_high_rounded,
-                                gradientColors: gradienteBiblia,
-                                onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const RightsView()),
-                                ),
-                                compact: true,
-                                centerContent: true,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: buildMenuCard(
-                                context,
-                                title: 'Privacidade',
-                                iconData: Icons.security_rounded,
-                                gradientColors: gradienteHarpa,
-                                onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const PrivacyView()),
-                                ),
-                                compact: true,
-                                centerContent: true,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 14),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: buildMenuCard(
-                                context,
-                                title: 'Sobre',
-                                iconData: Icons.info_outline_rounded,
-                                gradientColors: gradienteDevocional,
-                                onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const AboutView()),
-                                ),
-                                compact: true,
-                                centerContent: true,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: buildMenuCard(
-                                context,
-                                title: 'Propostas',
-                                iconData: Icons.security_rounded,
-                                gradientColors: gradienteAudios,
-                                onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const ProposalsView()),
-                                ),
-                                compact: true,
-                                centerContent: true,
-                              ),
-                            ),
-                          ],
-                        ),
                           const SizedBox(height: 12),
-              Row(
-              children: [
-              Expanded(
-              child: buildMenuCard(
-              context,
-              title: 'Acompanhar Sugestões',
-              description: 'Acompanhe as sugestões aprovadas para próximas atualizações do aplicativo.',
-              iconData: Icons.settings_suggest_outlined,
-              gradientColors: gradienteAudios,
-                onPressed: () async => await _openExternal(_trello),
-              compact: true,
-              ),
-              ),
-              ],
-              ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: buildMenuCard(
+                                  context,
+                                  title: 'Devocional',
+                                  iconData: Icons.auto_stories_rounded,
+                                  gradientColors: gradienteDevocional,
+                                  onPressed: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const DevotionalListView()),
+                                  ),
+                                  compact: true,
+                                  centerContent: true,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: buildMenuCard(
+                                  context,
+                                  title: 'Áudios',
+                                  iconData: Icons.headphones_outlined,
+                                  gradientColors: gradienteAudios,
+                                  onPressed: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const HomeAudioView()),
+                                  ),
+                                  compact: true,
+                                  centerContent: true,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: buildMenuCard(
+                                  context,
+                                  title: 'Quiz bíblico',
+                                  description:
+                                      'Acesse o atalho do quiz na próxima atualização.',
+                                  iconData: Icons.quiz_outlined,
+                                  gradientColors: gradienteAudios,
+                                  onPressed: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const QuizView()),
+                                  ),
+                                  compact: true,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 14),
+                          Text(
+                            "Atalhos informativos",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              color: colorScheme.secondary,
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: buildMenuCard(
+                                  context,
+                                  title: 'Direitos',
+                                  iconData: Icons.priority_high_rounded,
+                                  gradientColors: gradienteBiblia,
+                                  onPressed: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const RightsView()),
+                                  ),
+                                  compact: true,
+                                  centerContent: true,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: buildMenuCard(
+                                  context,
+                                  title: 'Privacidade',
+                                  iconData: Icons.security_rounded,
+                                  gradientColors: gradienteHarpa,
+                                  onPressed: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const PrivacyView()),
+                                  ),
+                                  compact: true,
+                                  centerContent: true,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 14),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: buildMenuCard(
+                                  context,
+                                  title: 'Sobre',
+                                  iconData: Icons.info_outline_rounded,
+                                  gradientColors: gradienteDevocional,
+                                  onPressed: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const AboutView()),
+                                  ),
+                                  compact: true,
+                                  centerContent: true,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: buildMenuCard(
+                                  context,
+                                  title: 'Propostas',
+                                  iconData: Icons.security_rounded,
+                                  gradientColors: gradienteAudios,
+                                  onPressed: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ProposalsView()),
+                                  ),
+                                  compact: true,
+                                  centerContent: true,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: buildMenuCard(
+                                  context,
+                                  title: 'Acompanhar Sugestões',
+                                  description:
+                                      'Acompanhe as sugestões aprovadas para próximas atualizações do aplicativo.',
+                                  iconData: Icons.settings_suggest_outlined,
+                                  gradientColors: gradienteAudios,
+                                  onPressed: () async =>
+                                      await _openExternal(_trello),
+                                  compact: true,
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),

@@ -19,7 +19,6 @@ class HarpListView extends StatefulWidget {
 
 class _HarpListViewState extends State<HarpListView>
     with SingleTickerProviderStateMixin {
-
   List<String> filteredHarps = [];
   Set<String> favoriteHarps = {};
   final TextEditingController _searchController = TextEditingController();
@@ -40,14 +39,16 @@ class _HarpListViewState extends State<HarpListView>
 
   Future<void> _fetchAudioHarpa() async {
     try {
-      final String response = await rootBundle.loadString("assets/json/audiosHarpa.json");
+      final String response =
+          await rootBundle.loadString("assets/json/audiosHarpa.json");
       final Map<String, dynamic> jsonData = json.decode(response);
 
       final List data = jsonData["audios"];
 
       if (mounted) {
         setState(() {
-          _audioList = data.map((audio) => DataAudioModel.fromJson(audio)).toList();
+          _audioList =
+              data.map((audio) => DataAudioModel.fromJson(audio)).toList();
         });
       }
     } catch (_) {}
@@ -89,12 +90,13 @@ class _HarpListViewState extends State<HarpListView>
       filteredHarps = harps
           .where(
             (hino) => hino.toLowerCase().contains(
-          _searchController.text.toLowerCase(),
-        ),
-      )
+                  _searchController.text.toLowerCase(),
+                ),
+          )
           .toList();
     });
   }
+
   int _getHymnNumber(String hinoString) {
     try {
       final match = RegExp(r'^(\d+)').firstMatch(hinoString.trim());
@@ -110,54 +112,55 @@ class _HarpListViewState extends State<HarpListView>
   Widget _buildHarpList(List<String> harpList) {
     final settings = context.watch<SettingsViewModel>();
     return ListView.builder(
-        padding: const EdgeInsets.only(top: 10, bottom: 4, left: 10, right: 10),
-        itemCount: harpList.length,
-        itemBuilder: (context, index) {
-          final hino = harpList[index];
-          final isFavorite = favoriteHarps.contains(hino);
+      padding: const EdgeInsets.only(top: 10, bottom: 4, left: 10, right: 10),
+      itemCount: harpList.length,
+      itemBuilder: (context, index) {
+        final hino = harpList[index];
+        final isFavorite = favoriteHarps.contains(hino);
 
-          return Card(
-            margin: const EdgeInsets.symmetric(vertical: 4),
-            child: ListTile(
-              leading: const Icon(Icons.menu_book_rounded),
-              title: Text(
-                hino,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.secondary,
-                  fontSize: settings.fontSize,
-                ),
+        return Card(
+          margin: const EdgeInsets.symmetric(vertical: 4),
+          child: ListTile(
+            leading: const Icon(Icons.menu_book_rounded),
+            title: Text(
+              hino,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.secondary,
+                fontSize: settings.fontSize,
               ),
-              trailing: IconButton(
-                icon: Icon(
-                  isFavorite ? Icons.favorite : Icons.favorite_border_outlined,
-                  color: isFavorite ? redColor : cinzaClaro,
-                ),
-                onPressed: () => _toggleFavorite(hino),
-              ),
-              onTap: () {
-                String? audioUrl;
-
-                if (_audioList.isNotEmpty) {
-                  int hymnNumber = _getHymnNumber(hino);
-                  if (hymnNumber > 0 && hymnNumber <= _audioList.length) {
-                    audioUrl = _audioList[hymnNumber - 1].hinoURL;
-                  }
-                }
-
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => HarpContentView(
-                      harp: hino,
-                      audioUrl: audioUrl,
-                    ),
-                  ),
-                );
-              },
             ),
-          );
-        },
-      );
+            trailing: IconButton(
+              icon: Icon(
+                isFavorite ? Icons.favorite : Icons.favorite_border_outlined,
+                color: isFavorite ? redColor : cinzaClaro,
+              ),
+              onPressed: () => _toggleFavorite(hino),
+            ),
+            onTap: () {
+              String? audioUrl;
+
+              if (_audioList.isNotEmpty) {
+                int hymnNumber = _getHymnNumber(hino);
+                if (hymnNumber > 0 && hymnNumber <= _audioList.length) {
+                  audioUrl = _audioList[hymnNumber - 1].hinoURL;
+                }
+              }
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HarpContentView(
+                    harp: hino,
+                    audioUrl: audioUrl,
+                    audioHymns: _audioList,
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -169,64 +172,64 @@ class _HarpListViewState extends State<HarpListView>
         automaticallyImplyLeading: true,
         title: "Harpa Cristã",
         tabBar: TabBar(
-              controller: _tabController,
-              labelColor: Theme.of(context).colorScheme.secondary,
-              unselectedLabelColor: Theme.of(context).colorScheme.onSurface,
-              indicatorColor: Theme.of(context).colorScheme.secondary,
-              tabs: const [
-                Tab(text: "Todos"),
-                Tab(text: "Favoritos"),
-              ],
+          controller: _tabController,
+          labelColor: Theme.of(context).colorScheme.secondary,
+          unselectedLabelColor: Theme.of(context).colorScheme.onSurface,
+          indicatorColor: Theme.of(context).colorScheme.secondary,
+          tabs: const [
+            Tab(text: "Todos"),
+            Tab(text: "Favoritos"),
+          ],
         ),
       ),
       body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: "Pesquisar Hino",
-                  hintStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                  prefixIcon: Icon(Icons.search,
-                      color: Theme.of(context).colorScheme.secondary),
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.clear,
-                        color: Theme.of(context).colorScheme.secondary),
-                    onPressed: () {
-                      _searchController.clear();
-                      setState(() {
-                        filteredHarps = harps;
-                      });
-                    },
-                  ),
-                  filled: true,
-                  fillColor: Theme.of(context).colorScheme.primary,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: "Pesquisar Hino",
+                hintStyle: TextStyle(
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
-                style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-                cursorColor: Theme.of(context).colorScheme.secondary,
+                prefixIcon: Icon(Icons.search,
+                    color: Theme.of(context).colorScheme.secondary),
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.clear,
+                      color: Theme.of(context).colorScheme.secondary),
+                  onPressed: () {
+                    _searchController.clear();
+                    setState(() {
+                      filteredHarps = harps;
+                    });
+                  },
+                ),
+                filled: true,
+                fillColor: Theme.of(context).colorScheme.primary,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
               ),
+              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+              cursorColor: Theme.of(context).colorScheme.secondary,
             ),
-            const SizedBox(height: 12),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildHarpList(filteredHarps),
-                  _buildHarpList(favoriteHarps.toList()),
-                ],
-              ),
+          ),
+          const SizedBox(height: 12),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _buildHarpList(filteredHarps),
+                _buildHarpList(favoriteHarps.toList()),
+              ],
             ),
-          ],
-        ),
-
+          ),
+        ],
+      ),
     );
   }
 }

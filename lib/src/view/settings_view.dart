@@ -19,19 +19,10 @@ class SettingsView extends StatelessWidget {
 class _SettingsContent extends StatelessWidget {
   _SettingsContent();
 
-  /*static const String _supportEmail = "suporte.biblia.noads@gmail.com";
-  static const String _apoiaSeURL = "https://apoia.se/friendapp";
-  static const String _playStoreURL =
-      "https://play.google.com/store/apps/details?id=com.bibleAplication.app&pcampaignid=web_share";
-  static const String _pixKey = "5e32d467-b1e8-4db4-ae93-e6767105b704";*/
-
   static final String _supportEmail = dotenv.env["SUPPORT_EMAIL"] ?? "Email de suporte não encontrado!";
   static final String _apoiaSeURL = dotenv.env["APOIASE_URL"] ?? "Link de apoio não encontrado!";
   static final String _playStoreURL = dotenv.env["PLAYSTORE_URL"] ?? "";
   static final String _pixKey = dotenv.env["PIX_KEY"] ?? "";
-
-
-
 
   final Uri _playStoreUrl = Uri.parse(_playStoreURL);
   final Uri _apoiase = Uri.parse(_apoiaSeURL);

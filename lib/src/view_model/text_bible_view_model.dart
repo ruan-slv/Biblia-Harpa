@@ -1,4 +1,5 @@
 import '../model/bible_audio.dart';
+import 'service/continue_reading_service.dart';
 import 'bible_read_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
@@ -10,6 +11,9 @@ class BibleContentViewModel extends ChangeNotifier {
   final List<List<String>> allBookChapters;
   final List<BibleAudioChapter>? audioChapters;
   final int verseSelectionLimit;
+
+  /// Serviço responsável por registrar o capítulo aberto para retomada global.
+  final ContinueReadingService continueReadingService;
 
   final ScrollController scrollController = ScrollController();
   final TextEditingController keywordController = TextEditingController();
@@ -23,9 +27,11 @@ class BibleContentViewModel extends ChangeNotifier {
     required this.audioChapters,
     required int initialChapterNumber,
     this.verseSelectionLimit = 20,
+    this.continueReadingService = const ContinueReadingService(),
   }) {
     _setChapter(initialChapterNumber);
     _applyKeywordFilter();
+    _saveContinueReading();
 
     audioPlayer.positionStream.listen((position) {
       if (_isAutoScrollEnabled && audioPlayer.duration != null) {
@@ -123,6 +129,7 @@ class BibleContentViewModel extends ChangeNotifier {
     }
 
     _setChapter(newChapterNumber);
+    _saveContinueReading();
     keywordController.clear();
     _applyKeywordFilter();
     _selectedVerseIndices = const [];
@@ -141,6 +148,14 @@ class BibleContentViewModel extends ChangeNotifier {
 
   void nextChapter() => navigateToChapter(_currentChapterNumber + 1);
   void previousChapter() => navigateToChapter(_currentChapterNumber - 1);
+
+  void _saveContinueReading() {
+    continueReadingService.saveBible(
+      bookName: bookName,
+      jsonPath: jsonPath,
+      chapterNumber: _currentChapterNumber,
+    );
+  }
 
   Future<void> toggleCurrentChapterRead() async {
     final newId = "${bookName}_$_currentChapterNumber";
