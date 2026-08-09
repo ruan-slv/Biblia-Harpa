@@ -1,0 +1,22 @@
+final List<String> topicos = [
+  'Adoração',
+  'Gratidão',
+  'Fé',
+  'Amor',
+  'Perdão',
+  'Esperança',
+  'Paz',
+  'Obediência',
+  'Confiança',
+  'Serviço',
+  'Ansiedade',
+  'Arrependimento',
+  'Adversidade',
+  'Santidade',
+  'Salvação',
+  'Sabedoria',
+  'Tentação',
+  'Segurança',
+  'Solidão',
+  'Submissão'
+];

@@ -8,9 +8,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  shared_preferences: ^2.2.3
-  file_picker: ^10.3.2
-  path_provider: ^2.1.4
+  shared_preferences: ^2.5.5
+  file_picker: ^12.0.0-beta.5
+  path_provider: ^2.1.5
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   http: ^1.2.2
@@ -19,21 +19,27 @@ dependencies:
   media_kit_libs_windows_audio: ^1.0.9
   dio: ^5.7.0
   cupertino_icons: ^1.0.8
-  share_plus: ^11.0.0
-  upgrader: ^11.5.0
-  in_app_update: ^4.2.3
+  share_plus: ^13.1.0
+  upgrader: ^13.5.0
+  in_app_update: ^4.2.5
   url_launcher: ^6.3.0
-  package_info_plus: ^8.3.1
+  package_info_plus: ^10.1.0
   audio_service: ^0.18.12
-  audio_session: ^0.1.18
-  connectivity_plus: ^6.0.3
+  audio_session: ^0.2.3
+  connectivity_plus: ^7.1.1
+  sqflite: ^2.4.2
+  sqflite_common_ffi: ^2.3.4+4
+  path: ^1.9.1
+  provider: ^6.1.5+1
+  watcher: ^1.1.0
+  flutter_dotenv: ^6.0.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
   flutter_launcher_icons: ^0.14.1
-  build_runner: ^2.4.13  # Downgrade para resolver o conflito
+  build_runner: ^2.4.13
   hive_generator: ^2.0.1
 
 flutter:
@@ -44,12 +50,12 @@ flutter:
     - assets/json/acf.json
     - assets/json/aa.json
     - assets/json/nvi.json
-    - assets/json/devocional.json
     - assets/json/newDevocionalModel.json
     - assets/json/palavraDoDia.json
-    - assets/json/apoio.json
     - assets/json/audios.json
     - assets/json/audiosHarpa.json
+    - assets/json/quizz.json
+    - .env
 
 flutter_icons:
   image_path: "assets/images/newLogoIcon.png"

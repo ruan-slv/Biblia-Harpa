@@ -47,3 +47,9 @@ texts
 *.jks
 *.keystore
 .vs/
+.env
+/build
+*.pem
+/.idea
+/.vscode
+/android
