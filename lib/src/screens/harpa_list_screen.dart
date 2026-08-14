@@ -11,6 +11,7 @@ import "package:flutter/material.dart";
 import 'package:flutter/services.dart' show rootBundle;
 import "package:shared_preferences/shared_preferences.dart";
 
+/// Lista os hinos da Harpa, permitindo busca e gerenciamento de favoritos.
 class HarpaList extends StatefulWidget {
   const HarpaList({super.key});
 
@@ -18,6 +19,7 @@ class HarpaList extends StatefulWidget {
   _HarpaListState createState() => _HarpaListState();
 }
 
+/// Coordena dados de áudio, favoritos, filtro e abas da lista de hinos.
 class _HarpaListState extends State<HarpaList>
     with SingleTickerProviderStateMixin {
 

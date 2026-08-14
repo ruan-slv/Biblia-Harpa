@@ -8,6 +8,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// Modela um item devocional com versículo, reflexão e oração.
 class TextModel {
   final String versiculo;
   final String texto;
@@ -25,6 +26,7 @@ class TextModel {
   }
 }
 
+/// Exibe o conteúdo de um tema devocional e permite navegar entre seus itens.
 class DevocionalContentScreen extends StatefulWidget {
   const DevocionalContentScreen(
       {super.key, required this.devo, this.initialIndex = 0});
@@ -37,6 +39,7 @@ class DevocionalContentScreen extends StatefulWidget {
       _DevocionalContentScreenState();
 }
 
+/// Carrega os devocionais e persiste o progresso de leitura do tema.
 class _DevocionalContentScreenState extends State<DevocionalContentScreen> {
   List<TextModel> devocionais = [];
   int currentIndex = 0;

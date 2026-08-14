@@ -1,3 +1,8 @@
+/// Disponibiliza constantes e dados estáticos utilizados pelo aplicativo.
+///
+/// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
+library;
+
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 

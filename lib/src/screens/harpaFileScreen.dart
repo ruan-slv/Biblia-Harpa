@@ -10,6 +10,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart'; // Importante para verificar conexão
 
+/// Reproduz um hino da Harpa e oferece navegação, download e compartilhamento.
 class Harpafilescreen extends StatefulWidget {
   final List<DataAudioModel> allHarpas;
   final int initialIndex;
@@ -24,6 +25,7 @@ class Harpafilescreen extends StatefulWidget {
   State<Harpafilescreen> createState() => _HarpafilescreenState();
 }
 
+/// Mantém o hino ativo, o ciclo de reprodução e o estado do arquivo baixado.
 class _HarpafilescreenState extends State<Harpafilescreen> {
   final AudioPlayer _player = AudioPlayer();
 

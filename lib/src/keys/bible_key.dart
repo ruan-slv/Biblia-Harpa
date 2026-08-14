@@ -1,3 +1,8 @@
+/// Disponibiliza constantes e dados estáticos utilizados pelo aplicativo.
+///
+/// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
+library;
+
 final List<String> books = [
   'Gênesis',
   'Êxodo',

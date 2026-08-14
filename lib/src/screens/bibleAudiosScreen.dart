@@ -9,6 +9,7 @@ import "package:flutter/services.dart" show rootBundle;
 import 'package:path_provider/path_provider.dart';
 
 // ... (Classes AudioData e Book permanecem as mesmas) ...
+/// Representa um capítulo em áudio, com seu título e endereço de reprodução.
 class AudioData {
   final String name;
   final String url;
@@ -20,6 +21,7 @@ class AudioData {
   }
 }
 
+/// Agrupa os capítulos em áudio pertencentes a um livro bíblico.
 class Book {
   final String title;
   final List<AudioData> chapters;
@@ -34,6 +36,7 @@ class Book {
   }
 }
 
+/// Lista e filtra os livros bíblicos que possuem capítulos em áudio.
 class Bibleaudiosscreen extends StatefulWidget {
   final bool isOffline;
 
@@ -46,6 +49,7 @@ class Bibleaudiosscreen extends StatefulWidget {
   State<Bibleaudiosscreen> createState() => _BibleaudiosscreenState();
 }
 
+/// Controla o carregamento, a busca e a disponibilidade local dos áudios.
 class _BibleaudiosscreenState extends State<Bibleaudiosscreen> {
   List<Book> _allBooks = [];
   List<Book> _filteredBooks = [];

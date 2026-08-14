@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// Lista os livros da versão bíblica selecionada e permite trocar de versão.
 class BibleList extends StatefulWidget {
   const BibleList({super.key});
 
@@ -20,6 +21,7 @@ class BibleList extends StatefulWidget {
   _BibleListState createState() => _BibleListState();
 }
 
+/// Gerencia versão ativa, pesquisa de livros e navegação para seus capítulos.
 class _BibleListState extends State<BibleList> {
   final BibleDownloadService _downloadService = BibleDownloadService();
   bool _isDownloading = false;

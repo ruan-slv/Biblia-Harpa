@@ -1,3 +1,8 @@
+/// Define os modelos de dados utilizados por este recurso do aplicativo.
+///
+/// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
+library;
+
 import 'package:hive/hive.dart';
 
 part 'music.g.dart';

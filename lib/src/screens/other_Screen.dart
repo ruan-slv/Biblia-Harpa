@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Necessário para Clipboard
 import 'package:url_launcher/url_launcher.dart';
 
+/// Exibe opções complementares, como apoio ao projeto e cópia da chave PIX.
 class OtherScreen extends StatefulWidget {
   const OtherScreen({super.key});
 
@@ -11,6 +12,7 @@ class OtherScreen extends StatefulWidget {
   State<OtherScreen> createState() => _OtherScreenState();
 }
 
+/// Controla o feedback visual da cópia e a abertura dos canais de suporte.
 class _OtherScreenState extends State<OtherScreen> {
   // --- Lógica copiada e adaptada da SettingsScreen ---
   final String _pixKey = "5e32d467-b1e8-4db4-ae93-e6767105b704";

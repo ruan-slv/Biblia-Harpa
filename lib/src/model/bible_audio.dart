@@ -1,3 +1,8 @@
+/// Define os modelos de dados utilizados por este recurso do aplicativo.
+///
+/// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
+library;
+
 class BibleAudioChapter {
   final String name;
   final String url;

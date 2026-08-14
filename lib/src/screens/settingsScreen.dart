@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+/// Reúne ajustes do aplicativo e links para suporte e avaliação na loja.
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
@@ -13,6 +14,7 @@ class SettingsScreen extends StatefulWidget {
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
+/// Executa ações externas e compõe os controles de configuração disponíveis.
 class _SettingsScreenState extends State<SettingsScreen> {
   Color newPrimaryColor = Colors.grey.shade300;
   Color newSecondaryColor = Colors.grey.shade900;

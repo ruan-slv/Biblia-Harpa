@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
+/// Lista os hinos da Harpa que possuem áudio para reprodução online ou local.
 class HarpaAudioScreen extends StatefulWidget {
   final bool isOffline;
 
@@ -20,6 +21,7 @@ class HarpaAudioScreen extends StatefulWidget {
   State<HarpaAudioScreen> createState() => _HarpaAudioScreenState();
 }
 
+/// Controla o carregamento e o filtro da lista de áudios da Harpa.
 class _HarpaAudioScreenState extends State<HarpaAudioScreen> {
 
   List<DataAudioModel> _allHarpas = [];

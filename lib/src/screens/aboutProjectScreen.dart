@@ -1,6 +1,7 @@
 import 'package:biblia_e_harpa/src/controllers/fontSizeController.dart';
 import 'package:flutter/material.dart';
 
+/// Exibe informações institucionais, objetivos e créditos do aplicativo.
 class Aboutprojectscreen extends StatelessWidget {
   const Aboutprojectscreen({super.key});
 

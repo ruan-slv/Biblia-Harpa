@@ -1,3 +1,8 @@
+/// Define recursos de tema e aparência utilizados pela interface.
+///
+/// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
+library;
+
 import 'package:biblia_e_harpa/src/theme/customTheme.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';

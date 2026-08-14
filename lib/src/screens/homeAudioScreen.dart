@@ -5,6 +5,7 @@ import 'package:biblia_e_harpa/src/screens/harpaAudioWrapper.dart';
 import 'package:biblia_e_harpa/src/screens/playlistScreen.dart';
 import 'package:flutter/material.dart';
 
+/// Fornece a navegação principal entre os áudios da Bíblia e da Harpa.
 class Homeaudioscreen extends StatefulWidget {
   const Homeaudioscreen({super.key});
 
@@ -12,6 +13,7 @@ class Homeaudioscreen extends StatefulWidget {
   State<Homeaudioscreen> createState() => _Homeaudioscreen();
 }
 
+/// Sincroniza a aba selecionada com o conteúdo de áudio correspondente.
 class _Homeaudioscreen extends State<Homeaudioscreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;

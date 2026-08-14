@@ -1,3 +1,8 @@
+/// Coordena o estado e as ações consumidos pela camada de apresentação.
+///
+/// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
+library;
+
 import 'service/bible_text_assets_service.dart';
 import 'package:flutter/foundation.dart';
 

@@ -1,3 +1,8 @@
+/// Reúne funções utilitárias compartilhadas por diferentes partes do aplicativo.
+///
+/// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
+library;
+
 import 'package:flutter/material.dart';
 
 // Cores principais

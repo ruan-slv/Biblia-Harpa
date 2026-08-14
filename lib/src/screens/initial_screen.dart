@@ -18,6 +18,7 @@ import 'devocional_list_screen.dart';
 import 'harpa_list_screen.dart';
 
 // Data class for Palavra do Dia
+/// Representa a palavra do dia com identificador, texto e versículo.
 class Data {
   final int id;
   final String texto;
@@ -34,6 +35,7 @@ class Data {
   }
 }
 
+/// Tela inicial que reúne atalhos, leitura atual e a palavra do dia.
 class Initial extends StatefulWidget {
   const Initial({super.key});
 
@@ -41,6 +43,7 @@ class Initial extends StatefulWidget {
   State<Initial> createState() => _InitialState();
 }
 
+/// Carrega os dados iniciais e controla os atalhos de leitura e compartilhamento.
 class _InitialState extends State<Initial> {
   Data? palavraAtual;
   DateTime? ultimaAtualizacao;

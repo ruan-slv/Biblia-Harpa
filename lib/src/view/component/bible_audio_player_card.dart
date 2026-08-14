@@ -1,3 +1,8 @@
+/// Define componentes visuais reutilizáveis da interface do aplicativo.
+///
+/// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
+library;
+
 import '../../model/bible_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
@@ -109,4 +114,3 @@ class BibleAudioPlayerCard extends StatelessWidget {
     );
   }
 }
-

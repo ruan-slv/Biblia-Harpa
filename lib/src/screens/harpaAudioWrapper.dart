@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../controllers/fontSizeController.dart';
 
+/// Decide a tela de áudio da Harpa conforme o estado de conectividade.
 class HarpaAudioWrapper extends StatefulWidget {
   const HarpaAudioWrapper({super.key});
 
@@ -12,6 +13,7 @@ class HarpaAudioWrapper extends StatefulWidget {
   State<HarpaAudioWrapper> createState() => _HarpaAudioWrapperState();
 }
 
+/// Observa a rede e apresenta conteúdo, falha de conexão ou modo offline.
 class _HarpaAudioWrapperState extends State<HarpaAudioWrapper> {
   late final Future<List<ConnectivityResult>> _connectivityFuture;
 

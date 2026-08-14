@@ -1,3 +1,8 @@
+/// Coordena o estado e as ações consumidos pela camada de apresentação.
+///
+/// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
+library;
+
 import '../model/bible_audio.dart';
 import 'service/bible_audio_assets_service.dart';
 import 'service/bible_version_service.dart';

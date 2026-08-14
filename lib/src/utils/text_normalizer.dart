@@ -1,3 +1,8 @@
+/// Reúne funções utilitárias compartilhadas por diferentes partes do aplicativo.
+///
+/// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
+library;
+
 class TextNormalizer {
   static String normalize(String input) {
     return input
@@ -10,4 +15,3 @@ class TextNormalizer {
         .replaceAll(RegExp(r'[ç]'), 'c');
   }
 }
-

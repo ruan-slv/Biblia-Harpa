@@ -1,3 +1,8 @@
+/// Implementa a interface e os fluxos de apresentação deste recurso.
+///
+/// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
+library;
+
 import 'dart:convert';
 import 'package:biblia_e_harpa/src/view/component/app_bar_component.dart';
 import 'package:biblia_e_harpa/src/view_model/settings_view_model.dart';

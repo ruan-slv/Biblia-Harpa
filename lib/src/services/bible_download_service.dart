@@ -1,3 +1,8 @@
+/// Implementa operações de dados, armazenamento ou integração deste recurso.
+///
+/// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
+library;
+
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';

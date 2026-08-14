@@ -11,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:http/http.dart' as http;
 
+/// Apresenta os capítulos em áudio de um livro e suas ações de reprodução.
 class Audiobookchaptersscreen extends StatefulWidget {
   final Book book;
   const Audiobookchaptersscreen({super.key, required this.book});
@@ -20,6 +21,7 @@ class Audiobookchaptersscreen extends StatefulWidget {
       _AudiobookchaptersscreenState();
 }
 
+/// Gerencia busca, reprodução, download, compartilhamento e exclusão de áudios.
 class _AudiobookchaptersscreenState extends State<Audiobookchaptersscreen> {
   final AudioPlayer _player = AudioPlayer();
   final TextEditingController _searchController = TextEditingController();

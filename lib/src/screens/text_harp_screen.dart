@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 
+/// Modela a letra de um hino, seu coro e as estrofes numeradas.
 class TextModel {
   final String hino;
   final String coro;
@@ -25,6 +26,7 @@ class TextModel {
   }
 }
 
+/// Exibe a letra do hino e, quando disponível, seus controles de áudio.
 class HarpContentScreen extends StatefulWidget {
   const HarpContentScreen({
     super.key,
@@ -39,6 +41,7 @@ class HarpContentScreen extends StatefulWidget {
   State<HarpContentScreen> createState() => _HarpContentScreenState();
 }
 
+/// Coordena carregamento, reprodução e rolagem automática do hino exibido.
 class _HarpContentScreenState extends State<HarpContentScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
   final ScrollController _scrollController = ScrollController(); // Adicionado para controlar o scroll

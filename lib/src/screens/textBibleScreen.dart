@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
 // Modelo para os dados do áudio
+/// Representa o áudio associado a um capítulo bíblico.
 class AudioChapter {
   final String name;
   final String url;
@@ -21,6 +22,7 @@ class AudioChapter {
   }
 }
 
+/// Mostra os versículos de um capítulo e recursos de leitura e áudio.
 class Textbiblescreen extends StatefulWidget {
   final String bookName;
   final String jsonPath;
@@ -41,6 +43,7 @@ class Textbiblescreen extends StatefulWidget {
   State<Textbiblescreen> createState() => _TextbiblescreenState();
 }
 
+/// Controla capítulos, seleção de versículos, filtro, rolagem e reprodução.
 class _TextbiblescreenState extends State<Textbiblescreen> {
   late int currentChapterNumber;
   late List<dynamic> currentVerses;

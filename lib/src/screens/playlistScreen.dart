@@ -11,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import '../models/music.dart';
 import '../services/musicService.dart';
 
+/// Gerencia a playlist local de músicas escolhidas pelo usuário.
 class PlaylistScreen extends StatefulWidget {
   const PlaylistScreen({super.key});
 
@@ -18,6 +19,7 @@ class PlaylistScreen extends StatefulWidget {
   State<PlaylistScreen> createState() => _PlaylistScreenState();
 }
 
+/// Monitora arquivos, controla a reprodução e atualiza a playlist na interface.
 class _PlaylistScreenState extends State<PlaylistScreen> {
   final MusicService musicService = MusicService();
   final AudioPlayer player = AudioPlayer();

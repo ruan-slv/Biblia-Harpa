@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../keys/devocionalkey.dart';
 
+/// Exibe os temas devocionais e o progresso de leitura de cada um.
 class DevocionalList extends StatefulWidget {
   const DevocionalList({super.key});
 
@@ -14,6 +15,7 @@ class DevocionalList extends StatefulWidget {
   _DevocionalListState createState() => _DevocionalListState();
 }
 
+/// Carrega os temas, calcula seu progresso e aplica o filtro de pesquisa.
 class _DevocionalListState extends State<DevocionalList> {
   List<String> filteredDevocionalTopic = [];
   final TextEditingController _filterController = TextEditingController();

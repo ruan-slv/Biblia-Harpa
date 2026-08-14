@@ -1,3 +1,8 @@
+/// Define recursos de tema e aparência utilizados pela interface.
+///
+/// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
+library;
+
 import 'package:flutter/material.dart';
 
 ThemeData lightMode = ThemeData(

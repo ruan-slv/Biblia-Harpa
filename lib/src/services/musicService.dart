@@ -1,3 +1,8 @@
+/// Implementa operações de dados, armazenamento ou integração deste recurso.
+///
+/// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 

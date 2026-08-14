@@ -1,3 +1,8 @@
+/// Define componentes visuais reutilizáveis da interface do aplicativo.
+///
+/// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
+library;
+
 import 'package:biblia_e_harpa/src/view_model/settings_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

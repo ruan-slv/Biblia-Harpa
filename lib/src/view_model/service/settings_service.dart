@@ -1,3 +1,8 @@
+/// Implementa o serviço que dá suporte à camada de apresentação.
+///
+/// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

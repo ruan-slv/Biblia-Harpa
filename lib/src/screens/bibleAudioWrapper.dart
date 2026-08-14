@@ -4,6 +4,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 import '../controllers/fontSizeController.dart';
 
+/// Verifica a conectividade antes de abrir a experiência de áudios bíblicos.
 class BibleAudioWrapper extends StatefulWidget {
   const BibleAudioWrapper({super.key});
 
@@ -11,6 +12,7 @@ class BibleAudioWrapper extends StatefulWidget {
   State<BibleAudioWrapper> createState() => _BibleAudioWrapperState();
 }
 
+/// Resolve o estado de rede e mostra o conteúdo, erro ou modo offline adequado.
 class _BibleAudioWrapperState extends State<BibleAudioWrapper> {
   late final Future<List<ConnectivityResult>> _connectivityFuture;
 

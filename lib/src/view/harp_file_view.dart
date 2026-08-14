@@ -1,3 +1,8 @@
+/// Implementa a interface e os fluxos de apresentação deste recurso.
+///
+/// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'component/app_bar_component.dart';
