@@ -3,6 +3,7 @@ import 'package:biblia_e_harpa/src/model/music.dart';
 import 'package:biblia_e_harpa/src/model/quiz_hive_model.dart';
 import 'package:biblia_e_harpa/src/utils/theme.dart';
 import 'package:biblia_e_harpa/src/view/home_view.dart';
+import 'package:biblia_e_harpa/src/view/component/started_access_on.dart';
 import 'package:biblia_e_harpa/src/view_model/settings_view_model.dart';
 import 'package:biblia_e_harpa/src/view_model/bible_providers.dart';
 import 'package:flutter/foundation.dart';
@@ -71,7 +72,7 @@ class MyApp extends StatelessWidget {
               debugLogging: false,
               messages: upgraderMessages,
             ),
-            child: const HomeView(),
+            child: const StartupGate(child: HomeView()),
           ),
         );
       },
