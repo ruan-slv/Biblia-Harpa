@@ -28,7 +28,7 @@ class SettingsService {
 
   Future<double> loadFontSize() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getDouble(_fontSizeKey) ?? 16.0;
+    return prefs.getDouble(_fontSizeKey) ?? 20.0;
   }
 
   Future<void> saveFontSize(double size) async {

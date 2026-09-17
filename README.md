@@ -132,3 +132,13 @@ recursos e documente APIs públicas com Dartdoc.
 
 Ainda não há uma licença declarada para o projeto. Antes de reutilizar ou
 distribuir o código, entre em contato com os responsáveis pelo repositório.
+
+## Como executar
+```
+flutter pub get
+flutter pub run flutter_launcher_icons:main
+dart run flutter_launcher_icons:main
+flutter build apk --release
+flutter build apk --split-per-abi
+flutter build ... --obfuscate
+```

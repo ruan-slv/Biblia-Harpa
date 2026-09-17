@@ -13,7 +13,7 @@ class SettingsViewModel extends ChangeNotifier {
   final SettingsService _service;
 
   ThemeMode _themeMode = ThemeMode.light;
-  double _fontSize = 20.0;
+  double _fontSize = 22.0;
 
   ThemeMode get themeMode => _themeMode;
   double get fontSize => _fontSize;
@@ -40,7 +40,7 @@ class SettingsViewModel extends ChangeNotifier {
   }
 
   Future<void> decreaseFontSize() async {
-    if (_fontSize > 20.0) {
+    if (_fontSize > 16.0) {
       _fontSize -= 2.0;
       await _service.saveFontSize(_fontSize);
       notifyListeners();
@@ -48,7 +48,7 @@ class SettingsViewModel extends ChangeNotifier {
   }
 
   Future<void> setFontSize(double size) async {
-    _fontSize = size.clamp(20.0, 50.0);
+    _fontSize = size.clamp(16.0, 50.0);
     await _service.saveFontSize(_fontSize);
     notifyListeners();
   }

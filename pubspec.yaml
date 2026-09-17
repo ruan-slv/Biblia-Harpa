@@ -1,6 +1,6 @@
 name: biblia_e_harpa
 description: "Projeto voltado para desenvolvimento de bíblia e harpa sem conexão com a internet"
-publish_to: 'none'
+publish_to: 'ruan-slv'
 version: 1.1.3+23
 environment:
   sdk: ^3.5.4
@@ -58,9 +58,9 @@ flutter:
     - .env
 
 flutter_icons:
-  image_path: "assets/images/newLogoIcon.png"
+  image_path: "assets/images/bible_icon.png"
   android: true
   ios: true
   remove_alpha_ios: true
   adaptive_icon_background: "#D3D3D3"
-  adaptive_icon_foreground: "assets/images/newLogoIcon.png"
+  adaptive_icon_foreground: "assets/images/bible_icon.png"
