@@ -8,7 +8,6 @@ import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:watcher/watcher.dart';
 import 'package:path_provider/path_provider.dart';
@@ -134,13 +133,10 @@ class _PlaylistViewState extends State<PlaylistView> {
   }
 
   void _playNextMusic() async {
-    final box = Hive.box<Music>("musicas");
-    if (_currentPlayingIndex == null || box.isEmpty) return;
-    int nextIndex = (_currentPlayingIndex! + 1) % box.length;
-    final nextMusic = box.getAt(nextIndex);
-    if (nextMusic != null) {
-      _playMusic(nextMusic.filePath, nextIndex);
-    }
+    final musics = _musicController.musics;
+    if (_currentPlayingIndex == null || musics.isEmpty) return;
+    final nextIndex = (_currentPlayingIndex! + 1) % musics.length;
+    _playMusic(musics[nextIndex].filePath, nextIndex);
   }
 
   Future<void> _pickMusicFile() async {
@@ -227,10 +223,14 @@ class _PlaylistViewState extends State<PlaylistView> {
             color: Theme.of(context).colorScheme.secondary,
         ),
       ),
-      body: ValueListenableBuilder<Box<Music>>(
-          valueListenable: Hive.box<Music>('musicas').listenable(),
-          builder: (context, box, _) {
-            if (box.isEmpty) {
+      body: AnimatedBuilder(
+          animation: _musicController,
+          builder: (context, _) {
+            if (_musicController.loading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            final musics = _musicController.musics;
+            if (musics.isEmpty) {
               return Center(
                   child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -260,7 +260,6 @@ class _PlaylistViewState extends State<PlaylistView> {
               ],
             ));
             }
-            final musics = box.values.toList();
             return ListView.builder(
               itemCount: musics.length,
               itemBuilder: (context, index) {

@@ -27,6 +27,7 @@ class BibleProvidersController {
         return BibleListController(
           versionService: ctx.read<BibleVersionController>(),
           audioAssetsService: ctx.read<BibleAudioAssetsController>(),
+          textAssetsService: ctx.read<BibleTextAssetsController>(),
         );
       }),
       ChangeNotifierProvider<BibleAudiosController>(create: (ctx) {

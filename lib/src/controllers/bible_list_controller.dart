@@ -5,6 +5,7 @@ library;
 
 import '../model/bible_audio.dart';
 import 'bible_audio_assets_controller.dart';
+import 'bible_text_assets_controller.dart';
 import 'bible_version_controller.dart';
 import '../utils/text_normalizer.dart';
 import 'package:flutter/foundation.dart';
@@ -12,10 +13,12 @@ import 'package:flutter/foundation.dart';
 class BibleListController extends ChangeNotifier {
   final BibleVersionController versionService;
   final BibleAudioAssetsController audioAssetsService;
+  final BibleTextAssetsController textAssetsService;
 
   BibleListController({
     required this.versionService,
     required this.audioAssetsService,
+    required this.textAssetsService,
   }) {
     _init();
   }
@@ -31,11 +34,15 @@ class BibleListController extends ChangeNotifier {
   String _query = '';
   String get query => _query;
 
+  List<String> _books = const [];
+  List<String> get books => _books;
+
   List<BibleAudioBook> _audioBooks = const [];
   List<BibleAudioBook> get audioBooks => _audioBooks;
 
   Future<void> _init() async {
     _selectedVersionFile = await versionService.getSelectedVersionFileName();
+    await _loadBooks();
     try {
       _audioBooks = await audioAssetsService.loadAudioBooks();
     } catch (_) {
@@ -65,14 +72,21 @@ class BibleListController extends ChangeNotifier {
         break;
     }
     _selectedVersionFile = newVersion;
-    notifyListeners();
     await versionService.setSelectedVersionFileName(newVersion);
+    await _loadBooks();
+    notifyListeners();
   }
 
-  List<String> filterBooks(List<String> books) {
+  Future<void> _loadBooks() async {
+    _books = (await textAssetsService.loadBooks(jsonAssetPath))
+        .map((book) => book.name)
+        .toList(growable: false);
+  }
+
+  List<String> filterBooks() {
     final q = TextNormalizer.normalize(_query.trim());
-    if (q.isEmpty) return books;
-    return books
+    if (q.isEmpty) return _books;
+    return _books
         .where((b) => TextNormalizer.normalize(b).contains(q))
         .toList(growable: false);
   }

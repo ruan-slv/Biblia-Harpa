@@ -16,7 +16,6 @@ import 'package:biblia_e_harpa/src/view/devotional_content_view.dart';
 import 'package:biblia_e_harpa/src/view/harp_content_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'component/app_bar_component.dart';
 import 'component/build_menu_card.dart';
 import 'devotional_list_view.dart';

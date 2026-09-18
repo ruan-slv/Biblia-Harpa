@@ -1,7 +1,7 @@
 import 'package:biblia_e_harpa/src/view/component/app_bar_component.dart';
 import 'package:biblia_e_harpa/src/controllers/quiz_controller.dart';
 import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
-import 'package:biblia_e_harpa/src/model/quiz_hive_model.dart';
+import 'package:biblia_e_harpa/src/model/quiz_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -509,7 +509,7 @@ class _QuizViewContent extends StatelessWidget {
 
   _AnswerState _resolveAnswerState(
     QuizController viewModel,
-    QuizQuestionHive question,
+    QuizQuestion question,
     int index,
   ) {
     if (viewModel.selected == null) return _AnswerState.idle;

@@ -3,51 +3,44 @@
 /// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
 library;
 
-import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:flutter/foundation.dart';
+import 'package:sqflite/sqflite.dart';
+import '../database/app_database.dart';
 import '../model/music.dart';
 
-class MusicController {
-  late final Box<Music> _musicBox;
-
+class MusicController extends ChangeNotifier {
   MusicController() {
-    try {
-      _musicBox = Hive.box<Music>('musicas');
-      debugPrint('Box "musicas" inicializada com sucesso. Tamanho: ${_musicBox.length}');
-    } catch (e) {
-      debugPrint('Erro ao inicializar Box "musicas": $e');
-      rethrow;
-    }
+    loadMusics();
+  }
+
+  List<Music> _musics = const [];
+  bool _loading = true;
+
+  List<Music> get musics => List.unmodifiable(_musics);
+  bool get loading => _loading;
+
+  Future<void> loadMusics() async {
+    final db = await AppDatabase.instance.database;
+    final rows = await db.query('music', orderBy: 'id ASC', limit: 20);
+    _musics = rows.map(Music.fromMap).toList(growable: false);
+    _loading = false;
+    notifyListeners();
   }
 
   Future<void> addMusic(Music music) async {
-    try {
-      await _musicBox.add(music);
-      debugPrint('Música adicionada: ${music.title}, Caminho: ${music.filePath}');
-    } catch (e) {
-      debugPrint('Erro ao adicionar música: $e');
-      rethrow;
-    }
+    final db = await AppDatabase.instance.database;
+    await db.insert('music', music.toMap(), conflictAlgorithm: ConflictAlgorithm.ignore);
+    await loadMusics();
   }
 
   List<Music> getMusics() {
-    try {
-      final musics = _musicBox.values.skip(0).take(20).toList();
-      debugPrint('Músicas recuperadas: ${musics.length}');
-      return musics;
-    } catch (e) {
-      debugPrint('Erro ao recuperar músicas: $e');
-      return [];
-    }
+    return musics;
   }
 
   Future<void> deleteMusic(int index) async {
-    try {
-      await _musicBox.deleteAt(index);
-      debugPrint('Música removida no índice: $index');
-    } catch (e) {
-      debugPrint('Erro ao remover música: $e');
-      rethrow;
-    }
+    if (index < 0 || index >= _musics.length) return;
+    final db = await AppDatabase.instance.database;
+    await db.delete('music', where: 'id = ?', whereArgs: [_musics[index].id]);
+    await loadMusics();
   }
 }

@@ -6,7 +6,6 @@ library;
 import 'package:biblia_e_harpa/src/view/component/app_bar_component.dart';
 import 'package:biblia_e_harpa/src/utils/config.dart';
 import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
-import 'package:biblia_e_harpa/src/keys/bible_key.dart';
 import 'package:biblia_e_harpa/src/controllers/bible_list_controller.dart';
 import 'package:biblia_e_harpa/src/controllers/bible_read_controller.dart';
 import 'package:biblia_e_harpa/src/view/component/bible_version_menu.dart';
@@ -24,7 +23,7 @@ class BibleListView extends StatelessWidget {
     final listViewModel = context.watch<BibleListController>();
     final readViewModel = context.watch<BibleReadController>();
     final settings = context.watch<SettingsController>();
-    final filteredBible = listViewModel.filterBooks(books);
+    final filteredBible = listViewModel.filterBooks();
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -52,7 +51,9 @@ class BibleListView extends StatelessWidget {
           ),
         ],
       ),
-      body: Column(
+      body: !listViewModel.initialized
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
           children: [
             Padding(
               padding: const EdgeInsets.all(10.0),

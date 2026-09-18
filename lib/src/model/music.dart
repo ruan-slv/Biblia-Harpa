@@ -3,17 +3,25 @@
 /// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
 library;
 
-import 'package:hive/hive.dart';
+class Music {
+  const Music({
+    this.id,
+    required this.title,
+    required this.filePath,
+  });
 
-part 'music.g.dart'; // 👈 necessário para build_runner gerar o MusicAdapter
+  final int? id;
+  final String title;
+  final String filePath;
 
-@HiveType(typeId: 0)
-class Music extends HiveObject {
-  @HiveField(0)
-  String title;
+  factory Music.fromMap(Map<String, Object?> map) => Music(
+        id: map['id'] as int?,
+        title: map['title'] as String,
+        filePath: map['file_path'] as String,
+      );
 
-  @HiveField(1)
-  String filePath;
-
-  Music({required this.title, required this.filePath});
+  Map<String, Object?> toMap() => {
+        'title': title,
+        'file_path': filePath,
+      };
 }

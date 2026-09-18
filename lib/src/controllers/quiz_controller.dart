@@ -4,10 +4,10 @@
 library;
 
 import 'dart:convert';
-import 'package:biblia_e_harpa/src/model/quiz_hive_model.dart';
+import 'package:biblia_e_harpa/src/database/app_database.dart';
+import 'package:biblia_e_harpa/src/model/quiz_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:hive/hive.dart';
 import 'continue_reading_controller.dart';
 
 class QuizController extends ChangeNotifier {
@@ -19,9 +19,7 @@ class QuizController extends ChangeNotifier {
         _selectedOptionIndex = -1;
 
   static const _assetPath = 'assets/json/quizz.json';
-  static const _boxName = 'quiz';
-
-  List<QuizQuestionHive> _questions = [];
+  List<QuizQuestion> _questions = [];
   bool _loading = true;
   String? _errorMessage;
 
@@ -44,9 +42,9 @@ class QuizController extends ChangeNotifier {
   bool get loading => _loading;
   String? get errorMessage => _errorMessage;
 
-  List<QuizQuestionHive> get questions => _questions;
+  List<QuizQuestion> get questions => _questions;
 
-  QuizQuestionHive? get currentQuestion {
+  QuizQuestion? get currentQuestion {
     if (_questions.isEmpty) return null;
     return _questions[_currentQuestionIndex];
   }
@@ -70,7 +68,6 @@ class QuizController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final box = await _openBox();
       final rawJson = await rootBundle.loadString(_assetPath);
       final decoded = jsonDecode(rawJson);
 
@@ -78,16 +75,33 @@ class QuizController extends ChangeNotifier {
         throw const FormatException('O arquivo do quiz deve conter uma lista de perguntas.');
       }
 
-      final questions = QuizQuestionHive.fromJsonList(decoded)..shuffle();
+      final questions = decoded
+          .map((question) => QuizQuestion.fromJson(
+                Map<String, dynamic>.from(question as Map),
+              ))
+          .toList(growable: false)
+        ..shuffle();
 
       if (questions.isEmpty) {
         throw const FormatException('Nenhuma pergunta valida foi encontrada no quiz.');
       }
 
-      await box.clear();
-      await box.addAll(questions);
+      final db = await AppDatabase.instance.database;
+      await db.transaction((transaction) async {
+        await transaction.delete('quiz_questions');
+        final batch = transaction.batch();
+        for (final question in questions) {
+          batch.insert(
+            'quiz_questions',
+            question.toDatabase(jsonEncode(question.options
+                .map((option) => option.toJson())
+                .toList(growable: false))),
+          );
+        }
+        await batch.commit(noResult: true);
+      });
 
-      _questions = box.values.toList(growable: false);
+      _questions = await _loadQuestionsFromDatabase();
       _currentQuestionIndex =
           _currentQuestionIndex.clamp(0, _questions.length - 1).toInt();
       _loadedOnce = true;
@@ -142,10 +156,16 @@ class QuizController extends ChangeNotifier {
     );
   }
 
-  Future<Box<QuizQuestionHive>> _openBox() async {
-    if (Hive.isBoxOpen(_boxName)) {
-      return Hive.box<QuizQuestionHive>(_boxName);
-    }
-    return Hive.openBox<QuizQuestionHive>(_boxName);
+  Future<List<QuizQuestion>> _loadQuestionsFromDatabase() async {
+    final db = await AppDatabase.instance.database;
+    final rows = await db.query('quiz_questions', orderBy: 'id ASC');
+    return rows.map((row) {
+      final options = (jsonDecode(row['options_json'] as String) as List)
+          .map((option) => QuizOption.fromJson(
+                Map<String, dynamic>.from(option as Map),
+              ))
+          .toList(growable: false);
+      return QuizQuestion.fromDatabase(row, options);
+    }).toList(growable: false);
   }
 }
