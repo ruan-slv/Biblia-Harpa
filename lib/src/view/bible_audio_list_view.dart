@@ -4,8 +4,8 @@
 library;
 
 import 'package:biblia_e_harpa/src/view/component/app_bar_component.dart';
-import 'package:biblia_e_harpa/src/view_model/settings_view_model.dart';
-import 'package:biblia_e_harpa/src/view_model/bible_audios_view_model.dart';
+import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
+import 'package:biblia_e_harpa/src/controllers/bible_audios_controller.dart';
 import 'package:biblia_e_harpa/src/view/component/feature_search_field.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -31,14 +31,14 @@ class _BibleAudioListViewState extends State<BibleAudioListView> {
     _loaded = true;
     Future.microtask(() {
       if (mounted) {
-        context.read<BibleAudiosViewModel>().load(offlineOnly: widget.isOffline);
+        context.read<BibleAudiosController>().load(offlineOnly: widget.isOffline);
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<BibleAudiosViewModel>();
+    final viewModel = context.watch<BibleAudiosController>();
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -55,13 +55,13 @@ class _BibleAudioListViewState extends State<BibleAudioListView> {
 }
 
 class _Content extends StatelessWidget {
-  final BibleAudiosViewModel viewModel;
+  final BibleAudiosController viewModel;
 
   const _Content({required this.viewModel});
 
   @override
   Widget build(BuildContext context) {
-    final settings = context.watch<SettingsViewModel>();
+    final settings = context.watch<SettingsController>();
     if (viewModel.loading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -87,7 +87,7 @@ class _Content extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: FeatureSearchField(
             hintText: "Pesquisar livro",
-            onChanged: (v) => context.read<BibleAudiosViewModel>().setQuery(v),
+            onChanged: (v) => context.read<BibleAudiosController>().setQuery(v),
           ),
         ),
         Expanded(

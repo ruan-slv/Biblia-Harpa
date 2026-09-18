@@ -6,7 +6,7 @@ library;
 import 'package:biblia_e_harpa/src/view/harp_audio_view.dart';
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:biblia_e_harpa/src/view_model/settings_view_model.dart';
+import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
 import 'package:provider/provider.dart';
 
 class HarpAudioWrapper extends StatefulWidget {
@@ -55,7 +55,7 @@ class _HarpAudioWrapperState extends State<HarpAudioWrapper> {
   }
 
   Widget _buildErrorWidget(BuildContext context, String message, {bool showOfflineButton = false}) {
-    final settings = context.watch<SettingsViewModel>();
+    final settings = context.watch<SettingsController>();
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),

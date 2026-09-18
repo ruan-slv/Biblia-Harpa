@@ -1,6 +1,6 @@
 import 'package:biblia_e_harpa/src/view/component/app_bar_component.dart';
-import 'package:biblia_e_harpa/src/view_model/quiz_view_model.dart';
-import 'package:biblia_e_harpa/src/view_model/settings_view_model.dart';
+import 'package:biblia_e_harpa/src/controllers/quiz_controller.dart';
+import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
 import 'package:biblia_e_harpa/src/model/quiz_hive_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +15,7 @@ class QuizView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => QuizViewModel(initialQuestionIndex: initialQuestionIndex)
+      create: (_) => QuizController(initialQuestionIndex: initialQuestionIndex)
         ..loadQuestions(),
       child: const _QuizViewContent(),
     );
@@ -28,7 +28,7 @@ class _QuizViewContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final viewModel = context.watch<QuizViewModel>();
+    final viewModel = context.watch<QuizController>();
 
     if (viewModel.loading) {
       return Scaffold(
@@ -95,7 +95,7 @@ class _QuizViewContent extends StatelessWidget {
                         width: double.infinity,
                         child: ElevatedButton.icon(
                           onPressed:
-                              context.read<QuizViewModel>().loadQuestions,
+                              context.read<QuizController>().loadQuestions,
                           icon: const Icon(Icons.refresh_rounded),
                           label: const Text('Tentar novamente'),
                         ),
@@ -136,7 +136,7 @@ class _QuizViewContent extends StatelessWidget {
       );
     }
 
-    if (viewModel.completed) {
+    if (viewModel.isCompleted) {
       return _buildCompletedState(context);
     }
 
@@ -145,7 +145,7 @@ class _QuizViewContent extends StatelessWidget {
 
   Widget _buildCompletedState(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final viewModel = context.watch<QuizViewModel>();
+    final viewModel = context.watch<QuizController>();
     final total = viewModel.questions.length;
     final percent = total == 0 ? 0.0 : viewModel.score / total;
 
@@ -332,7 +332,7 @@ class _QuizViewContent extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton.icon(
-                  onPressed: context.read<QuizViewModel>().loadQuestions,
+                  onPressed: context.read<QuizController>().loadQuestions,
                   icon: const Icon(Icons.replay_rounded),
                   label: const Text('Reiniciar quiz'),
                 ),
@@ -346,8 +346,8 @@ class _QuizViewContent extends StatelessWidget {
 
   Widget _buildQuestionState(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final viewModel = context.watch<QuizViewModel>();
-    final settings = context.watch<SettingsViewModel>();
+    final viewModel = context.watch<QuizController>();
+    final settings = context.watch<SettingsController>();
     final question = viewModel.questions[viewModel.current];
     final progress = (viewModel.current + 1) / viewModel.questions.length;
 
@@ -479,14 +479,14 @@ class _QuizViewContent extends StatelessWidget {
                       optionText: question.options[index].text,
                       fontSize: settings.fontSize,
                       state: _resolveAnswerState(viewModel, question, index),
-                      onTap: () => context.read<QuizViewModel>().answer(index),
+                      onTap: () => context.read<QuizController>().answer(index),
                     ),
                   );
                 }),
                 if (viewModel.selected != null) ...[
                   const SizedBox(height: 20),
                   ElevatedButton.icon(
-                    onPressed: context.read<QuizViewModel>().next,
+                    onPressed: context.read<QuizController>().next,
                     icon: Icon(
                       viewModel.current == viewModel.questions.length - 1
                           ? Icons.emoji_events_outlined
@@ -508,7 +508,7 @@ class _QuizViewContent extends StatelessWidget {
   }
 
   _AnswerState _resolveAnswerState(
-    QuizViewModel viewModel,
+    QuizController viewModel,
     QuizQuestionHive question,
     int index,
   ) {

@@ -5,8 +5,8 @@ library;
 
 import 'dart:convert';
 import 'package:biblia_e_harpa/src/model/data_audio_model.dart';
-import 'package:biblia_e_harpa/src/view_model/settings_view_model.dart';
-import 'package:biblia_e_harpa/src/view_model/service/continue_reading_service.dart';
+import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
+import 'package:biblia_e_harpa/src/controllers/continue_reading_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
@@ -47,7 +47,7 @@ class HarpContentView extends StatefulWidget {
 }
 
 class _HarpContentViewState extends State<HarpContentView> {
-  static const _continueReadingService = ContinueReadingService();
+  static const continueReadingController = ContinueReadingController();
   final AudioPlayer _audioPlayer = AudioPlayer();
   bool _isLoadingAudio = false;
   late final Future<List<HarpTextModel>> _textsFuture;
@@ -56,7 +56,7 @@ class _HarpContentViewState extends State<HarpContentView> {
   void initState() {
     super.initState();
     _textsFuture = loadTexts();
-    _continueReadingService.saveHarp(hymn: widget.harp);
+    continueReadingController.saveHarp(hymn: widget.harp);
     _loadAudio();
   }
 
@@ -251,7 +251,7 @@ class _HarpContentViewState extends State<HarpContentView> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final settings = context.watch<SettingsViewModel>();
+    final settings = context.watch<SettingsController>();
 
     return FutureBuilder<List<HarpTextModel>>(
       future: _textsFuture,

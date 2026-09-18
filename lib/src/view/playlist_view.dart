@@ -4,7 +4,7 @@
 library;
 
 
-import 'package:biblia_e_harpa/src/view_model/settings_view_model.dart';
+import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:just_audio/just_audio.dart';
@@ -14,7 +14,7 @@ import 'package:watcher/watcher.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../model/music.dart';
-import '../view_model/service/music_service.dart';
+import '../controllers/music_controller.dart';
 
 class PlaylistView extends StatefulWidget {
   const PlaylistView({super.key});
@@ -24,7 +24,7 @@ class PlaylistView extends StatefulWidget {
 }
 
 class _PlaylistViewState extends State<PlaylistView> {
-  final MusicService musicService = MusicService();
+  final MusicController _musicController = MusicController();
   final AudioPlayer player = AudioPlayer();
   bool _isPlaying = false;
   int? _currentPlayingIndex;
@@ -89,7 +89,7 @@ class _PlaylistViewState extends State<PlaylistView> {
               title: filePath.split('/').last,
               filePath: filePath,
             );
-            musicService.addMusic(music).then((_) {
+            _musicController.addMusic(music).then((_) {
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -156,7 +156,7 @@ class _PlaylistViewState extends State<PlaylistView> {
           title: file.name,
           filePath: file.path!,
         );
-        await musicService.addMusic(music);
+        await _musicController.addMusic(music);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -177,7 +177,7 @@ class _PlaylistViewState extends State<PlaylistView> {
 
   Future<void> _removeMusic(int index) async {
     try {
-      await musicService.deleteMusic(index);
+      await _musicController.deleteMusic(index);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Música removida com sucesso!')),
@@ -215,7 +215,7 @@ class _PlaylistViewState extends State<PlaylistView> {
 
   @override
   Widget build(BuildContext context) {
-    final settings = context.watch<SettingsViewModel>();
+    final settings = context.watch<SettingsController>();
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       floatingActionButton: FloatingActionButton(

@@ -5,10 +5,10 @@ library;
 
 import 'package:biblia_e_harpa/src/view/component/app_bar_component.dart';
 import 'package:biblia_e_harpa/src/utils/config.dart';
-import 'package:biblia_e_harpa/src/view_model/settings_view_model.dart';
+import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
 import 'package:biblia_e_harpa/src/keys/bible_key.dart';
-import 'package:biblia_e_harpa/src/view_model/bible_list_view_model.dart';
-import 'package:biblia_e_harpa/src/view_model/bible_read_view_model.dart';
+import 'package:biblia_e_harpa/src/controllers/bible_list_controller.dart';
+import 'package:biblia_e_harpa/src/controllers/bible_read_controller.dart';
 import 'package:biblia_e_harpa/src/view/component/bible_version_menu.dart';
 import 'package:biblia_e_harpa/src/view/component/feature_search_field.dart';
 import 'package:flutter/material.dart';
@@ -21,9 +21,9 @@ class BibleListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final listViewModel = context.watch<BibleListViewModel>();
-    final readViewModel = context.watch<BibleReadViewModel>();
-    final settings = context.watch<SettingsViewModel>();
+    final listViewModel = context.watch<BibleListController>();
+    final readViewModel = context.watch<BibleReadController>();
+    final settings = context.watch<SettingsController>();
     final filteredBible = listViewModel.filterBooks(books);
 
     return Scaffold(
@@ -46,7 +46,7 @@ class BibleListView extends StatelessWidget {
                 ),
               ),
               child: BibleVersionMenu(
-                onSelected: (key) => context.read<BibleListViewModel>().setVersionByKey(key),
+                onSelected: (key) => context.read<BibleListController>().setVersionByKey(key),
               ),
             ),
           ),
@@ -58,7 +58,7 @@ class BibleListView extends StatelessWidget {
               padding: const EdgeInsets.all(10.0),
               child: FeatureSearchField(
                 hintText: "Pesquisar livro",
-                onChanged: (v) => context.read<BibleListViewModel>().setQuery(v),
+                onChanged: (v) => context.read<BibleListController>().setQuery(v),
               ),
             ),
             const SizedBox(height: 12),

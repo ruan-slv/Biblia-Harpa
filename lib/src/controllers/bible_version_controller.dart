@@ -5,7 +5,7 @@ library;
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-class BibleVersionService {
+class BibleVersionController {
   static const _prefsKey = 'selectedVersion';
 
   Future<String> getSelectedVersionFileName() async {

@@ -7,7 +7,7 @@ import 'dart:convert';
 import "package:biblia_e_harpa/src/view/component/app_bar_component.dart";
 import "package:biblia_e_harpa/src/utils/config.dart";
 import "package:biblia_e_harpa/src/view/harp_content_view.dart";
-import "package:biblia_e_harpa/src/view_model/settings_view_model.dart";
+import "package:biblia_e_harpa/src/controllers/settings_controller.dart";
 import "package:biblia_e_harpa/src/keys/harp_key.dart";
 import 'package:biblia_e_harpa/src/model/data_audio_model.dart';
 import "package:flutter/material.dart";
@@ -115,7 +115,7 @@ class _HarpListViewState extends State<HarpListView>
   }
 
   Widget _buildHarpList(List<String> harpList) {
-    final settings = context.watch<SettingsViewModel>();
+    final settings = context.watch<SettingsController>();
     return ListView.builder(
       padding: const EdgeInsets.only(top: 10, bottom: 4, left: 10, right: 10),
       itemCount: harpList.length,

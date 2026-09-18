@@ -4,11 +4,11 @@
 library;
 
 import 'dart:convert';
-import '../../model/bible_audio.dart';
+import '../model/bible_audio.dart';
 import 'package:flutter/services.dart';
 
-class BibleAudioAssetsService {
-  const BibleAudioAssetsService();
+class BibleAudioAssetsController {
+  const BibleAudioAssetsController();
 
   Future<List<BibleAudioBook>> loadAudioBooks() async {
     final response = await rootBundle.loadString("assets/json/audios.json");

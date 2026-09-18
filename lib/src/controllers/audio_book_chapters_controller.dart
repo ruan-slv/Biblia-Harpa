@@ -11,11 +11,11 @@ import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
 import 'package:path_provider/path_provider.dart';
 
-class BibleAudioChaptersViewModel extends ChangeNotifier {
+class BibleAudioChaptersController extends ChangeNotifier {
   final BibleAudioBook book;
   final AudioPlayer player = AudioPlayer();
 
-  BibleAudioChaptersViewModel({required this.book}) {
+  BibleAudioChaptersController({required this.book}) {
     _filteredChapters = book.chapters;
     _checkDownloadedChapters();
 

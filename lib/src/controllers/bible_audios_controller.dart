@@ -5,15 +5,15 @@ library;
 
 import 'dart:io';
 import '../model/bible_audio.dart';
-import 'service/bible_audio_assets_service.dart';
+import 'bible_audio_assets_controller.dart';
 import '../utils/text_normalizer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
-class BibleAudiosViewModel extends ChangeNotifier {
-  final BibleAudioAssetsService audioAssetsService;
+class BibleAudiosController extends ChangeNotifier {
+  final BibleAudioAssetsController audioAssetsService;
 
-  BibleAudiosViewModel({required this.audioAssetsService});
+  BibleAudiosController({required this.audioAssetsService});
 
   bool _loading = false;
   bool get loading => _loading;

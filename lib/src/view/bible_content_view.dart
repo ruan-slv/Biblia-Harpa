@@ -5,11 +5,11 @@ library;
 
 import 'package:biblia_e_harpa/src/view/component/app_bar_component.dart';
 import 'package:biblia_e_harpa/src/view/component/bottombar.dart';
-import 'package:biblia_e_harpa/src/view_model/settings_view_model.dart';
+import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
 import 'package:biblia_e_harpa/src/model/bible_audio.dart';
-import 'package:biblia_e_harpa/src/view_model/service/bible_share_service.dart';
-import 'package:biblia_e_harpa/src/view_model/bible_read_view_model.dart';
-import 'package:biblia_e_harpa/src/view_model/text_bible_view_model.dart';
+import 'package:biblia_e_harpa/src/controllers/bible_share_controller.dart';
+import 'package:biblia_e_harpa/src/controllers/bible_read_controller.dart';
+import 'package:biblia_e_harpa/src/controllers/bible_content_controller.dart';
 import 'package:biblia_e_harpa/src/view/component/bible_audio_player_card.dart';
 import 'package:biblia_e_harpa/src/view/component/controlled_search_field.dart';
 import 'package:biblia_e_harpa/src/view/component/selection_limit_dialog.dart';
@@ -34,9 +34,9 @@ class BibleContentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<BibleContentViewModel>(
-      create: (ctx) => BibleContentViewModel(
-        readState: ctx.read<BibleReadViewModel>(),
+    return ChangeNotifierProvider<BibleContentController>(
+      create: (ctx) => BibleContentController(
+        readState: ctx.read<BibleReadController>(),
         bookName: bookName,
         jsonPath: jsonPath,
         allBookChapters: allBookChapters,
@@ -53,9 +53,9 @@ class _TextBibleView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<BibleContentViewModel>();
-    final readViewModel = context.watch<BibleReadViewModel>();
-    final settings = context.watch<SettingsViewModel>();
+    final viewModel = context.watch<BibleContentController>();
+    final readViewModel = context.watch<BibleReadController>();
+    final settings = context.watch<SettingsController>();
     final colorScheme = Theme.of(context).colorScheme;
 
     if (viewModel.allBookChapters.isEmpty) {
@@ -99,7 +99,7 @@ class _TextBibleView extends StatelessWidget {
           IconButton(
             onPressed: () async {
               final chapterText = viewModel.buildShareText();
-              await context.read<BibleShareService>().shareText(chapterText);
+              await context.read<BibleShareController>().shareText(chapterText);
             },
             icon: Icon(
               viewModel.selectedVerseIndices.isEmpty ? Icons.share : Icons.send,

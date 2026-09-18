@@ -6,10 +6,10 @@ library;
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class BibleReadViewModel extends ChangeNotifier {
+class BibleReadController extends ChangeNotifier {
   static const String _key = "textosLidos";
 
-  BibleReadViewModel() {
+  BibleReadController() {
     _load();
   }
 

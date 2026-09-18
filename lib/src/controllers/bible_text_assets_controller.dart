@@ -4,11 +4,11 @@
 library;
 
 import 'dart:convert';
-import '../../model/bible_book.dart';
+import '../model/bible_book.dart';
 import 'package:flutter/services.dart';
 
-class BibleTextAssetsService {
-  const BibleTextAssetsService();
+class BibleTextAssetsController {
+  const BibleTextAssetsController();
 
   Future<BibleBook?> loadBook({
     required String jsonAssetPath,

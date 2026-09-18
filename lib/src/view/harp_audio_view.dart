@@ -6,7 +6,7 @@ library;
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:biblia_e_harpa/src/view_model/settings_view_model.dart';
+import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
 import 'package:biblia_e_harpa/src/model/data_audio_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -200,7 +200,7 @@ class _HarpAudioViewState extends State<HarpAudioView> {
   }
 
   Widget _buildContent() {
-    final settings = context.watch<SettingsViewModel>();
+    final settings = context.watch<SettingsController>();
     if (isLoading) return const Center(child: CircularProgressIndicator());
     if (error != null) return Center(child: Text(error!, style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: settings.fontSize)));
 

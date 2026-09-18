@@ -6,8 +6,8 @@ library;
 import 'dart:convert';
 import 'package:biblia_e_harpa/src/view/component/app_bar_component.dart';
 import 'package:biblia_e_harpa/src/view/component/bottombar.dart';
-import 'package:biblia_e_harpa/src/view_model/settings_view_model.dart';
-import 'package:biblia_e_harpa/src/view_model/service/continue_reading_service.dart';
+import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
+import 'package:biblia_e_harpa/src/controllers/continue_reading_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -43,7 +43,7 @@ class DevotionalContentView extends StatefulWidget {
 }
 
 class _DevotionalContentViewState extends State<DevotionalContentView> {
-  static const _continueReadingService = ContinueReadingService();
+  static const continueReadingController = ContinueReadingController();
   List<DevotionalTextModel> devocionais = [];
   int currentIndex = 0;
   bool isRead = false;
@@ -75,7 +75,7 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
               jsonResponse[resolvedTopic] as List? ?? const []);
 
       final loadedDevocionais = topicDevocionais
-          .where((json) => json is Map)
+          .whereType<Map>()
           .map((json) => DevotionalTextModel.fromJson(
                 Map<String, dynamic>.from(json),
               ))
@@ -104,7 +104,7 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
         await _checkReadStatus();
         final prefs = await SharedPreferences.getInstance();
         final int lastReadForTopic =
-            prefs.getInt('devocional_last_read_${_topicKey}') ?? -1;
+            prefs.getInt('devocional_last_read_$_topicKey') ?? -1;
         await _addOrUpdateHistory(lastReadForTopic);
       }
     } catch (e) {
@@ -180,10 +180,10 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
 
     await prefs.setBool(key, isRead);
     if (isRead) {
-      await prefs.setInt('devocional_last_read_${_topicKey}', currentIndex);
+      await prefs.setInt('devocional_last_read_$_topicKey', currentIndex);
       await _addOrUpdateHistory(currentIndex);
     } else {
-      await prefs.remove('devocional_last_read_${_topicKey}');
+      await prefs.remove('devocional_last_read_$_topicKey');
       await _addOrUpdateHistory(-1);
     }
 
@@ -252,7 +252,7 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('lastDevocionalIndex', currentIndex);
     await prefs.setString('lastDevocionalTopic', _topicKey);
-    await _continueReadingService.saveDevotional(
+    await continueReadingController.saveDevotional(
       topic: _topicKey,
       index: currentIndex,
     );
@@ -330,7 +330,7 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
 
     final devocional = devocionais[currentIndex];
     final colorScheme = Theme.of(context).colorScheme;
-    final settings = context.watch<SettingsViewModel>();
+    final settings = context.watch<SettingsController>();
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,

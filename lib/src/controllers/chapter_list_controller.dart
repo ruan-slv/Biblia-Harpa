@@ -3,13 +3,13 @@
 /// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
 library;
 
-import 'service/bible_text_assets_service.dart';
+import 'bible_text_assets_controller.dart';
 import 'package:flutter/foundation.dart';
 
-class BibleChapterListViewModel extends ChangeNotifier {
-  final BibleTextAssetsService textAssetsService;
+class BibleChapterListController extends ChangeNotifier {
+  final BibleTextAssetsController textAssetsService;
 
-  BibleChapterListViewModel({required this.textAssetsService});
+  BibleChapterListController({required this.textAssetsService});
 
   bool _loading = false;
   bool get loading => _loading;

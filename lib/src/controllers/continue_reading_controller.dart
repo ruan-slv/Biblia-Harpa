@@ -85,9 +85,9 @@ class ContinueReadingEntry {
 }
 
 /// Persiste e recupera os pontos de continuidade das funcionalidades do app.
-class ContinueReadingService {
+class ContinueReadingController {
   /// Cria o serviço de continuidade usando as preferências locais do app.
-  const ContinueReadingService();
+  const ContinueReadingController();
 
   static const _storageKey = 'continue_reading_entries';
   static const _devotionalAssetPath = 'assets/json/newDevocionalModel.json';

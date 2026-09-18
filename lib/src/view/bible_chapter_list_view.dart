@@ -4,11 +4,11 @@
 library;
 
 import 'package:biblia_e_harpa/src/view/component/app_bar_component.dart';
-import 'package:biblia_e_harpa/src/view_model/settings_view_model.dart';
+import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
 import 'package:biblia_e_harpa/src/model/bible_audio.dart';
-import 'package:biblia_e_harpa/src/view_model/service/bible_text_assets_service.dart';
-import 'package:biblia_e_harpa/src/view_model/bible_read_view_model.dart';
-import 'package:biblia_e_harpa/src/view_model/chapter_list_view_model.dart';
+import 'package:biblia_e_harpa/src/controllers/bible_text_assets_controller.dart';
+import 'package:biblia_e_harpa/src/controllers/bible_read_controller.dart';
+import 'package:biblia_e_harpa/src/controllers/chapter_list_controller.dart';
 import 'package:biblia_e_harpa/src/view/component/feature_search_field.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -29,9 +29,9 @@ class BibleChapterListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<BibleChapterListViewModel>(
-      create: (ctx) => BibleChapterListViewModel(
-        textAssetsService: ctx.read<BibleTextAssetsService>(),
+    return ChangeNotifierProvider<BibleChapterListController>(
+      create: (ctx) => BibleChapterListController(
+        textAssetsService: ctx.read<BibleTextAssetsController>(),
       )..load(bookName: name, jsonAssetPath: jsonPath),
       child: _ChapterListView(name: name, jsonPath: jsonPath, audioChapters: audioChapters),
     );
@@ -71,8 +71,8 @@ class _ChapterListViewState extends State<_ChapterListView>
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<BibleChapterListViewModel>();
-    final readViewModel = context.watch<BibleReadViewModel>();
+    final viewModel = context.watch<BibleChapterListController>();
+    final readViewModel = context.watch<BibleReadController>();
     final chaptersToShow = viewModel.filteredChapterNumbers();
     final readNumbers = viewModel.readChapterNumbersForBook(
       bookName: widget.name,
@@ -104,7 +104,7 @@ class _ChapterListViewState extends State<_ChapterListView>
               child: FeatureSearchField(
                 hintText: "Pesquisar Capítulo",
                 keyboardType: TextInputType.number,
-                onChanged: (v) => context.read<BibleChapterListViewModel>().setQuery(v),
+                onChanged: (v) => context.read<BibleChapterListController>().setQuery(v),
               ),
             ),
             const SizedBox(height: 12),
@@ -157,8 +157,8 @@ class _ChapterGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final readViewModel = context.watch<BibleReadViewModel>();
-    final settings = context.watch<SettingsViewModel>();
+    final readViewModel = context.watch<BibleReadController>();
+    final settings = context.watch<SettingsController>();
     if (chapterNumbers.isEmpty) {
       return const Center(child: Text("Nenhum capítulo disponível."));
     }

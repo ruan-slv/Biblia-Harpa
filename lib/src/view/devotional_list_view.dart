@@ -5,7 +5,7 @@ library;
 
 import 'dart:convert';
 import 'package:biblia_e_harpa/src/view/component/app_bar_component.dart';
-import 'package:biblia_e_harpa/src/view_model/settings_view_model.dart';
+import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
 import 'package:biblia_e_harpa/src/view/devotional_content_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -101,7 +101,7 @@ class _DevotionalListViewState extends State<DevotionalListView> {
 
   Widget _buildTemasTab(List<String> devoList) {
     final colorScheme = Theme.of(context).colorScheme;
-    final settings = context.watch<SettingsViewModel>();
+    final settings = context.watch<SettingsController>();
 
     return Column(
       children: [

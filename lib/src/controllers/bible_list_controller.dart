@@ -4,16 +4,16 @@
 library;
 
 import '../model/bible_audio.dart';
-import 'service/bible_audio_assets_service.dart';
-import 'service/bible_version_service.dart';
+import 'bible_audio_assets_controller.dart';
+import 'bible_version_controller.dart';
 import '../utils/text_normalizer.dart';
 import 'package:flutter/foundation.dart';
 
-class BibleListViewModel extends ChangeNotifier {
-  final BibleVersionService versionService;
-  final BibleAudioAssetsService audioAssetsService;
+class BibleListController extends ChangeNotifier {
+  final BibleVersionController versionService;
+  final BibleAudioAssetsController audioAssetsService;
 
-  BibleListViewModel({
+  BibleListController({
     required this.versionService,
     required this.audioAssetsService,
   }) {

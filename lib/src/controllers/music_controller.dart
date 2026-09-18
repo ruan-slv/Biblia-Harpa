@@ -5,12 +5,12 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import '../../model/music.dart';
+import '../model/music.dart';
 
-class MusicService {
+class MusicController {
   late final Box<Music> _musicBox;
 
-  MusicService() {
+  MusicController() {
     try {
       _musicBox = Hive.box<Music>('musicas');
       debugPrint('Box "musicas" inicializada com sucesso. Tamanho: ${_musicBox.length}');

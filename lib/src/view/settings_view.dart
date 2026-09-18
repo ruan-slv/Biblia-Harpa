@@ -4,7 +4,7 @@
 library;
 
 import 'package:biblia_e_harpa/src/view/component/app_section_card.dart';
-import 'package:biblia_e_harpa/src/view_model/settings_view_model.dart';
+import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -25,16 +25,13 @@ class _SettingsContent extends StatelessWidget {
   _SettingsContent();
 
   static final String _supportEmail = dotenv.env["SUPPORT_EMAIL"] ?? "Email de suporte não encontrado!";
-  static final String _apoiaSeURL = dotenv.env["APOIASE_URL"] ?? "Link de apoio não encontrado!";
   static final String _playStoreURL = dotenv.env["PLAYSTORE_URL"] ?? "";
   static final String _pixKey = dotenv.env["PIX_KEY"] ?? "";
 
   final Uri _playStoreUrl = Uri.parse(_playStoreURL);
-  final Uri _apoiase = Uri.parse(_apoiaSeURL);
 
   void copyPixKey(BuildContext context) {
     Clipboard.setData(ClipboardData(text: _pixKey));
-    Navigator.pop(context);
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -128,7 +125,7 @@ class _SettingsContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Consumer<SettingsViewModel>(
+    return Consumer<SettingsController>(
       builder: (context, viewModel, _) {
         return Scaffold(
           backgroundColor: colorScheme.surface,
@@ -243,76 +240,10 @@ class _SettingsContent extends StatelessWidget {
                     icon: Icons.coffee_rounded,
                     title: "Apoiar projeto",
                     subtitle:
-                        "Apoie este projeto voluntário da forma que preferir.",
+                    "Seu apoio nos ajuda a manter este projeto de pé com manutenções e atualizações do aplicativo para seu aproveitamento.",
                     child: ElevatedButton.icon(
                       onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              backgroundColor: colorScheme.surface,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(24),
-                              ),
-                              title: Text(
-                                "Apoio",
-                                style: TextStyle(
-                                  color: colorScheme.secondary,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              content: Text(
-                                "Nos apoie compartilhando este aplicativo com cinco conhecidos. Nossa prioridade é alcançar mais pessoas. Caso queira contribuir com a manutenção da infraestrutura e com a expansão do app para Desktop e iOS, considere fazer uma doação. (sugestão: Não doe valores acima de R\$ 5 reais, pois desejamos apenas o mínimo para funcionamento.).",
-                                style: TextStyle(color: colorScheme.secondary),
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    SharePlus.instance.share(
-                                      ShareParams(
-                                        text:
-                                            "📖✨ Descubra uma nova forma de se conectar com a Palavra de Deus!\n\n"
-                                            "Baixe agora nosso aplicativo gratuito de leitura bíblica e tenha acesso a versiculos, harpa e muito mais, tudo na palma da sua mão de forma ofline e sem anúncios.\n\n"
-                                            "🔗 Acesse aqui: $_playStoreUrl",
-                                      ),
-                                    );
-                                  },
-                                  child: Text(
-                                    "Compartilhar app",
-                                    style:
-                                        TextStyle(color: colorScheme.secondary),
-                                  ),
-                                ),
-                                TextButton(
-                                  // Dispara uma janela externa para Apoia.se
-                                  onPressed: () async =>
-                                      await _openExternal(_apoiase),
-                                  child: Text(
-                                    "Apoio mensal",
-                                    style:
-                                        TextStyle(color: colorScheme.secondary),
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: () => copyPixKey(context),
-                                  child: Text(
-                                    "Apoio único",
-                                    style:
-                                        TextStyle(color: colorScheme.secondary),
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: Text(
-                                    "Fechar",
-                                    style:
-                                        TextStyle(color: colorScheme.secondary),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        );
+                        copyPixKey(context);
                       },
                       icon: const Icon(Icons.info_outline_rounded),
                       label: const Text("Ver mais"),

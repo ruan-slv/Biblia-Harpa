@@ -3,20 +3,20 @@
 /// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
 library;
 
-import 'package:biblia_e_harpa/src/view_model/settings_view_model.dart';
-import 'package:biblia_e_harpa/src/view_model/daily_word_view_model.dart';
+import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
 import 'package:biblia_e_harpa/src/view/quiz_view.dart';
 import 'package:biblia_e_harpa/src/view/home_audio_view.dart';
 import 'package:biblia_e_harpa/src/view/settings_view.dart';
-import 'package:biblia_e_harpa/src/view_model/service/daily_word_service.dart';
-import 'package:biblia_e_harpa/src/view_model/service/bible_text_assets_service.dart';
-import 'package:biblia_e_harpa/src/view_model/bible_list_view_model.dart';
-import 'package:biblia_e_harpa/src/view_model/service/continue_reading_service.dart';
+import 'package:biblia_e_harpa/src/controllers/daily_word_controller.dart';
+import 'package:biblia_e_harpa/src/controllers/bible_text_assets_controller.dart';
+import 'package:biblia_e_harpa/src/controllers/bible_list_controller.dart';
+import 'package:biblia_e_harpa/src/controllers/continue_reading_controller.dart';
 import 'package:biblia_e_harpa/src/view/bible_content_view.dart';
 import 'package:biblia_e_harpa/src/view/devotional_content_view.dart';
 import 'package:biblia_e_harpa/src/view/harp_content_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'component/app_bar_component.dart';
 import 'component/build_menu_card.dart';
 import 'devotional_list_view.dart';
@@ -34,17 +34,8 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   int currentPageIndex = 0;
 
-  final DailyWordService _service = DailyWordService();
-  static const _continueReadingService = ContinueReadingService();
-  late final DailyWordViewModel _dailyWordViewModel;
-
-  /*
-  Future<void> _openExternal(Uri url) async {
-    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-      throw Exception("Não foi possível abrir a página");
-    }
-  }
-  */
+  final DailyWordController _dailyWordController = DailyWordController();
+  static const _continueReadingController = ContinueReadingController();
 
   Future<void> _resume(ContinueReadingEntry entry) async {
     switch (entry.type) {
@@ -65,7 +56,7 @@ class _HomeViewState extends State<HomeView> {
         final jsonPath = entry.data['jsonPath'] as String?;
         if (bookName == null || jsonPath == null) return;
 
-        final book = await context.read<BibleTextAssetsService>().loadBook(
+        final book = await context.read<BibleTextAssetsController>().loadBook(
               bookName: bookName,
               jsonAssetPath: jsonPath,
             );
@@ -80,7 +71,7 @@ class _HomeViewState extends State<HomeView> {
         }
 
         final audioChapters = context
-            .read<BibleListViewModel>()
+            .read<BibleListController>()
             .findAudioChaptersForBook(bookName);
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -121,7 +112,7 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Future<void> _showContinueReading() async {
-    final entries = await _continueReadingService.loadEntries();
+    final entries = await _continueReadingController.loadEntries();
     if (!mounted) return;
 
     await showModalBottomSheet<void>(
@@ -168,7 +159,7 @@ class _HomeViewState extends State<HomeView> {
                   ),
                   onTap: () async {
                     Navigator.of(sheetContext).pop();
-                    final entry = await _continueReadingService
+                    final entry = await _continueReadingController
                         .findNextUnreadDevotional();
                     if (!mounted) return;
                     if (entry == null) {
@@ -259,16 +250,14 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
-    _dailyWordViewModel = DailyWordViewModel(service: _service);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        _dailyWordViewModel.loadDailyWord(context);
+        _dailyWordController.loadDailyWord();
       }
     });
   }
 
-  ColorScheme colorScheme(BuildContext context) =>
-      Theme.of(context).colorScheme;
+  ColorScheme colorScheme(BuildContext context) => Theme.of(context).colorScheme;
 
   @override
   Widget build(BuildContext context) {
@@ -276,7 +265,7 @@ class _HomeViewState extends State<HomeView> {
     final List<Widget> pages = [
       SafeArea(
         child: ChangeNotifierProvider.value(
-          value: _dailyWordViewModel,
+          value: _dailyWordController,
           child: LayoutBuilder(
             builder: (context, constraints) {
               final content = ConstrainedBox(
@@ -287,7 +276,7 @@ class _HomeViewState extends State<HomeView> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Consumer<DailyWordViewModel>(
+                    Consumer<DailyWordController>(
                       builder: (context, viewModel, _) {
                         final currentWord = viewModel.currentWord;
                         return Padding(
@@ -329,7 +318,7 @@ class _HomeViewState extends State<HomeView> {
                                   ),
                                 ),
                                 const SizedBox(height: 12),
-                                Consumer<SettingsViewModel>(
+                                Consumer<SettingsController>(
                                   builder: (context, settings, _) {
                                     return Text(
                                       currentWord?.text ??
@@ -543,7 +532,7 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   void dispose() {
-    _dailyWordViewModel.dispose();
+    _dailyWordController.dispose();
     super.dispose();
   }
 }

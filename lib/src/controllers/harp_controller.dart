@@ -7,12 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../keys/harp_key.dart';
 
-class HarpViewModel extends ChangeNotifier {
+class HarpController extends ChangeNotifier {
   final String initialHarp;
   late String _currentHarp;
   final List<String> allHarps = harps;
 
-  HarpViewModel({required this.initialHarp}) {
+  HarpController({required this.initialHarp}) {
     _currentHarp = initialHarp;
     _loadReadStatus();
   }

@@ -4,8 +4,8 @@ import 'package:biblia_e_harpa/src/model/quiz_hive_model.dart';
 import 'package:biblia_e_harpa/src/utils/theme.dart';
 import 'package:biblia_e_harpa/src/view/home_view.dart';
 import 'package:biblia_e_harpa/src/view/component/started_access_on.dart';
-import 'package:biblia_e_harpa/src/view_model/settings_view_model.dart';
-import 'package:biblia_e_harpa/src/view_model/bible_providers.dart';
+import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
+import 'package:biblia_e_harpa/src/controllers/bible_providers_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -38,15 +38,15 @@ void main() async {
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   }
 
-  final settingsViewModel = SettingsViewModel();
-  await settingsViewModel.initialize();
+  final settingsController = SettingsController();
+  await settingsController.initialize();
   await dotenv.load(fileName: ".env");
 
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(value: settingsViewModel),
-        ...BibleProviders.build(),
+        ChangeNotifierProvider.value(value: settingsController),
+        ...BibleProvidersController.build(),
       ],
       child: const MyApp(),
     ),
@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final upgraderMessages = UpgraderMessages(code: 'pt-br');
-    return Consumer<SettingsViewModel>(
+    return Consumer<SettingsController>(
       builder: (context, settings, _) {
         return MaterialApp(
           title: 'Bíblia e Harpa',

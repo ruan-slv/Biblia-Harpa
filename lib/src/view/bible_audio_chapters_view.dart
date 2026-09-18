@@ -4,9 +4,9 @@
 library;
 
 import 'package:biblia_e_harpa/src/view/component/app_bar_component.dart';
-import 'package:biblia_e_harpa/src/view_model/settings_view_model.dart';
+import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
 import 'package:biblia_e_harpa/src/model/bible_audio.dart';
-import 'package:biblia_e_harpa/src/view_model/audio_book_chapters_view_model.dart';
+import 'package:biblia_e_harpa/src/controllers/audio_book_chapters_controller.dart';
 import 'package:biblia_e_harpa/src/view/component/feature_search_field.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -19,8 +19,8 @@ class BibleAudioChaptersView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<BibleAudioChaptersViewModel>(
-      create: (_) => BibleAudioChaptersViewModel(book: book),
+    return ChangeNotifierProvider<BibleAudioChaptersController>(
+      create: (_) => BibleAudioChaptersController(book: book),
       child: _AudioBookChaptersView(book: book),
     );
   }
@@ -32,8 +32,8 @@ class _AudioBookChaptersView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<BibleAudioChaptersViewModel>();
-    final settings = context.watch<SettingsViewModel>();
+    final viewModel = context.watch<BibleAudioChaptersController>();
+    final settings = context.watch<SettingsController>();
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
