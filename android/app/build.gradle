@@ -12,7 +12,7 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace = "com.bibleAplication.app"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "28.2.13676358"
+    ndkVersion = "30.0.16248370"
 
     packagingOptions {
         jniLibs {
@@ -55,7 +55,9 @@ android {
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.release
+            if (keystoreProperties.size() > 0) {
+                signingConfig = signingConfigs.release
+            }
             minifyEnabled true
             shrinkResources true
         }

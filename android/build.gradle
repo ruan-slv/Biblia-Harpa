@@ -6,7 +6,7 @@ buildscript {
 
     dependencies {
         // ✅ Usa o Android Gradle Plugin atualizado
-        classpath 'com.android.tools.build:gradle:8.11.1'
+        classpath 'com.android.tools.build:gradle:9.0.1'
     }
 }
 

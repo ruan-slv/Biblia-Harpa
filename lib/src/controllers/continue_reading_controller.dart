@@ -116,7 +116,9 @@ class ContinueReadingController {
 
   /// Salva um item novo ou atualiza o item com o mesmo [ContinueReadingEntry.id].
   Future<void> save(ContinueReadingEntry entry) async {
-    final entries = await loadEntries();
+    // [loadEntries] pode retornar uma lista constante quando ainda não existe
+    // histórico. A cópia garante que as operações abaixo sempre sejam mutáveis.
+    final entries = List<ContinueReadingEntry>.from(await loadEntries());
     entries.removeWhere((item) => item.id == entry.id);
     entries.add(entry);
     entries.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
