@@ -246,7 +246,7 @@ class _SettingsContent extends StatelessWidget {
                         copyPixKey(context);
                       },
                       icon: const Icon(Icons.info_outline_rounded),
-                      label: const Text("Ver mais"),
+                      label: const Text("Apoiar"),
                     ),
                   ),
                   const SizedBox(height: 16),

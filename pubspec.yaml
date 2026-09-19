@@ -42,15 +42,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
-    - assets/json/harpa_crista_640_hinos.json
-    - assets/json/acf.json
-    - assets/json/aa.json
-    - assets/json/nvi.json
-    - assets/json/newDevocionalModel.json
-    - assets/json/palavraDoDia.json
-    - assets/json/audios.json
-    - assets/json/audiosHarpa.json
-    - assets/json/quizz.json
+    - assets/json/data.json
     - .env
 
 flutter_icons:
