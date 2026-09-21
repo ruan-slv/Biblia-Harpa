@@ -101,7 +101,7 @@ class _HarpContentViewState extends State<HarpContentView> {
   Future<List<HarpTextModel>> loadTexts() async {
     try {
       String jsonString = await rootBundle
-          .loadString('assets/json/harpa_crista_640_hinos.json');
+          .loadString('assets/json/outros/harpa_crista_640_hinos.json');
       Map<String, dynamic> jsonResponse = jsonDecode(jsonString);
       List<HarpTextModel> texts = [];
       jsonResponse.forEach((key, value) {

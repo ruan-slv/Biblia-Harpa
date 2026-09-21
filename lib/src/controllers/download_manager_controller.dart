@@ -39,12 +39,11 @@ class DownloadItem {
 class DownloadManagerController extends ChangeNotifier {
   static const String _dataJsonPath = 'assets/data.json';
 
-  List<DownloadItem> _bibleVersions = [];
-  List<DownloadItem> _audios = [];
-  List<DownloadItem> _contentItems = [];
+  final List<DownloadItem> _bibleVersions = [];
+  final List<DownloadItem> _audios = [];
+  final List<DownloadItem> _contentItems = [];
 
-  Map<String, bool> _downloadedFiles = {};
-  Map<String, double> _downloadProgress = {};
+  final Map<String, double> _downloadProgress = {};
 
   List<DownloadItem> get bibleVersions => _bibleVersions;
   List<DownloadItem> get audios => _audios;

@@ -38,16 +38,17 @@ class DailyWordController extends ChangeNotifier {
 
     try {
       final String jsonString = await rootBundle
-          .loadString("assets/json/palavraDoDia.json");
-      final List<dynamic> jsonResponse = jsonDecode(jsonString)["palavraDoDia"];
-      if (jsonResponse.isEmpty) {
+          .loadString("assets/json/outros/palavra_do_dia.json");
+      final Map<String, dynamic> decoded = jsonDecode(jsonString);
+      final List<dynamic> words = decoded["palavraDoDia"] ?? decoded["palavras"] ?? [];
+      if (words.isEmpty) {
         _currentWord = DailyWord(id: 0, text: "", reference: "");
         _lastDataUpdate = now;
         notifyListeners();
         return;
       }
-      final randomIndex = Random().nextInt(jsonResponse.length);
-      final selectedWord = jsonResponse[randomIndex];
+      final randomIndex = Random().nextInt(words.length);
+      final selectedWord = words[randomIndex];
       _currentWord = DailyWord.fromJson(selectedWord);
       await prefs.setString("last_update", now.toIso8601String());
       await prefs.setString("palavra_atual", jsonEncode(selectedWord));

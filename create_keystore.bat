@@ -1,0 +1,1 @@
+"C:\Program Files\Java\jdk-21.0.12.1\bin\keytool.exe" -genkeypair -v -keystore key.jks -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias androiddebugkey -storepass android -keypass android -dname "CN=Android Debug,O=Android,C=US"

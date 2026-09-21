@@ -1,51 +1,75 @@
-# Bíblia e Harpa
+# Bíblia e Harpa Cristã
 
-Aplicativo Flutter para leitura da Bíblia, consulta à Harpa Cristã, devocionais
-e conteúdos em áudio. O projeto prioriza uma experiência simples, acessível e
-útil mesmo sem conexão: os textos principais são distribuídos como assets do
-aplicativo e os conteúdos escolhidos pelo usuário podem ser mantidos no
-dispositivo.
+Aplicativo multiplataforma desenvolvido com Flutter que reúne ferramentas essenciais para a vida cristã. Projetado para funcionar principalmente offline, garantindo acesso contínuo aos conteúdos mais importantes mesmo sem conexão com a internet.
 
-## Recursos
+## Recursos Principais
 
-- Leitura de versões bíblicas incluídas no aplicativo, com busca por livro e
-  capítulo.
-- Harpa Cristã com pesquisa, favoritos e letras dos hinos.
-- Devocionais, palavra do dia e acompanhamento do progresso de leitura.
-- Quiz bíblico com perguntas armazenadas localmente.
-- Áudios bíblicos e hinos, com reprodução, download opcional, exclusão e
-  compartilhamento.
-- Playlist local para músicas selecionadas pelo usuário.
-- Ajustes de tema e tamanho de fonte, além do recurso de continuar lendo.
+### Leitura Bíblica
+- Diversas versões da Bíblia disponíveis em múltiplos idiomas (Português, Inglês, Espanhol, Alemão, Francês, Russo, Chinês, entre outros)
+- Navegação intuitiva por livros e capítulos
+- Busca de textos bíblicos
+- Ajuste de tamanho de fonte para maior conforto na leitura
+- Sistema de "continuar lendo" para retomar onde você parou
+- Compartilhamento de versículos
 
-## Privacidade e sustentabilidade
+### Harpa Cristã
+- Mais de 640 hinos da Harpa Cristã
+- Pesquisa por título ou letra dos hinos
+- Sistema de favoritos para acessar hinos preferidos rapidamente
+- Reprodução de áudios dos hinos
 
-Este projeto assume os seguintes compromissos:
+### Devocionais e Palavra do Dia
+- Devocionais diários para reflexão
+- Palavra do dia com versículos inspiradores
+- Acompanhamento do progresso de leitura
 
-- Não contém telemetria, rastreamento comportamental, SDKs de analytics ou
-  coleta de perfil de uso.
-- Não exibe anúncios e não oferece planos, recursos ou produtos pagos.
-- Não exige conta de usuário para a leitura e o uso dos recursos locais.
-- Seu sustento é feito exclusivamente por doações voluntárias. A contribuição
-  é opcional e não libera nem restringe funcionalidades do aplicativo.
+### Quiz Bíblico
+- Perguntas sobre a Bíblia para testar seus conhecimentos
+- Conteúdo armazenado localmente para uso offline
 
-As preferências de leitura, tema, favoritos, histórico, progresso e playlist
-são armazenados localmente com `SharedPreferences` e Hive. Conexões podem ser
-necessárias para baixar ou reproduzir áudios, verificar atualizações, abrir
-links externos de suporte ou compartilhar conteúdos; essas ações não têm a
-finalidade de criar perfis de usuários.
+### Áudios e Músicas
+- Reprodução de áudios bíblicos e hinos
+- Download opcional de conteúdos para uso offline
+- Criação de playlists pessoais
+- Compartilhamento de músicas
+- Player com suporte a notificações
 
-## Tecnologias
+### Personalização
+- Temas claro e escuro
+- Ajuste de tamanho de fonte
+- Preferências de leitura salvas localmente
+
+## Privacidade e Sustentabilidade
+
+O aplicativo respeita sua privacidade:
+
+- **Sem telemetria ou rastreamento de uso** — não coleta dados, não envia analytics e não cria perfis de usuário.
+- **Sem anúncios** — nenhuma publicidade ou banners.
+- **Sem necessidade de conta de usuário** — todos os recursos locais funcionam sem cadastro.
+- **Dados armazenados apenas no seu dispositivo** — preferências de leitura, favoritos, histórico, progresso e playlist ficam salvos localmente no aparelho.
+- **Sustentado exclusivamente por doações voluntárias** — a contribuição é opcional e não libera nem restringe funcionalidades.
+
+Conexões à internet podem ser necessárias para baixar ou reproduzir áudios, verificar atualizações, abrir links externos de suporte ou compartilhar conteúdos, mas essas ações não têm a finalidade de coletar dados ou criar perfis de usuários.
+
+## Plataformas Suportadas
+
+O aplicativo está disponível para:
+- Android
+- iOS
+- Windows
+- Linux
+- macOS
+- Web
+
+## Tecnologias Utilizadas
 
 - [Flutter](https://flutter.dev/) e Dart (SDK `^3.5.4`)
 - `provider` para gerenciamento de estado
-- Hive e `SharedPreferences` para armazenamento local
+- `sqflite` e `SharedPreferences` para armazenamento local
 - `just_audio` e `audio_service` para reprodução de áudio
 - `dio` e `http` para downloads e acesso a conteúdos remotos
 
-O projeto possui estrutura para Android, iOS, Linux, macOS, Windows e Web.
-
-## Estrutura do projeto
+## Estrutura do Projeto
 
 ```text
 lib/
@@ -63,14 +87,12 @@ assets/
 └── json/                  # Textos bíblicos, hinos, devocionais e quiz
 ```
 
-## Como executar
+## Como Executar
 
 ### Pré-requisitos
 
 - Flutter compatível com Dart `^3.5.4`.
-- Ambiente configurado para a plataforma desejada. Consulte
-  [`flutter doctor`](https://docs.flutter.dev/reference/flutter-cli#flutter-doctor)
-  para verificar os requisitos locais.
+- Ambiente configurado para a plataforma desejada. Consulte [`flutter doctor`](https://docs.flutter.dev/reference/flutter-cli#flutter-doctor) para verificar os requisitos locais.
 
 ### Configuração
 
@@ -90,8 +112,7 @@ assets/
    PLAYSTORE_URL=
    ```
 
-   O `.env` é ignorado pelo Git e também é declarado como asset no
-   `pubspec.yaml`; ele deve existir antes de executar ou gerar o aplicativo.
+   O `.env` é ignorado pelo Git e também é declarado como asset no `pubspec.yaml`; ele deve existir antes de executar ou gerar o aplicativo.
 
 4. Instale as dependências e execute:
 
@@ -100,7 +121,7 @@ assets/
    flutter run
    ```
 
-## Qualidade e builds
+## Qualidade e Builds
 
 Execute as verificações locais antes de enviar alterações:
 
@@ -119,26 +140,20 @@ flutter build windows
 flutter build web
 ```
 
-O script [`flutter_runner.sh`](flutter_runner.sh) reúne opções interativas de
-limpeza e build para as plataformas suportadas.
+O script [`flutter_runner.sh`](flutter_runner.sh) reúne opções interativas de limpeza e build para as plataformas suportadas.
 
 ## Contribuições
 
-Contribuições são bem-vindas. Ao abrir uma alteração, mantenha os dados de
-usuário no dispositivo, não introduza telemetria, publicidade ou cobrança por
-recursos e documente APIs públicas com Dartdoc.
+Contribuições são bem-vindas! Ao contribuir, mantenha os princípios do projeto:
+
+- Dados do usuário permanecem no dispositivo
+- Sem telemetria, publicidade ou cobrança por recursos
+- Documente APIs públicas com Dartdoc
 
 ## Licença
 
-Ainda não há uma licença declarada para o projeto. Antes de reutilizar ou
-distribuir o código, entre em contato com os responsáveis pelo repositório.
+Para informações sobre a licença, entre em contato com os responsáveis pelo repositório.
 
-## Como executar
-```
-flutter pub get
-flutter pub run flutter_launcher_icons:main
-dart run flutter_launcher_icons:main
-flutter build apk --release
-flutter build apk --split-per-abi
-flutter build ... --obfuscate
-```
+---
+
+Feito com fé e código.

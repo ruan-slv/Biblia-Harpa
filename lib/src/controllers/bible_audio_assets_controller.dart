@@ -11,7 +11,7 @@ class BibleAudioAssetsController {
   const BibleAudioAssetsController();
 
   Future<List<BibleAudioBook>> loadAudioBooks() async {
-    final response = await rootBundle.loadString("assets/json/audios.json");
+    final response = await rootBundle.loadString("assets/json/outros/audios.json");
     final List data = json.decode(response) as List;
     return data
         .whereType<Map>()

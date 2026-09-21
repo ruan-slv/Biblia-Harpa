@@ -18,7 +18,7 @@ class QuizController extends ChangeNotifier {
         _score = 0,
         _selectedOptionIndex = -1;
 
-  static const _assetPath = 'assets/json/quizz.json';
+  static const _assetPath = 'assets/json/outros/quizz.json';
   List<QuizQuestion> _questions = [];
   bool _loading = true;
   String? _errorMessage;

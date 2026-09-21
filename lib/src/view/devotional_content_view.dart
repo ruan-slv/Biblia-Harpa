@@ -65,7 +65,7 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
 
     try {
       final String jsonString =
-          await rootBundle.loadString('assets/json/newDevocionalModel.json');
+          await rootBundle.loadString('assets/json/outros/devocionais.json');
       final decoded = jsonDecode(jsonString);
       final jsonResponse = Map<String, dynamic>.from(decoded as Map);
       final resolvedTopic = _resolveTopic(jsonResponse, widget.devo);

@@ -57,7 +57,7 @@ class _HomeAudioViewState extends State<HomeAudioView>
           tabs: const [
             Tab(text: "Bíblia"),
             Tab(text: "Harpa"),
-            Tab(text: "Personalizados"),
+            Tab(text: "Outros"),
           ],
         ),
       ),

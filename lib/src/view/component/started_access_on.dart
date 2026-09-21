@@ -15,6 +15,8 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../services/notification_service.dart';
+
 /// Um arquivo .json de conteúdo que o usuário pode escolher baixar.
 class JsonFileOption {
   const JsonFileOption({
@@ -69,7 +71,7 @@ const List<JsonFileConfig> kJsonFileOptions = [
         Color(0xFFFFC107),
         Color(0xFFFFCC80),
       ],
-      assetPath: 'assets/json/acf.json',
+      assetPath: 'assets/json/bible/acf.json',
       required: true,
     ),
   ),
@@ -84,7 +86,7 @@ const List<JsonFileConfig> kJsonFileOptions = [
         Color(0xFFFFC107),
         Color(0xFFFFCC80),
       ],
-      assetPath: 'assets/json/nvi.json',
+      assetPath: 'assets/json/bible/nvi.json',
     ),
   ),
   JsonFileConfig(
@@ -98,7 +100,7 @@ const List<JsonFileConfig> kJsonFileOptions = [
         Color(0xFFFFC107),
         Color(0xFFFFCC80),
       ],
-      assetPath: 'assets/json/aa.json',
+      assetPath: 'assets/json/bible/aa.json',
     ),
   ),
   JsonFileConfig(
@@ -112,7 +114,7 @@ const List<JsonFileConfig> kJsonFileOptions = [
         Color(0xFF7E57C2),
         Color(0xFFB39DDB),
       ],
-      assetPath: 'assets/json/harpa_crista_640_hinos.json',
+      assetPath: 'assets/json/outros/harpa_crista_640_hinos.json',
     ),
   ),
   JsonFileConfig(
@@ -126,7 +128,7 @@ const List<JsonFileConfig> kJsonFileOptions = [
         Color(0xFF7BAE7F),
         Color(0xFFA5D6A7),
       ],
-      assetPath: 'assets/json/newDevocionalModel.json',
+      assetPath: 'assets/json/outros/devocionais.json',
     ),
   ),
   JsonFileConfig(
@@ -140,7 +142,7 @@ const List<JsonFileConfig> kJsonFileOptions = [
         Color(0xFF3F51B5),
         Color(0xFF90CAF9),
       ],
-      assetPath: 'assets/json/audios.json',
+      assetPath: 'assets/json/outros/audios.json',
     ),
   ),
   JsonFileConfig(
@@ -154,7 +156,7 @@ const List<JsonFileConfig> kJsonFileOptions = [
         Color(0xFF3F51B5),
         Color(0xFF90CAF9),
       ],
-      assetPath: 'assets/json/audiosHarpa.json',
+      assetPath: 'assets/json/outros/audios_harpa.json',
     ),
   ),
   JsonFileConfig(
@@ -168,7 +170,7 @@ const List<JsonFileConfig> kJsonFileOptions = [
         Color(0xFF7BAE7F),
         Color(0xFFA5D6A7),
       ],
-      assetPath: 'assets/json/quizz.json',
+      assetPath: 'assets/json/outros/quizz.json',
     ),
   ),
   JsonFileConfig(
@@ -182,7 +184,7 @@ const List<JsonFileConfig> kJsonFileOptions = [
         Color(0xFFD32F2F),
         Color(0xFFEF9A9A),
       ],
-      assetPath: 'assets/json/palavraDoDia.json',
+      assetPath: 'assets/json/outros/palavra_do_dia.json',
     ),
   ),
 ];
@@ -843,30 +845,16 @@ class StartupGate extends StatefulWidget {
 }
 
 class _StartupGateState extends State<StartupGate> {
-  bool _checking = true;
-
   @override
   void initState() {
     super.initState();
-    _checkGate();
-  }
-
-  Future<void> _checkGate() async {
-    final prefs = await SharedPreferences.getInstance();
-    final done = prefs.getBool(kDownloadDoneKey) ?? false;
-    if (!mounted) return;
-    setState(() => _checking = !done);
-  }
-
-  void _onStart() {
-    setState(() => _checking = false);
+    // Schedule reading notification on app start
+    NotificationService.scheduleReadingNotification();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_checking) {
-      return StartedAccessOn(options: widget.options, onStart: _onStart);
-    }
+    // Always show the child directly - no download popup
     return widget.child;
   }
 }

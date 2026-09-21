@@ -4,11 +4,10 @@
 library;
 
 import 'package:biblia_e_harpa/src/view/component/app_bar_component.dart';
-import 'package:biblia_e_harpa/src/utils/config.dart';
 import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
 import 'package:biblia_e_harpa/src/controllers/bible_list_controller.dart';
 import 'package:biblia_e_harpa/src/controllers/bible_read_controller.dart';
-import 'package:biblia_e_harpa/src/view/component/bible_version_menu.dart';
+import 'package:biblia_e_harpa/src/view/component/bible_version_selector_dialog.dart';
 import 'package:biblia_e_harpa/src/view/component/feature_search_field.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -32,22 +31,20 @@ class BibleListView extends StatelessWidget {
         centerTitle: false,
         automaticallyImplyLeading: true,
         actions: [
-          SizedBox(
-            width: sizeBtnOptions[0],
-            height: sizeBtnOptions[1],
-            child: Theme(
-              data: Theme.of(context).copyWith(
-                popupMenuTheme: PopupMenuThemeData(
-                  color: Theme.of(context).colorScheme.primary,
-                  textStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
+          IconButton(
+            icon: Icon(Icons.translate, color: Theme.of(context).colorScheme.secondary),
+            tooltip: 'Selecionar versão',
+            onPressed: () async {
+              await showDialog(
+                context: context,
+                builder: (context) => BibleVersionSelectorDialog(
+                  currentVersionKey: listViewModel.selectedVersionKey,
+                  onSelected: (version) {
+                    context.read<BibleListController>().setVersionByKey(version.key);
+                  },
                 ),
-              ),
-              child: BibleVersionMenu(
-                onSelected: (key) => context.read<BibleListController>().setVersionByKey(key),
-              ),
-            ),
+              );
+            },
           ),
         ],
       ),

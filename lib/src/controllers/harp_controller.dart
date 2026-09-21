@@ -3,18 +3,58 @@
 /// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
 library;
 
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../keys/harp_key.dart';
 
 class HarpController extends ChangeNotifier {
   final String initialHarp;
   late String _currentHarp;
-  final List<String> allHarps = harps;
+  List<String> allHarps = [];
+  bool _loading = true;
 
   HarpController({required this.initialHarp}) {
     _currentHarp = initialHarp;
+    _loadHarpsFromJson();
     _loadReadStatus();
+  }
+
+  bool get loading => _loading;
+
+  Future<void> _loadHarpsFromJson() async {
+    try {
+      final response = await rootBundle.loadString("assets/json/outros/harpa_crista_640_hinos.json");
+      final decoded = json.decode(response);
+      List<String> harps = [];
+      
+      if (decoded is Map) {
+        for (final key in decoded.keys) {
+          final item = decoded[key];
+          if (item is Map) {
+            final title = item["hino"] ?? "";
+            if (title.isNotEmpty) {
+              harps.add(title);
+            }
+          }
+        }
+      }
+      
+      setState(() {
+        allHarps = harps;
+        _loading = false;
+      });
+    } catch (e) {
+      print("Error loading harps from JSON: $e");
+      setState(() {
+        _loading = false;
+      });
+    }
+  }
+
+  void setState(VoidCallback callback) {
+    callback();
+    notifyListeners();
   }
 
   String get currentHarp => _currentHarp;

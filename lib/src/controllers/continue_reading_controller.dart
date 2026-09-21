@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:biblia_e_harpa/src/keys/devocional_key.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -90,7 +89,7 @@ class ContinueReadingController {
   const ContinueReadingController();
 
   static const _storageKey = 'continue_reading_entries';
-  static const _devotionalAssetPath = 'assets/json/newDevocionalModel.json';
+  static const _devotionalAssetPath = 'assets/json/outros/devocionais.json';
 
   /// Retorna os itens recentes, do mais recente para o mais antigo.
   Future<List<ContinueReadingEntry>> loadEntries() async {
@@ -215,7 +214,7 @@ class ContinueReadingController {
 
       final topics = <String>[
         if (lastTopic != null && content.containsKey(lastTopic)) lastTopic,
-        ...topicos.where((topic) => topic != lastTopic),
+        ...content.keys.where((topic) => topic != lastTopic),
       ];
 
       for (final topic in topics) {

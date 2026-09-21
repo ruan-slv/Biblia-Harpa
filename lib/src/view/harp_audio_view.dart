@@ -96,7 +96,7 @@ class _HarpAudioViewState extends State<HarpAudioView> {
   Future<void> _fetchAudioHarpa() async {
     setState(() => isLoading = true);
     try {
-      final String response = await rootBundle.loadString("assets/json/audiosHarpa.json");
+      final String response = await rootBundle.loadString("assets/json/outros/audios_harpa.json");
       final Map<String, dynamic> jsonData = json.decode(response);
       final List data = jsonData["audios"];
       _allHarpas = data.map((audio) => DataAudioModel.fromJson(audio)).toList();

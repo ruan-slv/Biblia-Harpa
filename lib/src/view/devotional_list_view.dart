@@ -13,7 +13,6 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../utils/config.dart';
-import '../keys/devocional_key.dart';
 
 class DevotionalListView extends StatefulWidget {
   const DevotionalListView({super.key});
@@ -24,8 +23,9 @@ class DevotionalListView extends StatefulWidget {
 
 class _DevotionalListViewState extends State<DevotionalListView> {
   List<String> filteredDevocionalTopic = [];
+  List<String> allTopics = [];
   final TextEditingController _filterController = TextEditingController();
-  final String _jsonPath = "assets/json/newDevocionalModel.json";
+  final String _jsonPath = "assets/json/outros/devocionais.json";
 
   Map<String, dynamic> fullDevocionalData = {};
   Map<String, double> topicsProgress = {};
@@ -33,7 +33,6 @@ class _DevotionalListViewState extends State<DevotionalListView> {
   @override
   void initState() {
     super.initState();
-    filteredDevocionalTopic = topicos;
     _filterController.addListener(_filterDevocional);
     _loadDataAndProgress();
   }
@@ -57,6 +56,8 @@ class _DevotionalListViewState extends State<DevotionalListView> {
       if (mounted) {
         setState(() {
           fullDevocionalData = data;
+          allTopics = data.keys.toList();
+          filteredDevocionalTopic = allTopics;
         });
         await _calculateAllProgress();
       }
@@ -67,7 +68,7 @@ class _DevotionalListViewState extends State<DevotionalListView> {
     final prefs = await SharedPreferences.getInstance();
     Map<String, double> tempProgress = {};
 
-    for (String topic in topicos) {
+    for (String topic in allTopics) {
       List<dynamic> items = fullDevocionalData[topic] ?? [];
       if (items.isEmpty) {
         tempProgress[topic] = 0.0;
@@ -92,7 +93,7 @@ class _DevotionalListViewState extends State<DevotionalListView> {
 
   void _filterDevocional() {
     setState(() {
-      filteredDevocionalTopic = topicos
+      filteredDevocionalTopic = allTopics
           .where((devo) =>
               devo.toLowerCase().contains(_filterController.text.toLowerCase()))
           .toList();

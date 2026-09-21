@@ -8,7 +8,6 @@ import "package:biblia_e_harpa/src/view/component/app_bar_component.dart";
 import "package:biblia_e_harpa/src/utils/config.dart";
 import "package:biblia_e_harpa/src/view/harp_content_view.dart";
 import "package:biblia_e_harpa/src/controllers/settings_controller.dart";
-import "package:biblia_e_harpa/src/keys/harp_key.dart";
 import 'package:biblia_e_harpa/src/model/data_audio_model.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/services.dart';
@@ -24,28 +23,71 @@ class HarpListView extends StatefulWidget {
 
 class _HarpListViewState extends State<HarpListView>
     with SingleTickerProviderStateMixin {
+  List<String> allHarps = [];
   List<String> filteredHarps = [];
   Set<String> favoriteHarps = {};
   final TextEditingController _searchController = TextEditingController();
   late TabController _tabController;
+  bool _loading = true;
 
   List<DataAudioModel> _audioList = [];
 
   @override
   void initState() {
     super.initState();
-    filteredHarps = harps;
     _searchController.addListener(_filterHarps);
     _loadFavorites();
+    _loadHarps();
     _fetchAudioHarpa();
 
     _tabController = TabController(length: 2, vsync: this);
   }
 
+  Future<void> _loadHarps() async {
+    try {
+      final response = await rootBundle.loadString("assets/json/outros/harpa_crista_640_hinos.json");
+      final decoded = json.decode(response);
+      List<String> harps = [];
+      
+      if (decoded is Map) {
+        // Arquivo é um objeto com chaves numéricas
+        for (final key in decoded.keys) {
+          final item = decoded[key];
+          if (item is Map) {
+            final title = item["hino"] ?? "";
+            if (title.isNotEmpty) {
+              harps.add(title);
+            }
+          }
+        }
+      } else if (decoded is List) {
+        // Fallback para array
+        for (final item in decoded) {
+          if (item is Map) {
+            final number = item["numero"] ?? item["number"] ?? "";
+            final title = item["titulo"] ?? item["title"] ?? "";
+            harps.add("$number - $title");
+          }
+        }
+      }
+      
+      setState(() {
+        allHarps = harps;
+        filteredHarps = harps;
+        _loading = false;
+      });
+    } catch (e) {
+      print("Error loading harps: $e");
+      setState(() {
+        _loading = false;
+      });
+    }
+  }
+
   Future<void> _fetchAudioHarpa() async {
     try {
       final String response =
-          await rootBundle.loadString("assets/json/audiosHarpa.json");
+          await rootBundle.loadString("assets/json/outros/audios_harpa.json");
       final Map<String, dynamic> jsonData = json.decode(response);
 
       final List data = jsonData["audios"];
@@ -92,7 +134,7 @@ class _HarpListViewState extends State<HarpListView>
 
   void _filterHarps() {
     setState(() {
-      filteredHarps = harps
+      filteredHarps = allHarps
           .where(
             (hino) => hino.toLowerCase().contains(
                   _searchController.text.toLowerCase(),
@@ -187,54 +229,56 @@ class _HarpListViewState extends State<HarpListView>
           ],
         ),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: "Pesquisar Hino",
-                hintStyle: TextStyle(
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
-                prefixIcon: Icon(Icons.search,
-                    color: Theme.of(context).colorScheme.secondary),
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.clear,
-                      color: Theme.of(context).colorScheme.secondary),
-                  onPressed: () {
-                    _searchController.clear();
-                    setState(() {
-                      filteredHarps = harps;
-                    });
-                  },
-                ),
-                filled: true,
-                fillColor: Theme.of(context).colorScheme.primary,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
-              ),
-              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-              cursorColor: Theme.of(context).colorScheme.secondary,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
+      body: _loading
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
               children: [
-                _buildHarpList(filteredHarps),
-                _buildHarpList(favoriteHarps.toList()),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: "Pesquisar Hino",
+                      hintStyle: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                      prefixIcon: Icon(Icons.search,
+                          color: Theme.of(context).colorScheme.secondary),
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.clear,
+                            color: Theme.of(context).colorScheme.secondary),
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() {
+                            filteredHarps = allHarps;
+                          });
+                        },
+                      ),
+                      filled: true,
+                      fillColor: Theme.of(context).colorScheme.primary,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding:
+                          const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+                    ),
+                    style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                    cursorColor: Theme.of(context).colorScheme.secondary,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildHarpList(filteredHarps),
+                      _buildHarpList(favoriteHarps.toList()),
+                    ],
+                  ),
+                ),
               ],
             ),
-          ),
-        ],
-      ),
     );
   }
 }
