@@ -99,91 +99,129 @@ class _WordImageShareViewState extends State<WordImageShareView> {
           ),
         ],
       ),
-      body: RepaintBoundary(
-        key: _boundaryKey,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Positioned.fill(
-              child: Image.file(
-                widget.imageFile,
-                fit: BoxFit.cover,
-              ),
-            ),
-            // Sombreamento para o texto ficar legível sobre qualquer imagem.
-            const DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  stops: [0.0, 0.5, 1.0],
-                  colors: [
-                    Colors.transparent,
-                    Color(0x33000000),
-                    Color(0xCC000000),
-                  ],
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Área de captura — o IconButton NÃO fica aqui, assim não aparece na imagem.
+          RepaintBoundary(
+            key: _boundaryKey,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Positioned.fill(
+                  child: Image.file(
+                    widget.imageFile,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                margin: const EdgeInsets.all(20),
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: Colors.black54,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.white24),
+                // Sombreamento para o texto ficar legível sobre qualquer imagem.
+                const DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: [0.0, 0.5, 1.0],
+                      colors: [
+                        Colors.transparent,
+                        Color(0x33000000),
+                        Color(0xCC000000),
+                      ],
+                    ),
+                  ),
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'PALAVRA DO DIA',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 2.0,
-                      ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    margin: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Colors.black54,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.white24),
                     ),
-                    const SizedBox(height: 14),
-                    Text(
-                      '“${widget.word.text}”',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 21,
-                        height: 1.5,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    if (widget.word.reference.isNotEmpty) ...[
-                      const SizedBox(height: 12),
-                      Text(
-                        '— ${widget.word.reference}',
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 16,
-                          fontStyle: FontStyle.italic,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'PALAVRA DO DIA',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 2.0,
+                          ),
                         ),
-                      ),
-                    ],
-                    const SizedBox(height: 16),
-                    Text(
-                      'Bíblia e Harpa',
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.55),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                      ),
+                        const SizedBox(height: 14),
+                        Text(
+                          '“${widget.word.text}”',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 21,
+                            height: 1.5,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        if (widget.word.reference.isNotEmpty) ...[
+                          const SizedBox(height: 12),
+                          Text(
+                            '— ${widget.word.reference}',
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 16,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ],
+                        const SizedBox(height: 16),
+                        Text(
+                          'Bíblia e Harpa',
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.55),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Botão posicionado por cima da área de captura — não entra na imagem.
+          Positioned(
+            top: 48,
+            right: 12,
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: _imageReady ? _share : null,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.black87,
+                    shape: BoxShape.circle,
+                  ),
+                  child: _sharing
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Icon(
+                          Icons.share,
+                          color: Colors.white,
+                          size: 22,
+                        ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

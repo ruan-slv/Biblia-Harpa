@@ -514,6 +514,7 @@ class _TextBibleViewState extends State<_TextBibleView> {
                                                   .secondary,
                                               fontSize: settings.fontSize,
                                             ),
+                                            textAlign: TextAlign.justify,
                                           ),
                                         ),
                                       ],
