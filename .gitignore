@@ -41,14 +41,39 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
-appBible.jks
-texts
-
+# Chaves, certificados e senhas de assinatura
+key.properties
+**/key.properties
 *.jks
 *.keystore
-.vs/
-.env
-/build
+*.p12
+*.pfx
+*.key
 *.pem
+*.cer
+*.crt
+*.mobileprovision
+appBible.jks
+create_keystore.bat
+texts
+
+# Ambientes e segredos
+.env
+.env.*
+!.env.example
+
+# Credenciais e serviços externos
+google-services.json
+GoogleService-Info.plist
+
+# Build e arquivos temporários nativos
+.cxx/
+**/.cxx/
+**/android/.gradle/
+build/
+**/build/
+ephemeral/
+**/ephemeral/
+.vs/
 /.idea
 /.vscode

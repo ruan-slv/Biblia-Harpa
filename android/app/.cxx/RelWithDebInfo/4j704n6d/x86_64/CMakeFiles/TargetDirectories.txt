@@ -1,2 +1,0 @@
-D:/Bible/appbible/android/app/.cxx/RelWithDebInfo/4j704n6d/x86_64/CMakeFiles/edit_cache.dir
-D:/Bible/appbible/android/app/.cxx/RelWithDebInfo/4j704n6d/x86_64/CMakeFiles/rebuild_cache.dir

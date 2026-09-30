@@ -13,6 +13,9 @@ import 'package:biblia_e_harpa/src/controllers/bible_content_controller.dart';
 import 'package:biblia_e_harpa/src/view/component/bible_audio_player_card.dart';
 import 'package:biblia_e_harpa/src/view/component/controlled_search_field.dart';
 import 'package:biblia_e_harpa/src/view/component/selection_limit_dialog.dart';
+import 'package:biblia_e_harpa/src/view/component/bible_version_selector_dialog.dart';
+import 'package:biblia_e_harpa/src/controllers/bible_list_controller.dart';
+import 'package:biblia_e_harpa/src/controllers/bible_text_assets_controller.dart';
 import 'package:biblia_e_harpa/src/services/annotation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -57,7 +60,7 @@ class _TextBibleView extends StatefulWidget {
 }
 
 class _TextBibleViewState extends State<_TextBibleView> {
-  Map<String, Color> _verseAnnotations = {};
+  Map<String, String> _verseAnnotations = {};
   bool _highlightMode = false;
   String? _loadedChapterId;
 
@@ -71,13 +74,12 @@ class _TextBibleViewState extends State<_TextBibleView> {
     final viewModel = context.read<BibleContentController>();
     final annotations = await AnnotationService.getAnnotations();
     final chapterId = viewModel.chapterId;
-    final verseAnnotations = <String, Color>{};
+    final verseAnnotations = <String, String>{};
 
     for (final entry in annotations.entries) {
       if (entry.key.startsWith('$chapterId:')) {
         final verseIndex = entry.key.split(':')[1];
-        final color = _colorFromHex(entry.value);
-        verseAnnotations[verseIndex] = color;
+        verseAnnotations[verseIndex] = entry.value;
       }
     }
 
@@ -94,26 +96,56 @@ class _TextBibleViewState extends State<_TextBibleView> {
     }
   }
 
-  Color _colorFromHex(String hex) {
-    final colors = {
-      'yellow': Colors.yellow,
-      'green': Colors.green,
-      'blue': Colors.blue,
-      'pink': Colors.pink,
-      'orange': Colors.orange,
-    };
-    return colors[hex] ?? Colors.yellow;
+  Color _getHighlightColor(BuildContext context, String colorKey) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final alpha = isDark ? 0.28 : 0.32;
+
+    switch (colorKey.toLowerCase()) {
+      case 'yellow':
+        return isDark
+            ? const Color(0xFFFFD54F).withValues(alpha: alpha)
+            : const Color(0xFFFFE082).withValues(alpha: alpha);
+      case 'green':
+        return isDark
+            ? const Color(0xFF66BB6A).withValues(alpha: alpha)
+            : const Color(0xFFA5D6A7).withValues(alpha: alpha);
+      case 'blue':
+        return isDark
+            ? const Color(0xFF42A5F5).withValues(alpha: alpha)
+            : const Color(0xFF90CAF9).withValues(alpha: alpha);
+      case 'pink':
+        return isDark
+            ? const Color(0xFFEC407A).withValues(alpha: alpha)
+            : const Color(0xFFF48FB1).withValues(alpha: alpha);
+      case 'orange':
+        return isDark
+            ? const Color(0xFFFFA726).withValues(alpha: alpha)
+            : const Color(0xFFFFCC80).withValues(alpha: alpha);
+      default:
+        return isDark
+            ? const Color(0xFFFFD54F).withValues(alpha: alpha)
+            : const Color(0xFFFFE082).withValues(alpha: alpha);
+    }
   }
 
-  String _hexFromColor(Color color) {
-    final colors = {
-      Colors.yellow: 'yellow',
-      Colors.green: 'green',
-      Colors.blue: 'blue',
-      Colors.pink: 'pink',
-      Colors.orange: 'orange',
-    };
-    return colors[color] ?? 'yellow';
+  Color _getHighlightBorderColor(BuildContext context, String colorKey) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final alpha = isDark ? 0.45 : 0.40;
+
+    switch (colorKey.toLowerCase()) {
+      case 'yellow':
+        return const Color(0xFFFFB300).withValues(alpha: alpha);
+      case 'green':
+        return const Color(0xFF43A047).withValues(alpha: alpha);
+      case 'blue':
+        return const Color(0xFF1E88E5).withValues(alpha: alpha);
+      case 'pink':
+        return const Color(0xFFD81B60).withValues(alpha: alpha);
+      case 'orange':
+        return const Color(0xFFFB8C00).withValues(alpha: alpha);
+      default:
+        return const Color(0xFFFFB300).withValues(alpha: alpha);
+    }
   }
 
   Future<void> _showAnnotationMenu(
@@ -123,107 +155,187 @@ class _TextBibleViewState extends State<_TextBibleView> {
   ) async {
     final viewModel = context.read<BibleContentController>();
     final chapterId = viewModel.chapterId;
-    
-    final result = await showMenu<Color>(
+    final colorScheme = Theme.of(context).colorScheme;
+
+    final options = [
+      {'key': 'yellow', 'label': 'Amarelo', 'color': const Color(0xFFFFCA28)},
+      {'key': 'green', 'label': 'Verde', 'color': const Color(0xFF66BB6A)},
+      {'key': 'blue', 'label': 'Azul', 'color': const Color(0xFF42A5F5)},
+      {'key': 'pink', 'label': 'Rosa', 'color': const Color(0xFFEC407A)},
+      {'key': 'orange', 'label': 'Laranja', 'color': const Color(0xFFFFA726)},
+    ];
+
+    final result = await showMenu<String>(
       context: context,
       position: RelativeRect.fromLTRB(
-        offset.dx, offset.dy, offset.dx + 10, offset.dy + 10,
+        offset.dx,
+        offset.dy,
+        offset.dx + 10,
+        offset.dy + 10,
       ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      color: colorScheme.surface,
       items: [
-        PopupMenuItem(
-          value: Colors.yellow,
-          child: Row(
-            children: [
-              Container(
-                width: 20,
-                height: 20,
-                color: Colors.yellow,
-                margin: const EdgeInsets.only(right: 8),
-              ),
-              const Text('Amarelo'),
-            ],
+        ...options.map(
+          (opt) => PopupMenuItem<String>(
+            value: opt['key'] as String,
+            child: Row(
+              children: [
+                Container(
+                  width: 20,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    color: opt['color'] as Color,
+                    shape: BoxShape.circle,
+                  ),
+                  margin: const EdgeInsets.only(right: 12),
+                ),
+                Text(
+                  opt['label'] as String,
+                  style: TextStyle(
+                    color: colorScheme.secondary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-        PopupMenuItem(
-          value: Colors.green,
+        PopupMenuItem<String>(
+          value: 'clear',
           child: Row(
             children: [
-              Container(
-                width: 20,
-                height: 20,
-                color: Colors.green,
-                margin: const EdgeInsets.only(right: 8),
+              Icon(Icons.clear_rounded, color: colorScheme.secondary, size: 20),
+              const SizedBox(width: 12),
+              Text(
+                'Remover destaque',
+                style: TextStyle(
+                  color: colorScheme.secondary,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-              const Text('Verde'),
-            ],
-          ),
-        ),
-        PopupMenuItem(
-          value: Colors.blue,
-          child: Row(
-            children: [
-              Container(
-                width: 20,
-                height: 20,
-                color: Colors.blue,
-                margin: const EdgeInsets.only(right: 8),
-              ),
-              const Text('Azul'),
-            ],
-          ),
-        ),
-        PopupMenuItem(
-          value: Colors.pink,
-          child: Row(
-            children: [
-              Container(
-                width: 20,
-                height: 20,
-                color: Colors.pink,
-                margin: const EdgeInsets.only(right: 8),
-              ),
-              const Text('Rosa'),
-            ],
-          ),
-        ),
-        PopupMenuItem(
-          value: Colors.orange,
-          child: Row(
-            children: [
-              Container(
-                width: 20,
-                height: 20,
-                color: Colors.orange,
-                margin: const EdgeInsets.only(right: 8),
-              ),
-              const Text('Laranja'),
-            ],
-          ),
-        ),
-        PopupMenuItem(
-          value: Colors.transparent,
-          child: const Row(
-            children: [
-              Icon(Icons.clear),
-              SizedBox(width: 8),
-              Text('Remover'),
             ],
           ),
         ),
       ],
     );
-    
+
     if (result != null) {
-      if (result == Colors.transparent) {
+      if (result == 'clear') {
         await AnnotationService.removeAnnotation(chapterId, verseIndex.toString());
       } else {
         await AnnotationService.setAnnotation(
           chapterId,
           verseIndex.toString(),
-          _hexFromColor(result),
+          result,
         );
       }
       _loadAnnotations();
+    }
+  }
+
+  Future<void> _handleShareOrSelection(
+    BuildContext context,
+    BibleContentController viewModel,
+  ) async {
+    final colorScheme = Theme.of(context).colorScheme;
+    final selectedCount = viewModel.selectedVerseIndices.length;
+
+    if (selectedCount == 0) {
+      final shouldShare = await showDialog<bool>(
+        context: context,
+        builder: (dialogCtx) => AlertDialog(
+          backgroundColor: colorScheme.surface,
+          title: Text(
+            'Compartilhar Capítulo',
+            style: TextStyle(color: colorScheme.secondary),
+          ),
+          content: Text(
+            'Nenhum versículo foi selecionado. Deseja compartilhar os versículos deste capítulo (${viewModel.chapterTitle})?',
+            style: TextStyle(color: colorScheme.secondary),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogCtx, false),
+              child: Text(
+                'Cancelar',
+                style: TextStyle(color: colorScheme.secondary),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(dialogCtx, true),
+              child: const Text('Compartilhar'),
+            ),
+          ],
+        ),
+      );
+
+      if (shouldShare == true && context.mounted) {
+        final chapterText = viewModel.buildShareText();
+        await context.read<BibleShareController>().shareText(chapterText);
+      }
+      return;
+    }
+
+    final action = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: colorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetCtx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: colorScheme.secondary.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              Text(
+                '$selectedCount versículo${selectedCount > 1 ? 's' : ''} selecionado${selectedCount > 1 ? 's' : ''}',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.secondary,
+                ),
+              ),
+              const SizedBox(height: 12),
+              ListTile(
+                leading: Icon(Icons.share, color: colorScheme.secondary),
+                title: Text(
+                  'Compartilhar versículos selecionados',
+                  style: TextStyle(color: colorScheme.secondary),
+                ),
+                onTap: () => Navigator.pop(sheetCtx, 'share'),
+              ),
+              ListTile(
+                leading: Icon(Icons.close, color: colorScheme.secondary),
+                title: Text(
+                  'Limpar seleção',
+                  style: TextStyle(color: colorScheme.secondary),
+                ),
+                onTap: () => Navigator.pop(sheetCtx, 'clear'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (!context.mounted) return;
+    if (action == 'share') {
+      final chapterText = viewModel.buildShareText();
+      await context.read<BibleShareController>().shareText(chapterText);
+      viewModel.clearSelections();
+    } else if (action == 'clear') {
+      viewModel.clearSelections();
     }
   }
 
@@ -282,7 +394,9 @@ class _TextBibleViewState extends State<_TextBibleView> {
               if (viewModel.isAutoScrollEnabled &&
                   !viewModel.audioPlayer.playing &&
                   viewModel.currentAudioChapter != null) {
-                viewModel.audioPlayer.play();
+                try {
+                  await viewModel.audioPlayer.play();
+                } catch (_) {}
               }
             },
             icon: Icon(
@@ -293,12 +407,9 @@ class _TextBibleViewState extends State<_TextBibleView> {
                   ? colorScheme.secondary
                   : colorScheme.secondary.withValues(alpha: 0.6),
             ),
-          ),
-          IconButton(
-            onPressed:
-                viewModel.selectedVerseIndices.isEmpty ? null : viewModel.clearSelections,
-            icon: const Icon(Icons.close),
-            tooltip: 'Limpar seleção',
+            tooltip: viewModel.isAutoScrollEnabled
+                ? 'Pausar leitura automática'
+                : 'Iniciar leitura automática',
           ),
           IconButton(
             onPressed: () {
@@ -317,7 +428,7 @@ class _TextBibleViewState extends State<_TextBibleView> {
               }
             },
             icon: Icon(
-              _highlightMode ? Icons.highlight_rounded : Icons.highlight_outlined,
+              _highlightMode ? Icons.colorize : Icons.colorize_rounded,
               color: _highlightMode
                   ? colorScheme.secondary
                   : colorScheme.secondary.withValues(alpha: 0.6),
@@ -325,14 +436,20 @@ class _TextBibleViewState extends State<_TextBibleView> {
             tooltip: _highlightMode ? 'Modo destaque ativado' : 'Modo destaque',
           ),
           IconButton(
-            onPressed: () async {
-              final chapterText = viewModel.buildShareText();
-              await context.read<BibleShareController>().shareText(chapterText);
-            },
-            icon: Icon(
-              viewModel.selectedVerseIndices.isEmpty ? Icons.share : Icons.send,
+            onPressed: () => _handleShareOrSelection(context, viewModel),
+            icon: Badge(
+              isLabelVisible: viewModel.selectedVerseIndices.isNotEmpty,
+              label: Text('${viewModel.selectedVerseIndices.length}'),
+              child: Icon(
+                viewModel.selectedVerseIndices.isEmpty
+                    ? Icons.share_outlined
+                    : Icons.share,
+                color: colorScheme.secondary,
+              ),
             ),
-            tooltip: 'Compartilhar',
+            tooltip: viewModel.selectedVerseIndices.isEmpty
+                ? 'Compartilhar'
+                : 'Compartilhar ou Limpar seleção',
           ),
         ],
       ),
@@ -476,17 +593,34 @@ class _TextBibleViewState extends State<_TextBibleView> {
                                 );
                               },
                               child: Container(
-                                padding: const EdgeInsets.all(8.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
                                 decoration: BoxDecoration(
-                                  color: _verseAnnotations[originalIndex.toString()] ??
-                                      (viewModel.selectedVerseIndices
-                                              .contains(originalIndex)
+                                  color: _verseAnnotations[originalIndex.toString()] != null
+                                      ? _getHighlightColor(context, _verseAnnotations[originalIndex.toString()]!)
+                                      : (viewModel.selectedVerseIndices.contains(originalIndex)
                                           ? Theme.of(context)
                                               .colorScheme
                                               .primary
                                               .withValues(alpha: 0.9)
                                           : Colors.transparent),
-                                  borderRadius: BorderRadius.circular(30.0),
+                                  borderRadius: BorderRadius.circular(16.0),
+                                  border: _verseAnnotations[originalIndex.toString()] != null
+                                      ? Border.all(
+                                          color: _getHighlightBorderColor(
+                                            context,
+                                            _verseAnnotations[originalIndex.toString()]!,
+                                          ),
+                                          width: 1.2,
+                                        )
+                                      : (viewModel.selectedVerseIndices.contains(originalIndex)
+                                          ? Border.all(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary
+                                                  .withValues(alpha: 0.25),
+                                              width: 1.0,
+                                            )
+                                          : null),
                                 ),
                                 child: Column(
                                   children: [
@@ -513,6 +647,9 @@ class _TextBibleViewState extends State<_TextBibleView> {
                                                   .colorScheme
                                                   .secondary,
                                               fontSize: settings.fontSize,
+                                              fontWeight: _verseAnnotations[originalIndex.toString()] != null
+                                                  ? FontWeight.w500
+                                                  : FontWeight.normal,
                                             ),
                                             textAlign: TextAlign.justify,
                                           ),

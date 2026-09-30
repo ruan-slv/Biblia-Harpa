@@ -1,3 +1,4 @@
+import 'bible_text_assets_controller.dart';
 import '../model/bible_audio.dart';
 import 'continue_reading_controller.dart';
 import 'bible_read_controller.dart';
@@ -7,8 +8,10 @@ import 'package:just_audio/just_audio.dart';
 class BibleContentController extends ChangeNotifier {
   final BibleReadController readState;
   final String bookName;
-  final String jsonPath;
-  final List<List<String>> allBookChapters;
+  String _jsonPath;
+  String get jsonPath => _jsonPath;
+  List<List<String>> _allBookChapters;
+  List<List<String>> get allBookChapters => _allBookChapters;
   final List<BibleAudioChapter>? audioChapters;
   final int verseSelectionLimit;
 
@@ -22,13 +25,14 @@ class BibleContentController extends ChangeNotifier {
   BibleContentController({
     required this.readState,
     required this.bookName,
-    required this.jsonPath,
-    required this.allBookChapters,
+    required String jsonPath,
+    required List<List<String>> allBookChapters,
     required this.audioChapters,
     required int initialChapterNumber,
     this.verseSelectionLimit = 20,
     this.continueReadingController = const ContinueReadingController(),
-  }) {
+  })  : _jsonPath = jsonPath,
+        _allBookChapters = allBookChapters {
     _setChapter(initialChapterNumber);
     _applyKeywordFilter();
     _saveContinueReading();
@@ -226,6 +230,40 @@ class BibleContentController extends ChangeNotifier {
 
     _currentChapterNumber = c;
     _currentVerses = allBookChapters[_currentChapterNumber - 1];
+  }
+
+  Future<void> changeVersion({
+    required String newVersionFileName,
+    required BibleTextAssetsController textAssetsService,
+  }) async {
+    final newPath = "assets/json/bible/$newVersionFileName";
+    final books = await textAssetsService.loadBooks(newPath);
+    if (books.isEmpty) return;
+
+    int bookIndex = books.indexWhere(
+      (b) => b.name.trim().toLowerCase() == bookName.trim().toLowerCase(),
+    );
+
+    if (bookIndex == -1) {
+      final normalizedTarget = bookName
+          .trim()
+          .toLowerCase()
+          .replaceAll(RegExp(r'[^a-z0-9]'), '');
+      bookIndex = books.indexWhere((b) =>
+          b.name.trim().toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '') ==
+          normalizedTarget);
+    }
+
+    if (bookIndex != -1) {
+      final newBook = books[bookIndex];
+      _jsonPath = newPath;
+      _allBookChapters = newBook.chapters;
+      _setChapter(_currentChapterNumber);
+      _applyKeywordFilter();
+      _selectedVerseIndices = const [];
+      _saveContinueReading();
+      notifyListeners();
+    }
   }
 
   @override

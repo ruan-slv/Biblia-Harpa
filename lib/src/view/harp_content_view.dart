@@ -204,9 +204,24 @@ class _HarpContentViewState extends State<HarpContentView> {
                                 : Icons.play_circle_filled),
                             iconSize: 40.0,
                             color: Theme.of(context).colorScheme.secondary,
-                            onPressed: () => (playing ?? false)
-                                ? _audioPlayer.pause()
-                                : _audioPlayer.play(),
+                            onPressed: () async {
+                              try {
+                                (playing ?? false)
+                                    ? await _audioPlayer.pause()
+                                    : await _audioPlayer.play();
+                              } catch (_) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Não foi possível reproduzir o áudio. Verifique se há fones ou caixas de som conectados.',
+                                      ),
+                                      duration: Duration(seconds: 3),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
                           ),
                           IconButton(
                             icon: const Icon(Icons.stop_circle_outlined),

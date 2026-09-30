@@ -77,7 +77,7 @@ class _HarpListViewState extends State<HarpListView>
         _loading = false;
       });
     } catch (e) {
-      print("Error loading harps: $e");
+      debugPrint("Error loading harps: $e");
       setState(() {
         _loading = false;
       });

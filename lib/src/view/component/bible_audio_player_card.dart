@@ -57,8 +57,19 @@ class BibleAudioPlayerCard extends StatelessWidget {
                 final playing = playerState?.playing;
                 if (processingState == ProcessingState.loading ||
                     processingState == ProcessingState.buffering) {
-                  return CircularProgressIndicator(
-                    color: Theme.of(context).colorScheme.secondary,
+                  return SizedBox(
+                    width: 96,
+                    height: 48,
+                    child: Center(
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
+                    ),
                   );
                 }
                 return Row(
@@ -72,9 +83,24 @@ class BibleAudioPlayerCard extends StatelessWidget {
                       ),
                       iconSize: 40.0,
                       color: Theme.of(context).colorScheme.secondary,
-                      onPressed: () => (playing ?? false)
-                          ? audioPlayer.pause()
-                          : audioPlayer.play(),
+                      onPressed: () async {
+                        try {
+                          (playing ?? false)
+                              ? await audioPlayer.pause()
+                              : await audioPlayer.play();
+                        } catch (_) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Não foi possível reproduzir o áudio. Verifique se há fones ou caixas de som conectados.',
+                                ),
+                                duration: Duration(seconds: 3),
+                              ),
+                            );
+                          }
+                        }
+                      },
                     ),
                     IconButton(
                       icon: const Icon(Icons.stop_circle_outlined),

@@ -261,6 +261,19 @@ class _SettingsContent extends StatelessWidget {
                       label: const Text("Solicitar suporte"),
                     ),
                   ),
+                  const SizedBox(height: 16),
+                  AppSectionCard(
+                    icon: Icons.privacy_tip_outlined,
+                    title: "Política de Privacidade",
+                    subtitle:
+                        "Conheça como tratamos seus dados e sua privacidade.",
+                    child: ElevatedButton.icon(
+                      onPressed: () async => await _openExternal(
+                          Uri.parse("https://ruan-slv.github.io/biblia-site/")),
+                      icon: const Icon(Icons.open_in_new_rounded),
+                      label: const Text("Ver política"),
+                    ),
+                  ),
                 ],
               ),
             ],

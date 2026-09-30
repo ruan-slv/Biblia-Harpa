@@ -4,6 +4,7 @@
 library;
 
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -45,7 +46,7 @@ class HarpController extends ChangeNotifier {
         _loading = false;
       });
     } catch (e) {
-      print("Error loading harps from JSON: $e");
+      debugPrint("Error loading harps from JSON: $e");
       setState(() {
         _loading = false;
       });
