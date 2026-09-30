@@ -3,7 +3,6 @@
 /// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
 library;
 
-import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
 import 'package:biblia_e_harpa/src/view/quiz_view.dart';
 import 'package:biblia_e_harpa/src/view/home_audio_view.dart';
 import 'package:biblia_e_harpa/src/view/settings_view.dart';
@@ -14,6 +13,8 @@ import 'package:biblia_e_harpa/src/controllers/continue_reading_controller.dart'
 import 'package:biblia_e_harpa/src/view/bible_content_view.dart';
 import 'package:biblia_e_harpa/src/view/devotional_content_view.dart';
 import 'package:biblia_e_harpa/src/view/harp_content_view.dart';
+import 'package:biblia_e_harpa/src/view/notes_view.dart';
+import 'component/daily_word_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'component/app_bar_component.dart';
@@ -278,69 +279,14 @@ class _HomeViewState extends State<HomeView> {
                     Consumer<DailyWordController>(
                       builder: (context, viewModel, _) {
                         final currentWord = viewModel.currentWord;
+                        if (currentWord == null) {
+                          return const SizedBox.shrink();
+                        }
                         return Padding(
                           padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
-                          child: Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(24),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  colorScheme.primary,
-                                  colorScheme.surface,
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              borderRadius: BorderRadius.circular(28),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: colorScheme.secondary
-                                      .withValues(alpha: 0.08),
-                                  blurRadius: 18,
-                                  offset: const Offset(0, 10),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 18),
-                                Text(
-                                  currentWord?.reference.isNotEmpty == true
-                                      ? currentWord!.reference
-                                      : "Versículo não encontrado",
-                                  style: TextStyle(
-                                    color: colorScheme.secondary,
-                                    fontSize: 23,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                                Consumer<SettingsController>(
-                                  builder: (context, settings, _) {
-                                    return Text(
-                                      currentWord?.text ??
-                                          "Palavra do dia não encontrada",
-                                      style: TextStyle(
-                                        fontSize: settings.fontSize,
-                                        fontStyle: FontStyle.italic,
-                                        color: colorScheme.secondary
-                                            .withValues(alpha: 0.92),
-                                        height: 1.55,
-                                      ),
-                                      textAlign: TextAlign.justify,
-                                    );
-                                  },
-                                ),
-                                const SizedBox(height: 20),
-                                ElevatedButton.icon(
-                                  onPressed: viewModel.shareDailyWord,
-                                  icon: const Icon(Icons.share_outlined),
-                                  label: const Text("Compartilhar"),
-                                ),
-                              ],
-                            ),
+                          child: DailyWordCard(
+                            word: currentWord,
+                            onNewWord: viewModel.loadDailyWord,
                           ),
                         );
                       },
@@ -455,8 +401,6 @@ class _HomeViewState extends State<HomeView> {
                                 child: buildMenuCard(
                                   context,
                                   title: 'Quiz bíblico',
-                                  description:
-                                      'Acesse o atalho do quiz na próxima atualização.',
                                   iconData: Icons.quiz_outlined,
                                   gradientColors: gradienteAudios,
                                   onPressed: () => Navigator.push(
@@ -465,6 +409,23 @@ class _HomeViewState extends State<HomeView> {
                                         builder: (context) => const QuizView()),
                                   ),
                                   compact: true,
+                                  centerContent: true,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: buildMenuCard(
+                                  context,
+                                  title: 'Anotações',
+                                  iconData: Icons.edit_note_outlined,
+                                  gradientColors: gradienteApoio,
+                                  onPressed: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const NotesView()),
+                                  ),
+                                  compact: true,
+                                  centerContent: true,
                                 ),
                               ),
                             ],

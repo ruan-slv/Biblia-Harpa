@@ -27,7 +27,7 @@ class AppDatabase {
     final directory = await getApplicationDocumentsDirectory();
     _database = await openDatabase(
       path.join(directory.path, 'biblia_e_harpa.db'),
-      version: 1,
+      version: 2,
       onCreate: (db, _) async {
         await db.execute('''
           CREATE TABLE music (
@@ -45,6 +45,30 @@ class AppDatabase {
             reference TEXT NOT NULL
           )
         ''');
+        await db.execute('''
+          CREATE TABLE annotations (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            content TEXT NOT NULL,
+            reference TEXT,
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL
+          )
+        ''');
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (newVersion >= 2) {
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS annotations (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              title TEXT NOT NULL,
+              content TEXT NOT NULL,
+              reference TEXT,
+              created_at INTEGER NOT NULL,
+              updated_at INTEGER NOT NULL
+            )
+          ''');
+        }
       },
     );
     return _database!;
