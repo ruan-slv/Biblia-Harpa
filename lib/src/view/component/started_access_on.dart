@@ -848,8 +848,9 @@ class _StartupGateState extends State<StartupGate> {
   @override
   void initState() {
     super.initState();
-    // Schedule reading notification on app start
-    NotificationService.scheduleReadingNotification();
+    // Agenda o lembrete de leitura em segundo plano, sem bloquear o
+    // primeiro frame (o agendamento é tolerante a falhas por dentro).
+    unawaited(NotificationService.scheduleReadingNotification());
   }
 
   @override

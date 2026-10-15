@@ -22,13 +22,20 @@ class SettingsView extends StatelessWidget {
 }
 
 class _SettingsContent extends StatelessWidget {
-  _SettingsContent();
+  // Valores lidos do .env a cada construção da tela (em vez de uma vez de
+  // forma estática), para refletir o conteúdo após o dotenv ser carregado
+  // em paralelo na inicialização.
+  late final String _supportEmail;
+  late final String _playStoreURL;
+  late final String _pixKey;
+  late final Uri _playStoreUrl;
 
-  static final String _supportEmail = dotenv.env["SUPPORT_EMAIL"] ?? "Email de suporte não encontrado!";
-  static final String _playStoreURL = dotenv.env["PLAYSTORE_URL"] ?? "";
-  static final String _pixKey = dotenv.env["PIX_KEY"] ?? "";
-
-  final Uri _playStoreUrl = Uri.parse(_playStoreURL);
+  _SettingsContent() {
+    _supportEmail = dotenv.env["SUPPORT_EMAIL"] ?? "Email de suporte não encontrado!";
+    _playStoreURL = dotenv.env["PLAYSTORE_URL"] ?? "";
+    _pixKey = dotenv.env["PIX_KEY"] ?? "";
+    _playStoreUrl = Uri.parse(_playStoreURL);
+  }
 
   void copyPixKey(BuildContext context) {
     Clipboard.setData(ClipboardData(text: _pixKey));
