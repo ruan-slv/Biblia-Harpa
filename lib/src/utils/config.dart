@@ -41,3 +41,4 @@ final List<Color> gradienteDevocional = [tealColor, verdeEsperanca, Colors.green
 final List<Color> gradientePalavraDoDia = [deepOrangeColor, redColor, Colors.red.shade200];
 final List<Color> gradienteAudios = [azulSereno, Colors.blue.shade600, Colors.lightBlue.shade200];
 final List<Color> gradienteApoio = [Colors.pink.shade800, Colors.red, Colors.pink.shade200];
+final List<Color> gradienteOutros = [Colors.indigo.shade800, Colors.blue.shade700, Colors.lightBlue.shade200];

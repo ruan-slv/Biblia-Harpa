@@ -7,6 +7,7 @@ import 'package:biblia_e_harpa/src/view/quiz_view.dart';
 import 'package:biblia_e_harpa/src/view/home_audio_view.dart';
 import 'package:biblia_e_harpa/src/view/settings_view.dart';
 import 'package:biblia_e_harpa/src/controllers/daily_word_controller.dart';
+import 'package:biblia_e_harpa/src/controllers/devotional_of_the_day_controller.dart';
 import 'package:biblia_e_harpa/src/controllers/bible_text_assets_controller.dart';
 import 'package:biblia_e_harpa/src/controllers/bible_list_controller.dart';
 import 'package:biblia_e_harpa/src/controllers/continue_reading_controller.dart';
@@ -15,6 +16,8 @@ import 'package:biblia_e_harpa/src/view/devotional_content_view.dart';
 import 'package:biblia_e_harpa/src/view/harp_content_view.dart';
 import 'package:biblia_e_harpa/src/view/notes_view.dart';
 import 'component/daily_word_card.dart';
+import 'component/devotional_of_the_day_card.dart';
+import 'other_projects_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'component/app_bar_component.dart';
@@ -35,6 +38,8 @@ class _HomeViewState extends State<HomeView> {
   int currentPageIndex = 0;
 
   final DailyWordController _dailyWordController = DailyWordController();
+  final DevotionalOfTheDayController _devotionalController =
+      DevotionalOfTheDayController();
   static const _continueReadingController = ContinueReadingController();
 
   Future<void> _resume(ContinueReadingEntry entry) async {
@@ -253,6 +258,7 @@ class _HomeViewState extends State<HomeView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         _dailyWordController.loadDailyWord();
+        _devotionalController.load();
       }
     });
   }
@@ -305,7 +311,7 @@ class _HomeViewState extends State<HomeView> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -433,6 +439,40 @@ class _HomeViewState extends State<HomeView> {
                         ],
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                      child: buildMenuCard(
+                        context,
+                        title: 'Outros projetos',
+                        description:
+                            'Descubra outros projetos em que estamos preparando para você',
+                        iconData: Icons.apps_rounded,
+                        gradientColors: gradienteOutros,
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const OtherProjectsView(),
+                          ),
+                        ),
+                      ),
+                    ),
+                    ChangeNotifierProvider.value(
+                      value: _devotionalController,
+                      child: Consumer<DevotionalOfTheDayController>(
+                        builder: (context, viewModel, _) {
+                          final currentDevotional = viewModel.current;
+                          if (currentDevotional == null) {
+                            return const SizedBox.shrink();
+                          }
+                          return Padding(
+                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+                            child: DevotionalOfTheDayCard(
+                              devotional: currentDevotional,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                   ],
                 ),
               );
@@ -493,6 +533,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   void dispose() {
     _dailyWordController.dispose();
+    _devotionalController.dispose();
     super.dispose();
   }
 }

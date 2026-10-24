@@ -5,7 +5,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../model/daily_word.dart';
-import '../word_image_share_view.dart';
+import '../image_share_view.dart';
 
 class DailyWordCard extends StatefulWidget {
   final DailyWord word;
@@ -24,12 +24,21 @@ class DailyWordCard extends StatefulWidget {
 class _DailyWordCardState extends State<DailyWordCard> {
   final ScreenshotController _screenshotController = ScreenshotController();
   bool _isSharing = false;
+  // Esconde o botão de compartilhar para que ele não apareça na imagem.
+  bool _hideShareButton = false;
 
   Future<void> _shareAsImage() async {
     if (_isSharing) return;
-    setState(() => _isSharing = true);
+    setState(() {
+      _isSharing = true;
+      _hideShareButton = true;
+    });
 
     try {
+      // Aguarda o próximo quadro para garantir que o botão foi removido
+      // da árvore antes de capturar a imagem.
+      await WidgetsBinding.instance.endOfFrame;
+
       final image = await _screenshotController.capture(pixelRatio: 2.0);
       if (image == null) return;
 
@@ -47,7 +56,10 @@ class _DailyWordCardState extends State<DailyWordCard> {
       debugPrint('Error sharing image: $e');
     } finally {
       if (mounted) {
-        setState(() => _isSharing = false);
+        setState(() {
+          _isSharing = false;
+          _hideShareButton = false;
+        });
       }
     }
   }
@@ -92,9 +104,13 @@ class _DailyWordCardState extends State<DailyWordCard> {
       if (mounted) {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) => WordImageShareView(
+            builder: (_) => ImageShareView(
               imageFile: picked,
-              word: widget.word,
+              content: ImageShareContent(
+                label: 'PALAVRA DO DIA',
+                quote: widget.word.text,
+                reference: widget.word.reference,
+              ),
             ),
           ),
         );
@@ -144,15 +160,16 @@ class _DailyWordCardState extends State<DailyWordCard> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                IconButton(
-                  icon: Icon(
-                    Icons.share,
-                    color: colorScheme.secondary,
-                    size: 22,
+                if (!_hideShareButton)
+                  IconButton(
+                    icon: Icon(
+                      Icons.share,
+                      color: colorScheme.secondary,
+                      size: 22,
+                    ),
+                    onPressed: _isSharing ? null : _showShareOptions,
+                    tooltip: 'Compartilhar',
                   ),
-                  onPressed: _isSharing ? null : _showShareOptions,
-                  tooltip: 'Compartilhar',
-                ),
               ],
             ),
             const SizedBox(height: 16),

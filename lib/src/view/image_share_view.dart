@@ -5,25 +5,46 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
-import '../model/daily_word.dart';
 
-/// Tela em tela cheia que compõe a Palavra do Dia sobre uma imagem escolhida
-/// pela galeria e permite compartilhar o resultado como PNG.
-class WordImageShareView extends StatefulWidget {
+/// Conteúdo textual desenhado sobre a imagem escolhida na galeria.
+class ImageShareContent {
+  const ImageShareContent({
+    required this.label,
+    required this.quote,
+    required this.reference,
+    this.footer = 'Bíblia e Harpa',
+  });
+
+  /// Título exibido no topo do cartão (ex.: "PALAVRA DO DIA").
+  final String label;
+
+  /// Texto principal do cartão.
+  final String quote;
+
+  /// Referência exibida logo abaixo do texto principal.
+  final String reference;
+
+  /// Assinatura exibida na parte inferior do cartão.
+  final String footer;
+}
+
+/// Tela em tela cheia que compõe um conteúdo textual sobre uma imagem
+/// escolhida pela galeria e permite compartilhar o resultado como PNG.
+class ImageShareView extends StatefulWidget {
   final File imageFile;
-  final DailyWord word;
+  final ImageShareContent content;
 
-  const WordImageShareView({
+  const ImageShareView({
     super.key,
     required this.imageFile,
-    required this.word,
+    required this.content,
   });
 
   @override
-  State<WordImageShareView> createState() => _WordImageShareViewState();
+  State<ImageShareView> createState() => _ImageShareViewState();
 }
 
-class _WordImageShareViewState extends State<WordImageShareView> {
+class _ImageShareViewState extends State<ImageShareView> {
   final GlobalKey _boundaryKey = GlobalKey();
   bool _imageReady = false;
   bool _sharing = false;
@@ -49,7 +70,7 @@ class _WordImageShareViewState extends State<WordImageShareView> {
           await image.toByteData(format: ui.ImageByteFormat.png);
 
       final directory = await getTemporaryDirectory();
-      final file = File('${directory.path}/palavra_do_dia_compartilhar.png');
+      final file = File('${directory.path}/compartilhar_imagem.png');
       if (data != null) {
         await file.writeAsBytes(data.buffer.asUint8List());
       } else {
@@ -61,7 +82,7 @@ class _WordImageShareViewState extends State<WordImageShareView> {
           files: [
             XFile(file.path, mimeType: 'image/png'),
           ],
-          text: 'Palavra do Dia - ${widget.word.reference}',
+          text: '${widget.content.label} - ${widget.content.reference}',
         ),
       );
 
@@ -79,12 +100,14 @@ class _WordImageShareViewState extends State<WordImageShareView> {
 
   @override
   Widget build(BuildContext context) {
+    final content = widget.content;
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black87,
         foregroundColor: Colors.white,
-        title: const Text('Compartilhar Palavra do Dia'),
+        title: Text('Compartilhar ${content.label}'),
         actions: [
           IconButton(
             icon: _sharing
@@ -144,8 +167,8 @@ class _WordImageShareViewState extends State<WordImageShareView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'PALAVRA DO DIA',
-                          style: TextStyle(
+                          content.label,
+                          style: const TextStyle(
                             color: Colors.white70,
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -154,7 +177,7 @@ class _WordImageShareViewState extends State<WordImageShareView> {
                         ),
                         const SizedBox(height: 14),
                         Text(
-                          '“${widget.word.text}”',
+                          '“${content.quote}”',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 21,
@@ -162,10 +185,10 @@ class _WordImageShareViewState extends State<WordImageShareView> {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        if (widget.word.reference.isNotEmpty) ...[
+                        if (content.reference.isNotEmpty) ...[
                           const SizedBox(height: 12),
                           Text(
-                            '— ${widget.word.reference}',
+                            '— ${content.reference}',
                             style: const TextStyle(
                               color: Colors.white70,
                               fontSize: 16,
@@ -175,7 +198,7 @@ class _WordImageShareViewState extends State<WordImageShareView> {
                         ],
                         const SizedBox(height: 16),
                         Text(
-                          'Bíblia e Harpa',
+                          content.footer,
                           style: TextStyle(
                             color: Colors.white.withValues(alpha: 0.55),
                             fontSize: 13,

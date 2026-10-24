@@ -5,6 +5,7 @@ library;
 
 import 'package:biblia_e_harpa/src/view/component/app_section_card.dart';
 import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
+import 'package:biblia_e_harpa/src/controllers/database_export_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -17,7 +18,10 @@ class SettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _SettingsContent();
+    return ChangeNotifierProvider(
+      create: (_) => DatabaseExportController(),
+      child: _SettingsContent(),
+    );
   }
 }
 
@@ -127,6 +131,25 @@ class _SettingsContent extends StatelessWidget {
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       throw Exception("Não foi possível abrir a Play Store");
     }
+  }
+
+  Future<void> _exportDatabase(
+    BuildContext context,
+    DatabaseExportController controller,
+  ) async {
+    final result = await controller.export();
+    if (!context.mounted) return;
+
+    final message = result.directory == null
+        ? result.message
+        : '${result.message}\n${result.directory}';
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   @override
@@ -280,6 +303,39 @@ class _SettingsContent extends StatelessWidget {
                       icon: const Icon(Icons.open_in_new_rounded),
                       label: const Text("Ver política"),
                     ),
+                  ),
+                  const SizedBox(height: 16),
+                  Consumer<DatabaseExportController>(
+                    builder: (context, exportController, _) {
+                      return AppSectionCard(
+                        icon: Icons.save_alt_rounded,
+                        title: "Exportar Base de Dados",
+                        subtitle:
+                            "Salve os arquivos .json da Bíblia (versão selecionada) e da Harpa em uma pasta do seu dispositivo.",
+                        child: ElevatedButton.icon(
+                          onPressed: exportController.isExporting
+                              ? null
+                              : () => _exportDatabase(
+                                    context,
+                                    exportController,
+                                  ),
+                          icon: exportController.isExporting
+                              ? const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Icon(Icons.save_alt_rounded),
+                          label: Text(
+                            exportController.isExporting
+                                ? "Exportando..."
+                                : "Exportar",
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
