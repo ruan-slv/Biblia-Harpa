@@ -22,7 +22,7 @@ class BibleAudioPlayerCard extends StatelessWidget {
     if (currentAudioChapter == null) {
       return Card(
         margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.9),
+        color: Theme.of(context).colorScheme.surface,
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Padding(
@@ -32,7 +32,7 @@ class BibleAudioPlayerCard extends StatelessWidget {
             height: 24,
             child: CircularProgressIndicator(
               strokeWidth: 2,
-              color: Theme.of(context).colorScheme.secondary,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ),
@@ -41,7 +41,7 @@ class BibleAudioPlayerCard extends StatelessWidget {
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.9),
+      color: Theme.of(context).colorScheme.surface,
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
@@ -66,7 +66,7 @@ class BibleAudioPlayerCard extends StatelessWidget {
                         height: 24,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: Theme.of(context).colorScheme.secondary,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -82,7 +82,7 @@ class BibleAudioPlayerCard extends StatelessWidget {
                             : Icons.play_circle_filled,
                       ),
                       iconSize: 40.0,
-                      color: Theme.of(context).colorScheme.secondary,
+                      color: Theme.of(context).colorScheme.onSurface,
                       onPressed: () async {
                         try {
                           (playing ?? false)
@@ -105,7 +105,7 @@ class BibleAudioPlayerCard extends StatelessWidget {
                     IconButton(
                       icon: const Icon(Icons.stop_circle_outlined),
                       iconSize: 40.0,
-                      color: Theme.of(context).colorScheme.secondary,
+                      color: Theme.of(context).colorScheme.onSurface,
                       onPressed: () {
                         audioPlayer.stop();
                         audioPlayer.seek(Duration.zero);
@@ -128,8 +128,11 @@ class BibleAudioPlayerCard extends StatelessWidget {
                     max: duration.inSeconds.toDouble(),
                     onChanged: (value) =>
                         audioPlayer.seek(Duration(seconds: value.toInt())),
-                    activeColor: Theme.of(context).colorScheme.secondary,
-                    inactiveColor: Colors.grey.withValues(alpha: 0.5),
+                    activeColor: Theme.of(context).colorScheme.onSurface,
+                    inactiveColor: Theme.of(context)
+                        .colorScheme
+                        .onSurfaceVariant
+                        .withValues(alpha: 0.5),
                   );
                 },
               ),

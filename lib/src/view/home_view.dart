@@ -141,25 +141,25 @@ class _HomeViewState extends State<HomeView> {
                   width: 48,
                   height: 5,
                   decoration: BoxDecoration(
-                    color: colorScheme.secondary.withValues(alpha: .22),
+                    color: colorScheme.onSurface.withValues(alpha: .22),
                     borderRadius: BorderRadius.circular(999),
                   ),
                 ),
                 const SizedBox(height: 12),
                 ListTile(
                   leading:
-                      Icon(Icons.auto_fix_high, color: colorScheme.secondary),
+                      Icon(Icons.auto_fix_high, color: colorScheme.onSurface),
                   title: Text(
                     'Próximo devocional não lido',
                     style: TextStyle(
-                      color: colorScheme.secondary,
+                      color: colorScheme.onSurface,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   subtitle: Text(
                     'Avança para a próxima leitura disponível',
                     style: TextStyle(
-                      color: colorScheme.secondary.withValues(alpha: .72),
+                      color: colorScheme.onSurface.withValues(alpha: .72),
                     ),
                   ),
                   onTap: () async {
@@ -181,7 +181,7 @@ class _HomeViewState extends State<HomeView> {
                 ),
                 Divider(
                   height: 1,
-                  color: colorScheme.secondary.withValues(alpha: .08),
+                  color: colorScheme.onSurface.withValues(alpha: .08),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -190,7 +190,7 @@ class _HomeViewState extends State<HomeView> {
                     child: Text(
                       'Continuar de onde parou',
                       style: TextStyle(
-                        color: colorScheme.secondary,
+                        color: colorScheme.onSurface,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -202,7 +202,7 @@ class _HomeViewState extends State<HomeView> {
                     child: Text(
                       'Nenhuma leitura ou atividade recente.',
                       style: TextStyle(
-                        color: colorScheme.secondary.withValues(alpha: .72),
+                        color: colorScheme.onSurface.withValues(alpha: .72),
                       ),
                     ),
                   )
@@ -216,12 +216,12 @@ class _HomeViewState extends State<HomeView> {
                         return ListTile(
                           leading: Icon(
                             _continueIcon(entry.type),
-                            color: colorScheme.secondary,
+                            color: colorScheme.onSurface,
                           ),
                           title: Text(
                             entry.title,
                             style: TextStyle(
-                              color: colorScheme.secondary,
+                              color: colorScheme.onSurface,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -229,12 +229,12 @@ class _HomeViewState extends State<HomeView> {
                             entry.subtitle,
                             style: TextStyle(
                               color:
-                                  colorScheme.secondary.withValues(alpha: .72),
+                                  colorScheme.onSurface.withValues(alpha: .72),
                             ),
                           ),
                           trailing: Icon(
                             Icons.chevron_right_rounded,
-                            color: colorScheme.secondary.withValues(alpha: .55),
+                            color: colorScheme.onSurface.withValues(alpha: .55),
                           ),
                           onTap: () {
                             Navigator.of(sheetContext).pop();
@@ -263,7 +263,8 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
-  ColorScheme colorScheme(BuildContext context) => Theme.of(context).colorScheme;
+  ColorScheme colorScheme(BuildContext context) =>
+      Theme.of(context).colorScheme;
 
   @override
   Widget build(BuildContext context) {
@@ -320,7 +321,7 @@ class _HomeViewState extends State<HomeView> {
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
-                              color: colorScheme.secondary,
+                              color: colorScheme.onSurface,
                             ),
                           ),
                           const SizedBox(height: 14),
@@ -428,7 +429,8 @@ class _HomeViewState extends State<HomeView> {
                                   onPressed: () => Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => const NotesView()),
+                                        builder: (context) =>
+                                            const NotesView()),
                                   ),
                                   compact: true,
                                   centerContent: true,
@@ -487,7 +489,7 @@ class _HomeViewState extends State<HomeView> {
     ];
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
         title: "Bíblia e Harpa",
         centerTitle: false,
@@ -500,28 +502,32 @@ class _HomeViewState extends State<HomeView> {
             currentPageIndex = index;
           });
         },
-        indicatorColor: colorScheme.secondary,
+        indicatorColor: colorScheme.surfaceContainerHighest,
         selectedIndex: currentPageIndex,
         destinations: <Widget>[
           NavigationDestination(
             selectedIcon: Icon(
               Icons.home,
-              color: colorScheme.primary,
+              color: colorScheme.brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
             ),
             icon: Icon(
               Icons.home_outlined,
-              color: colorScheme.secondary,
+              color: colorScheme.onSurface,
             ),
             label: "Inicio",
           ),
           NavigationDestination(
             selectedIcon: Icon(
               Icons.settings,
-              color: colorScheme.primary,
+              color: colorScheme.brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
             ),
             icon: Icon(
               Icons.settings_outlined,
-              color: colorScheme.secondary,
+              color: colorScheme.onSurface,
             ),
             label: "Configurações",
           ),

@@ -40,7 +40,7 @@ class AppSectionCard extends StatelessWidget {
                       color: colorScheme.surface,
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    child: Icon(icon, color: colorScheme.secondary),
+                    child: Icon(icon, color: colorScheme.onSurface),
                   ),
                   const SizedBox(width: 12),
                 ],
@@ -53,14 +53,14 @@ class AppSectionCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
-                          color: colorScheme.secondary,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                       const SizedBox(height: 6),
                       Text(
                         subtitle,
                         style: TextStyle(
-                          color: colorScheme.secondary.withValues(alpha:0.82),
+                          color: colorScheme.onSurface.withValues(alpha: 0.82),
                           height: 1.4,
                         ),
                       ),

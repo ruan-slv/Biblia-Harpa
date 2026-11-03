@@ -28,7 +28,7 @@ class _HarpAudioWrapperState extends State<HarpAudioWrapper> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: FutureBuilder<List<ConnectivityResult>>(
         future: _connectivityFuture,
         builder: (context, snapshot) {
@@ -40,7 +40,8 @@ class _HarpAudioWrapperState extends State<HarpAudioWrapper> {
                 context, "Erro ao verificar a conexão. Tente novamente.");
           }
 
-          if (snapshot.hasData && !snapshot.data!.contains(ConnectivityResult.none)) {
+          if (snapshot.hasData &&
+              !snapshot.data!.contains(ConnectivityResult.none)) {
             return const HarpAudioView(isOffline: false);
           }
 
@@ -54,7 +55,8 @@ class _HarpAudioWrapperState extends State<HarpAudioWrapper> {
     );
   }
 
-  Widget _buildErrorWidget(BuildContext context, String message, {bool showOfflineButton = false}) {
+  Widget _buildErrorWidget(BuildContext context, String message,
+      {bool showOfflineButton = false}) {
     final settings = context.watch<SettingsController>();
     return Center(
       child: Padding(
@@ -65,14 +67,17 @@ class _HarpAudioWrapperState extends State<HarpAudioWrapper> {
             Icon(
               Icons.wifi_off_rounded,
               size: 60,
-              color: Theme.of(context).colorScheme.secondary.withValues(alpha:0.7),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.7),
             ),
             const SizedBox(height: 20),
             Text(
               message,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: settings.fontSize,
               ),
             ),
@@ -83,18 +88,19 @@ class _HarpAudioWrapperState extends State<HarpAudioWrapper> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const HarpAudioView(isOffline: true),
+                      builder: (context) =>
+                          const HarpAudioView(isOffline: true),
                     ),
                   );
                 },
                 icon: Icon(
                   Icons.download_done_rounded,
-                  color: Theme.of(context).colorScheme.secondary,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
                 label: Text(
                   "Hinos Baixados",
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.secondary,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: settings.fontSize * 0.9,
                     fontWeight: FontWeight.bold,
                   ),
@@ -102,7 +108,7 @@ class _HarpAudioWrapperState extends State<HarpAudioWrapper> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.primary,
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),

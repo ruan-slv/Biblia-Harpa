@@ -1,9 +1,13 @@
-# Documentação visual — Player Offline
+# Documentação visual — Bíblia e Harpa
 
 Este documento descreve a paleta de cores, os tokens visuais, a tipografia e
-onde cada elemento é aplicado no aplicativo. A fonte de verdade é o arquivo
-[`lib/theme/app_theme.dart`](lib/theme/app_theme.dart); cores pontuais de
-componentes específicos também estão listadas aqui.
+as regras de aplicação da identidade visual. A fonte de verdade dos tokens e
+dos temas claro/escuro é [`lib/src/utils/theme.dart`](lib/src/utils/theme.dart);
+cores específicas de componentes também estão listadas aqui.
+
+> As descrições de telas na seção 2 foram originalmente escritas para outra
+> estrutura de aplicativo. Neste repositório, elas servem como referência de
+> estilo; os pontos de aplicação correspondentes estão mapeados na seção 5.
 
 ---
 
@@ -379,24 +383,25 @@ Textos longos usam `height` entre `1.35` e `1.5` para leitura confortável
 
 | Arquivo | Responsabilidade visual |
 |---|---|
-| `lib/theme/app_theme.dart` | Tokens de marca, temas claro/escuro, superfícies, bordas e tipografia base |
-| `lib/utils/widgets_compartilhados.dart` | Cabeçalhos, etiquetas, estados vazios, diálogos e SnackBars |
-| `lib/views/tela_shell.dart` | Barra lateral, marca, navegação e rodapé |
-| `lib/views/tela_inicio.dart` | Hero, estatísticas e atalhos |
-| `lib/views/tela_player.dart` | Pastas, cartões de mídia, banners e progresso |
-| `lib/views/tela_logs.dart` | Filtros, cartões e níveis de log |
-| `lib/views/dialog_configuracoes.dart` | Aparência, pasta de downloads e segurança |
-| `lib/views/player/dialog_player_midia.dart` | Player de áudio e vídeo |
-| `lib/main.dart` | Aplicação dos temas e tela de falha |
+| `lib/src/utils/theme.dart` | Tokens, temas claro/escuro, superfícies, bordas e tipografia base |
+| `lib/src/utils/config.dart` | Gradientes das categorias e atalhos |
+| `lib/src/view/home_view.dart` | Início, atalhos e navegação principal |
+| `lib/src/view/bible_*_view.dart` | Listas, leitura, capítulos e áudio da Bíblia |
+| `lib/src/view/harp_*_view.dart` | Listas, leitura e reprodução da Harpa |
+| `lib/src/view/devotional_*_view.dart` | Lista e leitura de devocionais |
+| `lib/src/view/quiz_view.dart` | Perguntas, alternativas e estados de resposta |
+| `lib/src/view/notes_view.dart` e `note_detail_view.dart` | Lista e detalhe de anotações |
+| `lib/src/view/component/` | App bar, cartões, campos, navegação e primeiro acesso |
+| `lib/main.dart` | Aplicação dos temas e tema escolhido pelo usuário |
 
 ---
 
 ## 6. Como alterar a identidade visual
 
-1. Atualize as constantes em `lib/theme/app_theme.dart`.
+1. Atualize os tokens em `lib/src/utils/theme.dart`.
 2. O `ColorScheme` será regenerado automaticamente a partir de `corPrimaria`.
 3. Ajuste os gradientes fixos do hero (`#008F7E` → `#5B4BD6`) em
-   `lib/views/tela_inicio.dart`, caso a marca mude.
+   `lib/src/utils/theme.dart`, caso a marca mude.
 4. Revise as cores de estado (`#22C55E`, `#0EA5E9`, `#EF4444`) caso seja
    necessária uma paleta de feedback diferente.
 5. Execute `flutter analyze`, `flutter test` e valide visualmente nos dois temas.

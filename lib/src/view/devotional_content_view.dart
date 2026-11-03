@@ -13,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:biblia_e_harpa/src/utils/theme.dart';
 
 class DevotionalTextModel {
   final String versiculo;
@@ -24,7 +25,8 @@ class DevotionalTextModel {
 
   factory DevotionalTextModel.fromJson(Map<String, dynamic> json) {
     return DevotionalTextModel(
-      versiculo: json['versiculo'] ?? json['Versiculo'] ?? 'versiculo não encontrado',
+      versiculo:
+          json['versiculo'] ?? json['Versiculo'] ?? 'versiculo não encontrado',
       texto: json['texto'] ?? json['Texto'] ?? 'Texto não encontrado',
       oracao: json['Oração'] ?? json['oracao'] ?? 'Oração não encontrada',
     );
@@ -284,7 +286,7 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
       final title = loadError ?? 'Devocional não encontrado.';
 
       return Scaffold(
-        backgroundColor: colorScheme.surface,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: CustomAppBar(
           title: _topicKey,
           centerTitle: false,
@@ -301,13 +303,13 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
                       Icon(
                         Icons.menu_book_outlined,
                         size: 48,
-                        color: colorScheme.secondary.withValues(alpha: 0.6),
+                        color: colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                       const SizedBox(height: 16),
                       Text(
                         title,
                         style: TextStyle(
-                          color: colorScheme.secondary,
+                          color: colorScheme.onSurface,
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                         ),
@@ -317,7 +319,7 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
                       Text(
                         'Verifique se há conteúdo disponível no arquivo de devocionais.',
                         style: TextStyle(
-                          color: colorScheme.secondary.withValues(alpha: 0.7),
+                          color: colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -333,7 +335,7 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
     final settings = context.watch<SettingsController>();
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
         title: _topicKey,
         centerTitle: false,
@@ -350,7 +352,7 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
               );
             },
             icon: const Icon(Icons.share),
-            color: Theme.of(context).colorScheme.secondary,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ],
       ),
@@ -369,13 +371,13 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
             ),
             decoration: BoxDecoration(
               color: isRead
-                  ? Colors.green.withValues(alpha: 0.16)
-                  : colorScheme.primary,
+                  ? AppTheme.sucesso.withValues(alpha: 0.16)
+                  : colorScheme.primaryContainer,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: isRead
-                    ? Colors.green.withValues(alpha: 0.45)
-                    : colorScheme.secondary.withValues(alpha: 0.08),
+                    ? AppTheme.sucesso.withValues(alpha: 0.45)
+                    : colorScheme.onSurface.withValues(alpha: 0.08),
               ),
             ),
             child: Row(
@@ -384,7 +386,9 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
                   height: 42,
                   width: 42,
                   decoration: BoxDecoration(
-                    color: isRead ? Colors.green : colorScheme.secondary,
+                    color: isRead
+                        ? AppTheme.sucesso
+                        : colorScheme.primaryContainer,
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Icon(
@@ -403,7 +407,7 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
                       Text(
                         isRead ? "Devocional concluído" : "Marcar como lido",
                         style: TextStyle(
-                          color: colorScheme.secondary,
+                          color: colorScheme.onSurface,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -413,7 +417,7 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
                             ? "Toque para marcar como não lido."
                             : "Toque para marcar como lido.",
                         style: TextStyle(
-                          color: colorScheme.secondary.withValues(alpha: 0.72),
+                          color: colorScheme.onSurface.withValues(alpha: 0.72),
                           height: 1.3,
                         ),
                       ),
@@ -455,7 +459,7 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
                           style: TextStyle(
                             fontSize: settings.fontSize,
                             fontStyle: FontStyle.italic,
-                            color: Theme.of(context).colorScheme.secondary,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -465,7 +469,7 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
                           style: TextStyle(
                             fontSize: settings.fontSize + 2,
                             fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.secondary,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -474,7 +478,7 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
                           devocional.texto,
                           style: TextStyle(
                             fontSize: settings.fontSize,
-                            color: Theme.of(context).colorScheme.secondary,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -484,7 +488,7 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
                           style: TextStyle(
                             fontSize: settings.fontSize + 2,
                             fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.secondary,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -493,7 +497,7 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
                           devocional.oracao,
                           style: TextStyle(
                             fontSize: settings.fontSize,
-                            color: Theme.of(context).colorScheme.secondary,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                           textAlign: TextAlign.center,
                         ),

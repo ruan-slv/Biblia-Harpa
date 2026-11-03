@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../utils/config.dart';
+import '../utils/theme.dart';
 
 class DevotionalListView extends StatefulWidget {
   const DevotionalListView({super.key});
@@ -112,19 +113,20 @@ class _DevotionalListViewState extends State<DevotionalListView> {
             controller: _filterController,
             decoration: InputDecoration(
               hintText: "Pesquisar livro",
-              hintStyle:
-                  TextStyle(color: Theme.of(context).colorScheme.secondary),
+              hintStyle: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               prefixIcon: Icon(Icons.search,
-                  color: Theme.of(context).colorScheme.secondary),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant),
               suffixIcon: IconButton(
                 onPressed: () {
                   _filterController.clear();
                 },
                 icon: Icon(Icons.clear,
-                    color: Theme.of(context).colorScheme.secondary),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
               filled: true,
-              fillColor: Theme.of(context).colorScheme.primary,
+              fillColor: Theme.of(context).colorScheme.surface,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(30.0),
                 borderSide: BorderSide.none,
@@ -132,8 +134,8 @@ class _DevotionalListViewState extends State<DevotionalListView> {
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
             ),
-            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-            cursorColor: Theme.of(context).colorScheme.secondary,
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+            cursorColor: Theme.of(context).colorScheme.primary,
           ),
         ),
         const SizedBox(height: 12),
@@ -150,11 +152,11 @@ class _DevotionalListViewState extends State<DevotionalListView> {
               return Container(
                 margin: const EdgeInsets.symmetric(vertical: 6),
                 decoration: BoxDecoration(
-                  color: colorScheme.primary,
+                  color: colorScheme.surface,
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: colorScheme.secondary.withValues(alpha: 0.05),
+                      color: colorScheme.onSurface.withValues(alpha: 0.05),
                       blurRadius: 14,
                       offset: const Offset(0, 8),
                     ),
@@ -196,8 +198,8 @@ class _DevotionalListViewState extends State<DevotionalListView> {
                                       ? Icons.check_circle_rounded
                                       : Icons.auto_stories_rounded,
                                   color: progress >= 1.0
-                                      ? Colors.green
-                                      : colorScheme.secondary,
+                                      ? AppTheme.sucesso
+                                      : colorScheme.onSurface,
                                 ),
                               ),
                               const SizedBox(width: 12),
@@ -214,7 +216,7 @@ class _DevotionalListViewState extends State<DevotionalListView> {
                                             devocionalTopic,
                                             style: TextStyle(
                                               fontSize: settings.fontSize,
-                                              color: colorScheme.secondary,
+                                              color: colorScheme.onSurface,
                                               fontWeight: FontWeight.w600,
                                             ),
                                           ),
@@ -224,7 +226,7 @@ class _DevotionalListViewState extends State<DevotionalListView> {
                                           "$percentage%",
                                           style: TextStyle(
                                             fontSize: settings.fontSize * 0.8,
-                                            color: colorScheme.secondary
+                                            color: colorScheme.onSurface
                                                 .withValues(alpha: 0.7),
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -237,7 +239,7 @@ class _DevotionalListViewState extends State<DevotionalListView> {
                                           ? "Tema concluído"
                                           : "Toque para iniciar ou continuar a leitura",
                                       style: TextStyle(
-                                        color: colorScheme.secondary
+                                        color: colorScheme.onSurface
                                             .withValues(alpha: 0.72),
                                       ),
                                     ),
@@ -254,7 +256,7 @@ class _DevotionalListViewState extends State<DevotionalListView> {
                               backgroundColor: colorScheme.surface,
                               valueColor: AlwaysStoppedAnimation<Color>(
                                 progress >= 1.0
-                                    ? Colors.green
+                                    ? AppTheme.sucesso
                                     : gradienteDevocional.first,
                               ),
                               minHeight: 8,
@@ -276,7 +278,7 @@ class _DevotionalListViewState extends State<DevotionalListView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: const CustomAppBar(
         title: "Devocional",
         centerTitle: false,

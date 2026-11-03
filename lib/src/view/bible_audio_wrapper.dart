@@ -28,7 +28,7 @@ class _BibleAudioWrapperState extends State<BibleAudioWrapper> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: FutureBuilder<List<ConnectivityResult>>(
         future: _connectivityFuture,
         builder: (context, snapshot) {

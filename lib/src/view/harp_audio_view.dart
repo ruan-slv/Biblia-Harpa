@@ -52,7 +52,8 @@ class _HarpAudioViewState extends State<HarpAudioView> {
     _searchController.addListener(_filtrarAudioHarpa);
 
     _player.positionStream.listen((p) => setState(() => _currentPosition = p));
-    _player.durationStream.listen((d) => setState(() => _audioDuration = d ?? Duration.zero));
+    _player.durationStream
+        .listen((d) => setState(() => _audioDuration = d ?? Duration.zero));
     _player.playerStateStream.listen((state) {
       if (state.processingState == ProcessingState.completed) _playNext();
       setState(() {});
@@ -81,7 +82,10 @@ class _HarpAudioViewState extends State<HarpAudioView> {
   void _filtrarAudioHarpa() {
     final query = _searchController.text;
     setState(() {
-      _filtrarHarpa = _allHarpas.where((audio) => _normalize(audio.titulo).contains(_normalize(query))).toList();
+      _filtrarHarpa = _allHarpas
+          .where(
+              (audio) => _normalize(audio.titulo).contains(_normalize(query)))
+          .toList();
     });
   }
 
@@ -89,32 +93,39 @@ class _HarpAudioViewState extends State<HarpAudioView> {
     final directory = await getApplicationDocumentsDirectory();
     final audioDir = Directory('${directory.path}/harpa_audios');
     if (!await audioDir.exists()) await audioDir.create(recursive: true);
-    final safeName = hinoTitle.replaceAll(RegExp(r'[^\w\s]+'), '').replaceAll(' ', '_');
+    final safeName =
+        hinoTitle.replaceAll(RegExp(r'[^\w\s]+'), '').replaceAll(' ', '_');
     return '${audioDir.path}/$safeName.mp3';
   }
 
   Future<void> _fetchAudioHarpa() async {
     setState(() => isLoading = true);
     try {
-      final String response = await rootBundle.loadString("assets/json/outros/audios_harpa.json");
+      final String response =
+          await rootBundle.loadString("assets/json/outros/audios_harpa.json");
       final Map<String, dynamic> jsonData = json.decode(response);
       final List data = jsonData["audios"];
       _allHarpas = data.map((audio) => DataAudioModel.fromJson(audio)).toList();
 
       for (int i = 0; i < _allHarpas.length; i++) {
-        if (await File(await _getLocalFilePath(_allHarpas[i].titulo)).exists()) {
+        if (await File(await _getLocalFilePath(_allHarpas[i].titulo))
+            .exists()) {
           _downloadedIndices.add(i);
         }
       }
 
       if (widget.isOffline) {
-        _allHarpas = _allHarpas.where((h) => _downloadedIndices.contains(_allHarpas.indexOf(h))).toList();
+        _allHarpas = _allHarpas
+            .where((h) => _downloadedIndices.contains(_allHarpas.indexOf(h)))
+            .toList();
       }
 
       setState(() {
         _filtrarHarpa = _allHarpas;
         isLoading = false;
-        if (widget.isOffline && _allHarpas.isEmpty) error = "Nenhum hino foi baixado.";
+        if (widget.isOffline && _allHarpas.isEmpty) {
+          error = "Nenhum hino foi baixado.";
+        }
       });
     } catch (e) {
       setState(() {
@@ -138,23 +149,33 @@ class _HarpAudioViewState extends State<HarpAudioView> {
         await _player.setAudioSource(AudioSource.file(path));
       } else {
         final connectivity = await Connectivity().checkConnectivity();
-        if (connectivity.contains(ConnectivityResult.none)) throw Exception("Sem internet");
-        
+        if (connectivity.contains(ConnectivityResult.none)) {
+          throw Exception("Sem internet");
+        }
+
         String url = hino.hinoURL;
         if (url.contains("drive.google.com")) {
           final id = RegExp(r"/d/([^/]+)/").firstMatch(url)?.group(1);
-          if (id != null) url = "https://drive.google.com/uc?export=download&id=$id&confirm=t";
+          if (id != null) {
+            url =
+                "https://drive.google.com/uc?export=download&id=$id&confirm=t";
+          }
         }
         await _player.setAudioSource(AudioSource.uri(Uri.parse(url)));
       }
       await _player.play();
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Erro ao reproduzir áudio.")));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Erro ao reproduzir áudio.")));
+      }
     }
   }
 
   void _playNext() {
-    if (_currentIndex != null && _currentIndex! < _filtrarHarpa.length - 1) _loadAndPlay(_currentIndex! + 1);
+    if (_currentIndex != null && _currentIndex! < _filtrarHarpa.length - 1) {
+      _loadAndPlay(_currentIndex! + 1);
+    }
   }
 
   Future<void> _download(int index) async {
@@ -168,10 +189,16 @@ class _HarpAudioViewState extends State<HarpAudioView> {
         _downloadedIndices.add(_allHarpas.indexOf(hino));
         _isDownloading = false;
       });
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${hino.titulo} baixado!")));
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("${hino.titulo} baixado!")));
+      }
     } catch (e) {
       setState(() => _isDownloading = false);
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Erro no download.")));
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Erro no download.")));
+      }
     }
   }
 
@@ -180,21 +207,31 @@ class _HarpAudioViewState extends State<HarpAudioView> {
     final file = File(await _getLocalFilePath(hino.titulo));
     if (await file.exists()) await file.delete();
     setState(() => _downloadedIndices.remove(_allHarpas.indexOf(hino)));
-    if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Removido.")));
+    if (mounted) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Removido.")));
+    }
   }
 
   Future<void> _share(int index) async {
     final hino = _filtrarHarpa[index];
-    await SharePlus.instance.share(ShareParams(text: "Ouça ${hino.titulo} na Harpa Cristã: ${hino.hinoURL}"));
+    await SharePlus.instance.share(ShareParams(
+        text: "Ouça ${hino.titulo} na Harpa Cristã: ${hino.hinoURL}"));
   }
 
-  String _formatDuration(Duration d) => "${d.inMinutes}:${(d.inSeconds % 60).toString().padLeft(2, '0')}";
+  String _formatDuration(Duration d) =>
+      "${d.inMinutes}:${(d.inSeconds % 60).toString().padLeft(2, '0')}";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: widget.isOffline ? CustomAppBar(automaticallyImplyLeading: true, centerTitle: false, title: "Hinos Baixados") : null,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: widget.isOffline
+          ? CustomAppBar(
+              automaticallyImplyLeading: true,
+              centerTitle: false,
+              title: "Hinos Baixados")
+          : null,
       body: _buildContent(),
     );
   }
@@ -202,7 +239,13 @@ class _HarpAudioViewState extends State<HarpAudioView> {
   Widget _buildContent() {
     final settings = context.watch<SettingsController>();
     if (isLoading) return const Center(child: CircularProgressIndicator());
-    if (error != null) return Center(child: Text(error!, style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: settings.fontSize)));
+    if (error != null) {
+      return Center(
+          child: Text(error!,
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontSize: settings.fontSize)));
+    }
 
     return Column(
       children: [
@@ -212,14 +255,19 @@ class _HarpAudioViewState extends State<HarpAudioView> {
             controller: _searchController,
             decoration: InputDecoration(
               hintText: "Pesquisar hino",
-              hintStyle: TextStyle(color: Theme.of(context).colorScheme.secondary),
-              prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.secondary),
+              hintStyle:
+                  TextStyle(color: Theme.of(context).colorScheme.onSurface),
+              prefixIcon: Icon(Icons.search,
+                  color: Theme.of(context).colorScheme.onSurface),
               filled: true,
-              fillColor: Theme.of(context).colorScheme.primary,
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide.none),
-              contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+              fillColor: Theme.of(context).colorScheme.surface,
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide.none),
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
             ),
-            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
           ),
         ),
         Expanded(
@@ -228,23 +276,42 @@ class _HarpAudioViewState extends State<HarpAudioView> {
             itemBuilder: (context, index) {
               final hino = _filtrarHarpa[index];
               final isSelected = _currentIndex == index;
-              final isDownloaded = _downloadedIndices.contains(_allHarpas.indexOf(hino));
+              final isDownloaded =
+                  _downloadedIndices.contains(_allHarpas.indexOf(hino));
 
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                color: isSelected ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.5) : null,
+                color: isSelected
+                    ? Theme.of(context).colorScheme.primaryContainer
+                    : null,
                 child: Column(
                   children: [
                     ListTile(
-                      title: Text(hino.titulo, style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: settings.fontSize, fontWeight: isSelected ? FontWeight.bold : null)),
+                      title: Text(hino.titulo,
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface,
+                              fontSize: settings.fontSize,
+                              fontWeight: isSelected ? FontWeight.bold : null)),
                       onTap: () => _loadAndPlay(index),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          IconButton(icon: Icon(Icons.share_outlined, color: Theme.of(context).colorScheme.secondary, size: 20), onPressed: () => _share(index)),
                           IconButton(
-                            icon: Icon(isDownloaded ? Icons.delete_outline : Icons.download_outlined, color: Theme.of(context).colorScheme.secondary, size: 20),
-                            onPressed: isDownloaded ? () => _delete(index) : () => _download(index),
+                              icon: Icon(Icons.share_outlined,
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                  size: 20),
+                              onPressed: () => _share(index)),
+                          IconButton(
+                            icon: Icon(
+                                isDownloaded
+                                    ? Icons.delete_outline
+                                    : Icons.download_outlined,
+                                color: Theme.of(context).colorScheme.onSurface,
+                                size: 20),
+                            onPressed: isDownloaded
+                                ? () => _delete(index)
+                                : () => _download(index),
                           ),
                         ],
                       ),
@@ -256,26 +323,54 @@ class _HarpAudioViewState extends State<HarpAudioView> {
                           children: [
                             Slider(
                               value: _currentPosition.inSeconds.toDouble(),
-                              max: _audioDuration.inSeconds > 0 ? _audioDuration.inSeconds.toDouble() : 1.0,
-                              onChanged: (v) => _player.seek(Duration(seconds: v.toInt())),
-                              activeColor: Theme.of(context).colorScheme.secondary,
+                              max: _audioDuration.inSeconds > 0
+                                  ? _audioDuration.inSeconds.toDouble()
+                                  : 1.0,
+                              onChanged: (v) =>
+                                  _player.seek(Duration(seconds: v.toInt())),
+                              activeColor:
+                                  Theme.of(context).colorScheme.onSurface,
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(_formatDuration(_currentPosition), style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
+                                Text(_formatDuration(_currentPosition),
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                        fontSize: 12)),
                                 Row(
                                   children: [
-                                    IconButton(icon: const Icon(Icons.replay_10), onPressed: () => _player.seek(Duration(seconds: _currentPosition.inSeconds - 10))),
                                     IconButton(
-                                      icon: Icon(_player.playing ? Icons.pause_circle_filled : Icons.play_circle_filled),
+                                        icon: const Icon(Icons.replay_10),
+                                        onPressed: () => _player.seek(Duration(
+                                            seconds:
+                                                _currentPosition.inSeconds -
+                                                    10))),
+                                    IconButton(
+                                      icon: Icon(_player.playing
+                                          ? Icons.pause_circle_filled
+                                          : Icons.play_circle_filled),
                                       iconSize: 40,
-                                      onPressed: () => _player.playing ? _player.pause() : _player.play(),
+                                      onPressed: () => _player.playing
+                                          ? _player.pause()
+                                          : _player.play(),
                                     ),
-                                    IconButton(icon: const Icon(Icons.forward_10), onPressed: () => _player.seek(Duration(seconds: _currentPosition.inSeconds + 10))),
+                                    IconButton(
+                                        icon: const Icon(Icons.forward_10),
+                                        onPressed: () => _player.seek(Duration(
+                                            seconds:
+                                                _currentPosition.inSeconds +
+                                                    10))),
                                   ],
                                 ),
-                                Text(_formatDuration(_audioDuration), style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12)),
+                                Text(_formatDuration(_audioDuration),
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                        fontSize: 12)),
                               ],
                             ),
                           ],

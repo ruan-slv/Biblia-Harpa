@@ -2,6 +2,7 @@ import 'package:biblia_e_harpa/src/view/component/app_bar_component.dart';
 import 'package:biblia_e_harpa/src/controllers/quiz_controller.dart';
 import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
 import 'package:biblia_e_harpa/src/model/quiz_model.dart';
+import 'package:biblia_e_harpa/src/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -32,16 +33,16 @@ class _QuizViewContent extends StatelessWidget {
 
     if (viewModel.loading) {
       return Scaffold(
-        backgroundColor: colorScheme.surface,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Center(
-          child: CircularProgressIndicator(color: colorScheme.secondary),
+          child: CircularProgressIndicator(color: colorScheme.onSurface),
         ),
       );
     }
 
     if (viewModel.errorMessage != null) {
       return Scaffold(
-        backgroundColor: colorScheme.surface,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: const CustomAppBar(
           title: 'Quizz Bíblico',
           centerTitle: false,
@@ -67,7 +68,7 @@ class _QuizViewContent extends StatelessWidget {
                         ),
                         child: Icon(
                           Icons.error_outline_rounded,
-                          color: colorScheme.secondary,
+                          color: colorScheme.onSurface,
                           size: 32,
                         ),
                       ),
@@ -78,7 +79,7 @@ class _QuizViewContent extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
-                          color: colorScheme.secondary,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -86,7 +87,7 @@ class _QuizViewContent extends StatelessWidget {
                         'Tente recarregar para buscar as perguntas novamente.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: colorScheme.secondary.withValues(alpha: 0.72),
+                          color: colorScheme.onSurface.withValues(alpha: 0.72),
                           height: 1.4,
                         ),
                       ),
@@ -112,7 +113,7 @@ class _QuizViewContent extends StatelessWidget {
 
     if (viewModel.questions.isEmpty) {
       return Scaffold(
-        backgroundColor: colorScheme.surface,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: const CustomAppBar(
           title: 'Quizz Bíblico',
           centerTitle: false,
@@ -127,7 +128,7 @@ class _QuizViewContent extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w600,
-                  color: colorScheme.secondary,
+                  color: colorScheme.onSurface,
                 ),
               ),
             ),
@@ -150,7 +151,7 @@ class _QuizViewContent extends StatelessWidget {
     final percent = total == 0 ? 0.0 : viewModel.score / total;
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: const CustomAppBar(
         title: 'Resultado do Quiz',
         centerTitle: false,
@@ -177,7 +178,7 @@ class _QuizViewContent extends StatelessWidget {
                           ),
                           child: Icon(
                             Icons.workspace_premium_rounded,
-                            color: colorScheme.secondary,
+                            color: colorScheme.onSurface,
                             size: 38,
                           ),
                         ),
@@ -188,7 +189,7 @@ class _QuizViewContent extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w700,
-                            color: colorScheme.secondary,
+                            color: colorScheme.onSurface,
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -198,7 +199,7 @@ class _QuizViewContent extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16,
                             color:
-                                colorScheme.secondary.withValues(alpha: 0.75),
+                                colorScheme.onSurface.withValues(alpha: 0.75),
                             height: 1.45,
                           ),
                         ),
@@ -208,9 +209,10 @@ class _QuizViewContent extends StatelessWidget {
                           child: LinearProgressIndicator(
                             value: percent,
                             minHeight: 12,
-                            backgroundColor: colorScheme.surface,
+                            backgroundColor:
+                                Theme.of(context).scaffoldBackgroundColor,
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              colorScheme.secondary,
+                              colorScheme.onSurface,
                             ),
                           ),
                         ),
@@ -259,7 +261,7 @@ class _QuizViewContent extends StatelessWidget {
                               ),
                               child: Icon(
                                 Icons.fact_check_outlined,
-                                color: colorScheme.secondary,
+                                color: colorScheme.onSurface,
                               ),
                             ),
                             const SizedBox(width: 12),
@@ -269,7 +271,7 @@ class _QuizViewContent extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w700,
-                                  color: colorScheme.secondary,
+                                  color: colorScheme.onSurface,
                                 ),
                               ),
                             ),
@@ -289,7 +291,7 @@ class _QuizViewContent extends StatelessWidget {
                               color: colorScheme.surface,
                               borderRadius: BorderRadius.circular(18),
                               border: Border.all(
-                                color: colorScheme.secondary
+                                color: colorScheme.onSurface
                                     .withValues(alpha: 0.08),
                               ),
                             ),
@@ -301,7 +303,7 @@ class _QuizViewContent extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700,
-                                    color: colorScheme.secondary
+                                    color: colorScheme.onSurface
                                         .withValues(alpha: 0.6),
                                   ),
                                 ),
@@ -310,14 +312,14 @@ class _QuizViewContent extends StatelessWidget {
                                   question.question,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w700,
-                                    color: colorScheme.secondary,
+                                    color: colorScheme.onSurface,
                                   ),
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
                                   'Referência: ${question.reference}',
                                   style: TextStyle(
-                                    color: colorScheme.secondary
+                                    color: colorScheme.onSurface
                                         .withValues(alpha: 0.74),
                                     height: 1.35,
                                   ),
@@ -352,7 +354,7 @@ class _QuizViewContent extends StatelessWidget {
     final progress = (viewModel.current + 1) / viewModel.questions.length;
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
         title:
             'Quizz Bíblico ${viewModel.current + 1}/${viewModel.questions.length}',
@@ -388,7 +390,7 @@ class _QuizViewContent extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700,
-                                  color: colorScheme.secondary,
+                                  color: colorScheme.onSurface,
                                 ),
                               ),
                             ),
@@ -398,7 +400,7 @@ class _QuizViewContent extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
-                                color: colorScheme.secondary
+                                color: colorScheme.onSurface
                                     .withValues(alpha: 0.72),
                               ),
                             ),
@@ -412,7 +414,7 @@ class _QuizViewContent extends StatelessWidget {
                             minHeight: 10,
                             backgroundColor: colorScheme.surface,
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              colorScheme.secondary,
+                              colorScheme.onSurface,
                             ),
                           ),
                         ),
@@ -422,7 +424,7 @@ class _QuizViewContent extends StatelessWidget {
                           style: TextStyle(
                             fontSize: settings.fontSize + 7,
                             fontWeight: FontWeight.w700,
-                            color: colorScheme.secondary,
+                            color: colorScheme.onSurface,
                             height: 1.35,
                           ),
                         ),
@@ -435,7 +437,7 @@ class _QuizViewContent extends StatelessWidget {
                               color: colorScheme.surface,
                               borderRadius: BorderRadius.circular(18),
                               border: Border.all(
-                                color: colorScheme.secondary
+                                color: colorScheme.onSurface
                                     .withValues(alpha: 0.08),
                               ),
                             ),
@@ -447,7 +449,7 @@ class _QuizViewContent extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700,
-                                    color: colorScheme.secondary
+                                    color: colorScheme.onSurface
                                         .withValues(alpha: 0.6),
                                   ),
                                 ),
@@ -456,7 +458,7 @@ class _QuizViewContent extends StatelessWidget {
                                   question.reference,
                                   style: TextStyle(
                                     fontSize: settings.fontSize,
-                                    color: colorScheme.secondary,
+                                    color: colorScheme.onSurface,
                                     height: 1.4,
                                   ),
                                 ),
@@ -554,19 +556,19 @@ class _SummaryChip extends StatelessWidget {
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: colorScheme.secondary.withValues(alpha: 0.08),
+          color: colorScheme.onSurface.withValues(alpha: 0.08),
         ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 18, color: colorScheme.secondary),
+          Icon(icon, size: 18, color: colorScheme.onSurface),
           const SizedBox(width: 8),
           Text(
             '$label: $value',
             style: TextStyle(
               fontWeight: FontWeight.w700,
-              color: colorScheme.secondary,
+              color: colorScheme.onSurface,
             ),
           ),
         ],
@@ -678,38 +680,38 @@ class _AnswerOptionCard extends StatelessWidget {
     switch (state) {
       case _AnswerState.correct:
         return _OptionStyle(
-          backgroundColor: Colors.green.withValues(alpha: 0.16),
-          borderColor: Colors.green.withValues(alpha: 0.42),
-          badgeColor: Colors.green,
-          foregroundColor: colorScheme.secondary,
-          shadowColor: Colors.green.withValues(alpha: 0.08),
+          backgroundColor: AppTheme.sucesso.withValues(alpha: 0.16),
+          borderColor: AppTheme.sucesso.withValues(alpha: 0.42),
+          badgeColor: AppTheme.sucesso,
+          foregroundColor: colorScheme.onSurface,
+          shadowColor: AppTheme.sucesso.withValues(alpha: 0.08),
           borderWidth: 1.4,
         );
       case _AnswerState.wrong:
         return _OptionStyle(
-          backgroundColor: Colors.red.withValues(alpha: 0.12),
-          borderColor: Colors.red.withValues(alpha: 0.32),
-          badgeColor: Colors.red,
-          foregroundColor: colorScheme.secondary,
-          shadowColor: Colors.red.withValues(alpha: 0.05),
+          backgroundColor: colorScheme.error.withValues(alpha: 0.12),
+          borderColor: colorScheme.error.withValues(alpha: 0.32),
+          badgeColor: colorScheme.error,
+          foregroundColor: colorScheme.onSurface,
+          shadowColor: colorScheme.error.withValues(alpha: 0.05),
           borderWidth: 1.2,
         );
       case _AnswerState.disabled:
         return _OptionStyle(
-          backgroundColor: colorScheme.primary.withValues(alpha: 0.45),
-          borderColor: colorScheme.secondary.withValues(alpha: 0.06),
+          backgroundColor: colorScheme.surfaceContainerHighest,
+          borderColor: colorScheme.onSurface.withValues(alpha: 0.06),
           badgeColor: colorScheme.surface,
-          foregroundColor: colorScheme.secondary.withValues(alpha: 0.52),
+          foregroundColor: colorScheme.onSurface.withValues(alpha: 0.52),
           shadowColor: Colors.transparent,
           borderWidth: 1,
         );
       case _AnswerState.idle:
         return _OptionStyle(
-          backgroundColor: colorScheme.primary,
-          borderColor: colorScheme.secondary.withValues(alpha: 0.08),
+          backgroundColor: colorScheme.surface,
+          borderColor: colorScheme.onSurface.withValues(alpha: 0.08),
           badgeColor: colorScheme.surface,
-          foregroundColor: colorScheme.secondary,
-          shadowColor: colorScheme.secondary.withValues(alpha: 0.06),
+          foregroundColor: colorScheme.onSurface,
+          shadowColor: colorScheme.onSurface.withValues(alpha: 0.06),
           borderWidth: 1,
         );
     }

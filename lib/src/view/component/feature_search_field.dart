@@ -38,25 +38,32 @@ class _FeatureSearchFieldState extends State<FeatureSearchField> {
       onChanged: widget.onChanged,
       decoration: InputDecoration(
         hintText: widget.hintText,
-        hintStyle: TextStyle(color: Theme.of(context).colorScheme.secondary),
-        prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.secondary),
+        hintStyle:
+            TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+        prefixIcon: Icon(
+          Icons.search,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
         suffixIcon: IconButton(
           onPressed: () {
             _controller.clear();
             widget.onChanged('');
           },
-          icon: Icon(Icons.clear, color: Theme.of(context).colorScheme.secondary),
+          icon: Icon(
+            Icons.clear,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
         filled: true,
-        fillColor: Theme.of(context).colorScheme.primary,
+        fillColor: Theme.of(context).colorScheme.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.0),
           borderSide: BorderSide.none,
         ),
         contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
       ),
-      style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-      cursorColor: Theme.of(context).colorScheme.secondary,
+      style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+      cursorColor: Theme.of(context).colorScheme.primary,
     );
   }
 }

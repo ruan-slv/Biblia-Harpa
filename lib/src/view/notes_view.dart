@@ -31,12 +31,10 @@ class _NotesViewState extends State<NotesView> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return ChangeNotifierProvider.value(
       value: _controller,
       child: Scaffold(
-        backgroundColor: colorScheme.surface,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: CustomAppBar(
           title: 'Anotações',
           centerTitle: false,
@@ -78,13 +76,13 @@ class _NotesBody extends StatelessWidget {
               Icon(
                 Icons.notes_rounded,
                 size: 72,
-                color: colorScheme.secondary.withValues(alpha: 0.35),
+                color: colorScheme.onSurface.withValues(alpha: 0.35),
               ),
               const SizedBox(height: 16),
               Text(
                 'Nenhuma anotação ainda',
                 style: TextStyle(
-                  color: colorScheme.secondary,
+                  color: colorScheme.onSurface,
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),
@@ -93,7 +91,7 @@ class _NotesBody extends StatelessWidget {
               Text(
                 'Toque em "Nova anotação" para começar.',
                 style: TextStyle(
-                  color: colorScheme.secondary.withValues(alpha: 0.7),
+                  color: colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -113,7 +111,7 @@ class _NotesBody extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
             side: BorderSide(
-              color: colorScheme.secondary.withValues(alpha: 0.1),
+              color: colorScheme.onSurface.withValues(alpha: 0.1),
             ),
           ),
           child: InkWell(
@@ -135,11 +133,9 @@ class _NotesBody extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          note.title.isEmpty
-                              ? 'Sem título'
-                              : note.title,
+                          note.title.isEmpty ? 'Sem título' : note.title,
                           style: TextStyle(
-                            color: colorScheme.secondary,
+                            color: colorScheme.onSurface,
                             fontSize: 17,
                             fontWeight: FontWeight.w700,
                           ),
@@ -150,7 +146,7 @@ class _NotesBody extends StatelessWidget {
                       IconButton(
                         icon: Icon(
                           Icons.delete_outline,
-                          color: colorScheme.secondary.withValues(alpha: 0.6),
+                          color: colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
                         tooltip: 'Excluir',
                         onPressed: () => _confirmDelete(context, note),
@@ -163,7 +159,7 @@ class _NotesBody extends StatelessWidget {
                       child: Text(
                         note.content,
                         style: TextStyle(
-                          color: colorScheme.secondary.withValues(alpha: 0.85),
+                          color: colorScheme.onSurface.withValues(alpha: 0.85),
                           fontSize: 15,
                           height: 1.4,
                         ),
@@ -177,7 +173,7 @@ class _NotesBody extends StatelessWidget {
                       child: Text(
                         '📖 ${note.reference}',
                         style: TextStyle(
-                          color: colorScheme.secondary.withValues(alpha: 0.6),
+                          color: colorScheme.onSurface.withValues(alpha: 0.6),
                           fontSize: 13,
                         ),
                       ),
@@ -187,7 +183,7 @@ class _NotesBody extends StatelessWidget {
                     child: Text(
                       note.dateFormatted,
                       style: TextStyle(
-                        color: colorScheme.secondary.withValues(alpha: 0.5),
+                        color: colorScheme.onSurface.withValues(alpha: 0.5),
                         fontSize: 12,
                       ),
                     ),
@@ -209,7 +205,9 @@ class _NotesBody extends StatelessWidget {
       builder: (context) => AlertDialog(
         title: const Text('Excluir anotação?'),
         content: Text(
-          note.title.isEmpty ? 'Esta anotação será excluída.' : '"${note.title}" será excluída.',
+          note.title.isEmpty
+              ? 'Esta anotação será excluída.'
+              : '"${note.title}" será excluída.',
         ),
         actions: [
           TextButton(
@@ -220,7 +218,7 @@ class _NotesBody extends StatelessWidget {
             onPressed: () => Navigator.pop(context, true),
             child: Text(
               'Excluir',
-              style: TextStyle(color: colorScheme.secondary),
+              style: TextStyle(color: colorScheme.onSurface),
             ),
           ),
         ],
@@ -231,5 +229,3 @@ class _NotesBody extends StatelessWidget {
     }
   }
 }
-
-

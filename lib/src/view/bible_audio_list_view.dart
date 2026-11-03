@@ -31,7 +31,9 @@ class _BibleAudioListViewState extends State<BibleAudioListView> {
     _loaded = true;
     Future.microtask(() {
       if (mounted) {
-        context.read<BibleAudiosController>().load(offlineOnly: widget.isOffline);
+        context
+            .read<BibleAudiosController>()
+            .load(offlineOnly: widget.isOffline);
       }
     });
   }
@@ -41,7 +43,7 @@ class _BibleAudioListViewState extends State<BibleAudioListView> {
     final viewModel = context.watch<BibleAudiosController>();
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: widget.isOffline
           ? CustomAppBar(
               automaticallyImplyLeading: true,
@@ -73,7 +75,7 @@ class _Content extends StatelessWidget {
             viewModel.error!,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Theme.of(context).colorScheme.secondary,
+              color: Theme.of(context).colorScheme.onSurface,
               fontSize: settings.fontSize,
             ),
           ),
@@ -98,12 +100,12 @@ class _Content extends StatelessWidget {
               return ListTile(
                 trailing: Icon(
                   Icons.list,
-                  color: Theme.of(context).colorScheme.secondary,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
                 title: Text(
                   book.title,
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.secondary,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: settings.fontSize,
                   ),
                 ),

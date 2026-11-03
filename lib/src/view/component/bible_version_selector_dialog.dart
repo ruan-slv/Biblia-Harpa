@@ -23,38 +23,133 @@ class BibleVersionInfo {
 
 final List<BibleVersionInfo> bibleVersions = [
   // Português
-  const BibleVersionInfo(key: 'ACF', fileName: 'acf.json', name: 'Almeida Corrigida Fiel', language: 'Português', flag: '🇧🇷'),
-  const BibleVersionInfo(key: 'AA', fileName: 'aa.json', name: 'Almeida Atualizada', language: 'Português', flag: '🇧🇷'),
-  const BibleVersionInfo(key: 'NVI', fileName: 'nvi.json', name: 'Nova Versão Internacional', language: 'Português', flag: '🇧🇷'),
+  const BibleVersionInfo(
+      key: 'ACF',
+      fileName: 'acf.json',
+      name: 'Almeida Corrigida Fiel',
+      language: 'Português',
+      flag: '🇧🇷'),
+  const BibleVersionInfo(
+      key: 'AA',
+      fileName: 'aa.json',
+      name: 'Almeida Atualizada',
+      language: 'Português',
+      flag: '🇧🇷'),
+  const BibleVersionInfo(
+      key: 'NVI',
+      fileName: 'nvi.json',
+      name: 'Nova Versão Internacional',
+      language: 'Português',
+      flag: '🇧🇷'),
   // Inglês
-  const BibleVersionInfo(key: 'KJV', fileName: 'en_kjv.json', name: 'King James Version', language: 'English', flag: '🇬🇧'),
-  const BibleVersionInfo(key: 'BBE', fileName: 'en_bbe.json', name: 'Basic English Bible', language: 'English', flag: '🇬🇧'),
+  const BibleVersionInfo(
+      key: 'KJV',
+      fileName: 'en_kjv.json',
+      name: 'King James Version',
+      language: 'English',
+      flag: '🇬🇧'),
+  const BibleVersionInfo(
+      key: 'BBE',
+      fileName: 'en_bbe.json',
+      name: 'Basic English Bible',
+      language: 'English',
+      flag: '🇬🇧'),
   // Espanhol
-  const BibleVersionInfo(key: 'RVR', fileName: 'es_rvr.json', name: 'Reina-Valera', language: 'Español', flag: '🇪🇸'),
+  const BibleVersionInfo(
+      key: 'RVR',
+      fileName: 'es_rvr.json',
+      name: 'Reina-Valera',
+      language: 'Español',
+      flag: '🇪🇸'),
   // Alemão
-  const BibleVersionInfo(key: 'SCHLACHTER', fileName: 'de_schlachter.json', name: 'Schlachter', language: 'Deutsch', flag: '🇩🇪'),
+  const BibleVersionInfo(
+      key: 'SCHLACHTER',
+      fileName: 'de_schlachter.json',
+      name: 'Schlachter',
+      language: 'Deutsch',
+      flag: '🇩🇪'),
   // Francês
-  const BibleVersionInfo(key: 'APEE', fileName: 'fr_apee.json', name: 'APEE', language: 'Français', flag: '🇫🇷'),
+  const BibleVersionInfo(
+      key: 'APEE',
+      fileName: 'fr_apee.json',
+      name: 'APEE',
+      language: 'Français',
+      flag: '🇫🇷'),
   // Russo
-  const BibleVersionInfo(key: 'SYNODAL', fileName: 'ru_synodal.json', name: 'Synodal', language: 'Русский', flag: '🇷🇺'),
+  const BibleVersionInfo(
+      key: 'SYNODAL',
+      fileName: 'ru_synodal.json',
+      name: 'Synodal',
+      language: 'Русский',
+      flag: '🇷🇺'),
   // Chinês
-  const BibleVersionInfo(key: 'CUV', fileName: 'zh_cuv.json', name: 'Chinese Union Version', language: '中文', flag: '🇨🇳'),
-  const BibleVersionInfo(key: 'NCV', fileName: 'zh_ncv.json', name: 'New Chinese Version', language: '中文', flag: '🇨🇳'),
+  const BibleVersionInfo(
+      key: 'CUV',
+      fileName: 'zh_cuv.json',
+      name: 'Chinese Union Version',
+      language: '中文',
+      flag: '🇨🇳'),
+  const BibleVersionInfo(
+      key: 'NCV',
+      fileName: 'zh_ncv.json',
+      name: 'New Chinese Version',
+      language: '中文',
+      flag: '🇨🇳'),
   // Coreano
-  const BibleVersionInfo(key: 'KO', fileName: 'ko_ko.json', name: 'Korean', language: '한국어', flag: '🇰🇷'),
+  const BibleVersionInfo(
+      key: 'KO',
+      fileName: 'ko_ko.json',
+      name: 'Korean',
+      language: '한국어',
+      flag: '🇰🇷'),
   // Vietnamita
-  const BibleVersionInfo(key: 'VIETNAMESE', fileName: 'vi_vietnamese.json', name: 'Vietnamese', language: 'Tiếng Việt', flag: '🇻🇳'),
+  const BibleVersionInfo(
+      key: 'VIETNAMESE',
+      fileName: 'vi_vietnamese.json',
+      name: 'Vietnamese',
+      language: 'Tiếng Việt',
+      flag: '🇻🇳'),
   // Grego
-  const BibleVersionInfo(key: 'GREEK', fileName: 'el_greek.json', name: 'Greek', language: 'Ελληνικά', flag: '🇬🇷'),
+  const BibleVersionInfo(
+      key: 'GREEK',
+      fileName: 'el_greek.json',
+      name: 'Greek',
+      language: 'Ελληνικά',
+      flag: '🇬🇷'),
   // Romeno
-  const BibleVersionInfo(key: 'CORNILESCU', fileName: 'ro_cornilescu.json', name: 'Cornilescu', language: 'Română', flag: '🇷🇴'),
+  const BibleVersionInfo(
+      key: 'CORNILESCU',
+      fileName: 'ro_cornilescu.json',
+      name: 'Cornilescu',
+      language: 'Română',
+      flag: '🇷🇴'),
   // Esperanto
-  const BibleVersionInfo(key: 'ESPERANTO', fileName: 'eo_esperanto.json', name: 'Esperanto', language: 'Esperanto', flag: '🌍'),
+  const BibleVersionInfo(
+      key: 'ESPERANTO',
+      fileName: 'eo_esperanto.json',
+      name: 'Esperanto',
+      language: 'Esperanto',
+      flag: '🌍'),
   // Árabe
-  const BibleVersionInfo(key: 'SVD', fileName: 'ar_svd.json', name: 'Saudi Standard Version', language: 'العربية', flag: '🇸🇦'),
+  const BibleVersionInfo(
+      key: 'SVD',
+      fileName: 'ar_svd.json',
+      name: 'Saudi Standard Version',
+      language: 'العربية',
+      flag: '🇸🇦'),
   // Finlandês
-  const BibleVersionInfo(key: 'FINNISH', fileName: 'fi_finnish.json', name: 'Finnish', language: 'Suomi', flag: '🇫🇮'),
-  const BibleVersionInfo(key: 'FI_PR', fileName: 'fi_pr.json', name: 'Finnish (PR)', language: 'Suomi', flag: '🇫🇮'),
+  const BibleVersionInfo(
+      key: 'FINNISH',
+      fileName: 'fi_finnish.json',
+      name: 'Finnish',
+      language: 'Suomi',
+      flag: '🇫🇮'),
+  const BibleVersionInfo(
+      key: 'FI_PR',
+      fileName: 'fi_pr.json',
+      name: 'Finnish (PR)',
+      language: 'Suomi',
+      flag: '🇫🇮'),
 ];
 
 class BibleVersionSelectorDialog extends StatefulWidget {
@@ -72,7 +167,8 @@ class BibleVersionSelectorDialog extends StatefulWidget {
       _BibleVersionSelectorDialogState();
 }
 
-class _BibleVersionSelectorDialogState extends State<BibleVersionSelectorDialog> {
+class _BibleVersionSelectorDialogState
+    extends State<BibleVersionSelectorDialog> {
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
 
@@ -112,13 +208,14 @@ class _BibleVersionSelectorDialogState extends State<BibleVersionSelectorDialog>
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.secondary,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                   ),
                   IconButton(
                     onPressed: () => Navigator.pop(context),
-                    icon: Icon(Icons.close, color: Theme.of(context).colorScheme.secondary),
+                    icon: Icon(Icons.close,
+                        color: Theme.of(context).colorScheme.onSurface),
                   ),
                 ],
               ),
@@ -130,17 +227,21 @@ class _BibleVersionSelectorDialogState extends State<BibleVersionSelectorDialog>
                 onChanged: (v) => setState(() => _searchQuery = v),
                 decoration: InputDecoration(
                   hintText: 'Buscar por nome ou idioma',
-                  hintStyle: TextStyle(color: Theme.of(context).colorScheme.secondary),
-                  prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.secondary),
+                  hintStyle:
+                      TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                  prefixIcon: Icon(Icons.search,
+                      color: Theme.of(context).colorScheme.onSurface),
                   filled: true,
-                  fillColor: Theme.of(context).colorScheme.primary,
+                  fillColor: Theme.of(context).colorScheme.surface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24),
                     borderSide: BorderSide.none,
                   ),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                 ),
-                style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface),
               ),
             ),
             const SizedBox(height: 8),
@@ -152,20 +253,24 @@ class _BibleVersionSelectorDialogState extends State<BibleVersionSelectorDialog>
                   final version = filteredVersions[index];
                   final isSelected = version.key == widget.currentVersionKey;
                   return ListTile(
-                    leading: Text(version.flag, style: const TextStyle(fontSize: 24)),
+                    leading: Text(version.flag,
+                        style: const TextStyle(fontSize: 24)),
                     title: Text(
                       version.name,
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.normal,
                       ),
                     ),
                     subtitle: Text(
                       version.language,
-                      style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface),
                     ),
                     trailing: isSelected
-                        ? Icon(Icons.check_circle, color: Theme.of(context).colorScheme.secondary)
+                        ? Icon(Icons.check_circle,
+                            color: Theme.of(context).colorScheme.onSurface)
                         : null,
                     onTap: () {
                       widget.onSelected(version);

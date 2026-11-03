@@ -16,6 +16,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../services/notification_service.dart';
+import '../../utils/theme.dart';
 
 /// Um arquivo .json de conteúdo que o usuário pode escolher baixar.
 class JsonFileOption {
@@ -67,9 +68,9 @@ const List<JsonFileConfig> kJsonFileOptions = [
       description: 'Almeida Corrigida Fiel',
       icon: Icons.menu_book_rounded,
       gradient: [
-        Color(0xFFE65100),
-        Color(0xFFFFC107),
-        Color(0xFFFFCC80),
+        AppTheme.corDourada,
+        Color(0xFFFFD98A),
+        Color(0xFFFFEDC2),
       ],
       assetPath: 'assets/json/bible/acf.json',
       required: true,
@@ -82,9 +83,9 @@ const List<JsonFileConfig> kJsonFileOptions = [
       description: 'Nova Versão Internacional',
       icon: Icons.menu_book_rounded,
       gradient: [
-        Color(0xFFE65100),
-        Color(0xFFFFC107),
-        Color(0xFFFFCC80),
+        AppTheme.corDourada,
+        Color(0xFFFFD98A),
+        Color(0xFFFFEDC2),
       ],
       assetPath: 'assets/json/bible/nvi.json',
     ),
@@ -96,9 +97,9 @@ const List<JsonFileConfig> kJsonFileOptions = [
       description: 'Almeida Atualizada',
       icon: Icons.menu_book_rounded,
       gradient: [
-        Color(0xFFE65100),
-        Color(0xFFFFC107),
-        Color(0xFFFFCC80),
+        AppTheme.corDourada,
+        Color(0xFFFFD98A),
+        Color(0xFFFFEDC2),
       ],
       assetPath: 'assets/json/bible/aa.json',
     ),
@@ -110,9 +111,9 @@ const List<JsonFileConfig> kJsonFileOptions = [
       description: '640 hinos em texto',
       icon: Icons.music_note_rounded,
       gradient: [
-        Color(0xFF5C6BC0),
-        Color(0xFF7E57C2),
-        Color(0xFFB39DDB),
+        AppTheme.corPrimaria,
+        AppTheme.corSecundaria,
+        Color(0xFFAB9FFF),
       ],
       assetPath: 'assets/json/outros/harpa_crista_640_hinos.json',
     ),
@@ -124,9 +125,9 @@ const List<JsonFileConfig> kJsonFileOptions = [
       description: 'Leituras diárias por tema',
       icon: Icons.auto_stories_rounded,
       gradient: [
-        Color(0xFF00897B),
-        Color(0xFF7BAE7F),
-        Color(0xFFA5D6A7),
+        AppTheme.corPrimaria,
+        AppTheme.sucesso,
+        AppTheme.corSecundaria,
       ],
       assetPath: 'assets/json/outros/devocionais.json',
     ),
@@ -138,9 +139,9 @@ const List<JsonFileConfig> kJsonFileOptions = [
       description: 'Índice dos áudios da Bíblia',
       icon: Icons.headphones_outlined,
       gradient: [
-        Color(0xFF4A90E2),
-        Color(0xFF3F51B5),
-        Color(0xFF90CAF9),
+        AppTheme.informacao,
+        AppTheme.corPrimaria,
+        AppTheme.corSecundaria,
       ],
       assetPath: 'assets/json/outros/audios.json',
     ),
@@ -152,9 +153,9 @@ const List<JsonFileConfig> kJsonFileOptions = [
       description: 'Índice dos hinos da Harpa',
       icon: Icons.audiotrack_rounded,
       gradient: [
-        Color(0xFF4A90E2),
-        Color(0xFF3F51B5),
-        Color(0xFF90CAF9),
+        AppTheme.informacao,
+        AppTheme.corPrimaria,
+        AppTheme.corSecundaria,
       ],
       assetPath: 'assets/json/outros/audios_harpa.json',
     ),
@@ -166,9 +167,9 @@ const List<JsonFileConfig> kJsonFileOptions = [
       description: 'Perguntas e respostas',
       icon: Icons.quiz_outlined,
       gradient: [
-        Color(0xFF00897B),
-        Color(0xFF7BAE7F),
-        Color(0xFFA5D6A7),
+        AppTheme.corPrimaria,
+        AppTheme.corSecundaria,
+        AppTheme.sucesso,
       ],
       assetPath: 'assets/json/outros/quizz.json',
     ),
@@ -180,9 +181,9 @@ const List<JsonFileConfig> kJsonFileOptions = [
       description: 'Versículo diário',
       icon: Icons.wb_sunny_rounded,
       gradient: [
-        Color(0xFFE65100),
-        Color(0xFFD32F2F),
-        Color(0xFFEF9A9A),
+        AppTheme.corDourada,
+        AppTheme.corVermelha,
+        Color(0xFFFFA3A3),
       ],
       assetPath: 'assets/json/outros/palavra_do_dia.json',
     ),
@@ -243,7 +244,8 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
       ),
     );
     _online = kIsWeb || (!Platform.isAndroid && !Platform.isIOS);
-    _selected.addAll(widget.options.where((o) => o.option.required).map((o) => o.option.id));
+    _selected.addAll(
+        widget.options.where((o) => o.option.required).map((o) => o.option.id));
     if (!kIsWeb) {
       Connectivity().checkConnectivity().then((results) {
         if (!mounted) return;
@@ -275,8 +277,9 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
     if (_state != StartedAccessState.choosing) return;
     setState(() {
       _selected.clear();
-      _selected.addAll(
-          widget.options.where((o) => o.option.required).map((o) => o.option.id));
+      _selected.addAll(widget.options
+          .where((o) => o.option.required)
+          .map((o) => o.option.id));
     });
   }
 
@@ -323,9 +326,8 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
   }
 
   Future<void> _runDownloads() async {
-    final targets = widget.options
-        .where((o) => _selected.contains(o.option.id))
-        .toList();
+    final targets =
+        widget.options.where((o) => _selected.contains(o.option.id)).toList();
     var allOk = true;
 
     for (final config in targets) {
@@ -356,7 +358,8 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
 
       if (kIsWeb) {
         final response = await http.get(
-          Uri.parse('${config.downloadUrl}?t=${DateTime.now().millisecondsSinceEpoch}'),
+          Uri.parse(
+              '${config.downloadUrl}?t=${DateTime.now().millisecondsSinceEpoch}'),
         );
         if (response.statusCode != 200) {
           throw Exception('HTTP ${response.statusCode}');
@@ -455,7 +458,7 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: switch (_state) {
           StartedAccessState.choosing => _buildChoosing(colorScheme),
@@ -474,10 +477,13 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: colorScheme.primary,
+              color: colorScheme.primaryContainer,
               borderRadius: BorderRadius.circular(18),
             ),
-            child: Icon(Icons.cloud_download_rounded, color: colorScheme.secondary),
+            child: Icon(
+              Icons.cloud_download_rounded,
+              color: colorScheme.primary,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -489,14 +495,14 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w800,
-                    color: colorScheme.secondary,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle ?? 'Escolha os arquivos .json para baixar e iniciar',
                   style: TextStyle(
-                    color: colorScheme.secondary.withValues(alpha: .75),
+                    color: colorScheme.onSurface.withValues(alpha: .75),
                   ),
                 ),
               ],
@@ -531,7 +537,7 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
             style: ElevatedButton.styleFrom(
               minimumSize: const Size.fromHeight(52),
               backgroundColor: colorScheme.primary,
-              foregroundColor: colorScheme.secondary,
+              foregroundColor: colorScheme.onPrimary,
             ),
           ),
         ),
@@ -541,7 +547,8 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
             onPressed: _skip,
             child: Text(
               'Pular e usar os arquivos já no app',
-              style: TextStyle(color: colorScheme.secondary.withValues(alpha: .8)),
+              style:
+                  TextStyle(color: colorScheme.onSurface.withValues(alpha: .8)),
             ),
           ),
         ),
@@ -557,7 +564,7 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Material(
-        color: selected ? colorScheme.primary : Colors.transparent,
+        color: selected ? colorScheme.primaryContainer : Colors.transparent,
         borderRadius: BorderRadius.circular(20),
         child: InkWell(
           borderRadius: BorderRadius.circular(20),
@@ -584,7 +591,7 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
                         config.option.name,
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
-                          color: colorScheme.secondary,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -593,7 +600,7 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
                             ? '${config.option.description} (obrigatório)'
                             : config.option.description,
                         style: TextStyle(
-                          color: colorScheme.secondary.withValues(alpha: .7),
+                          color: colorScheme.onSurface.withValues(alpha: .7),
                           fontSize: 13,
                         ),
                       ),
@@ -602,13 +609,15 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
                 ),
                 if (isRequired)
                   Icon(Icons.lock_rounded,
-                      size: 20, color: colorScheme.secondary.withValues(alpha: .6))
+                      size: 20,
+                      color: colorScheme.onSurface.withValues(alpha: .6))
                 else
                   Checkbox(
                     value: selected,
                     onChanged: (_) => _toggle(id),
-                    side: BorderSide(color: colorScheme.secondary.withValues(alpha: .5)),
-                    activeColor: colorScheme.secondary,
+                    side: BorderSide(
+                        color: colorScheme.onSurface.withValues(alpha: .5)),
+                    activeColor: colorScheme.onSurface,
                   ),
               ],
             ),
@@ -623,12 +632,14 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
-          TextButton(onPressed: _selectAll, child: const Text('Selecionar todos')),
+          TextButton(
+              onPressed: _selectAll, child: const Text('Selecionar todos')),
           const Spacer(),
           TextButton(onPressed: _clearAll, child: const Text('Limpar')),
           Text(
             '${_selected.length} de ${widget.options.length}',
-            style: TextStyle(color: colorScheme.secondary.withValues(alpha: .7)),
+            style:
+                TextStyle(color: colorScheme.onSurface.withValues(alpha: .7)),
           ),
         ],
       ),
@@ -650,7 +661,8 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
               const SizedBox(height: 8),
               Text(
                 'Concluído: $completed de $total',
-                style: TextStyle(color: colorScheme.secondary.withValues(alpha: .7)),
+                style: TextStyle(
+                    color: colorScheme.onSurface.withValues(alpha: .7)),
               ),
               const SizedBox(height: 12),
               ClipRRect(
@@ -658,8 +670,9 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
                 child: LinearProgressIndicator(
                   value: overall,
                   minHeight: 12,
-                  backgroundColor: colorScheme.primary,
-                  valueColor: AlwaysStoppedAnimation<Color>(colorScheme.secondary),
+                  backgroundColor: colorScheme.surfaceContainerLow,
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(colorScheme.primary),
                 ),
               ),
             ],
@@ -681,8 +694,9 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
             label: const Text('Cancelar'),
             style: OutlinedButton.styleFrom(
               minimumSize: const Size.fromHeight(48),
-              foregroundColor: colorScheme.secondary,
-              side: BorderSide(color: colorScheme.secondary.withValues(alpha: .4)),
+              foregroundColor: colorScheme.onSurface,
+              side: BorderSide(
+                  color: colorScheme.onSurface.withValues(alpha: .4)),
             ),
           ),
         ),
@@ -703,11 +717,11 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
 
     if (!selected) {
       icon = Icons.skip_next_rounded;
-      iconColor = colorScheme.secondary.withValues(alpha: .3);
+      iconColor = colorScheme.onSurface.withValues(alpha: .3);
       label = 'Pulado';
     } else if (status == DownloadStatus.done || _done.contains(id)) {
       icon = Icons.check_circle_rounded;
-      iconColor = Colors.green;
+      iconColor = AppTheme.sucesso;
       label = 'Concluído';
     } else if (status == DownloadStatus.error || error != null) {
       icon = Icons.error_rounded;
@@ -715,18 +729,20 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
       label = error ?? 'Erro';
     } else if (status == DownloadStatus.downloading) {
       icon = Icons.cloud_download_rounded;
-      iconColor = colorScheme.secondary;
+      iconColor = colorScheme.onSurface;
       label = '${(progress * 100).toInt()}%';
     } else {
       icon = Icons.hourglass_top_rounded;
-      iconColor = colorScheme.secondary.withValues(alpha: .5);
+      iconColor = colorScheme.onSurface.withValues(alpha: .5);
       label = 'Aguardando';
     }
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Material(
-        color: colorScheme.primary.withValues(alpha: selected ? 0.5 : 0.2),
+        color: selected
+            ? colorScheme.primaryContainer
+            : colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(16),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -742,7 +758,7 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
                       config.option.name,
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        color: colorScheme.secondary,
+                        color: colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -754,8 +770,8 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
                           value: progress,
                           minHeight: 6,
                           backgroundColor: colorScheme.surface,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(colorScheme.secondary),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              colorScheme.primary),
                         ),
                       ),
                   ],
@@ -787,10 +803,14 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: colorScheme.primary,
+                color: colorScheme.primaryContainer,
                 borderRadius: BorderRadius.circular(32),
               ),
-              child: Icon(Icons.check_circle_rounded, size: 64, color: Colors.green),
+              child: Icon(
+                Icons.check_circle_rounded,
+                size: 64,
+                color: AppTheme.sucesso,
+              ),
             ),
             const SizedBox(height: 24),
             Text(
@@ -798,7 +818,7 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
               style: TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.w800,
-                color: colorScheme.secondary,
+                color: colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 8),
@@ -806,7 +826,7 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
               'Seus arquivos foram baixados com sucesso.',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: colorScheme.secondary.withValues(alpha: .7),
+                color: colorScheme.onSurface.withValues(alpha: .7),
               ),
             ),
             const SizedBox(height: 32),
@@ -817,7 +837,7 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size.fromHeight(52),
                 backgroundColor: colorScheme.primary,
-                foregroundColor: colorScheme.secondary,
+                foregroundColor: colorScheme.onPrimary,
               ),
             ),
           ],
@@ -835,7 +855,8 @@ enum DownloadStatus { idle, downloading, done, error }
 /// Exibe o [StartedAccessOn] apenas no primeiro acesso (ou quando o download
 /// ainda não foi concluído). Depois de concluído, mostra a [child] normalmente.
 class StartupGate extends StatefulWidget {
-  const StartupGate({super.key, required this.child, this.options = kJsonFileOptions});
+  const StartupGate(
+      {super.key, required this.child, this.options = kJsonFileOptions});
 
   final Widget child;
   final List<JsonFileConfig> options;

@@ -144,10 +144,8 @@ class _HarpContentViewState extends State<HarpContentView> {
     required Widget body,
     Widget? bottomNavigationBar,
   }) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
         title: widget.harp,
         centerTitle: false,
@@ -161,7 +159,7 @@ class _HarpContentViewState extends State<HarpContentView> {
   Widget _buildAudioPlayer() {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.9),
+      color: Theme.of(context).colorScheme.surface,
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
@@ -172,7 +170,7 @@ class _HarpContentViewState extends State<HarpContentView> {
                 height: 24,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  color: Theme.of(context).colorScheme.secondary,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               )
             : Row(
@@ -190,7 +188,7 @@ class _HarpContentViewState extends State<HarpContentView> {
                         return Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: CircularProgressIndicator(
-                            color: Theme.of(context).colorScheme.secondary,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         );
                       }
@@ -203,7 +201,7 @@ class _HarpContentViewState extends State<HarpContentView> {
                                 ? Icons.pause_circle_filled
                                 : Icons.play_circle_filled),
                             iconSize: 40.0,
-                            color: Theme.of(context).colorScheme.secondary,
+                            color: Theme.of(context).colorScheme.onSurface,
                             onPressed: () async {
                               try {
                                 (playing ?? false)
@@ -226,7 +224,7 @@ class _HarpContentViewState extends State<HarpContentView> {
                           IconButton(
                             icon: const Icon(Icons.stop_circle_outlined),
                             iconSize: 40.0,
-                            color: Theme.of(context).colorScheme.secondary,
+                            color: Theme.of(context).colorScheme.onSurface,
                             onPressed: () {
                               _audioPlayer.stop();
                               _audioPlayer.seek(Duration.zero);
@@ -251,8 +249,11 @@ class _HarpContentViewState extends State<HarpContentView> {
                               : 1.0,
                           onChanged: (value) => _audioPlayer
                               .seek(Duration(seconds: value.toInt())),
-                          activeColor: Theme.of(context).colorScheme.secondary,
-                          inactiveColor: Colors.grey.withValues(alpha: 0.5),
+                          activeColor: Theme.of(context).colorScheme.onSurface,
+                          inactiveColor: Theme.of(context)
+                              .colorScheme
+                              .onSurfaceVariant
+                              .withValues(alpha: 0.5),
                         );
                       },
                     ),
@@ -281,7 +282,7 @@ class _HarpContentViewState extends State<HarpContentView> {
             body: Center(
               child: Text(
                 'Erro ao carregar os textos.',
-                style: TextStyle(color: colorScheme.secondary),
+                style: TextStyle(color: colorScheme.onSurface),
               ),
             ),
           );
@@ -291,7 +292,7 @@ class _HarpContentViewState extends State<HarpContentView> {
             body: Center(
               child: Text(
                 'Nenhum texto encontrado.',
-                style: TextStyle(color: colorScheme.secondary),
+                style: TextStyle(color: colorScheme.onSurface),
               ),
             ),
           );
@@ -353,7 +354,7 @@ class _HarpContentViewState extends State<HarpContentView> {
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
-                                    color: colorScheme.secondary
+                                    color: colorScheme.onSurface
                                         .withValues(alpha: 0.9),
                                   ),
                                   textAlign: TextAlign.center,
@@ -363,7 +364,7 @@ class _HarpContentViewState extends State<HarpContentView> {
                                   entry.value,
                                   style: TextStyle(
                                     fontSize: settings.fontSize,
-                                    color: colorScheme.secondary,
+                                    color: colorScheme.onSurface,
                                     height: 1.5,
                                   ),
                                   textAlign: TextAlign.center,
@@ -375,7 +376,7 @@ class _HarpContentViewState extends State<HarpContentView> {
                                     style: TextStyle(
                                       fontSize: settings.fontSize,
                                       fontWeight: FontWeight.bold,
-                                      color: colorScheme.secondary,
+                                      color: colorScheme.onSurface,
                                       height: 1.5,
                                     ),
                                     textAlign: TextAlign.center,

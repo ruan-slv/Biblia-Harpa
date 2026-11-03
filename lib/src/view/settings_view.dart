@@ -35,7 +35,8 @@ class _SettingsContent extends StatelessWidget {
   late final Uri _playStoreUrl;
 
   _SettingsContent() {
-    _supportEmail = dotenv.env["SUPPORT_EMAIL"] ?? "Email de suporte não encontrado!";
+    _supportEmail =
+        dotenv.env["SUPPORT_EMAIL"] ?? "Email de suporte não encontrado!";
     _playStoreURL = dotenv.env["PLAYSTORE_URL"] ?? "";
     _pixKey = dotenv.env["PIX_KEY"] ?? "";
     _playStoreUrl = Uri.parse(_playStoreURL);
@@ -98,27 +99,27 @@ class _SettingsContent extends StatelessWidget {
           title: Text(
             "Suporte",
             style: TextStyle(
-              color: colorScheme.secondary,
+              color: colorScheme.onSurface,
               fontWeight: FontWeight.w700,
             ),
           ),
           content: Text(
             "E-mail: $_supportEmail",
-            style: TextStyle(color: colorScheme.secondary),
+            style: TextStyle(color: colorScheme.onSurface),
           ),
           actions: [
             TextButton(
               onPressed: () => _startSupport(context),
               child: Text(
                 "Entrar em contato",
-                style: TextStyle(color: colorScheme.secondary),
+                style: TextStyle(color: colorScheme.onSurface),
               ),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: Text(
                 "Fechar",
-                style: TextStyle(color: colorScheme.secondary),
+                style: TextStyle(color: colorScheme.onSurface),
               ),
             ),
           ],
@@ -158,7 +159,7 @@ class _SettingsContent extends StatelessWidget {
     return Consumer<SettingsController>(
       builder: (context, viewModel, _) {
         return Scaffold(
-          backgroundColor: colorScheme.surface,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: ListView(
             padding:
                 const EdgeInsets.symmetric(vertical: 15.0, horizontal: 25.0),
@@ -175,7 +176,7 @@ class _SettingsContent extends StatelessWidget {
                       children: [
                         Text(
                           "Tamanho atual: ${viewModel.fontSize.toStringAsFixed(0)} pt",
-                          style: TextStyle(color: colorScheme.secondary),
+                          style: TextStyle(color: colorScheme.onSurface),
                         ),
                         const SizedBox(height: 12),
                         Wrap(
@@ -215,7 +216,7 @@ class _SettingsContent extends StatelessWidget {
                                 ? "Modo escuro ativo"
                                 : "Modo claro ativo",
                             style: TextStyle(
-                              color: colorScheme.secondary,
+                              color: colorScheme.onSurface,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -270,7 +271,7 @@ class _SettingsContent extends StatelessWidget {
                     icon: Icons.coffee_rounded,
                     title: "Apoiar projeto",
                     subtitle:
-                    "Seu apoio nos ajuda a manter este projeto de pé com manutenções e atualizações do aplicativo para seu aproveitamento.",
+                        "Seu apoio nos ajuda a manter este projeto de pé com manutenções e atualizações do aplicativo para seu aproveitamento.",
                     child: ElevatedButton.icon(
                       onPressed: () {
                         copyPixKey(context);

@@ -45,10 +45,11 @@ class _HarpListViewState extends State<HarpListView>
 
   Future<void> _loadHarps() async {
     try {
-      final response = await rootBundle.loadString("assets/json/outros/harpa_crista_640_hinos.json");
+      final response = await rootBundle
+          .loadString("assets/json/outros/harpa_crista_640_hinos.json");
       final decoded = json.decode(response);
       List<String> harps = [];
-      
+
       if (decoded is Map) {
         // Arquivo é um objeto com chaves numéricas
         for (final key in decoded.keys) {
@@ -70,7 +71,7 @@ class _HarpListViewState extends State<HarpListView>
           }
         }
       }
-      
+
       setState(() {
         allHarps = harps;
         filteredHarps = harps;
@@ -172,14 +173,16 @@ class _HarpListViewState extends State<HarpListView>
             title: Text(
               hino,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: settings.fontSize,
               ),
             ),
             trailing: IconButton(
               icon: Icon(
                 isFavorite ? Icons.favorite : Icons.favorite_border_outlined,
-                color: isFavorite ? redColor : cinzaClaro,
+                color: isFavorite
+                    ? redColor
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               onPressed: () => _toggleFavorite(hino),
             ),
@@ -213,16 +216,16 @@ class _HarpListViewState extends State<HarpListView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
         centerTitle: false,
         automaticallyImplyLeading: true,
         title: "Harpa Cristã",
         tabBar: TabBar(
           controller: _tabController,
-          labelColor: Theme.of(context).colorScheme.secondary,
+          labelColor: Theme.of(context).colorScheme.onSurface,
           unselectedLabelColor: Theme.of(context).colorScheme.onSurface,
-          indicatorColor: Theme.of(context).colorScheme.secondary,
+          indicatorColor: Theme.of(context).colorScheme.onSurface,
           tabs: const [
             Tab(text: "Todos"),
             Tab(text: "Favoritos"),
@@ -240,13 +243,15 @@ class _HarpListViewState extends State<HarpListView>
                     decoration: InputDecoration(
                       hintText: "Pesquisar Hino",
                       hintStyle: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                       prefixIcon: Icon(Icons.search,
-                          color: Theme.of(context).colorScheme.secondary),
+                          color:
+                              Theme.of(context).colorScheme.onSurfaceVariant),
                       suffixIcon: IconButton(
                         icon: Icon(Icons.clear,
-                            color: Theme.of(context).colorScheme.secondary),
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant),
                         onPressed: () {
                           _searchController.clear();
                           setState(() {
@@ -255,16 +260,17 @@ class _HarpListViewState extends State<HarpListView>
                         },
                       ),
                       filled: true,
-                      fillColor: Theme.of(context).colorScheme.primary,
+                      fillColor: Theme.of(context).colorScheme.surface,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30.0),
                         borderSide: BorderSide.none,
                       ),
-                      contentPadding:
-                          const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 0, horizontal: 20),
                     ),
-                    style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-                    cursorColor: Theme.of(context).colorScheme.secondary,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface),
+                    cursorColor: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 const SizedBox(height: 12),

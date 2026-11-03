@@ -140,10 +140,10 @@ class _DailyWordCardState extends State<DailyWordCard> {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: colorScheme.primary,
+          color: colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: colorScheme.secondary.withValues(alpha: 0.1),
+            color: colorScheme.onSurface.withValues(alpha: 0.1),
           ),
         ),
         child: Column(
@@ -155,7 +155,7 @@ class _DailyWordCardState extends State<DailyWordCard> {
                 Text(
                   'Palavra do Dia',
                   style: TextStyle(
-                    color: colorScheme.secondary,
+                    color: colorScheme.onSurface,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -164,7 +164,7 @@ class _DailyWordCardState extends State<DailyWordCard> {
                   IconButton(
                     icon: Icon(
                       Icons.share,
-                      color: colorScheme.secondary,
+                      color: colorScheme.onSurface,
                       size: 22,
                     ),
                     onPressed: _isSharing ? null : _showShareOptions,
@@ -176,7 +176,7 @@ class _DailyWordCardState extends State<DailyWordCard> {
             Text(
               widget.word.text,
               style: TextStyle(
-                color: colorScheme.secondary,
+                color: colorScheme.onSurface,
                 fontSize: 16,
                 height: 1.5,
               ),
@@ -185,7 +185,7 @@ class _DailyWordCardState extends State<DailyWordCard> {
             Text(
               '— ${widget.word.reference}',
               style: TextStyle(
-                color: colorScheme.secondary.withValues(alpha: 0.7),
+                color: colorScheme.onSurface.withValues(alpha: 0.7),
                 fontSize: 14,
                 fontStyle: FontStyle.italic,
               ),
@@ -211,37 +211,37 @@ class _DailyWordCardState extends State<DailyWordCard> {
             children: [
               const SizedBox(height: 12),
               ListTile(
-                leading: Icon(Icons.text_snippet, color: colorScheme.secondary),
+                leading: Icon(Icons.text_snippet, color: colorScheme.onSurface),
                 title: Text(
                   'Compartilhar texto',
-                  style: TextStyle(color: colorScheme.secondary),
+                  style: TextStyle(color: colorScheme.onSurface),
                 ),
                 onTap: () => Navigator.pop(sheetContext, 'text'),
               ),
               ListTile(
-                leading: Icon(Icons.image, color: colorScheme.secondary),
+                leading: Icon(Icons.image, color: colorScheme.onSurface),
                 title: Text(
                   'Compartilhar imagem da galeria',
-                  style: TextStyle(color: colorScheme.secondary),
+                  style: TextStyle(color: colorScheme.onSurface),
                 ),
                 subtitle: Text(
                   'Escolha uma imagem do seu dispositivo',
                   style: TextStyle(
-                    color: colorScheme.secondary.withValues(alpha: 0.7),
+                    color: colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
                 onTap: () => Navigator.pop(sheetContext, 'gallery'),
               ),
               ListTile(
-                leading: Icon(Icons.screenshot, color: colorScheme.secondary),
+                leading: Icon(Icons.screenshot, color: colorScheme.onSurface),
                 title: Text(
                   'Compartilhar como imagem',
-                  style: TextStyle(color: colorScheme.secondary),
+                  style: TextStyle(color: colorScheme.onSurface),
                 ),
                 subtitle: Text(
                   'Gera uma imagem com a Palavra do Dia',
                   style: TextStyle(
-                    color: colorScheme.secondary.withValues(alpha: 0.7),
+                    color: colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
                 onTap: () => Navigator.pop(sheetContext, 'image'),

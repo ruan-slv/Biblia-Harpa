@@ -46,7 +46,7 @@ class _NoteDetailBody extends StatelessWidget {
 
     if (note == null) {
       return Scaffold(
-        backgroundColor: colorScheme.surface,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: CustomAppBar(
           title: 'Anotação',
           centerTitle: false,
@@ -59,13 +59,13 @@ class _NoteDetailBody extends StatelessWidget {
               Icon(
                 Icons.note_outlined,
                 size: 72,
-                color: colorScheme.secondary.withValues(alpha: 0.35),
+                color: colorScheme.onSurface.withValues(alpha: 0.35),
               ),
               const SizedBox(height: 16),
               Text(
                 'Anotação não encontrada.',
                 style: TextStyle(
-                  color: colorScheme.secondary,
+                  color: colorScheme.onSurface,
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),
@@ -74,7 +74,7 @@ class _NoteDetailBody extends StatelessWidget {
               Text(
                 'Ela pode ter sido excluída.',
                 style: TextStyle(
-                  color: colorScheme.secondary.withValues(alpha: 0.7),
+                  color: colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
             ],
@@ -84,7 +84,7 @@ class _NoteDetailBody extends StatelessWidget {
     }
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
         title: note.title.isEmpty ? 'Anotação' : note.title,
         centerTitle: false,
@@ -93,7 +93,7 @@ class _NoteDetailBody extends StatelessWidget {
           IconButton(
             icon: Icon(
               Icons.edit_note,
-              color: colorScheme.secondary,
+              color: colorScheme.onSurface,
             ),
             tooltip: 'Editar',
             onPressed: () => showNoteEditorDialog(
@@ -105,7 +105,7 @@ class _NoteDetailBody extends StatelessWidget {
           IconButton(
             icon: Icon(
               Icons.delete_outline,
-              color: colorScheme.secondary.withValues(alpha: 0.8),
+              color: colorScheme.onSurface.withValues(alpha: 0.8),
             ),
             tooltip: 'Excluir',
             onPressed: () => _confirmDelete(context, controller, note),
@@ -123,7 +123,7 @@ class _NoteDetailBody extends StatelessWidget {
                 child: Text(
                   note.title,
                   style: TextStyle(
-                    color: colorScheme.secondary,
+                    color: colorScheme.onSurface,
                     fontSize: 26,
                     fontWeight: FontWeight.w800,
                   ),
@@ -137,7 +137,7 @@ class _NoteDetailBody extends StatelessWidget {
                   vertical: 8,
                 ),
                 decoration: BoxDecoration(
-                  color: colorScheme.primary,
+                  color: colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -146,13 +146,13 @@ class _NoteDetailBody extends StatelessWidget {
                     Icon(
                       Icons.menu_book_rounded,
                       size: 18,
-                      color: colorScheme.secondary,
+                      color: colorScheme.onSurface,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       note.reference!,
                       style: TextStyle(
-                        color: colorScheme.secondary,
+                        color: colorScheme.onSurface,
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                       ),
@@ -164,7 +164,7 @@ class _NoteDetailBody extends StatelessWidget {
               Text(
                 note.content,
                 style: TextStyle(
-                  color: colorScheme.secondary,
+                  color: colorScheme.onSurface,
                   fontSize: 18,
                   height: 1.7,
                 ),
@@ -173,7 +173,7 @@ class _NoteDetailBody extends StatelessWidget {
               Text(
                 'Sem conteúdo.',
                 style: TextStyle(
-                  color: colorScheme.secondary.withValues(alpha: 0.6),
+                  color: colorScheme.onSurface.withValues(alpha: 0.6),
                   fontSize: 16,
                   fontStyle: FontStyle.italic,
                 ),
@@ -184,13 +184,13 @@ class _NoteDetailBody extends StatelessWidget {
                 Icon(
                   Icons.schedule,
                   size: 16,
-                  color: colorScheme.secondary.withValues(alpha: 0.6),
+                  color: colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
                 const SizedBox(width: 6),
                 Text(
                   'Criada em ${note.dateFormatted}',
                   style: TextStyle(
-                    color: colorScheme.secondary.withValues(alpha: 0.6),
+                    color: colorScheme.onSurface.withValues(alpha: 0.6),
                     fontSize: 13,
                   ),
                 ),
@@ -204,13 +204,13 @@ class _NoteDetailBody extends StatelessWidget {
                     Icon(
                       Icons.update,
                       size: 16,
-                      color: colorScheme.secondary.withValues(alpha: 0.6),
+                      color: colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                     const SizedBox(width: 6),
                     Text(
                       'Editada em ${note.dateFormatted}',
                       style: TextStyle(
-                        color: colorScheme.secondary.withValues(alpha: 0.6),
+                        color: colorScheme.onSurface.withValues(alpha: 0.6),
                         fontSize: 13,
                       ),
                     ),
@@ -247,7 +247,7 @@ class _NoteDetailBody extends StatelessWidget {
             onPressed: () => Navigator.pop(context, true),
             child: Text(
               'Excluir',
-              style: TextStyle(color: colorScheme.secondary),
+              style: TextStyle(color: colorScheme.onSurface),
             ),
           ),
         ],

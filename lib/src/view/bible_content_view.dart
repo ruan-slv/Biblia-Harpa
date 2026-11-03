@@ -14,6 +14,7 @@ import 'package:biblia_e_harpa/src/view/component/bible_audio_player_card.dart';
 import 'package:biblia_e_harpa/src/view/component/controlled_search_field.dart';
 import 'package:biblia_e_harpa/src/view/component/selection_limit_dialog.dart';
 import 'package:biblia_e_harpa/src/services/annotation_service.dart';
+import 'package:biblia_e_harpa/src/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -190,7 +191,7 @@ class _TextBibleViewState extends State<_TextBibleView> {
                 Text(
                   opt['label'] as String,
                   style: TextStyle(
-                    color: colorScheme.secondary,
+                    color: colorScheme.onSurface,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -202,12 +203,12 @@ class _TextBibleViewState extends State<_TextBibleView> {
           value: 'clear',
           child: Row(
             children: [
-              Icon(Icons.clear_rounded, color: colorScheme.secondary, size: 20),
+              Icon(Icons.clear_rounded, color: colorScheme.onSurface, size: 20),
               const SizedBox(width: 12),
               Text(
                 'Remover destaque',
                 style: TextStyle(
-                  color: colorScheme.secondary,
+                  color: colorScheme.onSurface,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -219,7 +220,8 @@ class _TextBibleViewState extends State<_TextBibleView> {
 
     if (result != null) {
       if (result == 'clear') {
-        await AnnotationService.removeAnnotation(chapterId, verseIndex.toString());
+        await AnnotationService.removeAnnotation(
+            chapterId, verseIndex.toString());
       } else {
         await AnnotationService.setAnnotation(
           chapterId,
@@ -245,18 +247,18 @@ class _TextBibleViewState extends State<_TextBibleView> {
           backgroundColor: colorScheme.surface,
           title: Text(
             'Compartilhar Capítulo',
-            style: TextStyle(color: colorScheme.secondary),
+            style: TextStyle(color: colorScheme.onSurface),
           ),
           content: Text(
             'Nenhum versículo foi selecionado. Deseja compartilhar os versículos deste capítulo (${viewModel.chapterTitle})?',
-            style: TextStyle(color: colorScheme.secondary),
+            style: TextStyle(color: colorScheme.onSurface),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogCtx, false),
               child: Text(
                 'Cancelar',
-                style: TextStyle(color: colorScheme.secondary),
+                style: TextStyle(color: colorScheme.onSurface),
               ),
             ),
             ElevatedButton(
@@ -291,7 +293,7 @@ class _TextBibleViewState extends State<_TextBibleView> {
                 height: 4,
                 margin: const EdgeInsets.only(bottom: 16),
                 decoration: BoxDecoration(
-                  color: colorScheme.secondary.withValues(alpha: 0.2),
+                  color: colorScheme.onSurface.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -300,23 +302,23 @@ class _TextBibleViewState extends State<_TextBibleView> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: colorScheme.secondary,
+                  color: colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 12),
               ListTile(
-                leading: Icon(Icons.share, color: colorScheme.secondary),
+                leading: Icon(Icons.share, color: colorScheme.onSurface),
                 title: Text(
                   'Compartilhar versículos selecionados',
-                  style: TextStyle(color: colorScheme.secondary),
+                  style: TextStyle(color: colorScheme.onSurface),
                 ),
                 onTap: () => Navigator.pop(sheetCtx, 'share'),
               ),
               ListTile(
-                leading: Icon(Icons.close, color: colorScheme.secondary),
+                leading: Icon(Icons.close, color: colorScheme.onSurface),
                 title: Text(
                   'Limpar seleção',
-                  style: TextStyle(color: colorScheme.secondary),
+                  style: TextStyle(color: colorScheme.onSurface),
                 ),
                 onTap: () => Navigator.pop(sheetCtx, 'clear'),
               ),
@@ -349,12 +351,13 @@ class _TextBibleViewState extends State<_TextBibleView> {
 
     final chapterId = viewModel.chapterId;
     final chapterTitle = viewModel.chapterTitle;
-    final isRead = readViewModel.isRead(chapterId) || readViewModel.isRead(chapterTitle);
+    final isRead =
+        readViewModel.isRead(chapterId) || readViewModel.isRead(chapterTitle);
 
     _ensureAnnotationsLoaded(chapterId);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
         title: chapterTitle,
         centerTitle: false,
@@ -401,8 +404,8 @@ class _TextBibleViewState extends State<_TextBibleView> {
                   ? Icons.auto_stories
                   : Icons.auto_stories_outlined,
               color: viewModel.isAutoScrollEnabled
-                  ? colorScheme.secondary
-                  : colorScheme.secondary.withValues(alpha: 0.6),
+                  ? colorScheme.onSurface
+                  : colorScheme.onSurface.withValues(alpha: 0.6),
             ),
             tooltip: viewModel.isAutoScrollEnabled
                 ? 'Pausar leitura automática'
@@ -427,8 +430,8 @@ class _TextBibleViewState extends State<_TextBibleView> {
             icon: Icon(
               _highlightMode ? Icons.colorize : Icons.colorize_rounded,
               color: _highlightMode
-                  ? colorScheme.secondary
-                  : colorScheme.secondary.withValues(alpha: 0.6),
+                  ? colorScheme.onSurface
+                  : colorScheme.onSurface.withValues(alpha: 0.6),
             ),
             tooltip: _highlightMode ? 'Modo destaque ativado' : 'Modo destaque',
           ),
@@ -441,7 +444,7 @@ class _TextBibleViewState extends State<_TextBibleView> {
                 viewModel.selectedVerseIndices.isEmpty
                     ? Icons.share_outlined
                     : Icons.share,
-                color: colorScheme.secondary,
+                color: colorScheme.onSurface,
               ),
             ),
             tooltip: viewModel.selectedVerseIndices.isEmpty
@@ -452,7 +455,8 @@ class _TextBibleViewState extends State<_TextBibleView> {
       ),
       bottomNavigationBar: BottomBar(
         canGoBack: viewModel.currentChapterNumber > 1,
-        canGoNext: viewModel.currentChapterNumber < viewModel.allBookChapters.length,
+        canGoNext:
+            viewModel.currentChapterNumber < viewModel.allBookChapters.length,
         onPrevious: viewModel.previousChapter,
         onNext: viewModel.nextChapter,
         topChild: InkWell(
@@ -462,13 +466,13 @@ class _TextBibleViewState extends State<_TextBibleView> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             decoration: BoxDecoration(
               color: isRead
-                  ? Colors.green.withValues(alpha: 0.16)
-                  : colorScheme.primary,
+                  ? AppTheme.sucesso.withValues(alpha: 0.16)
+                  : colorScheme.primaryContainer,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: isRead
-                    ? Colors.green.withValues(alpha: 0.45)
-                    : colorScheme.secondary.withValues(alpha: 0.08),
+                    ? AppTheme.sucesso.withValues(alpha: 0.45)
+                    : colorScheme.onSurface.withValues(alpha: 0.08),
               ),
             ),
             child: Row(
@@ -477,7 +481,9 @@ class _TextBibleViewState extends State<_TextBibleView> {
                   height: 42,
                   width: 42,
                   decoration: BoxDecoration(
-                    color: isRead ? Colors.green : colorScheme.secondary,
+                    color: isRead
+                        ? AppTheme.sucesso
+                        : colorScheme.primaryContainer,
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Icon(
@@ -496,7 +502,7 @@ class _TextBibleViewState extends State<_TextBibleView> {
                       Text(
                         isRead ? "Capítulo concluído" : "Marcar como lido",
                         style: TextStyle(
-                          color: colorScheme.secondary,
+                          color: colorScheme.onSurface,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -506,7 +512,7 @@ class _TextBibleViewState extends State<_TextBibleView> {
                             ? "Toque para marcar como não lido."
                             : "Toque para marcar como lido.",
                         style: TextStyle(
-                          color: colorScheme.secondary.withValues(alpha: 0.72),
+                          color: colorScheme.onSurface.withValues(alpha: 0.72),
                           height: 1.3,
                         ),
                       ),
@@ -547,7 +553,7 @@ class _TextBibleViewState extends State<_TextBibleView> {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: settings.fontSize,
-                      color: Theme.of(context).colorScheme.secondary,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                 ),
@@ -563,9 +569,14 @@ class _TextBibleViewState extends State<_TextBibleView> {
                             return const SizedBox(height: 24);
                           }
 
-                          final originalIndex = viewModel.filteredVerseIndices[index];
-                          final verseText = viewModel.currentVerses[originalIndex];
+                          final originalIndex =
+                              viewModel.filteredVerseIndices[index];
+                          final verseText =
+                              viewModel.currentVerses[originalIndex];
                           final verseNumber = originalIndex + 1;
+                          final isSelected = viewModel.selectedVerseIndices
+                              .contains(originalIndex);
+                          final colorScheme = Theme.of(context).colorScheme;
 
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 16.0),
@@ -578,8 +589,11 @@ class _TextBibleViewState extends State<_TextBibleView> {
                                     originalIndex,
                                   );
                                 } else {
-                                  final ok = viewModel.toggleVerseSelection(originalIndex);
-                                  if (!ok) await SelectionLimitDialog.show(context);
+                                  final ok = viewModel
+                                      .toggleVerseSelection(originalIndex);
+                                  if (!ok) {
+                                    await SelectionLimitDialog.show(context);
+                                  }
                                 }
                               },
                               onLongPress: () {
@@ -590,30 +604,35 @@ class _TextBibleViewState extends State<_TextBibleView> {
                                 );
                               },
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0, vertical: 8.0),
                                 decoration: BoxDecoration(
-                                  color: _verseAnnotations[originalIndex.toString()] != null
-                                      ? _getHighlightColor(context, _verseAnnotations[originalIndex.toString()]!)
-                                      : (viewModel.selectedVerseIndices.contains(originalIndex)
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .primary
+                                  color: _verseAnnotations[
+                                              originalIndex.toString()] !=
+                                          null
+                                      ? _getHighlightColor(
+                                          context,
+                                          _verseAnnotations[
+                                              originalIndex.toString()]!)
+                                      : (isSelected
+                                          ? colorScheme.primary
                                               .withValues(alpha: 0.9)
                                           : Colors.transparent),
                                   borderRadius: BorderRadius.circular(16.0),
-                                  border: _verseAnnotations[originalIndex.toString()] != null
+                                  border: _verseAnnotations[
+                                              originalIndex.toString()] !=
+                                          null
                                       ? Border.all(
                                           color: _getHighlightBorderColor(
                                             context,
-                                            _verseAnnotations[originalIndex.toString()]!,
+                                            _verseAnnotations[
+                                                originalIndex.toString()]!,
                                           ),
                                           width: 1.2,
                                         )
-                                      : (viewModel.selectedVerseIndices.contains(originalIndex)
+                                      : (isSelected
                                           ? Border.all(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary
+                                              color: colorScheme.outlineVariant
                                                   .withValues(alpha: 0.25),
                                               width: 1.0,
                                             )
@@ -628,9 +647,9 @@ class _TextBibleViewState extends State<_TextBibleView> {
                                         Text(
                                           "$verseNumber",
                                           style: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .secondary,
+                                            color: isSelected
+                                                ? Colors.black
+                                                : colorScheme.onSurface,
                                             fontSize: settings.fontSize,
                                             fontWeight: FontWeight.w900,
                                           ),
@@ -640,11 +659,14 @@ class _TextBibleViewState extends State<_TextBibleView> {
                                           child: Text(
                                             verseText,
                                             style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary,
+                                              color: isSelected
+                                                  ? Colors.black
+                                                  : colorScheme.onSurface,
                                               fontSize: settings.fontSize,
-                                              fontWeight: _verseAnnotations[originalIndex.toString()] != null
+                                              fontWeight: _verseAnnotations[
+                                                          originalIndex
+                                                              .toString()] !=
+                                                      null
                                                   ? FontWeight.w500
                                                   : FontWeight.normal,
                                             ),

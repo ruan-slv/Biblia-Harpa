@@ -34,7 +34,7 @@ class TextContentCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: settings.fontSize + 5,
                   fontWeight: FontWeight.w700,
-                  color: colorScheme.secondary,
+                  color: colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 14),
@@ -42,7 +42,7 @@ class TextContentCard extends StatelessWidget {
                 body,
                 style: TextStyle(
                   fontSize: settings.fontSize,
-                  color: colorScheme.secondary,
+                  color: colorScheme.onSurface,
                   height: 1.6,
                 ),
                 textAlign: TextAlign.justify,

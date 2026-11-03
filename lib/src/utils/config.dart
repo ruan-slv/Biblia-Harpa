@@ -8,37 +8,37 @@ import 'package:flutter/material.dart';
 // Cores principais
 const mainColor = Color.fromARGB(255, 36, 36, 43);
 const whiteColor = Colors.white;
-const azulSereno = Color.fromARGB(255, 74, 144, 226);     // #4A90E2
-const brancoNeve = Color.fromARGB(255, 255, 255, 255);     // #FFFFFF
-const begeClaro = Color.fromARGB(255, 245, 245, 220);      // #F5F5DC
+const azulSereno = Color(0xFF0EA5E9);
+const brancoNeve = Color.fromARGB(255, 255, 255, 255); // #FFFFFF
+const begeClaro = Color(0xFFF7F9FC);
 
 // Cores secundárias
-const verdeEsperanca = Color.fromARGB(255, 123, 174, 127); // #7BAE7F
-const douradoSuave = Color.fromARGB(255, 212, 175, 55);    // #D4AF37
-const rosaSuave = Color.fromARGB(255, 248, 225, 231);      // #F8E1E7
+const verdeEsperanca = Color(0xFF22C55E);
+const douradoSuave = Color(0xFFF5B93F);
+const rosaSuave = Color(0xFFFF6B6B);
 
 // Cores para texto
-const cinzaEscuro = Color.fromARGB(255, 51, 51, 51);       // #333333
-const cinzaClaro = Color.fromARGB(255, 136, 136, 136);     // #888888
+const cinzaEscuro = Color.fromARGB(255, 51, 51, 51); // #333333
+const cinzaClaro = Color.fromARGB(255, 136, 136, 136); // #888888
 
 // Cores adicionais
 List<double> sizeBtnOptions = [100, 50];
 List<double> sizeBtnInitial = [150, 100];
 
-Color amberColor = Colors.amber.shade800;
-Color indigoColor = Colors.indigo.shade700;
-Color tealColor = Colors.teal.shade700;
-Color redColor = Colors.red.shade700;
-Color purpleColor = Colors.deepPurple;
-Color lightPurpleColor = Colors.deepPurpleAccent.shade200;
+const amberColor = Color(0xFFF5B93F);
+const indigoColor = Color(0xFF7C6BFF);
+const tealColor = Color(0xFF00BFA6);
+const redColor = Color(0xFFFF6B6B);
+const purpleColor = Color(0xFF7C6BFF);
+const lightPurpleColor = Color(0xFFAB9FFF);
 
-Color deepOrangeColor = Colors.deepOrange.shade800; // Adicionada para Palavra do Dia
+const deepOrangeColor = Color(0xFFF5B93F);
 
 // Listas de Cores para os Gradientes dos Ícones
-final List<Color> gradienteBiblia = [Colors.orange.shade800, Colors.amber, Colors.orange.shade200];
-final List<Color> gradienteHarpa = [indigoColor, purpleColor, lightPurpleColor];
-final List<Color> gradienteDevocional = [tealColor, verdeEsperanca, Colors.green.shade200];
-final List<Color> gradientePalavraDoDia = [deepOrangeColor, redColor, Colors.red.shade200];
-final List<Color> gradienteAudios = [azulSereno, Colors.blue.shade600, Colors.lightBlue.shade200];
-final List<Color> gradienteApoio = [Colors.pink.shade800, Colors.red, Colors.pink.shade200];
-final List<Color> gradienteOutros = [Colors.indigo.shade800, Colors.blue.shade700, Colors.lightBlue.shade200];
+const List<Color> gradienteBiblia = [amberColor, Color(0xFFFFD98A)];
+const List<Color> gradienteHarpa = [indigoColor, tealColor];
+const List<Color> gradienteDevocional = [tealColor, indigoColor];
+const List<Color> gradientePalavraDoDia = [deepOrangeColor, redColor];
+const List<Color> gradienteAudios = [tealColor, azulSereno];
+const List<Color> gradienteApoio = [indigoColor, redColor];
+const List<Color> gradienteOutros = [indigoColor, azulSereno];

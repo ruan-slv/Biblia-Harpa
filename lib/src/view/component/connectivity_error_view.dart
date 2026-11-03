@@ -39,7 +39,7 @@ class ConnectivityErrorView extends StatelessWidget {
               message,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: settings.fontSize,
               ),
             ),
@@ -49,12 +49,12 @@ class ConnectivityErrorView extends StatelessWidget {
                 onPressed: onOfflinePressed,
                 icon: Icon(
                   Icons.offline_pin,
-                  color: Theme.of(context).colorScheme.secondary,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
                 label: Text(
                   "Áudios Baixados",
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.secondary,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: settings.fontSize * 0.9,
                     fontWeight: FontWeight.bold,
                   ),

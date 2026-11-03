@@ -11,6 +11,7 @@ import 'package:dio/dio.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:biblia_e_harpa/src/utils/theme.dart';
 
 class HarpFileView extends StatefulWidget {
   final List<DataAudioModel> allHymns;
@@ -80,7 +81,8 @@ class _HarpFileViewState extends State<HarpFileView> {
     if (!await audioDir.exists()) {
       await audioDir.create(recursive: true);
     }
-    final safeName = fileName.replaceAll(RegExp(r'[^\w\s]+'), '').replaceAll(' ', '_');
+    final safeName =
+        fileName.replaceAll(RegExp(r'[^\w\s]+'), '').replaceAll(' ', '_');
     return '${audioDir.path}/$safeName.mp3';
   }
 
@@ -93,6 +95,7 @@ class _HarpFileViewState extends State<HarpFileView> {
       });
     }
   }
+
   Future<void> _downloadAudio() async {
     if (_isDownloading) return;
 
@@ -106,7 +109,7 @@ class _HarpFileViewState extends State<HarpFileView> {
 
       String url = _currentHymn.hinoURL;
       if (url.contains('drive.google.com') && !url.contains('&confirm=')) {
-        if(url.contains('?')) {
+        if (url.contains('?')) {
           url = '$url&confirm=t';
         } else {
           url = '$url?confirm=t';
@@ -121,7 +124,8 @@ class _HarpFileViewState extends State<HarpFileView> {
           _isDownloading = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${_currentHymn.titulo} baixado com sucesso!')),
+          SnackBar(
+              content: Text('${_currentHymn.titulo} baixado com sucesso!')),
         );
       }
     } catch (e) {
@@ -130,7 +134,8 @@ class _HarpFileViewState extends State<HarpFileView> {
           _isDownloading = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Erro ao baixar o áudio. Verifique a conexão.')),
+          const SnackBar(
+              content: Text('Erro ao baixar o áudio. Verifique a conexão.')),
         );
       }
     }
@@ -191,7 +196,7 @@ class _HarpFileViewState extends State<HarpFileView> {
         Uri.parse(url),
         headers: {
           'User-Agent':
-          'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36'
+              'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36'
         },
       );
 
@@ -203,7 +208,7 @@ class _HarpFileViewState extends State<HarpFileView> {
         final dio = Dio();
         dio.options.headers = {
           'User-Agent':
-          'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36',
+              'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36',
         };
 
         final savePath = await _getLocalFilePath(_currentHymn.titulo);
@@ -266,7 +271,7 @@ class _HarpFileViewState extends State<HarpFileView> {
     final hasNext = _currentIndex < widget.allHymns.length - 1;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
         title: _currentHymn.titulo,
         centerTitle: false,
@@ -274,185 +279,239 @@ class _HarpFileViewState extends State<HarpFileView> {
         actions: [
           _isDownloading
               ? Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                color: Theme.of(context).colorScheme.secondary,
-                strokeWidth: 2,
-              ),
-            ),
-          )
+                  padding: const EdgeInsets.all(12.0),
+                  child: SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      strokeWidth: 2,
+                    ),
+                  ),
+                )
               : IconButton(
-            icon: Icon(
-              _isDownloaded ? Icons.download_done : Icons.download,
-              color: _isDownloaded ? Colors.green : Theme.of(context).colorScheme.secondary,
-            ),
-            tooltip: _isDownloaded ? "Hino baixado (Toque para remover)" : "Baixar hino",
-            onPressed: () {
-              if (_isDownloaded) {
-                _deleteAudio();
-              } else {
-                _downloadAudio();
-              }
-            },
-          ),
+                  icon: Icon(
+                    _isDownloaded ? Icons.download_done : Icons.download,
+                    color: _isDownloaded
+                        ? AppTheme.sucesso
+                        : Theme.of(context).colorScheme.onSurface,
+                  ),
+                  tooltip: _isDownloaded
+                      ? "Hino baixado (Toque para remover)"
+                      : "Baixar hino",
+                  onPressed: () {
+                    if (_isDownloaded) {
+                      _deleteAudio();
+                    } else {
+                      _downloadAudio();
+                    }
+                  },
+                ),
         ],
       ),
       body: SafeArea(
         child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const SizedBox(height: 20),
-                  Stack(
-                    alignment: Alignment.topRight,
-                    children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.6,
-                        height: MediaQuery.of(context).size.width * 0.6,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary,
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha:0.2), blurRadius: 10, offset: const Offset(0, 5))],
-                        ),
-                        child: Icon(Icons.music_note_rounded, size: 100, color: Theme.of(context).colorScheme.secondary),
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 20),
+                Stack(
+                  alignment: Alignment.topRight,
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      height: MediaQuery.of(context).size.width * 0.6,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.2),
+                              blurRadius: 10,
+                              offset: const Offset(0, 5))
+                        ],
                       ),
-                      if (_isDownloaded)
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                                color: Colors.green,
-                                shape: BoxShape.circle,
-                                border: Border.all(color: Colors.white, width: 2)
-                            ),
-                            child: const Icon(Icons.offline_pin, color: Colors.white, size: 20),
-                          ),
+                      child: Icon(Icons.music_note_rounded,
+                          size: 100,
+                          color: Theme.of(context).colorScheme.onSurface),
+                    ),
+                    if (_isDownloaded)
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                              color: AppTheme.sucesso,
+                              shape: BoxShape.circle,
+                              border:
+                                  Border.all(color: Colors.white, width: 2)),
+                          child: const Icon(Icons.offline_pin,
+                              color: Colors.white, size: 20),
                         ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 30),
+                Text(_currentHymn.titulo,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onSurface),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis),
+                const SizedBox(height: 8),
+                Text("Harpa Cristã",
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.7))),
+              ],
+            ),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SliderTheme(
+                  data: SliderTheme.of(context).copyWith(
+                    thumbShape:
+                        const RoundSliderThumbShape(enabledThumbRadius: 8.0),
+                    overlayShape:
+                        const RoundSliderOverlayShape(overlayRadius: 16.0),
+                  ),
+                  child: Slider(
+                    value: _currentPosition.inSeconds.toDouble(),
+                    min: 0,
+                    max: _audioDuration.inSeconds
+                        .toDouble()
+                        .clamp(1.0, double.infinity),
+                    onChanged: (value) =>
+                        _player.seek(Duration(seconds: value.toInt())),
+                    activeColor: Theme.of(context).colorScheme.onSurface,
+                    inactiveColor: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.3),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(_formatDuration(_currentPosition),
+                          style: TextStyle(
+                              fontSize: 12,
+                              color: Theme.of(context).colorScheme.onSurface)),
+                      Text(_formatDuration(_audioDuration),
+                          style: TextStyle(
+                              fontSize: 12,
+                              color: Theme.of(context).colorScheme.onSurface)),
                     ],
                   ),
-                  const SizedBox(height: 30),
-                  Text(_currentHymn.titulo,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.secondary),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis),
-                  const SizedBox(height: 8),
-                  Text("Harpa Cristã", style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.secondary.withValues(alpha:0.7))),
-                ],
-              ),
-
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SliderTheme(
-                    data: SliderTheme.of(context).copyWith(
-                      thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8.0),
-                      overlayShape: const RoundSliderOverlayShape(overlayRadius: 16.0),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.replay_10_rounded),
+                      iconSize: 28.0,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 0.8),
+                      onPressed: () => _player.seek(
+                          Duration(seconds: _currentPosition.inSeconds - 10)),
                     ),
-                    child: Slider(
-                      value: _currentPosition.inSeconds.toDouble(),
-                      min: 0,
-                      max: _audioDuration.inSeconds.toDouble().clamp(1.0, double.infinity),
-                      onChanged: (value) => _player.seek(Duration(seconds: value.toInt())),
-                      activeColor: Theme.of(context).colorScheme.secondary,
-                      inactiveColor: Theme.of(context).colorScheme.secondary.withValues(alpha:0.3),
+                    IconButton(
+                      icon: const Icon(Icons.skip_previous_rounded),
+                      iconSize: 36.0,
+                      color: hasPrevious
+                          ? Theme.of(context).colorScheme.onSurface
+                          : Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.3),
+                      onPressed: hasPrevious ? _playPrevious : null,
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(_formatDuration(_currentPosition), style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.secondary)),
-                        Text(_formatDuration(_audioDuration), style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.secondary)),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.replay_10_rounded),
-                        iconSize: 28.0,
-                        color: Theme.of(context).colorScheme.secondary.withValues(alpha:0.8),
-                        onPressed: () => _player.seek(Duration(seconds: _currentPosition.inSeconds - 10)),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.skip_previous_rounded),
-                        iconSize: 36.0,
-                        color: hasPrevious
-                            ? Theme.of(context).colorScheme.secondary
-                            : Theme.of(context).colorScheme.secondary.withValues(alpha:0.3),
-                        onPressed: hasPrevious ? _playPrevious : null,
-                      ),
-                      SizedBox(
-                        width: 70,
-                        height: 70,
-                        child: Center(
-                          child: isLoading
-                              ? CircularProgressIndicator(
-                            color: Theme.of(context).colorScheme.secondary,
-                          )
-                              : InkWell(
-                            borderRadius: BorderRadius.circular(50),
-                            onTap: () {
-                              isPlaying ? _player.pause() : _player.play();
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.secondary,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Theme.of(context).colorScheme.secondary.withValues(alpha:0.3),
-                                    blurRadius: 10,
-                                    spreadRadius: 2,
-                                  )
-                                ],
+                    SizedBox(
+                      width: 70,
+                      height: 70,
+                      child: Center(
+                        child: isLoading
+                            ? CircularProgressIndicator(
+                                color: Theme.of(context).colorScheme.onSurface,
+                              )
+                            : InkWell(
+                                borderRadius: BorderRadius.circular(50),
+                                onTap: () {
+                                  isPlaying ? _player.pause() : _player.play();
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withValues(alpha: 0.3),
+                                        blurRadius: 10,
+                                        spreadRadius: 2,
+                                      )
+                                    ],
+                                  ),
+                                  child: Icon(
+                                    isPlaying
+                                        ? Icons.pause_rounded
+                                        : Icons.play_arrow_rounded,
+                                    size: 40.0,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
+                                ),
                               ),
-                              child: Icon(
-                                isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                                size: 40.0,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                          ),
-                        ),
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.skip_next_rounded),
-                        iconSize: 36.0,
-                        color: hasNext
-                            ? Theme.of(context).colorScheme.secondary
-                            : Theme.of(context).colorScheme.secondary.withValues(alpha:0.3),
-                        onPressed: hasNext ? _playNext : null,
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.forward_10_rounded),
-                        iconSize: 28.0,
-                        color: Theme.of(context).colorScheme.secondary.withValues(alpha:0.8),
-                        onPressed: () => _player.seek(Duration(seconds: _currentPosition.inSeconds + 10)),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                ],
-              ),
-            ],
-          ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.skip_next_rounded),
+                      iconSize: 36.0,
+                      color: hasNext
+                          ? Theme.of(context).colorScheme.onSurface
+                          : Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.3),
+                      onPressed: hasNext ? _playNext : null,
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.forward_10_rounded),
+                      iconSize: 28.0,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 0.8),
+                      onPressed: () => _player.seek(
+                          Duration(seconds: _currentPosition.inSeconds + 10)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
+          ],
         ),
-
+      ),
     );
   }
 }

@@ -16,17 +16,18 @@ class SelectionLimitDialog {
           backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text(
             "Aviso de Limite",
-            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
           ),
           content: Text(
             "Selecionar muitos versículos pode fazer com que o texto seja cortado ao compartilhar em algumas redes sociais. Considere compartilhar a quantidade máxima de versículos e depois realizar um novo compartilhamento com o restante dos versículos desejados!",
-            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
           ),
           actions: <Widget>[
             TextButton(
               child: Text(
                 "Entendi",
-                style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface),
               ),
               onPressed: () => Navigator.of(context).pop(),
             ),

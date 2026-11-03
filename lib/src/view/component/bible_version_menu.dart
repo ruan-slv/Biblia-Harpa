@@ -21,7 +21,7 @@ class BibleVersionMenu extends StatelessWidget {
     return PopupMenuButton<String>(
       icon: Icon(
         Icons.more_vert,
-        color: Theme.of(context).colorScheme.secondary,
+        color: Theme.of(context).colorScheme.onSurface,
       ),
       onSelected: (String value) async {
         if (value == 'SELECT_VERSION') {
@@ -44,11 +44,13 @@ class BibleVersionMenu extends StatelessWidget {
             value: "SELECT_VERSION",
             child: Row(
               children: [
-                Icon(Icons.translate, color: Theme.of(context).colorScheme.secondary),
+                Icon(Icons.translate,
+                    color: Theme.of(context).colorScheme.onSurface),
                 SizedBox(width: 8),
                 Text(
                   "Selecionar versão",
-                  style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onSurface),
                 ),
               ],
             ),
@@ -61,7 +63,8 @@ class BibleVersionMenu extends StatelessWidget {
                 SizedBox(width: 8),
                 Text(
                   "Almeida Corrigida Fiel",
-                  style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onSurface),
                 ),
               ],
             ),
@@ -74,7 +77,8 @@ class BibleVersionMenu extends StatelessWidget {
                 SizedBox(width: 8),
                 Text(
                   "Nova Versão Internacional",
-                  style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onSurface),
                 ),
               ],
             ),
@@ -87,7 +91,8 @@ class BibleVersionMenu extends StatelessWidget {
                 SizedBox(width: 8),
                 Text(
                   "Almeida Atualizada",
-                  style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onSurface),
                 ),
               ],
             ),
@@ -100,7 +105,8 @@ class BibleVersionMenu extends StatelessWidget {
                 SizedBox(width: 8),
                 Text(
                   "King James Version",
-                  style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onSurface),
                 ),
               ],
             ),
@@ -113,7 +119,8 @@ class BibleVersionMenu extends StatelessWidget {
                 SizedBox(width: 8),
                 Text(
                   "Reina-Valera (Español)",
-                  style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onSurface),
                 ),
               ],
             ),

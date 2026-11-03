@@ -99,7 +99,7 @@ class _NoteEditorDialogState extends State<NoteEditorDialog> {
       backgroundColor: colorScheme.surface,
       title: Text(
         isEditing ? 'Editar anotação' : 'Nova anotação',
-        style: TextStyle(color: colorScheme.secondary, fontSize: 18),
+        style: TextStyle(color: colorScheme.onSurface, fontSize: 18),
       ),
       content: SizedBox(
         width: double.maxFinite,
@@ -111,10 +111,10 @@ class _NoteEditorDialogState extends State<NoteEditorDialog> {
               decoration: InputDecoration(
                 hintText: 'Título',
                 hintStyle: TextStyle(
-                  color: colorScheme.secondary.withValues(alpha: 0.6),
+                  color: colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
-              style: TextStyle(color: colorScheme.secondary),
+              style: TextStyle(color: colorScheme.onSurface),
             ),
             const SizedBox(height: 12),
             TextField(
@@ -123,10 +123,10 @@ class _NoteEditorDialogState extends State<NoteEditorDialog> {
               decoration: InputDecoration(
                 hintText: 'Escreva sua anotação...',
                 hintStyle: TextStyle(
-                  color: colorScheme.secondary.withValues(alpha: 0.6),
+                  color: colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
-              style: TextStyle(color: colorScheme.secondary),
+              style: TextStyle(color: colorScheme.onSurface),
             ),
             const SizedBox(height: 12),
             TextField(
@@ -134,10 +134,10 @@ class _NoteEditorDialogState extends State<NoteEditorDialog> {
               decoration: InputDecoration(
                 hintText: 'Referência (ex.: João 3:16)',
                 hintStyle: TextStyle(
-                  color: colorScheme.secondary.withValues(alpha: 0.6),
+                  color: colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
-              style: TextStyle(color: colorScheme.secondary),
+              style: TextStyle(color: colorScheme.onSurface),
             ),
           ],
         ),
@@ -151,7 +151,7 @@ class _NoteEditorDialogState extends State<NoteEditorDialog> {
           onPressed: _save,
           child: Text(
             'Salvar',
-            style: TextStyle(color: colorScheme.secondary),
+            style: TextStyle(color: colorScheme.onSurface),
           ),
         ),
       ],

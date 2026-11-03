@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'bible_content_view.dart';
+import '../utils/theme.dart';
 
 class BibleChapterListView extends StatelessWidget {
   final String name;
@@ -33,7 +34,8 @@ class BibleChapterListView extends StatelessWidget {
       create: (ctx) => BibleChapterListController(
         textAssetsService: ctx.read<BibleTextAssetsController>(),
       )..load(bookName: name, jsonAssetPath: jsonPath),
-      child: _ChapterListView(name: name, jsonPath: jsonPath, audioChapters: audioChapters),
+      child: _ChapterListView(
+          name: name, jsonPath: jsonPath, audioChapters: audioChapters),
     );
   }
 }
@@ -81,61 +83,61 @@ class _ChapterListViewState extends State<_ChapterListView>
     final filteredRead = readNumbers.where(chaptersToShow.contains).toList();
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
         title: widget.name,
         centerTitle: false,
         automaticallyImplyLeading: true,
         tabBar: TabBar(
           controller: _tabController,
-          labelColor: Theme.of(context).colorScheme.secondary,
+          labelColor: Theme.of(context).colorScheme.onSurface,
           unselectedLabelColor: Theme.of(context).colorScheme.onSurface,
-          indicatorColor: Theme.of(context).colorScheme.secondary,
+          indicatorColor: Theme.of(context).colorScheme.onSurface,
           tabs: const [
             Tab(text: "Todos"),
-            Tab(text: "Marcados como Lido"),
+            Tab(text: "Lidos"),
           ],
         ),
       ),
-      body:  Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: FeatureSearchField(
-                hintText: "Pesquisar Capítulo",
-                keyboardType: TextInputType.number,
-                onChanged: (v) => context.read<BibleChapterListController>().setQuery(v),
-              ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: FeatureSearchField(
+              hintText: "Pesquisar Capítulo",
+              keyboardType: TextInputType.number,
+              onChanged: (v) =>
+                  context.read<BibleChapterListController>().setQuery(v),
             ),
-            const SizedBox(height: 12),
-            Expanded(
-              child: viewModel.loading
-                  ? const Center(child: CircularProgressIndicator())
-                  : viewModel.chapters.isEmpty
-                      ? const Center(child: Text("Nenhum texto foi encontrado"))
-                      : TabBarView(
-                          controller: _tabController,
-                          children: [
-                            _ChapterGrid(
-                              bookName: widget.name,
-                              jsonPath: widget.jsonPath,
-                              chapters: viewModel.chapters,
-                              chapterNumbers: chaptersToShow,
-                              audioChapters: widget.audioChapters,
-                            ),
-                            _ChapterGrid(
-                              bookName: widget.name,
-                              jsonPath: widget.jsonPath,
-                              chapters: viewModel.chapters,
-                              chapterNumbers: filteredRead,
-                              audioChapters: widget.audioChapters,
-                            ),
-                          ],
-                        ),
-            ),
-          ],
-        ),
-
+          ),
+          const SizedBox(height: 12),
+          Expanded(
+            child: viewModel.loading
+                ? const Center(child: CircularProgressIndicator())
+                : viewModel.chapters.isEmpty
+                    ? const Center(child: Text("Nenhum texto foi encontrado"))
+                    : TabBarView(
+                        controller: _tabController,
+                        children: [
+                          _ChapterGrid(
+                            bookName: widget.name,
+                            jsonPath: widget.jsonPath,
+                            chapters: viewModel.chapters,
+                            chapterNumbers: chaptersToShow,
+                            audioChapters: widget.audioChapters,
+                          ),
+                          _ChapterGrid(
+                            bookName: widget.name,
+                            jsonPath: widget.jsonPath,
+                            chapters: viewModel.chapters,
+                            chapterNumbers: filteredRead,
+                            audioChapters: widget.audioChapters,
+                          ),
+                        ],
+                      ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -194,18 +196,23 @@ class _ChapterGrid extends StatelessWidget {
             padding: WidgetStateProperty.all(EdgeInsets.zero),
             minimumSize: WidgetStateProperty.all(const Size(30, 30)),
             side: WidgetStateProperty.all(
-              const BorderSide(color: Colors.blueGrey, width: 0.5),
+              BorderSide(
+                color: Theme.of(context).colorScheme.outlineVariant,
+                width: 0.5,
+              ),
             ),
             shape: WidgetStateProperty.all(
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(7.0)),
             ),
             backgroundColor: WidgetStateProperty.all(
               isRead
-                  ? Colors.blue.withValues(alpha: 0.7)
-                  : Theme.of(context).colorScheme.primary,
+                  ? AppTheme.sucesso
+                  : Theme.of(context).colorScheme.primaryContainer,
             ),
             foregroundColor: WidgetStateProperty.all(
-              Theme.of(context).colorScheme.secondary,
+              isRead
+                  ? Colors.white
+                  : Theme.of(context).colorScheme.onPrimaryContainer,
             ),
           ),
           child: Text(

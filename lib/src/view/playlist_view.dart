@@ -3,7 +3,6 @@
 /// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
 library;
 
-
 import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -14,6 +13,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../model/music.dart';
 import '../controllers/music_controller.dart';
+import '../utils/theme.dart';
 
 class PlaylistView extends StatefulWidget {
   const PlaylistView({super.key});
@@ -213,33 +213,33 @@ class _PlaylistViewState extends State<PlaylistView> {
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsController>();
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       floatingActionButton: FloatingActionButton(
         onPressed: _pickMusicFile,
         tooltip: 'Adicionar Música',
         backgroundColor: Theme.of(context).colorScheme.primary,
         child: Icon(
-            Icons.library_music,
-            color: Theme.of(context).colorScheme.secondary,
+          Icons.library_music,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
       ),
       body: AnimatedBuilder(
-          animation: _musicController,
-          builder: (context, _) {
-            if (_musicController.loading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            final musics = _musicController.musics;
-            if (musics.isEmpty) {
-              return Center(
-                  child: Column(
+        animation: _musicController,
+        builder: (context, _) {
+          if (_musicController.loading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final musics = _musicController.musics;
+          if (musics.isEmpty) {
+            return Center(
+                child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   'Vazio',
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.secondary,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: settings.fontSize,
                   ),
                 ),
@@ -252,107 +252,114 @@ class _PlaylistViewState extends State<PlaylistView> {
                   child: Text(
                     "Adicionar áudio",
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontSize: settings.fontSize,
                     ),
                   ),
                 ),
               ],
             ));
-            }
-            return ListView.builder(
-              itemCount: musics.length,
-              itemBuilder: (context, index) {
-                final music = musics[index];
-                final isPlaying = _isPlaying && _currentPlayingIndex == index;
-                return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  color: isPlaying ? Colors.green[50] : Colors.white,
-                  elevation: isPlaying ? 6 : 2,
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4),
-                    child: Column(
-                      children: [
-                        ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: Colors.green[200],
-                            child: Icon(
-                              isPlaying ? Icons.music_note : Icons.library_music,
-                              color: Colors.white,
-                            ),
-                          ),
-                          title: Text(
-                            music.title,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color:
-                                  isPlaying ? Colors.green[800] : Colors.black87,
-                            ),
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: Icon(
-                                    isPlaying ? Icons.pause : Icons.play_arrow,
-                                    color: Colors.green[800]),
-                                onPressed: () =>
-                                    _playMusic(music.filePath, index),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.delete,
-                                    color: Colors.redAccent),
-                                onPressed: () => _removeMusic(index),
-                              ),
-                            ],
+          }
+          return ListView.builder(
+            itemCount: musics.length,
+            itemBuilder: (context, index) {
+              final music = musics[index];
+              final isPlaying = _isPlaying && _currentPlayingIndex == index;
+              return Card(
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                color: isPlaying
+                    ? Theme.of(context).colorScheme.primaryContainer
+                    : Theme.of(context).colorScheme.surface,
+                elevation: isPlaying ? 6 : 2,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4),
+                  child: Column(
+                    children: [
+                      ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: AppTheme.sucesso,
+                          child: Icon(
+                            isPlaying ? Icons.music_note : Icons.library_music,
+                            color: Colors.white,
                           ),
                         ),
-                        if (isPlaying)
-                          Column(
-                            children: [
-                              Slider(
-                                value: _currentPosition.inSeconds.toDouble(),
-                                min: 0,
-                                max: _musicDuration.inSeconds.toDouble() > 0
-                                    ? _musicDuration.inSeconds.toDouble()
-                                    : 1,
-                                onChanged: (value) async {
-                                  await player
-                                      .seek(Duration(seconds: value.toInt()));
-                                },
-                                activeColor: Colors.green,
-                                inactiveColor: Colors.green[100],
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      _formatDuration(_currentPosition),
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-                                    Text(
-                                      _formatDuration(_musicDuration),
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
+                        title: Text(
+                          music.title,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: isPlaying
+                                ? AppTheme.sucesso
+                                : Theme.of(context).colorScheme.onSurface,
                           ),
-                      ],
-                    ),
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                  isPlaying ? Icons.pause : Icons.play_arrow,
+                                  color: AppTheme.sucesso),
+                              onPressed: () =>
+                                  _playMusic(music.filePath, index),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.delete,
+                                color: Theme.of(context).colorScheme.error,
+                              ),
+                              onPressed: () => _removeMusic(index),
+                            ),
+                          ],
+                        ),
+                      ),
+                      if (isPlaying)
+                        Column(
+                          children: [
+                            Slider(
+                              value: _currentPosition.inSeconds.toDouble(),
+                              min: 0,
+                              max: _musicDuration.inSeconds.toDouble() > 0
+                                  ? _musicDuration.inSeconds.toDouble()
+                                  : 1,
+                              onChanged: (value) async {
+                                await player
+                                    .seek(Duration(seconds: value.toInt()));
+                              },
+                              activeColor:
+                                  Theme.of(context).colorScheme.primary,
+                              inactiveColor: Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer,
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    _formatDuration(_currentPosition),
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                  Text(
+                                    _formatDuration(_musicDuration),
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                    ],
                   ),
-                );
-              },
-            );
-          },
-        ),
-
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

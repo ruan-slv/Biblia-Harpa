@@ -33,12 +33,12 @@ class BottomBar extends StatelessWidget {
           color: colorScheme.surface,
           border: Border(
             top: BorderSide(
-              color: colorScheme.secondary.withValues(alpha: 0.08),
+              color: colorScheme.outlineVariant.withValues(alpha: 0.45),
             ),
           ),
           boxShadow: [
             BoxShadow(
-              color: colorScheme.secondary.withValues(alpha: 0.06),
+              color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 18,
               offset: const Offset(0, -6),
             ),
@@ -61,8 +61,8 @@ class BottomBar extends StatelessWidget {
                     label: Text(previousLabel),
                     style: FilledButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      backgroundColor: colorScheme.primary,
-                      foregroundColor: colorScheme.secondary,
+                      backgroundColor: colorScheme.primaryContainer,
+                      foregroundColor: colorScheme.onPrimaryContainer,
                     ),
                   ),
                 ),
@@ -74,8 +74,8 @@ class BottomBar extends StatelessWidget {
                     icon: const Icon(Icons.chevron_right_rounded),
                     style: FilledButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      backgroundColor: colorScheme.secondary,
-                      foregroundColor: colorScheme.primary,
+                      backgroundColor: colorScheme.primary,
+                      foregroundColor: colorScheme.onPrimary,
                     ),
                   ),
                 ),

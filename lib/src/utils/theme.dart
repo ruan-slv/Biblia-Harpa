@@ -5,140 +5,146 @@ library;
 
 import 'package:flutter/material.dart';
 
-const _lightPrimary = Color(0xFFF4E8D5);
-const _lightSecondary = Color(0xFF3E2E22);
-const _lightBackground = Color(0xFFFCF8F2);
-const _lightSurface = Color(0xFFFFFCF7);
-const _lightAccent = Color(0xFF9C6B3F);
+abstract final class AppTheme {
+  static const corPrimaria = Color(0xFF00BFA6);
+  static const corSecundaria = Color(0xFF7C6BFF);
+  static const corVermelha = Color(0xFFFF6B6B);
+  static const corDourada = Color(0xFFF5B93F);
+  static const sucesso = Color(0xFF22C55E);
+  static const informacao = Color(0xFF0EA5E9);
+  static const erroSnackBar = Color(0xFFEF4444);
 
-const _darkPrimary = Color(0xFF1F2630);
-const _darkSecondary = Color(0xFFF6E8D2);
-const _darkBackground = Color(0xFF11161D);
-const _darkSurface = Color(0xFF19212B);
-const _darkAccent = Color(0xFFD6A56A);
+  static const gradienteMarca = [
+    corPrimaria,
+    corSecundaria,
+  ];
 
-ThemeData _buildTheme({
-  required Brightness brightness,
-  required Color primary,
-  required Color secondary,
-  required Color background,
-  required Color surface,
-  required Color accent,
-}) {
-  final colorScheme = ColorScheme(
+  static const gradienteHero = [
+    Color(0xFF008F7E),
+    Color(0xFF5B4BD6),
+  ];
+
+  static Color superficie(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFF141B23)
+          : const Color(0xFFFFFFFF);
+
+  static Color superficieSuave(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFF1A232D)
+          : const Color(0xFFF7F9FC);
+
+  static Color borda(BuildContext context) =>
+      Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5);
+
+  static Color textoSuave(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFFBEC9C5)
+          : const Color(0xFF3F4946);
+}
+
+ThemeData _buildTheme(Brightness brightness) {
+  final isDark = brightness == Brightness.dark;
+  final colorScheme = ColorScheme.fromSeed(
+    seedColor: AppTheme.corPrimaria,
     brightness: brightness,
-    primary: primary,
-    onPrimary: secondary,
-    secondary: accent,
-    onSecondary: brightness == Brightness.dark
-        ? const Color(0xFF1A120B)
-        : Colors.white,
-    error: const Color(0xFFB3261E),
-    onError: Colors.white,
-    surface: surface,
-    onSurface: secondary,
   );
+  final surface = isDark ? const Color(0xFF141B23) : const Color(0xFFFFFFFF);
+  final softSurface =
+      isDark ? const Color(0xFF1A232D) : const Color(0xFFF7F9FC);
+  final border = colorScheme.outlineVariant.withValues(alpha: 0.5);
+  final baseTextTheme = isDark
+      ? Typography.material2021(colorScheme: colorScheme).white
+      : Typography.material2021(colorScheme: colorScheme).black;
 
   return ThemeData(
     useMaterial3: true,
     brightness: brightness,
     colorScheme: colorScheme,
-    scaffoldBackgroundColor: background,
-    canvasColor: background,
-    cardColor: primary,
-    dividerColor: accent.withValues(alpha:0.18),
+    scaffoldBackgroundColor:
+        isDark ? const Color(0xFF0B0F14) : const Color(0xFFF3F6FA),
+    canvasColor: surface,
+    cardColor: surface,
+    dividerColor: border,
     appBarTheme: AppBarTheme(
-      backgroundColor: surface,
-      foregroundColor: secondary,
+      backgroundColor: Colors.transparent,
+      foregroundColor: colorScheme.onSurface,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       centerTitle: false,
       titleTextStyle: TextStyle(
-        color: secondary,
+        color: colorScheme.onSurface,
         fontSize: 20,
         fontWeight: FontWeight.w700,
       ),
-      iconTheme: IconThemeData(color: accent),
+      iconTheme: IconThemeData(color: colorScheme.primary),
     ),
     cardTheme: CardThemeData(
-      color: primary,
-      elevation: 2,
-      shadowColor: Colors.black.withValues(alpha:brightness == Brightness.dark ? 0.3 : 0.08),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      color: surface,
+      elevation: isDark ? 0 : 1,
+      shadowColor: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: border),
+      ),
       margin: EdgeInsets.zero,
+    ),
+    dialogTheme: DialogThemeData(
+      backgroundColor: surface,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+        side: BorderSide(color: border),
+      ),
+    ),
+    bottomSheetTheme: BottomSheetThemeData(
+      backgroundColor: surface,
+      surfaceTintColor: Colors.transparent,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: surface,
-        foregroundColor: secondary,
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
         elevation: 0,
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
     ),
-    iconTheme: IconThemeData(color: accent),
-    switchTheme: SwitchThemeData(
-      thumbColor: WidgetStateProperty.resolveWith(
-        (states) => states.contains(WidgetState.selected) ? accent : primary,
-      ),
-      trackColor: WidgetStateProperty.resolveWith(
-        (states) => states.contains(WidgetState.selected)
-            ? accent.withValues(alpha:0.35)
-            : secondary.withValues(alpha:0.18),
-      ),
-    ),
-    sliderTheme: SliderThemeData(
-      activeTrackColor: accent,
-      inactiveTrackColor: accent.withValues(alpha:0.22),
-      thumbColor: accent,
-      overlayColor: accent.withValues(alpha:0.14),
-    ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: surface,
-      hintStyle: TextStyle(color: secondary.withValues(alpha:0.55)),
+      hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: BorderSide(color: accent.withValues(alpha:0.12)),
+        borderSide: BorderSide(color: border),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: BorderSide(color: accent, width: 1.4),
+        borderSide: BorderSide(color: colorScheme.primary, width: 1.6),
       ),
-      border: OutlineInputBorder(
+      errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: BorderSide(color: accent.withValues(alpha:0.12)),
+        borderSide: BorderSide(color: colorScheme.error),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(color: colorScheme.error, width: 1.6),
       ),
     ),
-    textTheme: TextTheme(
-      bodyLarge: TextStyle(color: secondary, height: 1.45),
-      bodyMedium: TextStyle(color: secondary, height: 1.4),
-      titleLarge: TextStyle(
-        color: secondary,
-        fontWeight: FontWeight.w700,
-      ),
-      titleMedium: TextStyle(
-        color: secondary,
-        fontWeight: FontWeight.w600,
-      ),
+    textTheme: baseTextTheme.apply(
+      bodyColor: colorScheme.onSurface,
+      displayColor: colorScheme.onSurface,
+    ),
+    iconTheme: IconThemeData(color: colorScheme.primary),
+    progressIndicatorTheme: ProgressIndicatorThemeData(
+      color: colorScheme.primary,
+      linearTrackColor: softSurface,
     ),
   );
 }
 
-final ThemeData lightMode = _buildTheme(
-  brightness: Brightness.light,
-  primary: _lightPrimary,
-  secondary: _lightSecondary,
-  background: _lightBackground,
-  surface: _lightSurface,
-  accent: _lightAccent,
-);
-
-final ThemeData darkMode = _buildTheme(
-  brightness: Brightness.dark,
-  primary: _darkPrimary,
-  secondary: _darkSecondary,
-  background: _darkBackground,
-  surface: _darkSurface,
-  accent: _darkAccent,
-);
+final ThemeData lightMode = _buildTheme(Brightness.light);
+final ThemeData darkMode = _buildTheme(Brightness.dark);

@@ -8,13 +8,13 @@ import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 
 class ListTileMd extends StatelessWidget {
-
   final String title;
   final String? subTitle;
   final IconData? icon;
   final VoidCallback? onTap;
 
-  const ListTileMd({super.key, required this.title, this.subTitle, this.icon, this.onTap});
+  const ListTileMd(
+      {super.key, required this.title, this.subTitle, this.icon, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -22,19 +22,19 @@ class ListTileMd extends StatelessWidget {
     return ListTile(
       leading: Icon(
         icon,
-        color: Theme.of(context).colorScheme.secondary,
+        color: Theme.of(context).colorScheme.onSurface,
       ),
       title: Text(
         title,
         style: TextStyle(
-          color: Theme.of(context).colorScheme.secondary,
+          color: Theme.of(context).colorScheme.onSurface,
           fontSize: settings.fontSize,
         ),
       ),
       subtitle: Text(
         subTitle ?? "",
         style: TextStyle(
-          color: Theme.of(context).colorScheme.secondary,
+          color: Theme.of(context).colorScheme.onSurface,
           fontSize: settings.fontSize - 2,
         ),
       ),

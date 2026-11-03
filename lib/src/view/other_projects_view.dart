@@ -31,20 +31,21 @@ class OtherProjectsView extends StatelessWidget {
 
   static const List<_OtherProject> _projects = [
     _OtherProject(
-      title: 'Controlldesk Church',
-      description:
-          'Organize a rotina da sua igreja: escalas, avisos, finanças e muito mais em um só lugar.',
-      icon: Icons.church_rounded,
-      envKey: 'CONTROLDESK_CHURCH_URL',
-      fallbackUrl: 'https://ruan-slv.github.io/controlldesk/',
-    ),
-    _OtherProject(
       title: 'Bíblia Lite - sem anúncios',
       description:
-          'Uma Bíblia leve, rápida e sem anúncios para você ler onde estiver.',
+          'Uma versão extra leve do aplicativo Bíblia & Harpa com foco em reduzir funcionalidades para alcançar público com dispositivos antigos.',
       icon: Icons.menu_book_rounded,
       envKey: 'BIBLIA_LITE_URL',
       fallbackUrl: 'https://ruan-slv.github.io/biblia-lite/',
+    ),
+    _OtherProject(
+      title: 'Não Informado',
+      description:
+          'Programa Desktop para o público de utilização do Windows e Linux. Este projeto ainda não será divulgado pois está em desenvolvimento sem previsões de conclusão.',
+      //description: 'Organize a rotina da sua igreja: escalas, avisos, finanças e muito mais em um só lugar.',
+      icon: Icons.church_rounded,
+      envKey: 'CONTROLDESK_CHURCH_URL',
+      fallbackUrl: 'https://ruan-slv.github.io/controlldesk/',
     ),
   ];
 
@@ -56,7 +57,8 @@ class OtherProjectsView extends StatelessWidget {
   Future<void> _open(BuildContext context, _OtherProject project) async {
     final url = _resolveUrl(project);
     try {
-      if (!await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)) {
+      if (!await launchUrl(Uri.parse(url),
+          mode: LaunchMode.externalApplication)) {
         throw Exception('link inválido');
       }
     } catch (e) {
@@ -73,10 +75,8 @@ class OtherProjectsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
         title: 'Outros projetos',
         centerTitle: false,

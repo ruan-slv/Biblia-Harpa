@@ -35,7 +35,7 @@ class _HomeAudioViewState extends State<HomeAudioView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
         automaticallyImplyLeading: true,
         title: "Áudios",

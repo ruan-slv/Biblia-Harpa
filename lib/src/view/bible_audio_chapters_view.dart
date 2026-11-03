@@ -36,7 +36,7 @@ class _AudioBookChaptersView extends StatelessWidget {
     final settings = context.watch<SettingsController>();
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
         title: book.title,
         centerTitle: false,
@@ -58,30 +58,36 @@ class _AudioBookChaptersView extends StatelessWidget {
                 final chapter = viewModel.filteredChapters[index];
                 final originalIndex = book.chapters.indexOf(chapter);
                 final isCurrent = viewModel.currentIndex == originalIndex;
-                final isDownloading = viewModel.isDownloading[originalIndex] == true;
-                final isDownloaded = viewModel.downloadedChapters.contains(originalIndex);
+                final isDownloading =
+                    viewModel.isDownloading[originalIndex] == true;
+                final isDownloaded =
+                    viewModel.downloadedChapters.contains(originalIndex);
 
                 return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  color: isCurrent ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.5) : null,
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  color: isCurrent
+                      ? Theme.of(context).colorScheme.primaryContainer
+                      : null,
                   child: Column(
                     children: [
                       ListTile(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 4),
                         leading: IconButton(
                           onPressed: () => viewModel.play(originalIndex),
                           icon: Icon(
                             isCurrent && viewModel.player.playing
                                 ? Icons.pause_circle_filled
                                 : Icons.play_circle_filled,
-                            color: Theme.of(context).colorScheme.secondary,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                         onTap: () => viewModel.play(originalIndex),
                         title: Text(
                           chapter.name,
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontSize: settings.fontSize,
                             fontWeight: isCurrent ? FontWeight.bold : null,
                           ),
@@ -96,7 +102,8 @@ class _AudioBookChaptersView extends StatelessWidget {
                                   : () async {
                                       try {
                                         if (!context.mounted) return;
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
                                           const SnackBar(
                                             content: Text(
                                               'Preparando áudio para compartilhar...',
@@ -104,11 +111,16 @@ class _AudioBookChaptersView extends StatelessWidget {
                                             duration: Duration(seconds: 2),
                                           ),
                                         );
-                                        final path = await viewModel.prepareShareFilePath(originalIndex);
-                                        if (path == null) throw Exception('Sem arquivo');
+                                        final path = await viewModel
+                                            .prepareShareFilePath(
+                                                originalIndex);
+                                        if (path == null) {
+                                          throw Exception('Sem arquivo');
+                                        }
                                         await SharePlus.instance.share(
                                           ShareParams(
-                                            text: 'Ouça este trecho da Bíblia: ${chapter.name} - ${book.title}',
+                                            text:
+                                                'Ouça este trecho da Bíblia: ${chapter.name} - ${book.title}',
                                             files: [
                                               XFile(path),
                                             ],
@@ -116,7 +128,8 @@ class _AudioBookChaptersView extends StatelessWidget {
                                         );
                                       } catch (_) {
                                         if (!context.mounted) return;
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
                                           const SnackBar(
                                             content: Text(
                                               "Não foi possível compartilhar o áudio.",
@@ -127,7 +140,7 @@ class _AudioBookChaptersView extends StatelessWidget {
                                     },
                               icon: Icon(
                                 Icons.share_outlined,
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.onSurface,
                                 size: 20,
                               ),
                             ),
@@ -137,9 +150,11 @@ class _AudioBookChaptersView extends StatelessWidget {
                                 onPressed: kIsWeb
                                     ? null
                                     : () async {
-                                        final ok = await viewModel.delete(originalIndex);
+                                        final ok = await viewModel
+                                            .delete(originalIndex);
                                         if (!context.mounted) return;
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
                                           SnackBar(
                                             content: Text(
                                               ok
@@ -151,7 +166,8 @@ class _AudioBookChaptersView extends StatelessWidget {
                                       },
                                 icon: Icon(
                                   Icons.delete_outline,
-                                  color: Theme.of(context).colorScheme.secondary,
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
                                   size: 20,
                                 ),
                               )
@@ -161,9 +177,11 @@ class _AudioBookChaptersView extends StatelessWidget {
                                 onPressed: kIsWeb || isDownloading
                                     ? null
                                     : () async {
-                                        final ok = await viewModel.download(originalIndex);
+                                        final ok = await viewModel
+                                            .download(originalIndex);
                                         if (!context.mounted) return;
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
                                           SnackBar(
                                             content: Text(
                                               ok
@@ -179,12 +197,16 @@ class _AudioBookChaptersView extends StatelessWidget {
                                         height: 18,
                                         child: CircularProgressIndicator(
                                           strokeWidth: 2,
-                                          color: Theme.of(context).colorScheme.secondary,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
                                         ),
                                       )
                                     : Icon(
                                         Icons.download_outlined,
-                                        color: Theme.of(context).colorScheme.secondary,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
                                         size: 20,
                                       ),
                               ),
@@ -197,43 +219,81 @@ class _AudioBookChaptersView extends StatelessWidget {
                           child: Column(
                             children: [
                               Slider(
-                                value: viewModel.currentPosition.inSeconds.toDouble(),
-                                max: viewModel.audioDuration.inSeconds > 0 ? viewModel.audioDuration.inSeconds.toDouble() : 1.0,
-                                onChanged: (value) => viewModel.player.seek(Duration(seconds: value.toInt())),
-                                activeColor: Theme.of(context).colorScheme.secondary,
+                                value: viewModel.currentPosition.inSeconds
+                                    .toDouble(),
+                                max: viewModel.audioDuration.inSeconds > 0
+                                    ? viewModel.audioDuration.inSeconds
+                                        .toDouble()
+                                    : 1.0,
+                                onChanged: (value) => viewModel.player
+                                    .seek(Duration(seconds: value.toInt())),
+                                activeColor:
+                                    Theme.of(context).colorScheme.onSurface,
                               ),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    viewModel.formatDuration(viewModel.currentPosition),
-                                    style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12),
+                                    viewModel.formatDuration(
+                                        viewModel.currentPosition),
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                        fontSize: 12),
                                   ),
                                   Row(
                                     children: [
                                       IconButton(
                                         icon: const Icon(Icons.replay_10),
-                                        color: Theme.of(context).colorScheme.secondary,
-                                        onPressed: () => viewModel.player.seek(Duration(seconds: viewModel.currentPosition.inSeconds - 10)),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                        onPressed: () => viewModel.player.seek(
+                                            Duration(
+                                                seconds: viewModel
+                                                        .currentPosition
+                                                        .inSeconds -
+                                                    10)),
                                       ),
                                       IconButton(
                                         icon: Icon(
-                                          viewModel.player.playing ? Icons.pause_circle_filled : Icons.play_circle_filled,
+                                          viewModel.player.playing
+                                              ? Icons.pause_circle_filled
+                                              : Icons.play_circle_filled,
                                         ),
                                         iconSize: 40,
-                                        color: Theme.of(context).colorScheme.secondary,
-                                        onPressed: () => viewModel.player.playing ? viewModel.player.pause() : viewModel.player.play(),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                        onPressed: () =>
+                                            viewModel.player.playing
+                                                ? viewModel.player.pause()
+                                                : viewModel.player.play(),
                                       ),
                                       IconButton(
                                         icon: const Icon(Icons.forward_10),
-                                        color: Theme.of(context).colorScheme.secondary,
-                                        onPressed: () => viewModel.player.seek(Duration(seconds: viewModel.currentPosition.inSeconds + 10)),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                        onPressed: () => viewModel.player.seek(
+                                            Duration(
+                                                seconds: viewModel
+                                                        .currentPosition
+                                                        .inSeconds +
+                                                    10)),
                                       ),
                                     ],
                                   ),
                                   Text(
-                                    viewModel.formatDuration(viewModel.audioDuration),
-                                    style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12),
+                                    viewModel.formatDuration(
+                                        viewModel.audioDuration),
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                        fontSize: 12),
                                   ),
                                 ],
                               ),

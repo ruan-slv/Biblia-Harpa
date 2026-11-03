@@ -4,6 +4,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:biblia_e_harpa/src/utils/theme.dart';
 
 class ActionInfoCard extends StatelessWidget {
   const ActionInfoCard({
@@ -28,11 +29,7 @@ class ActionInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final colors = gradientColors ??
-        [
-          colorScheme.secondary,
-          colorScheme.secondary.withValues(alpha:0.82),
-        ];
+    final colors = gradientColors ?? AppTheme.gradienteMarca;
 
     return Material(
       color: Colors.transparent,
@@ -41,11 +38,12 @@ class ActionInfoCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(28),
         child: Ink(
           decoration: BoxDecoration(
-            color: colorScheme.primary,
+            color: AppTheme.superficie(context),
+            border: Border.all(color: AppTheme.borda(context)),
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
-                color: colorScheme.secondary.withValues(alpha:0.08),
+                color: Colors.black.withValues(alpha: 0.06),
                 blurRadius: 18,
                 offset: const Offset(0, 8),
               ),
@@ -71,7 +69,8 @@ class ActionInfoCard extends StatelessWidget {
                     ),
                     borderRadius: BorderRadius.circular(18),
                   ),
-                  child: Icon(icon, color: Colors.white, size: compact ? 24 : 28),
+                  child:
+                      Icon(icon, color: Colors.white, size: compact ? 24 : 28),
                 ),
                 SizedBox(height: compact ? 14 : 18),
                 Text(
@@ -80,7 +79,7 @@ class ActionInfoCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: compact ? 18 : 20,
                     fontWeight: FontWeight.w700,
-                    color: colorScheme.secondary,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 if (description.isNotEmpty) ...[
@@ -90,7 +89,7 @@ class ActionInfoCard extends StatelessWidget {
                     textAlign:
                         centerContent ? TextAlign.center : TextAlign.start,
                     style: TextStyle(
-                      color: colorScheme.secondary.withValues(alpha:0.8),
+                      color: colorScheme.onSurfaceVariant,
                       height: 1.45,
                     ),
                   ),
