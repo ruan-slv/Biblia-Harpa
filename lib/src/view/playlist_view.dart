@@ -3,6 +3,8 @@
 /// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
 library;
 
+import 'dart:async';
+
 import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -14,6 +16,7 @@ import 'package:path_provider/path_provider.dart';
 import '../model/music.dart';
 import '../controllers/music_controller.dart';
 import '../utils/theme.dart';
+import '../services/app_audio_handler.dart';
 
 class PlaylistView extends StatefulWidget {
   const PlaylistView({super.key});
@@ -24,7 +27,7 @@ class PlaylistView extends StatefulWidget {
 
 class _PlaylistViewState extends State<PlaylistView> {
   final MusicController _musicController = MusicController();
-  final AudioPlayer player = AudioPlayer();
+  AudioPlayer get player => sharedAudioPlayer;
   bool _isPlaying = false;
   int? _currentPlayingIndex;
   DirectoryWatcher? _watcher;
@@ -32,40 +35,75 @@ class _PlaylistViewState extends State<PlaylistView> {
   Duration _currentPosition = Duration.zero;
   Duration _musicDuration = Duration.zero;
 
+  final List<StreamSubscription<dynamic>> _subscriptions =
+      <StreamSubscription<dynamic>>[];
+  AppAudioHandler? _handler;
+
   @override
   void initState() {
     super.initState();
     _startDirectoryMonitoring();
 
-    player.playerStateStream.listen((state) {
-      if (state.processingState == ProcessingState.completed) {
-        _playNextMusic();
-      }
-    });
+    _subscriptions.add(
+      player.positionStream.listen((position) {
+        if (mounted) {
+          setState(() {
+            _currentPosition = position;
+          });
+        }
+      }),
+    );
 
-    player.positionStream.listen((position) {
-      setState(() {
-        _currentPosition = position;
-      });
-    });
+    _subscriptions.add(
+      player.durationStream.listen((duration) {
+        if (mounted) {
+          setState(() {
+            _musicDuration = duration ?? Duration.zero;
+          });
+        }
+      }),
+    );
 
-    player.durationStream.listen((duration) {
-      setState(() {
-        _musicDuration = duration ?? Duration.zero;
-      });
-    });
-
-    player.playingStream.listen((isPlaying) {
-      setState(() {
-        _isPlaying = isPlaying;
-      });
-    });
+    _subscriptions.add(
+      player.playingStream.listen((isPlaying) {
+        if (mounted) {
+          setState(() {
+            _isPlaying = isPlaying;
+          });
+        }
+      }),
+    );
   }
 
   @override
   void dispose() {
-    player.dispose();
+    _handler?.currentTrack.removeListener(_syncFromHandler);
+    for (final subscription in _subscriptions) {
+      subscription.cancel();
+    }
     super.dispose();
+  }
+
+  void _attachHandler(AppAudioHandler handler) {
+    if (identical(_handler, handler)) return;
+    _handler?.currentTrack.removeListener(_syncFromHandler);
+    _handler = handler;
+    handler.currentTrack.addListener(_syncFromHandler);
+  }
+
+  /// Reflete o avanço automático/notificação na lista de músicas.
+  void _syncFromHandler() {
+    if (!mounted) return;
+    final track = _handler?.currentTrack.value;
+    if (track == null || track.extras['source'] != 'playlist') return;
+    final index = int.tryParse(track.extras['index'] ?? '');
+    if (index == null) return;
+    if (_currentPlayingIndex == index) return;
+    setState(() {
+      _currentPlayingIndex = index;
+      _currentPosition = Duration.zero;
+      _musicDuration = Duration.zero;
+    });
   }
 
   Future<void> _startDirectoryMonitoring() async {
@@ -105,19 +143,58 @@ class _PlaylistViewState extends State<PlaylistView> {
     }
   }
 
-  void _playMusic(String path, int index) async {
+  Future<void> _playMusic(String path, int index) async {
     try {
-      if (_currentPlayingIndex == index) {
+      final activeHandler = activeAudioHandler;
+      final current = activeHandler?.currentTrack.value;
+      // Sem o serviço de mídia (fallback), usa o índice local.
+      final isCurrent = current != null
+          ? current.extras['source'] == 'playlist' &&
+              current.extras['index'] == '$index'
+          : _currentPlayingIndex == index;
+
+      if (isCurrent) {
         if (player.playing) {
           await player.pause();
         } else {
           await player.play();
         }
+        return;
+      }
+
+      setState(() {
+        _currentPlayingIndex = index;
+        _currentPosition = Duration.zero;
+      });
+
+      final tracks = <AppAudioTrack>[];
+      final musics = _musicController.musics;
+      for (var i = 0; i < musics.length; i++) {
+        final music = musics[i];
+        tracks.add(
+          AppAudioTrack(
+            id: 'playlist:$i:${music.filePath}',
+            title: music.title,
+            artist: 'Outros',
+            remoteUri: Uri.file(music.filePath),
+            localPath: music.filePath,
+            extras: <String, String>{
+              'source': 'playlist',
+              'index': '$i',
+            },
+          ),
+        );
+      }
+
+      final handler = await ensureAudioHandler();
+      if (handler != null) {
+        _attachHandler(handler);
+        await handler.playTracks(
+          tracks: tracks,
+          index: index,
+          continuous: true,
+        );
       } else {
-        setState(() {
-          _currentPlayingIndex = index;
-          _currentPosition = Duration.zero;
-        });
         await player.setFilePath(path);
         await player.play();
       }
@@ -130,13 +207,6 @@ class _PlaylistViewState extends State<PlaylistView> {
         );
       }
     }
-  }
-
-  void _playNextMusic() async {
-    final musics = _musicController.musics;
-    if (_currentPlayingIndex == null || musics.isEmpty) return;
-    final nextIndex = (_currentPlayingIndex! + 1) % musics.length;
-    _playMusic(musics[nextIndex].filePath, nextIndex);
   }
 
   Future<void> _pickMusicFile() async {
@@ -180,7 +250,12 @@ class _PlaylistViewState extends State<PlaylistView> {
         );
       }
       if (_currentPlayingIndex == index) {
-        await player.stop();
+        final handler = activeAudioHandler;
+        if (handler != null) {
+          await handler.stop();
+        } else {
+          await player.stop();
+        }
         setState(() {
           _isPlaying = false;
           _currentPlayingIndex = null;

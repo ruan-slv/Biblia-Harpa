@@ -235,6 +235,27 @@ class _SettingsContent extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   AppSectionCard(
+                    icon: Icons.repeat_rounded,
+                    title: "Reprodução contínua",
+                    subtitle:
+                        "Ao terminar um hino da Harpa, passa automaticamente para o próximo, sem parar.",
+                    child: SwitchListTile(
+                      contentPadding: EdgeInsets.zero,
+                      value: viewModel.continuousPlayback,
+                      onChanged: viewModel.setContinuousPlayback,
+                      title: Text(
+                        viewModel.continuousPlayback
+                            ? "Modo sem parar ativado"
+                            : "Modo sem parar desativado",
+                        style: TextStyle(
+                          color: colorScheme.onSurface,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  AppSectionCard(
                     icon: Icons.share_outlined,
                     title: "Compartilhar app",
                     subtitle:

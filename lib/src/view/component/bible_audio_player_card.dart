@@ -11,10 +11,19 @@ class BibleAudioPlayerCard extends StatelessWidget {
   final AudioPlayer audioPlayer;
   final BibleAudioChapter? currentAudioChapter;
 
+  /// Carrega e reproduz o capítulo atual no player global. Quando ausente,
+  /// o cartão apenas retoma a reprodução do player compartilhado.
+  final Future<void> Function()? onPlay;
+
+  /// Para a reprodução e libera a fila do player global.
+  final Future<void> Function()? onStop;
+
   const BibleAudioPlayerCard({
     super.key,
     required this.audioPlayer,
     required this.currentAudioChapter,
+    this.onPlay,
+    this.onStop,
   });
 
   @override
@@ -85,9 +94,13 @@ class BibleAudioPlayerCard extends StatelessWidget {
                       color: Theme.of(context).colorScheme.onSurface,
                       onPressed: () async {
                         try {
-                          (playing ?? false)
-                              ? await audioPlayer.pause()
-                              : await audioPlayer.play();
+                          if (playing ?? false) {
+                            await audioPlayer.pause();
+                          } else if (onPlay != null) {
+                            await onPlay!();
+                          } else {
+                            await audioPlayer.play();
+                          }
                         } catch (_) {
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -106,9 +119,13 @@ class BibleAudioPlayerCard extends StatelessWidget {
                       icon: const Icon(Icons.stop_circle_outlined),
                       iconSize: 40.0,
                       color: Theme.of(context).colorScheme.onSurface,
-                      onPressed: () {
-                        audioPlayer.stop();
-                        audioPlayer.seek(Duration.zero);
+                      onPressed: () async {
+                        if (onStop != null) {
+                          await onStop!();
+                        } else {
+                          await audioPlayer.stop();
+                          await audioPlayer.seek(Duration.zero);
+                        }
                       },
                     ),
                   ],

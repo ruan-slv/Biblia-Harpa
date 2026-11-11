@@ -3,6 +3,7 @@
 /// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
 library;
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -18,6 +19,8 @@ import 'package:share_plus/share_plus.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'component/app_bar_component.dart';
+import '../utils/theme.dart';
+import '../services/app_audio_handler.dart';
 
 class HarpAudioView extends StatefulWidget {
   final bool isOffline;
@@ -32,7 +35,7 @@ class HarpAudioView extends StatefulWidget {
 }
 
 class _HarpAudioViewState extends State<HarpAudioView> {
-  final AudioPlayer _player = AudioPlayer();
+  AudioPlayer get _player => sharedAudioPlayer;
   List<DataAudioModel> _allHarpas = [];
   List<DataAudioModel> _filtrarHarpa = [];
   final TextEditingController _searchController = TextEditingController();
@@ -45,27 +48,71 @@ class _HarpAudioViewState extends State<HarpAudioView> {
   bool _isDownloading = false;
   final Set<int> _downloadedIndices = {};
 
+  final List<StreamSubscription<dynamic>> _subscriptions =
+      <StreamSubscription<dynamic>>[];
+  AppAudioHandler? _handler;
+  String? _audioDirPath;
+
   @override
   void initState() {
     super.initState();
     _fetchAudioHarpa();
     _searchController.addListener(_filtrarAudioHarpa);
 
-    _player.positionStream.listen((p) => setState(() => _currentPosition = p));
-    _player.durationStream
-        .listen((d) => setState(() => _audioDuration = d ?? Duration.zero));
-    _player.playerStateStream.listen((state) {
-      if (state.processingState == ProcessingState.completed) _playNext();
-      setState(() {});
-    });
+    _subscriptions.add(
+      _player.positionStream.listen((p) {
+        if (mounted) setState(() => _currentPosition = p);
+      }),
+    );
+    _subscriptions.add(
+      _player.durationStream.listen((d) {
+        if (mounted) setState(() => _audioDuration = d ?? Duration.zero);
+      }),
+    );
+    _subscriptions.add(
+      _player.playerStateStream.listen((_) {
+        if (mounted) setState(() {});
+      }),
+    );
   }
 
   @override
   void dispose() {
     _searchController.removeListener(_filtrarAudioHarpa);
     _searchController.dispose();
-    _player.dispose();
+    _handler?.currentTrack.removeListener(_syncFromHandler);
+    for (final subscription in _subscriptions) {
+      subscription.cancel();
+    }
     super.dispose();
+  }
+
+  void _attachHandler(AppAudioHandler handler) {
+    if (identical(_handler, handler)) return;
+    _handler?.currentTrack.removeListener(_syncFromHandler);
+    _handler = handler;
+    handler.currentTrack.addListener(_syncFromHandler);
+  }
+
+  /// Mantém a lista alinhada quando o avanço acontece pela notificação/fones
+  /// ou pelo modo contínuo do player global.
+  void _syncFromHandler() {
+    if (!mounted) return;
+    final track = _handler?.currentTrack.value;
+    if (track == null || track.extras['source'] != 'harp-audio') return;
+    // Procura pelo título para continuar correto mesmo com a busca filtrando
+    // a lista depois que a fila foi montada.
+    final byTitle =
+        _filtrarHarpa.indexWhere((hino) => hino.titulo == track.title);
+    final index =
+        byTitle >= 0 ? byTitle : int.tryParse(track.extras['index'] ?? '');
+    if (index == null || index < 0 || index >= _filtrarHarpa.length) return;
+    if (_currentIndex == index) return;
+    setState(() {
+      _currentIndex = index;
+      _currentPosition = Duration.zero;
+      _audioDuration = Duration.zero;
+    });
   }
 
   String _normalize(String input) {
@@ -80,22 +127,48 @@ class _HarpAudioViewState extends State<HarpAudioView> {
   }
 
   void _filtrarAudioHarpa() {
+    // Guarda o hino em reprodução para reencontrá-lo na lista filtrada.
+    final playingHino = (_currentIndex != null &&
+            _currentIndex! >= 0 &&
+            _currentIndex! < _filtrarHarpa.length)
+        ? _filtrarHarpa[_currentIndex!]
+        : null;
     final query = _searchController.text;
     setState(() {
       _filtrarHarpa = _allHarpas
           .where(
               (audio) => _normalize(audio.titulo).contains(_normalize(query)))
           .toList();
+      if (playingHino == null) return;
+      final newIndex = _filtrarHarpa.indexOf(playingHino);
+      _currentIndex = newIndex < 0 ? null : newIndex;
     });
   }
 
-  Future<String> _getLocalFilePath(String hinoTitle) async {
+  Future<String> _getAudioDir() async {
+    if (_audioDirPath != null) return _audioDirPath!;
     final directory = await getApplicationDocumentsDirectory();
     final audioDir = Directory('${directory.path}/harpa_audios');
     if (!await audioDir.exists()) await audioDir.create(recursive: true);
-    final safeName =
-        hinoTitle.replaceAll(RegExp(r'[^\w\s]+'), '').replaceAll(' ', '_');
-    return '${audioDir.path}/$safeName.mp3';
+    return _audioDirPath = audioDir.path;
+  }
+
+  String _safeHinoName(String hinoTitle) =>
+      hinoTitle.replaceAll(RegExp(r'[^\w\s]+'), '').replaceAll(' ', '_');
+
+  Future<String> _getLocalFilePath(String hinoTitle) async {
+    final audioDir = await _getAudioDir();
+    return '$audioDir/${_safeHinoName(hinoTitle)}.mp3';
+  }
+
+  String _playableUrl(String url) {
+    if (url.contains("drive.google.com")) {
+      final id = RegExp(r"/d/([^/]+)/").firstMatch(url)?.group(1);
+      if (id != null) {
+        return "https://drive.google.com/uc?export=download&id=$id&confirm=t";
+      }
+    }
+    return url;
   }
 
   Future<void> _fetchAudioHarpa() async {
@@ -136,7 +209,7 @@ class _HarpAudioViewState extends State<HarpAudioView> {
   }
 
   Future<void> _loadAndPlay(int index) async {
-    final hino = _filtrarHarpa[index];
+    if (index < 0 || index >= _filtrarHarpa.length) return;
     setState(() {
       _currentIndex = index;
       _currentPosition = Duration.zero;
@@ -144,26 +217,59 @@ class _HarpAudioViewState extends State<HarpAudioView> {
     });
 
     try {
-      final path = await _getLocalFilePath(hino.titulo);
-      if (await File(path).exists()) {
-        await _player.setAudioSource(AudioSource.file(path));
-      } else {
+      final audioDir = await _getAudioDir();
+      String localPathFor(String titulo) =>
+          '$audioDir/${_safeHinoName(titulo)}.mp3';
+
+      // A fila inteira é entregue ao player global: assim a notificação, os
+      // fones e o modo contínuo conseguem avançar mesmo com a tela apagada.
+      final tracks = <AppAudioTrack>[];
+      for (var i = 0; i < _filtrarHarpa.length; i++) {
+        final item = _filtrarHarpa[i];
+        tracks.add(
+          AppAudioTrack(
+            id: 'harp-audio:$i:${item.titulo}',
+            title: item.titulo,
+            artist: 'Harpa Cristã',
+            remoteUri: Uri.parse(_playableUrl(item.hinoURL)),
+            localPath: localPathFor(item.titulo),
+            extras: <String, String>{
+              'source': 'harp-audio',
+              'index': '$i',
+            },
+          ),
+        );
+      }
+
+      final localPath = tracks[index].localPath;
+      final hasLocal = localPath != null && await File(localPath).exists();
+
+      if (!hasLocal) {
         final connectivity = await Connectivity().checkConnectivity();
         if (connectivity.contains(ConnectivityResult.none)) {
           throw Exception("Sem internet");
         }
-
-        String url = hino.hinoURL;
-        if (url.contains("drive.google.com")) {
-          final id = RegExp(r"/d/([^/]+)/").firstMatch(url)?.group(1);
-          if (id != null) {
-            url =
-                "https://drive.google.com/uc?export=download&id=$id&confirm=t";
-          }
-        }
-        await _player.setAudioSource(AudioSource.uri(Uri.parse(url)));
       }
-      await _player.play();
+
+      final handler = await ensureAudioHandler();
+      if (handler != null) {
+        _attachHandler(handler);
+        await handler.playTracks(
+          tracks: tracks,
+          index: index,
+          continuous: true,
+        );
+      } else {
+        // Fallback quando o serviço de mídia não está disponível.
+        if (hasLocal) {
+          await _player.setAudioSource(AudioSource.file(localPath));
+        } else {
+          await _player.setAudioSource(
+            AudioSource.uri(tracks[index].remoteUri),
+          );
+        }
+        await _player.play();
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -172,10 +278,59 @@ class _HarpAudioViewState extends State<HarpAudioView> {
     }
   }
 
-  void _playNext() {
-    if (_currentIndex != null && _currentIndex! < _filtrarHarpa.length - 1) {
-      _loadAndPlay(_currentIndex! + 1);
+  Future<void> _playNext() async {
+    final total = _filtrarHarpa.length;
+    if (total == 0 || _currentIndex == null) return;
+
+    if (_currentIndex! >= total - 1) {
+      // Fim da lista: no modo contínuo volta ao primeiro hino.
+      if (!context.read<SettingsController>().continuousPlayback) return;
+      await _loadAndPlay(0);
+      return;
     }
+    await _loadAndPlay(_currentIndex! + 1);
+  }
+
+  Future<void> _playPrevious() async {
+    final total = _filtrarHarpa.length;
+    if (total == 0 || _currentIndex == null) return;
+
+    if (_currentIndex! <= 0) {
+      if (!context.read<SettingsController>().continuousPlayback) return;
+      await _loadAndPlay(total - 1);
+      return;
+    }
+    await _loadAndPlay(_currentIndex! - 1);
+  }
+
+  /// Alterna entre reproduzir e pausar, reiniciando o hino caso ele já tenha
+  /// chegado ao fim.
+  Future<void> _togglePlayPause() async {
+    final index = _currentIndex;
+    // Se outro áudio assumiu o player global, inicia o hino selecionado
+    // (em vez de pausar/retomar o áudio de outra tela).
+    if (index != null &&
+        index >= 0 &&
+        index < _filtrarHarpa.length &&
+        activeAudioHandler != null) {
+      final current = activeAudioHandler!.currentTrack.value;
+      final isThisTrack = current != null &&
+          current.extras['source'] == 'harp-audio' &&
+          current.title == _filtrarHarpa[index].titulo;
+      if (!isThisTrack) {
+        await _loadAndPlay(index);
+        return;
+      }
+    }
+
+    if (_player.playing) {
+      await _player.pause();
+      return;
+    }
+    if (_player.processingState == ProcessingState.completed) {
+      await _player.seek(Duration.zero);
+    }
+    await _player.play();
   }
 
   Future<void> _download(int index) async {
@@ -251,23 +406,44 @@ class _HarpAudioViewState extends State<HarpAudioView> {
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: TextField(
-            controller: _searchController,
-            decoration: InputDecoration(
-              hintText: "Pesquisar hino",
-              hintStyle:
-                  TextStyle(color: Theme.of(context).colorScheme.onSurface),
-              prefixIcon: Icon(Icons.search,
-                  color: Theme.of(context).colorScheme.onSurface),
-              filled: true,
-              fillColor: Theme.of(context).colorScheme.surface,
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                  borderSide: BorderSide.none),
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
-            ),
-            style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: "Pesquisar hino",
+                    hintStyle: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface),
+                    prefixIcon: Icon(Icons.search,
+                        color: Theme.of(context).colorScheme.onSurface),
+                    filled: true,
+                    fillColor: Theme.of(context).colorScheme.surface,
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                        borderSide: BorderSide.none),
+                    contentPadding:
+                        const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+                  ),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                ),
+              ),
+              IconButton(
+                tooltip: settings.continuousPlayback
+                    ? "Reprodução contínua ativada (toque para desativar)"
+                    : "Reprodução contínua desativada (toque para ativar)",
+                onPressed: settings.toggleContinuousPlayback,
+                icon: Icon(
+                  settings.continuousPlayback
+                      ? Icons.repeat_on_rounded
+                      : Icons.repeat_rounded,
+                  color: settings.continuousPlayback
+                      ? AppTheme.sucesso
+                      : Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+            ],
           ),
         ),
         Expanded(
@@ -341,28 +517,66 @@ class _HarpAudioViewState extends State<HarpAudioView> {
                                             .onSurface,
                                         fontSize: 12)),
                                 Row(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     IconButton(
+                                      tooltip: "Hino anterior",
+                                      visualDensity: VisualDensity.compact,
+                                      constraints: const BoxConstraints(
+                                          minWidth: 36, minHeight: 36),
+                                      icon: const Icon(
+                                          Icons.skip_previous_rounded),
+                                      onPressed: _currentIndex == null ||
+                                              (!settings.continuousPlayback &&
+                                                  _currentIndex! <= 0)
+                                          ? null
+                                          : _playPrevious,
+                                    ),
+                                    IconButton(
+                                        tooltip: "Voltar 10s",
+                                        visualDensity: VisualDensity.compact,
+                                        constraints: const BoxConstraints(
+                                            minWidth: 36, minHeight: 36),
                                         icon: const Icon(Icons.replay_10),
                                         onPressed: () => _player.seek(Duration(
                                             seconds:
-                                                _currentPosition.inSeconds -
-                                                    10))),
+                                                (_currentPosition.inSeconds -
+                                                        10)
+                                                    .clamp(0, 1 << 31)))),
                                     IconButton(
+                                      visualDensity: VisualDensity.compact,
+                                      constraints: const BoxConstraints(
+                                          minWidth: 40, minHeight: 40),
                                       icon: Icon(_player.playing
                                           ? Icons.pause_circle_filled
                                           : Icons.play_circle_filled),
-                                      iconSize: 40,
-                                      onPressed: () => _player.playing
-                                          ? _player.pause()
-                                          : _player.play(),
+                                      iconSize: 36,
+                                      onPressed: _togglePlayPause,
                                     ),
                                     IconButton(
+                                        tooltip: "Avançar 10s",
+                                        visualDensity: VisualDensity.compact,
+                                        constraints: const BoxConstraints(
+                                            minWidth: 36, minHeight: 36),
                                         icon: const Icon(Icons.forward_10),
                                         onPressed: () => _player.seek(Duration(
                                             seconds:
-                                                _currentPosition.inSeconds +
-                                                    10))),
+                                                (_currentPosition.inSeconds +
+                                                        10)
+                                                    .clamp(0, 1 << 31)))),
+                                    IconButton(
+                                      tooltip: "Próximo hino",
+                                      visualDensity: VisualDensity.compact,
+                                      constraints: const BoxConstraints(
+                                          minWidth: 36, minHeight: 36),
+                                      icon: const Icon(Icons.skip_next_rounded),
+                                      onPressed: _currentIndex == null ||
+                                              (!settings.continuousPlayback &&
+                                                  _currentIndex! >=
+                                                      _filtrarHarpa.length - 1)
+                                          ? null
+                                          : _playNext,
+                                    ),
                                   ],
                                 ),
                                 Text(_formatDuration(_audioDuration),

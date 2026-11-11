@@ -3,6 +3,7 @@
 /// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
 library;
 
+import 'dart:async';
 import 'dart:io';
 import '../model/bible_audio.dart';
 import 'package:dio/dio.dart';
@@ -10,36 +11,70 @@ import 'package:flutter/foundation.dart' show ChangeNotifier, kIsWeb;
 import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
 import 'package:path_provider/path_provider.dart';
+import '../services/app_audio_handler.dart';
 
 class BibleAudioChaptersController extends ChangeNotifier {
   final BibleAudioBook book;
-  final AudioPlayer player = AudioPlayer();
+  AudioPlayer get player => sharedAudioPlayer;
+
+  final List<StreamSubscription<dynamic>> _subscriptions =
+      <StreamSubscription<dynamic>>[];
+  final Map<int, String> _localPaths = <int, String>{};
+  AppAudioHandler? _handler;
+  bool _disposed = false;
 
   BibleAudioChaptersController({required this.book}) {
     _filteredChapters = book.chapters;
     _checkDownloadedChapters();
 
-    player.playerStateStream.listen((state) {
-      _isBuffering = state.processingState == ProcessingState.buffering ||
-          state.processingState == ProcessingState.loading;
-      notifyListeners();
+    _subscriptions.add(
+      player.playerStateStream.listen((state) {
+        if (_disposed) return;
+        _isBuffering = state.processingState == ProcessingState.buffering ||
+            state.processingState == ProcessingState.loading;
+        notifyListeners();
+      }),
+    );
 
-      if (state.processingState == ProcessingState.completed) {
-        playNext();
-      }
-    });
+    _subscriptions.add(
+      player.positionStream.listen((position) {
+        if (_disposed) return;
+        _currentPosition = position;
+        notifyListeners();
+      }),
+    );
 
-    player.positionStream.listen((position) {
-      _currentPosition = position;
-      notifyListeners();
-    });
-
-    player.durationStream.listen((duration) {
-      _audioDuration = duration ?? Duration.zero;
-      notifyListeners();
-    });
+    _subscriptions.add(
+      player.durationStream.listen((duration) {
+        if (_disposed) return;
+        _audioDuration = duration ?? Duration.zero;
+        notifyListeners();
+      }),
+    );
 
     player.setVolume(_volume);
+  }
+
+  void _attachHandler(AppAudioHandler handler) {
+    if (identical(_handler, handler)) return;
+    _handler?.currentTrack.removeListener(_syncFromHandler);
+    _handler = handler;
+    handler.currentTrack.addListener(_syncFromHandler);
+  }
+
+  /// Reflete o avanço automático (modo contínuo/notificação) no capítulo atual.
+  void _syncFromHandler() {
+    if (_disposed) return;
+    final track = _handler?.currentTrack.value;
+    if (track == null || track.extras['source'] != 'bible-audio') return;
+    if (track.extras['book'] != book.title) return;
+    final index = int.tryParse(track.extras['index'] ?? '');
+    if (index == null || index < 0 || index >= book.chapters.length) return;
+    if (_currentIndex == index) return;
+    _currentIndex = index;
+    _currentPosition = Duration.zero;
+    _audioDuration = Duration.zero;
+    notifyListeners();
   }
 
   bool _isBuffering = false;
@@ -95,10 +130,12 @@ class BibleAudioChaptersController extends ChangeNotifier {
     for (int i = 0; i < book.chapters.length; i++) {
       final path = await getLocalFilePath(book.chapters[i].name);
       if (path.isEmpty) continue;
+      _localPaths[i] = path;
       if (await File(path).exists()) {
         _downloadedChapters.add(i);
       }
     }
+    if (_disposed) return;
     notifyListeners();
   }
 
@@ -110,9 +147,19 @@ class BibleAudioChaptersController extends ChangeNotifier {
   }
 
   Future<void> play(int indexInFullList) async {
-    final chapter = book.chapters[indexInFullList];
+    if (indexInFullList < 0 || indexInFullList >= book.chapters.length) return;
     try {
-      if (_currentIndex == indexInFullList) {
+      final active = activeAudioHandler;
+      final current = active?.currentTrack.value;
+      // Só alterna play/pause quando este capítulo é o que está no player
+      // global; caso outro áudio tenha assumido, inicia o capítulo.
+      final isCurrent = current != null
+          ? current.extras['source'] == 'bible-audio' &&
+              current.extras['book'] == book.title &&
+              current.extras['index'] == '$indexInFullList'
+          : _currentIndex == indexInFullList;
+
+      if (isCurrent) {
         if (player.playing) {
           await player.pause();
         } else {
@@ -127,33 +174,71 @@ class BibleAudioChaptersController extends ChangeNotifier {
       _isBuffering = true;
       notifyListeners();
 
-      bool usedLocal = false;
-      try {
-        final localPath = await getLocalFilePath(chapter.name);
-        if (localPath.isNotEmpty) {
-          final file = File(localPath);
-          if (await file.exists()) {
-            await player.setAudioSource(
-              AudioSource.file(localPath),
-              preload: true,
-            );
-            usedLocal = true;
-          }
-        }
-      } catch (_) {}
+      final tracks = await _buildTracks();
+      final handler = await ensureAudioHandler();
 
+      if (handler != null) {
+        _attachHandler(handler);
+        await handler.playTracks(
+          tracks: tracks,
+          index: indexInFullList,
+          continuous: true,
+        );
+        return;
+      }
+
+      // Fallback quando o serviço de mídia não está disponível.
+      final chapter = book.chapters[indexInFullList];
+      final localPath = _localPaths[indexInFullList];
+      var usedLocal = false;
+      if (localPath != null && localPath.isNotEmpty) {
+        if (await File(localPath).exists()) {
+          await player.setAudioSource(
+            AudioSource.file(localPath),
+            preload: true,
+          );
+          usedLocal = true;
+        }
+      }
       if (!usedLocal) {
         await player.setAudioSource(
           AudioSource.uri(Uri.parse(chapter.url)),
           preload: true,
         );
       }
-
       await player.play();
     } catch (_) {
       _isBuffering = false;
-      notifyListeners();
+      if (!_disposed) notifyListeners();
     }
+  }
+
+  /// Monta a fila completa de capítulos do livro para o player global.
+  Future<List<AppAudioTrack>> _buildTracks() async {
+    final tracks = <AppAudioTrack>[];
+    for (var i = 0; i < book.chapters.length; i++) {
+      final chapter = book.chapters[i];
+      var localPath = _localPaths[i];
+      if (localPath == null || localPath.isEmpty) {
+        localPath = await getLocalFilePath(chapter.name);
+        _localPaths[i] = localPath;
+      }
+      tracks.add(
+        AppAudioTrack(
+          id: 'bible-audio:$i:${chapter.name}',
+          title: '${book.title} — ${chapter.name}',
+          artist: 'Bíblia em áudio',
+          remoteUri: Uri.parse(chapter.url),
+          localPath: localPath.isEmpty ? null : localPath,
+          extras: <String, String>{
+            'source': 'bible-audio',
+            'book': book.title,
+            'index': '$i',
+          },
+        ),
+      );
+    }
+    return tracks;
   }
 
   void playNext() {
@@ -240,7 +325,12 @@ class BibleAudioChaptersController extends ChangeNotifier {
 
   @override
   void dispose() {
-    player.dispose();
+    _disposed = true;
+    _handler?.currentTrack.removeListener(_syncFromHandler);
+    for (final subscription in _subscriptions) {
+      subscription.cancel();
+    }
+    _subscriptions.clear();
     super.dispose();
   }
 }

@@ -16,8 +16,14 @@ class HarpAudioWrapper extends StatefulWidget {
   State<HarpAudioWrapper> createState() => _HarpAudioWrapperState();
 }
 
-class _HarpAudioWrapperState extends State<HarpAudioWrapper> {
+class _HarpAudioWrapperState extends State<HarpAudioWrapper>
+    with AutomaticKeepAliveClientMixin<HarpAudioWrapper> {
   late final Future<List<ConnectivityResult>> _connectivityFuture;
+
+  /// Mantém o player vivo ao alternar entre as abas de áudio, evitando que a
+  /// reprodução seja interrompida.
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -27,6 +33,7 @@ class _HarpAudioWrapperState extends State<HarpAudioWrapper> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: FutureBuilder<List<ConnectivityResult>>(

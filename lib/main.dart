@@ -1,9 +1,10 @@
 import 'dart:async';
 
-import 'package:audio_service/audio_service.dart';
+import 'package:biblia_e_harpa/src/services/app_audio_handler.dart';
 import 'package:biblia_e_harpa/src/database/app_database.dart';
 import 'package:biblia_e_harpa/src/utils/theme.dart';
 import 'package:biblia_e_harpa/src/view/home_view.dart';
+import 'package:biblia_e_harpa/src/view/component/mini_player.dart';
 import 'package:biblia_e_harpa/src/view/component/started_access_on.dart';
 import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
 import 'package:biblia_e_harpa/src/controllers/bible_providers_controller.dart';
@@ -14,8 +15,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:just_audio_media_kit/just_audio_media_kit.dart';
 import 'package:provider/provider.dart';
 import 'package:upgrader/upgrader.dart';
-
-late final AudioHandler audioHandler;
 
 /// Controlador de preferências (tema/tamanho de fonte).
 ///
@@ -42,7 +41,8 @@ Future<void> _warmUp() async {
 
   if (!kIsWeb) {
     // Mantém o app apenas em retrato.
-    tasks.add(SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]));
+    tasks.add(
+        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]));
   }
 
   await Future.wait(tasks);
@@ -50,6 +50,10 @@ Future<void> _warmUp() async {
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // O modo contínuo do player global acompanha a preferência do usuário.
+  AppAudioHandler.continuousResolver =
+      () => settingsController.continuousPlayback;
 
   // Inicialização do player de áudio. Em Android/iOS é um no-op síncrono
   // (o just_audio usa o player nativo); só registra o MediaKit em desktop.
@@ -69,6 +73,10 @@ void main() {
       child: const MyApp(),
     ),
   );
+
+  // Registra a sessão de áudio depois do runApp para preservar o primeiro
+  // frame. O handler é aguardado pelas telas via `ensureAudioHandler()`.
+  unawaited(ensureAudioHandler());
 }
 
 class MyApp extends StatelessWidget {
@@ -81,10 +89,19 @@ class MyApp extends StatelessWidget {
       builder: (context, settings, _) {
         return MaterialApp(
           title: 'Bíblia e Harpa',
+          navigatorKey: appNavigatorKey,
           theme: lightMode,
           darkTheme: darkMode,
           themeMode: settings.themeMode,
           debugShowCheckedModeBanner: false,
+          builder: (context, child) {
+            return Column(
+              children: [
+                Expanded(child: child ?? const SizedBox.shrink()),
+                const MiniPlayer(),
+              ],
+            );
+          },
           home: UpgradeAlert(
             upgrader: Upgrader(
               debugLogging: false,

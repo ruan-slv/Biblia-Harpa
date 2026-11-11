@@ -538,12 +538,15 @@ class _TextBibleViewState extends State<_TextBibleView> {
                 ),
               ),
             ),
-            SliverToBoxAdapter(
-              child: BibleAudioPlayerCard(
-                audioPlayer: viewModel.audioPlayer,
-                currentAudioChapter: viewModel.currentAudioChapter,
+            if (viewModel.currentAudioChapter != null)
+              SliverToBoxAdapter(
+                child: BibleAudioPlayerCard(
+                  audioPlayer: viewModel.audioPlayer,
+                  currentAudioChapter: viewModel.currentAudioChapter,
+                  onPlay: viewModel.playCurrentChapterAudio,
+                  onStop: viewModel.stopChapterAudio,
+                ),
               ),
-            ),
             if (viewModel.noFilterResults)
               SliverToBoxAdapter(
                 child: Padding(

@@ -3,6 +3,7 @@
 /// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
 library;
 
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'component/app_bar_component.dart';
@@ -12,6 +13,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:biblia_e_harpa/src/utils/theme.dart';
+import '../services/app_audio_handler.dart';
 
 class HarpFileView extends StatefulWidget {
   final List<DataAudioModel> allHymns;
@@ -28,7 +30,7 @@ class HarpFileView extends StatefulWidget {
 }
 
 class _HarpFileViewState extends State<HarpFileView> {
-  final AudioPlayer _player = AudioPlayer();
+  AudioPlayer get _player => sharedAudioPlayer;
 
   late int _currentIndex;
   late DataAudioModel _currentHymn;
@@ -40,6 +42,11 @@ class _HarpFileViewState extends State<HarpFileView> {
   bool _isDownloading = false;
   bool _isDownloaded = false;
 
+  final List<StreamSubscription<dynamic>> _subscriptions =
+      <StreamSubscription<dynamic>>[];
+  AppAudioHandler? _handler;
+  String? _audioDirPath;
+
   @override
   void initState() {
     super.initState();
@@ -47,23 +54,26 @@ class _HarpFileViewState extends State<HarpFileView> {
     _currentIndex = widget.initialIndex;
     _currentHymn = widget.allHymns[_currentIndex];
 
-    _player.playerStateStream.listen((state) {
-      if (!mounted) return;
-      setState(() {
-        _playerState = state;
-      });
-      if (state.processingState == ProcessingState.completed) {
-        _playNext();
-      }
-    });
+    _subscriptions.add(
+      _player.playerStateStream.listen((state) {
+        if (!mounted) return;
+        setState(() {
+          _playerState = state;
+        });
+      }),
+    );
 
-    _player.positionStream.listen((p) {
-      if (mounted) setState(() => _currentPosition = p);
-    });
+    _subscriptions.add(
+      _player.positionStream.listen((p) {
+        if (mounted) setState(() => _currentPosition = p);
+      }),
+    );
 
-    _player.durationStream.listen((d) {
-      if (mounted) setState(() => _audioDuration = d ?? Duration.zero);
-    });
+    _subscriptions.add(
+      _player.durationStream.listen((d) {
+        if (mounted) setState(() => _audioDuration = d ?? Duration.zero);
+      }),
+    );
 
     _checkIfDownloaded();
     _loadAndPlayAudio();
@@ -71,19 +81,61 @@ class _HarpFileViewState extends State<HarpFileView> {
 
   @override
   void dispose() {
-    _player.dispose();
+    _handler?.currentTrack.removeListener(_syncFromHandler);
+    for (final subscription in _subscriptions) {
+      subscription.cancel();
+    }
     super.dispose();
   }
 
-  Future<String> _getLocalFilePath(String fileName) async {
+  void _attachHandler(AppAudioHandler handler) {
+    if (identical(_handler, handler)) return;
+    _handler?.currentTrack.removeListener(_syncFromHandler);
+    _handler = handler;
+    handler.currentTrack.addListener(_syncFromHandler);
+  }
+
+  void _syncFromHandler() {
+    if (!mounted) return;
+    final track = _handler?.currentTrack.value;
+    if (track == null || track.extras['source'] != 'harp-file') return;
+    final index = int.tryParse(track.extras['index'] ?? '');
+    if (index == null || index < 0 || index >= widget.allHymns.length) return;
+    if (index == _currentIndex) return;
+    setState(() {
+      _currentIndex = index;
+      _currentHymn = widget.allHymns[index];
+      _currentPosition = Duration.zero;
+      _audioDuration = Duration.zero;
+    });
+    _checkIfDownloaded();
+  }
+
+  Future<String> _getAudioDir() async {
+    if (_audioDirPath != null) return _audioDirPath!;
     final directory = await getApplicationDocumentsDirectory();
     final audioDir = Directory('${directory.path}/harpa_audios');
-    if (!await audioDir.exists()) {
-      await audioDir.create(recursive: true);
+    if (!await audioDir.exists()) await audioDir.create(recursive: true);
+    return _audioDirPath = audioDir.path;
+  }
+
+  String _safeFileName(String fileName) =>
+      fileName.replaceAll(RegExp(r'[^\w\s]+'), '').replaceAll(' ', '_');
+
+  Future<String> _getLocalFilePath(String fileName) async {
+    final audioDir = await _getAudioDir();
+    return '$audioDir/${_safeFileName(fileName)}.mp3';
+  }
+
+  String _playableUrl(String url) {
+    if (url.contains("drive.google.com")) {
+      final idMatch = RegExp(r"/d/([^/]+)/").firstMatch(url);
+      if (idMatch != null) {
+        final id = idMatch.group(1);
+        return "https://drive.google.com/uc?export=download&id=$id&confirm=t";
+      }
     }
-    final safeName =
-        fileName.replaceAll(RegExp(r'[^\w\s]+'), '').replaceAll(' ', '_');
-    return '${audioDir.path}/$safeName.mp3';
+    return url;
   }
 
   Future<void> _checkIfDownloaded() async {
@@ -159,74 +211,103 @@ class _HarpFileViewState extends State<HarpFileView> {
     } catch (_) {}
   }
 
-  Future<void> _loadAndPlayAudio() async {
+  Future<void> _loadAndPlayAudio({bool allowDownloadFallback = true}) async {
     try {
       setState(() {
         _currentPosition = Duration.zero;
         _audioDuration = Duration.zero;
       });
 
-      final connectivity = await Connectivity().checkConnectivity();
-      final hasInternet = !connectivity.contains(ConnectivityResult.none);
+      final audioDir = await _getAudioDir();
+      final tracks = <AppAudioTrack>[];
+      for (var i = 0; i < widget.allHymns.length; i++) {
+        final hymn = widget.allHymns[i];
+        tracks.add(
+          AppAudioTrack(
+            id: 'harp-file:$i:${hymn.titulo}',
+            title: hymn.titulo,
+            artist: 'Harpa Cristã',
+            remoteUri: Uri.parse(_playableUrl(hymn.hinoURL)),
+            localPath: '$audioDir/${_safeFileName(hymn.titulo)}.mp3',
+            headers: const <String, String>{
+              'User-Agent':
+                  'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36',
+            },
+            extras: <String, String>{
+              'source': 'harp-file',
+              'index': '$i',
+            },
+          ),
+        );
+      }
 
-      final path = await _getLocalFilePath(_currentHymn.titulo);
-      final localFile = File(path);
-      final hasLocal = await localFile.exists();
-
-      if (!hasInternet) {
-        if (hasLocal) {
-          await _player.setAudioSource(AudioSource.file(path));
-          await _player.play();
-          return;
-        } else {
+      final localPath = tracks[_currentIndex].localPath;
+      final hasLocal = localPath != null && await File(localPath).exists();
+      if (!hasLocal) {
+        final connectivity = await Connectivity().checkConnectivity();
+        if (connectivity.contains(ConnectivityResult.none)) {
           throw Exception("Sem internet e sem arquivo offline.");
         }
       }
-      String url = _currentHymn.hinoURL;
 
-      if (url.contains("drive.google.com")) {
-        final idMatch = RegExp(r"/d/([^/]+)/").firstMatch(url);
-        if (idMatch != null) {
-          final id = idMatch.group(1);
-          url = "https://drive.google.com/uc?export=download&id=$id&confirm=t";
-        }
+      final handler = await ensureAudioHandler();
+      if (handler != null) {
+        _attachHandler(handler);
+        await handler.playTracks(
+          tracks: tracks,
+          index: _currentIndex,
+          continuous: true,
+        );
+        return;
       }
 
-      final onlineSource = AudioSource.uri(
-        Uri.parse(url),
-        headers: {
-          'User-Agent':
-              'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36'
-        },
-      );
-
-      await _player.setAudioSource(onlineSource);
+      if (hasLocal) {
+        await _player.setAudioSource(AudioSource.file(localPath));
+      } else {
+        await _player.setAudioSource(
+          AudioSource.uri(
+            tracks[_currentIndex].remoteUri,
+            headers: tracks[_currentIndex].headers,
+          ),
+        );
+      }
       await _player.play();
-      return;
-    } catch (e) {
-      try {
-        final dio = Dio();
-        dio.options.headers = {
-          'User-Agent':
-              'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36',
-        };
-
-        final savePath = await _getLocalFilePath(_currentHymn.titulo);
-        await dio.download(_currentHymn.hinoURL, savePath);
-
-        await _player.setAudioSource(AudioSource.file(savePath));
-        await _player.play();
-
-        setState(() => _isDownloaded = true);
-      } catch (_) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Erro ao reproduzir o áudio online e offline."),
-            ),
-          );
+    } catch (_) {
+      // Mesmo fallback de antes: baixa o hino e toca do arquivo local quando
+      // a reprodução online falha.
+      if (allowDownloadFallback) {
+        final downloaded = await _downloadCurrentForPlayback();
+        if (downloaded) {
+          await _loadAndPlayAudio(allowDownloadFallback: false);
+          return;
         }
       }
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Erro ao reproduzir o áudio online e offline."),
+          ),
+        );
+      }
+    }
+  }
+
+  /// Baixa o hino atual para o armazenamento do aparelho (fallback offline).
+  Future<bool> _downloadCurrentForPlayback() async {
+    try {
+      final savePath = await _getLocalFilePath(_currentHymn.titulo);
+      final dio = Dio();
+      dio.options.headers = const <String, String>{
+        'User-Agent':
+            'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36',
+      };
+      await dio.download(_playableUrl(_currentHymn.hinoURL), savePath);
+      if (mounted) {
+        setState(() => _isDownloaded = true);
+      }
+      return true;
+    } catch (_) {
+      return false;
     }
   }
 

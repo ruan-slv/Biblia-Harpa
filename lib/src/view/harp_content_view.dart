@@ -3,16 +3,20 @@
 /// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
 library;
 
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:biblia_e_harpa/src/model/data_audio_model.dart';
 import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
 import 'package:biblia_e_harpa/src/controllers/continue_reading_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'component/app_bar_component.dart';
 import 'component/bottombar.dart';
+import '../services/app_audio_handler.dart';
 
 class HarpTextModel {
   final String hino;
@@ -36,11 +40,16 @@ class HarpContentView extends StatefulWidget {
     required this.harp,
     this.audioUrl,
     this.audioHymns = const [],
+    this.autoPlay = false,
   });
 
   final String harp;
   final String? audioUrl;
   final List<DataAudioModel> audioHymns;
+
+  /// Inicia a reprodução automaticamente ao abrir (usado quando o modo
+  /// contínuo avança para o próximo hino).
+  final bool autoPlay;
 
   @override
   State<HarpContentView> createState() => _HarpContentViewState();
@@ -48,22 +57,105 @@ class HarpContentView extends StatefulWidget {
 
 class _HarpContentViewState extends State<HarpContentView> {
   static const continueReadingController = ContinueReadingController();
-  final AudioPlayer _audioPlayer = AudioPlayer();
+  AudioPlayer get _audioPlayer => sharedAudioPlayer;
   bool _isLoadingAudio = false;
   late final Future<List<HarpTextModel>> _textsFuture;
+  AppAudioHandler? _handler;
+  bool _isNavigating = false;
+  String? _audioDirPath;
+
+  List<HarpTextModel> _hymns = const [];
+
+  /// Fila do hino atual, guardada para poder iniciar a reprodução sob demanda
+  /// sem interromper outro áudio apenas por abrir o texto do hino.
+  List<AppAudioTrack>? _queueTracks;
+  int _queueIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _textsFuture = loadTexts();
+    _textsFuture.then((hymns) {
+      if (!mounted) return;
+      setState(() {
+        _hymns = hymns;
+      });
+    });
+
     continueReadingController.saveHarp(hymn: widget.harp);
+    unawaited(_bindHandler());
     _loadAudio();
   }
 
   @override
   void dispose() {
-    _audioPlayer.dispose();
+    _handler?.currentTrack.removeListener(_onTrackChanged);
     super.dispose();
+  }
+
+  Future<void> _bindHandler() async {
+    final handler = await ensureAudioHandler();
+    if (!mounted) return;
+    _attachHandler(handler);
+  }
+
+  void _attachHandler(AppAudioHandler? handler) {
+    if (handler == null || identical(_handler, handler)) return;
+    _handler?.currentTrack.removeListener(_onTrackChanged);
+    _handler = handler;
+    handler.currentTrack.addListener(_onTrackChanged);
+  }
+
+  /// Acompanha o avanço automático feito pelo player global e mostra o texto
+  /// do hino que está tocando quando esta tela está visível.
+  void _onTrackChanged() {
+    if (!mounted || _isNavigating) return;
+    final track = _handler?.currentTrack.value;
+    if (track == null) return;
+    if (track.extras['source'] != 'harp-content') return;
+    if (_sameHymn(track.title, widget.harp)) return;
+    if (ModalRoute.of(context)?.isCurrent != true) return;
+
+    final hymn = _hymnByTitle(track.title);
+    if (hymn == null) return;
+
+    _isNavigating = true;
+    Future.microtask(() {
+      if (!mounted) return;
+      _openHymn(hymn);
+    });
+  }
+
+  Future<String> _getAudioDir() async {
+    if (_audioDirPath != null) return _audioDirPath!;
+    // Mantém o mesmo diretório usado pela aba Harpa para reaproveitar os
+    // arquivos baixados (modo offline).
+    final docs = await getApplicationDocumentsDirectory();
+    final audioDir = Directory('${docs.path}/harpa_audios');
+    if (!await audioDir.exists()) await audioDir.create(recursive: true);
+    return _audioDirPath = audioDir.path;
+  }
+
+  String _safeFileName(String hinoTitle) =>
+      hinoTitle.replaceAll(RegExp(r'[^\w\s]+'), '').replaceAll(' ', '_');
+
+  List<DataAudioModel> _playableHymns() {
+    final list = widget.audioHymns
+        .where((audio) => audio.hinoURL.trim().isNotEmpty)
+        .toList();
+
+    final hasCurrent =
+        list.any((audio) => _sameHymn(audio.titulo, widget.harp));
+    if (!hasCurrent && widget.audioUrl != null && widget.audioUrl!.isNotEmpty) {
+      list.add(
+        DataAudioModel(titulo: widget.harp, hinoURL: widget.audioUrl!),
+      );
+    }
+
+    list.sort(
+      (a, b) => _hymnNumber(a.titulo).compareTo(_hymnNumber(b.titulo)),
+    );
+    return list;
   }
 
   Future<void> _loadAudio() async {
@@ -83,18 +175,125 @@ class _HarpContentViewState extends State<HarpContentView> {
     }
 
     try {
-      await _audioPlayer.setUrl(widget.audioUrl!);
-      if (mounted) {
-        setState(() {
-          _isLoadingAudio = false;
-        });
+      final hymns = _playableHymns();
+      var index =
+          hymns.indexWhere((audio) => _sameHymn(audio.titulo, widget.harp));
+      if (index < 0) {
+        hymns.add(
+          DataAudioModel(titulo: widget.harp, hinoURL: widget.audioUrl!),
+        );
+        index = hymns.length - 1;
+      }
+
+      final audioDir = await _getAudioDir();
+      final tracks = hymns
+          .map(
+            (audio) => AppAudioTrack(
+              id: 'harp-content:${_hymnNumber(audio.titulo)}:${audio.titulo}',
+              title: audio.titulo,
+              artist: 'Harpa Cristã',
+              remoteUri: Uri.parse(audio.hinoURL),
+              localPath: '$audioDir/${_safeFileName(audio.titulo)}.mp3',
+              extras: const <String, String>{'source': 'harp-content'},
+            ),
+          )
+          .toList();
+
+      final handler = await ensureAudioHandler();
+      if (handler != null) {
+        _attachHandler(handler);
+        _queueTracks = tracks;
+        _queueIndex = index;
+
+        final current = handler.currentTrack.value;
+        final isThisTrack = current != null &&
+            current.extras['source'] == 'harp-content' &&
+            _sameHymn(current.title, widget.harp);
+        // Não interrompe outro áudio (Harpa/Outros) só por abrir o texto do
+        // hino: a fila é iniciada quando o usuário toca em play.
+        final playingOther =
+            current != null && sharedAudioPlayer.playing && !isThisTrack;
+
+        if (!isThisTrack && !playingOther) {
+          await handler.playTracks(
+            tracks: tracks,
+            index: index,
+            continuous: true,
+            autoPlay: widget.autoPlay,
+          );
+        }
+      } else {
+        await _audioPlayer.setUrl(widget.audioUrl!);
+        if (widget.autoPlay) {
+          await _audioPlayer.play();
+        }
       }
     } catch (e) {
+      // Mantém a tela funcional mesmo quando o áudio não pode ser carregado.
+    } finally {
       if (mounted) {
         setState(() {
           _isLoadingAudio = false;
         });
       }
+    }
+  }
+
+  bool _sameHymn(String a, String b) {
+    final numberA = _hymnNumber(a);
+    final numberB = _hymnNumber(b);
+    if (numberA > 0 && numberB > 0) return numberA == numberB;
+    return a.toLowerCase().trim() == b.toLowerCase().trim();
+  }
+
+  HarpTextModel? _hymnByTitle(String title) {
+    for (final hymn in _hymns) {
+      if (_sameHymn(hymn.hino, title)) return hymn;
+    }
+    return null;
+  }
+
+  /// Alterna entre reproduzir e pausar, reiniciando o hino caso ele já tenha
+  /// chegado ao fim.
+  Future<void> _togglePlayPause() async {
+    try {
+      final handler = activeAudioHandler;
+      if (handler != null) {
+        final current = handler.currentTrack.value;
+        final isThisTrack = current != null &&
+            current.extras['source'] == 'harp-content' &&
+            _sameHymn(current.title, widget.harp);
+        final tracks = _queueTracks;
+        if (!isThisTrack && tracks != null && tracks.isNotEmpty) {
+          // Outra música/hino estava no player: inicia este hino (fila
+          // completa, para o modo contínuo continuar funcionando).
+          await handler.playTracks(
+            tracks: tracks,
+            index: _queueIndex,
+            continuous: true,
+          );
+          return;
+        }
+      }
+
+      if (_audioPlayer.playing) {
+        await _audioPlayer.pause();
+        return;
+      }
+      if (_audioPlayer.processingState == ProcessingState.completed) {
+        await _audioPlayer.seek(Duration.zero);
+      }
+      await _audioPlayer.play();
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Não foi possível reproduzir o áudio. Verifique se há fones ou caixas de som conectados.',
+          ),
+          duration: Duration(seconds: 3),
+        ),
+      );
     }
   }
 
@@ -128,13 +327,15 @@ class _HarpContentViewState extends State<HarpContentView> {
     return null;
   }
 
-  void _openHymn(HarpTextModel hymn) {
+  void _openHymn(HarpTextModel hymn, {bool autoPlay = false}) {
+    _isNavigating = true;
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (_) => HarpContentView(
           harp: hymn.hino,
           audioUrl: _audioUrlFor(hymn),
           audioHymns: widget.audioHymns,
+          autoPlay: autoPlay,
         ),
       ),
     );
@@ -157,6 +358,7 @@ class _HarpContentViewState extends State<HarpContentView> {
   }
 
   Widget _buildAudioPlayer() {
+    final settings = context.watch<SettingsController>();
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       color: Theme.of(context).colorScheme.surface,
@@ -202,24 +404,7 @@ class _HarpContentViewState extends State<HarpContentView> {
                                 : Icons.play_circle_filled),
                             iconSize: 40.0,
                             color: Theme.of(context).colorScheme.onSurface,
-                            onPressed: () async {
-                              try {
-                                (playing ?? false)
-                                    ? await _audioPlayer.pause()
-                                    : await _audioPlayer.play();
-                              } catch (_) {
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Não foi possível reproduzir o áudio. Verifique se há fones ou caixas de som conectados.',
-                                      ),
-                                      duration: Duration(seconds: 3),
-                                    ),
-                                  );
-                                }
-                              }
-                            },
+                            onPressed: _togglePlayPause,
                           ),
                           IconButton(
                             icon: const Icon(Icons.stop_circle_outlined),
@@ -229,6 +414,21 @@ class _HarpContentViewState extends State<HarpContentView> {
                               _audioPlayer.stop();
                               _audioPlayer.seek(Duration.zero);
                             },
+                          ),
+                          IconButton(
+                            tooltip: settings.continuousPlayback
+                                ? "Reprodução contínua ativada (toque para desativar)"
+                                : "Reprodução contínua desativada (toque para ativar)",
+                            icon: Icon(
+                              settings.continuousPlayback
+                                  ? Icons.repeat_on_rounded
+                                  : Icons.repeat_rounded,
+                            ),
+                            iconSize: 30.0,
+                            color: settings.continuousPlayback
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).colorScheme.onSurface,
+                            onPressed: settings.toggleContinuousPlayback,
                           ),
                         ],
                       );
@@ -317,10 +517,12 @@ class _HarpContentViewState extends State<HarpContentView> {
             canGoBack: currentIndex > 0,
             canGoNext: currentIndex >= 0 && currentIndex < hymns.length - 1,
             onPrevious: currentIndex > 0
-                ? () => _openHymn(hymns[currentIndex - 1])
+                ? () => _openHymn(hymns[currentIndex - 1],
+                    autoPlay: _audioPlayer.playing)
                 : null,
             onNext: currentIndex >= 0 && currentIndex < hymns.length - 1
-                ? () => _openHymn(hymns[currentIndex + 1])
+                ? () => _openHymn(hymns[currentIndex + 1],
+                    autoPlay: _audioPlayer.playing)
                 : null,
             previousLabel: 'Hino anterior',
             nextLabel: 'Próximo hino',

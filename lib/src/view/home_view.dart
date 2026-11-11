@@ -6,8 +6,6 @@ library;
 import 'package:biblia_e_harpa/src/view/quiz_view.dart';
 import 'package:biblia_e_harpa/src/view/home_audio_view.dart';
 import 'package:biblia_e_harpa/src/view/settings_view.dart';
-import 'package:biblia_e_harpa/src/controllers/daily_word_controller.dart';
-import 'package:biblia_e_harpa/src/controllers/devotional_of_the_day_controller.dart';
 import 'package:biblia_e_harpa/src/controllers/bible_text_assets_controller.dart';
 import 'package:biblia_e_harpa/src/controllers/bible_list_controller.dart';
 import 'package:biblia_e_harpa/src/controllers/continue_reading_controller.dart';
@@ -16,7 +14,6 @@ import 'package:biblia_e_harpa/src/view/devotional_content_view.dart';
 import 'package:biblia_e_harpa/src/view/harp_content_view.dart';
 import 'package:biblia_e_harpa/src/view/notes_view.dart';
 import 'component/daily_word_card.dart';
-import 'component/devotional_of_the_day_card.dart';
 import 'other_projects_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -37,9 +34,6 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   int currentPageIndex = 0;
 
-  final DailyWordController _dailyWordController = DailyWordController();
-  final DevotionalOfTheDayController _devotionalController =
-      DevotionalOfTheDayController();
   static const _continueReadingController = ContinueReadingController();
 
   Future<void> _resume(ContinueReadingEntry entry) async {
@@ -252,17 +246,6 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        _dailyWordController.loadDailyWord();
-        _devotionalController.load();
-      }
-    });
-  }
-
   ColorScheme colorScheme(BuildContext context) =>
       Theme.of(context).colorScheme;
 
@@ -271,218 +254,186 @@ class _HomeViewState extends State<HomeView> {
     final colorScheme = Theme.of(context).colorScheme;
     final List<Widget> pages = [
       SafeArea(
-        child: ChangeNotifierProvider.value(
-          value: _dailyWordController,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final content = ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: constraints.maxHeight,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Consumer<DailyWordController>(
-                      builder: (context, viewModel, _) {
-                        final currentWord = viewModel.currentWord;
-                        if (currentWord == null) {
-                          return const SizedBox.shrink();
-                        }
-                        return Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
-                          child: DailyWordCard(
-                            word: currentWord,
-                            onNewWord: viewModel.loadDailyWord,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final content = ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(20, 20, 20, 12),
+                    child: DailyWordCard(),
+                  ),
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                    child: buildMenuCard(
+                      context,
+                      title: 'Continuar lendo',
+                      description:
+                          'Retome Devocional, Bíblia, Harpa ou Quiz de onde parou.',
+                      iconData: Icons.read_more_rounded,
+                      gradientColors: gradienteDevocional,
+                      onPressed: _showContinueReading,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Atalhos principais",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: colorScheme.onSurface,
                           ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-                      child: buildMenuCard(
-                        context,
-                        title: 'Continuar lendo',
-                        description:
-                            'Retome Devocional, Bíblia, Harpa ou Quiz de onde parou.',
-                        iconData: Icons.read_more_rounded,
-                        gradientColors: gradienteDevocional,
-                        onPressed: _showContinueReading,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Atalhos principais",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w700,
-                              color: colorScheme.onSurface,
+                        ),
+                        const SizedBox(height: 14),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: buildMenuCard(
+                                context,
+                                title: 'Bíblia',
+                                iconData: Icons.menu_book_rounded,
+                                gradientColors: gradienteBiblia,
+                                onPressed: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          BibleFeature.bibleList()),
+                                ),
+                                compact: true,
+                                centerContent: true,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 14),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: buildMenuCard(
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: buildMenuCard(
+                                context,
+                                title: 'Harpa',
+                                iconData: Icons.music_note_rounded,
+                                gradientColors: gradienteHarpa,
+                                onPressed: () => Navigator.push(
                                   context,
-                                  title: 'Bíblia',
-                                  iconData: Icons.menu_book_rounded,
-                                  gradientColors: gradienteBiblia,
-                                  onPressed: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            BibleFeature.bibleList()),
-                                  ),
-                                  compact: true,
-                                  centerContent: true,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const HarpListView()),
                                 ),
+                                compact: true,
+                                centerContent: true,
                               ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: buildMenuCard(
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: buildMenuCard(
+                                context,
+                                title: 'Devocional',
+                                iconData: Icons.auto_stories_rounded,
+                                gradientColors: gradienteDevocional,
+                                onPressed: () => Navigator.push(
                                   context,
-                                  title: 'Harpa',
-                                  iconData: Icons.music_note_rounded,
-                                  gradientColors: gradienteHarpa,
-                                  onPressed: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const HarpListView()),
-                                  ),
-                                  compact: true,
-                                  centerContent: true,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const DevotionalListView()),
                                 ),
+                                compact: true,
+                                centerContent: true,
                               ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: buildMenuCard(
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: buildMenuCard(
+                                context,
+                                title: 'Áudios',
+                                iconData: Icons.headphones_outlined,
+                                gradientColors: gradienteAudios,
+                                onPressed: () => Navigator.push(
                                   context,
-                                  title: 'Devocional',
-                                  iconData: Icons.auto_stories_rounded,
-                                  gradientColors: gradienteDevocional,
-                                  onPressed: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const DevotionalListView()),
-                                  ),
-                                  compact: true,
-                                  centerContent: true,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const HomeAudioView()),
                                 ),
+                                compact: true,
+                                centerContent: true,
                               ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: buildMenuCard(
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: buildMenuCard(
+                                context,
+                                title: 'Quiz bíblico',
+                                iconData: Icons.quiz_outlined,
+                                gradientColors: gradienteAudios,
+                                onPressed: () => Navigator.push(
                                   context,
-                                  title: 'Áudios',
-                                  iconData: Icons.headphones_outlined,
-                                  gradientColors: gradienteAudios,
-                                  onPressed: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const HomeAudioView()),
-                                  ),
-                                  compact: true,
-                                  centerContent: true,
+                                  MaterialPageRoute(
+                                      builder: (context) => const QuizView()),
                                 ),
+                                compact: true,
+                                centerContent: true,
                               ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: buildMenuCard(
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: buildMenuCard(
+                                context,
+                                title: 'Anotações',
+                                iconData: Icons.edit_note_outlined,
+                                gradientColors: gradienteApoio,
+                                onPressed: () => Navigator.push(
                                   context,
-                                  title: 'Quiz bíblico',
-                                  iconData: Icons.quiz_outlined,
-                                  gradientColors: gradienteAudios,
-                                  onPressed: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const QuizView()),
-                                  ),
-                                  compact: true,
-                                  centerContent: true,
+                                  MaterialPageRoute(
+                                      builder: (context) => const NotesView()),
                                 ),
+                                compact: true,
+                                centerContent: true,
                               ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: buildMenuCard(
-                                  context,
-                                  title: 'Anotações',
-                                  iconData: Icons.edit_note_outlined,
-                                  gradientColors: gradienteApoio,
-                                  onPressed: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const NotesView()),
-                                  ),
-                                  compact: true,
-                                  centerContent: true,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-                      child: buildMenuCard(
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                    child: buildMenuCard(
+                      context,
+                      title: 'Outros projetos',
+                      description:
+                          'Descubra outros projetos em que estamos preparando para você',
+                      iconData: Icons.apps_rounded,
+                      gradientColors: gradienteOutros,
+                      onPressed: () => Navigator.push(
                         context,
-                        title: 'Outros projetos',
-                        description:
-                            'Descubra outros projetos em que estamos preparando para você',
-                        iconData: Icons.apps_rounded,
-                        gradientColors: gradienteOutros,
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const OtherProjectsView(),
-                          ),
+                        MaterialPageRoute(
+                          builder: (context) => const OtherProjectsView(),
                         ),
                       ),
                     ),
-                    ChangeNotifierProvider.value(
-                      value: _devotionalController,
-                      child: Consumer<DevotionalOfTheDayController>(
-                        builder: (context, viewModel, _) {
-                          final currentDevotional = viewModel.current;
-                          if (currentDevotional == null) {
-                            return const SizedBox.shrink();
-                          }
-                          return Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-                            child: DevotionalOfTheDayCard(
-                              devotional: currentDevotional,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              );
-              return SingleChildScrollView(
-                child: content,
-              );
-            },
-          ),
+                  ),
+                ],
+              ),
+            );
+            return SingleChildScrollView(
+              child: content,
+            );
+          },
         ),
       ),
       const SettingsView(),
@@ -534,12 +485,5 @@ class _HomeViewState extends State<HomeView> {
         ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _dailyWordController.dispose();
-    _devotionalController.dispose();
-    super.dispose();
   }
 }
