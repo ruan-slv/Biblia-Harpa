@@ -94,14 +94,6 @@ class MyApp extends StatelessWidget {
           darkTheme: darkMode,
           themeMode: settings.themeMode,
           debugShowCheckedModeBanner: false,
-          builder: (context, child) {
-            return Column(
-              children: [
-                Expanded(child: child ?? const SizedBox.shrink()),
-                const MiniPlayer(),
-              ],
-            );
-          },
           home: UpgradeAlert(
             upgrader: Upgrader(
               debugLogging: false,

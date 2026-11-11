@@ -15,8 +15,13 @@ class NotificationService {
   static const int _notificationId = 1;
   static const String _nextNotificationKey = 'next_reading_notification_time';
 
+  static bool get _isSupportedPlatform =>
+      !kIsWeb &&
+      (defaultTargetPlatform == TargetPlatform.android ||
+          defaultTargetPlatform == TargetPlatform.iOS);
+
   static Future<void> initialize() async {
-    if (_initialized) return;
+    if (_initialized || !_isSupportedPlatform) return;
 
     tz.initializeTimeZones();
     try {
@@ -63,6 +68,7 @@ class NotificationService {
   /// notificação agendada para o futuro, ela é mantida; caso contrário, uma
   /// nova é agendada para 17 horas a partir de agora.
   static Future<void> scheduleReadingNotification() async {
+    if (!_isSupportedPlatform) return;
     try {
       await initialize();
     } catch (e) {

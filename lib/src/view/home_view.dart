@@ -13,6 +13,8 @@ import 'package:biblia_e_harpa/src/view/bible_content_view.dart';
 import 'package:biblia_e_harpa/src/view/devotional_content_view.dart';
 import 'package:biblia_e_harpa/src/view/harp_content_view.dart';
 import 'package:biblia_e_harpa/src/view/notes_view.dart';
+import 'background_tasks_view.dart';
+import 'package:biblia_e_harpa/src/services/app_audio_handler.dart';
 import 'component/daily_word_card.dart';
 import 'other_projects_view.dart';
 import 'package:flutter/material.dart';
@@ -436,13 +438,18 @@ class _HomeViewState extends State<HomeView> {
           },
         ),
       ),
+      const BackgroundTasksView(),
       const SettingsView(),
     ];
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
-        title: "Bíblia e Harpa",
+        title: currentPageIndex == 1
+            ? "Segundo plano"
+            : currentPageIndex == 2
+                ? "Configurações"
+                : "Bíblia e Harpa",
         centerTitle: false,
       ),
       body: pages[currentPageIndex],
@@ -468,6 +475,36 @@ class _HomeViewState extends State<HomeView> {
               color: colorScheme.onSurface,
             ),
             label: "Inicio",
+          ),
+          NavigationDestination(
+            selectedIcon: Icon(
+              Icons.play_circle_rounded,
+              color: colorScheme.brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
+            ),
+            icon: ValueListenableBuilder<AppAudioHandler?>(
+              valueListenable: audioHandlerChanges,
+              builder: (context, handler, _) {
+                final trackNotifier = handler?.currentTrack;
+                return ValueListenableBuilder<AppAudioTrack?>(
+                  valueListenable: trackNotifier ?? ValueNotifier(null),
+                  builder: (context, track, _) {
+                    final icon = Icon(
+                      Icons.play_circle_outline_rounded,
+                      color: colorScheme.onSurface,
+                    );
+                    if (track == null) return icon;
+                    return Badge(
+                      smallSize: 8,
+                      backgroundColor: colorScheme.primary,
+                      child: icon,
+                    );
+                  },
+                );
+              },
+            ),
+            label: "Segundo plano",
           ),
           NavigationDestination(
             selectedIcon: Icon(

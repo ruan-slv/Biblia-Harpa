@@ -1,5 +1,30 @@
 # Tarefas
 
+## ✅ Concluído — Área "Segundo plano" no Bottom Navigation e remoção do card flutuante
+
+* **Demanda:** No `bottomNavigationBar` da tela inicial, criar uma nova área chamada
+  "Segundo plano" para centralizar as execuções de segundo plano (como áudios em
+  reprodução e status de serviços). Mover o card de execução para essa nova área e
+  remover o card flutuante fixado sobre as telas.
+* **Correção aplicada:**
+  * `lib/main.dart` → removeu o `builder` com o card fixo `MiniPlayer`, liberando
+    as telas da sobreposição do card flutuante na parte inferior.
+  * `lib/src/view/background_tasks_view.dart` → nova tela dedicada com:
+    * Card de áudio ativo: título, artista, status de reprodução ("Em reprodução" /
+      "Pausado"), indicador de faixa na fila, slider de progresso interativo com
+      duração e tempo decorrido, controles completos (anterior, -10s, play/pause,
+      +10s, próximo e botão de encerrar áudio), além do switch direto para o
+      modo contínuo ("Tocar sem parar").
+    * Estado vazio quando não houver áudio tocando, com botão de atalho para a
+      tela de áudios.
+    * Card de serviços em segundo plano: status do serviço de áudio persistente,
+      dos lembretes de leitura e do suporte offline.
+  * `lib/src/view/home_view.dart` → `NavigationBar` atualizado com a aba
+    "Segundo plano" entre "Início" e "Configurações", com badge dinâmico no ícone
+    quando houver reprodução ativa e atualização do título da `CustomAppBar`.
+  * `lib/src/services/notification_service.dart` → adicionada checagem
+    `_isSupportedPlatform` para evitar exceção de inicialização no Windows e Web.
+
 ## ✅ Concluído — Palavra do Dia / Devocional do Dia em um único card
 
 * **Demanda:** na tela inicial, o card "Palavra do Dia" ganha um botão que

@@ -120,7 +120,6 @@ class _MiniPlayerBar extends StatelessWidget {
                       )
                     else
                       IconButton(
-                        tooltip: playing ? 'Pausar' : 'Reproduzir',
                         icon: Icon(
                           playing
                               ? Icons.pause_circle_filled
@@ -132,7 +131,6 @@ class _MiniPlayerBar extends StatelessWidget {
                             playing ? handler.pause() : handler.play(),
                       ),
                     IconButton(
-                      tooltip: 'Parar',
                       icon: const Icon(Icons.close_rounded),
                       color: colorScheme.onSurface,
                       onPressed: handler.stop,
