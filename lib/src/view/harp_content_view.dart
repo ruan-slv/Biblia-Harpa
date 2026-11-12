@@ -9,6 +9,7 @@ import 'dart:io';
 import 'package:biblia_e_harpa/src/model/data_audio_model.dart';
 import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
 import 'package:biblia_e_harpa/src/controllers/continue_reading_controller.dart';
+import 'package:biblia_e_harpa/src/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
@@ -287,11 +288,13 @@ class _HarpContentViewState extends State<HarpContentView> {
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
-            'Não foi possível reproduzir o áudio. Verifique se há fones ou caixas de som conectados.',
+            context.l10n.t(
+              'Não foi possível reproduzir o áudio. Verifique se há fones ou caixas de som conectados.',
+            ),
           ),
-          duration: Duration(seconds: 3),
+          duration: const Duration(seconds: 3),
         ),
       );
     }
@@ -417,8 +420,10 @@ class _HarpContentViewState extends State<HarpContentView> {
                           ),
                           IconButton(
                             tooltip: settings.continuousPlayback
-                                ? "Reprodução contínua ativada (toque para desativar)"
-                                : "Reprodução contínua desativada (toque para ativar)",
+                                ? context.l10n.t(
+                                    "Reprodução contínua ativada (toque para desativar)")
+                                : context.l10n.t(
+                                    "Reprodução contínua desativada (toque para ativar)"),
                             icon: Icon(
                               settings.continuousPlayback
                                   ? Icons.repeat_on_rounded
@@ -481,7 +486,7 @@ class _HarpContentViewState extends State<HarpContentView> {
           return _buildScaffold(
             body: Center(
               child: Text(
-                'Erro ao carregar os textos.',
+                context.l10n.t('Erro ao carregar os textos.'),
                 style: TextStyle(color: colorScheme.onSurface),
               ),
             ),
@@ -491,7 +496,7 @@ class _HarpContentViewState extends State<HarpContentView> {
           return _buildScaffold(
             body: Center(
               child: Text(
-                'Nenhum texto encontrado.',
+                context.l10n.t('Nenhum texto encontrado.'),
                 style: TextStyle(color: colorScheme.onSurface),
               ),
             ),
@@ -524,8 +529,8 @@ class _HarpContentViewState extends State<HarpContentView> {
                 ? () => _openHymn(hymns[currentIndex + 1],
                     autoPlay: _audioPlayer.playing)
                 : null,
-            previousLabel: 'Hino anterior',
-            nextLabel: 'Próximo hino',
+            previousLabel: context.l10n.t('Hino anterior'),
+            nextLabel: context.l10n.t('Próximo hino'),
           ),
           body: Center(
             child: CustomScrollView(

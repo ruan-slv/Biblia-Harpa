@@ -5,6 +5,8 @@ library;
 
 import 'package:share_plus/share_plus.dart';
 
+import '../l10n/app_localizations.dart';
+
 class BibleShareController {
   const BibleShareController();
 
@@ -14,7 +16,7 @@ class BibleShareController {
 
   Future<void> shareAudioSource(String text, String url) async {
     final audio = StringBuffer()
-      ..writeln("Áudio de Bíblia e Harpa - sem anúncios")
+      ..writeln(tr("Áudio de Bíblia e Harpa - sem anúncios"))
       ..writeln(text)
       ..writeln(url);
 

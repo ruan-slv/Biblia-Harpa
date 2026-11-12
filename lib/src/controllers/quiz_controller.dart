@@ -8,6 +8,8 @@ import 'package:biblia_e_harpa/src/database/app_database.dart';
 import 'package:biblia_e_harpa/src/model/quiz_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+
+import '../l10n/app_localizations.dart';
 import 'continue_reading_controller.dart';
 
 class QuizController extends ChangeNotifier {
@@ -83,7 +85,8 @@ class QuizController extends ChangeNotifier {
         ..shuffle();
 
       if (questions.isEmpty) {
-        throw const FormatException('Nenhuma pergunta valida foi encontrada no quiz.');
+        throw FormatException(
+            tr('Nenhuma pergunta valida foi encontrada no quiz.'));
       }
 
       final db = await AppDatabase.instance.database;

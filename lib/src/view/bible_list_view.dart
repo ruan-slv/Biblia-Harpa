@@ -7,6 +7,7 @@ import 'package:biblia_e_harpa/src/view/component/app_bar_component.dart';
 import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
 import 'package:biblia_e_harpa/src/controllers/bible_list_controller.dart';
 import 'package:biblia_e_harpa/src/controllers/bible_read_controller.dart';
+import 'package:biblia_e_harpa/src/l10n/app_localizations.dart';
 import 'package:biblia_e_harpa/src/view/component/bible_version_selector_dialog.dart';
 import 'package:biblia_e_harpa/src/view/component/feature_search_field.dart';
 import 'package:flutter/material.dart';
@@ -28,14 +29,14 @@ class BibleListView extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
-        title: "Biblia Cristã",
+        title: context.l10n.t("Bíblia Cristã"),
         centerTitle: false,
         automaticallyImplyLeading: true,
         actions: [
           IconButton(
             icon: Icon(Icons.translate,
                 color: Theme.of(context).colorScheme.onSurface),
-            tooltip: 'Selecionar versão',
+            tooltip: context.l10n.t('Selecionar versão'),
             onPressed: () async {
               await showDialog(
                 context: context,
@@ -59,7 +60,7 @@ class BibleListView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: FeatureSearchField(
-                    hintText: "Pesquisar livro",
+                    hintText: context.l10n.t("Pesquisar livro"),
                     onChanged: (v) =>
                         context.read<BibleListController>().setQuery(v),
                   ),

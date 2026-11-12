@@ -7,6 +7,7 @@ import 'bible_read_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import '../services/app_audio_handler.dart';
+import '../l10n/app_localizations.dart';
 
 class BibleContentController extends ChangeNotifier {
   final BibleReadController readState;
@@ -286,7 +287,10 @@ class BibleContentController extends ChangeNotifier {
 
   String buildShareText() {
     final shareText = StringBuffer();
-    shareText.writeln("$bookName - Capítulo $_currentChapterNumber");
+    shareText.writeln(tr('{book} - Capítulo {number}', {
+      'book': bookName,
+      'number': '$_currentChapterNumber',
+    }));
     shareText.writeln();
 
     final indices = _selectedVerseIndices.isNotEmpty

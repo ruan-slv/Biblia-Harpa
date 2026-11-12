@@ -10,6 +10,7 @@ import 'bible_version_controller.dart';
 import 'bible_audios_controller.dart';
 import 'bible_list_controller.dart';
 import 'bible_read_controller.dart';
+import 'settings_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -17,17 +18,21 @@ class BibleProvidersController {
   static List<SingleChildWidget> build() {
     return [
       Provider<BibleVersionController>(create: (_) => BibleVersionController()),
-      Provider<BibleShareController>(create: (_) => const BibleShareController()),
-      Provider<BibleTextAssetsController>(create: (_) => const BibleTextAssetsController()),
+      Provider<BibleShareController>(
+          create: (_) => const BibleShareController()),
+      Provider<BibleTextAssetsController>(
+          create: (_) => const BibleTextAssetsController()),
       Provider<BibleAudioAssetsController>(
         create: (_) => const BibleAudioAssetsController(),
       ),
-      ChangeNotifierProvider<BibleReadController>(create: (_) => BibleReadController()),
+      ChangeNotifierProvider<BibleReadController>(
+          create: (_) => BibleReadController()),
       ChangeNotifierProvider<BibleListController>(create: (ctx) {
         return BibleListController(
           versionService: ctx.read<BibleVersionController>(),
           audioAssetsService: ctx.read<BibleAudioAssetsController>(),
           textAssetsService: ctx.read<BibleTextAssetsController>(),
+          settingsController: ctx.read<SettingsController>(),
         );
       }),
       ChangeNotifierProvider<BibleAudiosController>(create: (ctx) {

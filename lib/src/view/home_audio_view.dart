@@ -8,6 +8,7 @@ import 'package:biblia_e_harpa/src/view/harp_audio_wrapper.dart';
 import 'package:biblia_e_harpa/src/view/playlist_view.dart';
 import 'package:flutter/material.dart';
 import 'component/app_bar_component.dart';
+import '../l10n/app_localizations.dart';
 
 class HomeAudioView extends StatefulWidget {
   const HomeAudioView({super.key});
@@ -38,7 +39,7 @@ class _HomeAudioViewState extends State<HomeAudioView>
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
         automaticallyImplyLeading: true,
-        title: "Áudios",
+        title: context.l10n.t("Áudios"),
         centerTitle: false,
         tabBar: TabBar(
           controller: _tabController,
@@ -54,10 +55,10 @@ class _HomeAudioViewState extends State<HomeAudioView>
           indicatorSize: TabBarIndicatorSize.tab,
           labelStyle: const TextStyle(fontWeight: FontWeight.bold),
           unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal),
-          tabs: const [
-            Tab(text: "Bíblia"),
-            Tab(text: "Harpa"),
-            Tab(text: "Outros"),
+          tabs: [
+            Tab(text: context.l10n.t("Bíblia")),
+            Tab(text: context.l10n.t("Harpa")),
+            Tab(text: context.l10n.t("Outros")),
           ],
         ),
       ),

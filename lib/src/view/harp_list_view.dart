@@ -8,6 +8,7 @@ import "package:biblia_e_harpa/src/view/component/app_bar_component.dart";
 import "package:biblia_e_harpa/src/utils/config.dart";
 import "package:biblia_e_harpa/src/view/harp_content_view.dart";
 import "package:biblia_e_harpa/src/controllers/settings_controller.dart";
+import "package:biblia_e_harpa/src/l10n/app_localizations.dart";
 import 'package:biblia_e_harpa/src/model/data_audio_model.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/services.dart';
@@ -220,15 +221,15 @@ class _HarpListViewState extends State<HarpListView>
       appBar: CustomAppBar(
         centerTitle: false,
         automaticallyImplyLeading: true,
-        title: "Harpa Cristã",
+        title: context.l10n.t("Harpa Cristã"),
         tabBar: TabBar(
           controller: _tabController,
           labelColor: Theme.of(context).colorScheme.onSurface,
           unselectedLabelColor: Theme.of(context).colorScheme.onSurface,
           indicatorColor: Theme.of(context).colorScheme.onSurface,
-          tabs: const [
-            Tab(text: "Todos"),
-            Tab(text: "Favoritos"),
+          tabs: [
+            Tab(text: context.l10n.t("Todos")),
+            Tab(text: context.l10n.t("Favoritos")),
           ],
         ),
       ),
@@ -241,7 +242,7 @@ class _HarpListViewState extends State<HarpListView>
                   child: TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
-                      hintText: "Pesquisar Hino",
+                      hintText: context.l10n.t("Pesquisar hino"),
                       hintStyle: TextStyle(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../controllers/notes_controller.dart';
+import '../l10n/app_localizations.dart';
 import '../model/note.dart';
 import 'component/app_bar_component.dart';
 import 'component/note_editor_dialog.dart';
@@ -48,7 +49,7 @@ class _NoteDetailBody extends StatelessWidget {
       return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: CustomAppBar(
-          title: 'Anotação',
+          title: context.l10n.t('Anotação'),
           centerTitle: false,
           automaticallyImplyLeading: true,
         ),
@@ -63,7 +64,7 @@ class _NoteDetailBody extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Anotação não encontrada.',
+                context.l10n.t('Anotação não encontrada.'),
                 style: TextStyle(
                   color: colorScheme.onSurface,
                   fontSize: 18,
@@ -72,7 +73,7 @@ class _NoteDetailBody extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Ela pode ter sido excluída.',
+                context.l10n.t('Ela pode ter sido excluída.'),
                 style: TextStyle(
                   color: colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
@@ -86,7 +87,9 @@ class _NoteDetailBody extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
-        title: note.title.isEmpty ? 'Anotação' : note.title,
+        title: note.title.isEmpty
+            ? context.l10n.t('Anotação')
+            : note.title,
         centerTitle: false,
         automaticallyImplyLeading: true,
         actions: [
@@ -95,7 +98,7 @@ class _NoteDetailBody extends StatelessWidget {
               Icons.edit_note,
               color: colorScheme.onSurface,
             ),
-            tooltip: 'Editar',
+            tooltip: context.l10n.t('Editar'),
             onPressed: () => showNoteEditorDialog(
               context,
               controller: controller,
@@ -107,7 +110,7 @@ class _NoteDetailBody extends StatelessWidget {
               Icons.delete_outline,
               color: colorScheme.onSurface.withValues(alpha: 0.8),
             ),
-            tooltip: 'Excluir',
+            tooltip: context.l10n.t('Excluir'),
             onPressed: () => _confirmDelete(context, controller, note),
           ),
         ],
@@ -171,7 +174,7 @@ class _NoteDetailBody extends StatelessWidget {
               )
             else
               Text(
-                'Sem conteúdo.',
+                context.l10n.t('Sem conteúdo.'),
                 style: TextStyle(
                   color: colorScheme.onSurface.withValues(alpha: 0.6),
                   fontSize: 16,
@@ -188,7 +191,10 @@ class _NoteDetailBody extends StatelessWidget {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  'Criada em ${note.dateFormatted}',
+                  context.l10n.t(
+                    'Criada em {date}',
+                    {'date': note.dateFormatted},
+                  ),
                   style: TextStyle(
                     color: colorScheme.onSurface.withValues(alpha: 0.6),
                     fontSize: 13,
@@ -208,7 +214,10 @@ class _NoteDetailBody extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      'Editada em ${note.dateFormatted}',
+                      context.l10n.t(
+                        'Editada em {date}',
+                        {'date': note.dateFormatted},
+                      ),
                       style: TextStyle(
                         color: colorScheme.onSurface.withValues(alpha: 0.6),
                         fontSize: 13,
@@ -232,21 +241,24 @@ class _NoteDetailBody extends StatelessWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Excluir anotação?'),
+        title: Text(context.l10n.t('Excluir anotação?')),
         content: Text(
           note.title.isEmpty
-              ? 'Esta anotação será excluída.'
-              : '"${note.title}" será excluída.',
+              ? context.l10n.t('Esta anotação será excluída.')
+              : context.l10n.t(
+                  '"{title}" será excluída.',
+                  {'title': note.title},
+                ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
+            child: Text(context.l10n.t('Cancelar')),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: Text(
-              'Excluir',
+              context.l10n.t('Excluir'),
               style: TextStyle(color: colorScheme.onSurface),
             ),
           ),

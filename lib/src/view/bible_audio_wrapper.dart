@@ -8,6 +8,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'bible_audio_list_view.dart';
 import 'component/connectivity_error_view.dart';
+import '../l10n/app_localizations.dart';
 
 class BibleAudioWrapper extends StatefulWidget {
   const BibleAudioWrapper({super.key});
@@ -36,8 +37,9 @@ class _BibleAudioWrapperState extends State<BibleAudioWrapper> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return const ConnectivityErrorView(
-              message: "Erro ao verificar a conexão. Tente novamente.",
+            return ConnectivityErrorView(
+              message: context.l10n.t(
+                  "Erro ao verificar a conexão. Tente novamente."),
             );
           }
 
@@ -47,7 +49,8 @@ class _BibleAudioWrapperState extends State<BibleAudioWrapper> {
 
           return ConnectivityErrorView(
             message:
-                "Sem conexão com a internet. Conecte-se para ouvir áudios online ou acesse seus downloads.",
+                context.l10n.t(
+                    "Sem conexão com a internet. Conecte-se para ouvir áudios online ou acesse seus downloads."),
             onOfflinePressed: () {
               Navigator.push(
                 context,

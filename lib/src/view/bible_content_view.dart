@@ -10,6 +10,7 @@ import 'package:biblia_e_harpa/src/model/bible_audio.dart';
 import 'package:biblia_e_harpa/src/controllers/bible_share_controller.dart';
 import 'package:biblia_e_harpa/src/controllers/bible_read_controller.dart';
 import 'package:biblia_e_harpa/src/controllers/bible_content_controller.dart';
+import 'package:biblia_e_harpa/src/l10n/app_localizations.dart';
 import 'package:biblia_e_harpa/src/view/component/bible_audio_player_card.dart';
 import 'package:biblia_e_harpa/src/view/component/controlled_search_field.dart';
 import 'package:biblia_e_harpa/src/view/component/selection_limit_dialog.dart';
@@ -156,11 +157,31 @@ class _TextBibleViewState extends State<_TextBibleView> {
     final colorScheme = Theme.of(context).colorScheme;
 
     final options = [
-      {'key': 'yellow', 'label': 'Amarelo', 'color': const Color(0xFFFFCA28)},
-      {'key': 'green', 'label': 'Verde', 'color': const Color(0xFF66BB6A)},
-      {'key': 'blue', 'label': 'Azul', 'color': const Color(0xFF42A5F5)},
-      {'key': 'pink', 'label': 'Rosa', 'color': const Color(0xFFEC407A)},
-      {'key': 'orange', 'label': 'Laranja', 'color': const Color(0xFFFFA726)},
+      {
+        'key': 'yellow',
+        'label': context.l10n.t('Amarelo'),
+        'color': const Color(0xFFFFCA28)
+      },
+      {
+        'key': 'green',
+        'label': context.l10n.t('Verde'),
+        'color': const Color(0xFF66BB6A)
+      },
+      {
+        'key': 'blue',
+        'label': context.l10n.t('Azul'),
+        'color': const Color(0xFF42A5F5)
+      },
+      {
+        'key': 'pink',
+        'label': context.l10n.t('Rosa'),
+        'color': const Color(0xFFEC407A)
+      },
+      {
+        'key': 'orange',
+        'label': context.l10n.t('Laranja'),
+        'color': const Color(0xFFFFA726)
+      },
     ];
 
     final result = await showMenu<String>(
@@ -206,7 +227,7 @@ class _TextBibleViewState extends State<_TextBibleView> {
               Icon(Icons.clear_rounded, color: colorScheme.onSurface, size: 20),
               const SizedBox(width: 12),
               Text(
-                'Remover destaque',
+                context.l10n.t('Remover destaque'),
                 style: TextStyle(
                   color: colorScheme.onSurface,
                   fontWeight: FontWeight.w500,
@@ -246,24 +267,27 @@ class _TextBibleViewState extends State<_TextBibleView> {
         builder: (dialogCtx) => AlertDialog(
           backgroundColor: colorScheme.surface,
           title: Text(
-            'Compartilhar Capítulo',
+            context.l10n.t('Compartilhar Capítulo'),
             style: TextStyle(color: colorScheme.onSurface),
           ),
           content: Text(
-            'Nenhum versículo foi selecionado. Deseja compartilhar os versículos deste capítulo (${viewModel.chapterTitle})?',
+            context.l10n.t(
+              'Nenhum versículo foi selecionado. Deseja compartilhar os versículos deste capítulo ({chapter})?',
+              {'chapter': viewModel.chapterTitle},
+            ),
             style: TextStyle(color: colorScheme.onSurface),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogCtx, false),
               child: Text(
-                'Cancelar',
+                context.l10n.t('Cancelar'),
                 style: TextStyle(color: colorScheme.onSurface),
               ),
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(dialogCtx, true),
-              child: const Text('Compartilhar'),
+              child: Text(context.l10n.t('Compartilhar')),
             ),
           ],
         ),
@@ -298,7 +322,10 @@ class _TextBibleViewState extends State<_TextBibleView> {
                 ),
               ),
               Text(
-                '$selectedCount versículo${selectedCount > 1 ? 's' : ''} selecionado${selectedCount > 1 ? 's' : ''}',
+                context.l10n.t(
+                  '{count} versículos selecionados',
+                  {'count': '$selectedCount'},
+                ),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -309,7 +336,7 @@ class _TextBibleViewState extends State<_TextBibleView> {
               ListTile(
                 leading: Icon(Icons.share, color: colorScheme.onSurface),
                 title: Text(
-                  'Compartilhar versículos selecionados',
+                  context.l10n.t('Compartilhar versículos selecionados'),
                   style: TextStyle(color: colorScheme.onSurface),
                 ),
                 onTap: () => Navigator.pop(sheetCtx, 'share'),
@@ -317,7 +344,7 @@ class _TextBibleViewState extends State<_TextBibleView> {
               ListTile(
                 leading: Icon(Icons.close, color: colorScheme.onSurface),
                 title: Text(
-                  'Limpar seleção',
+                  context.l10n.t('Limpar seleção'),
                   style: TextStyle(color: colorScheme.onSurface),
                 ),
                 onTap: () => Navigator.pop(sheetCtx, 'clear'),
@@ -346,20 +373,20 @@ class _TextBibleViewState extends State<_TextBibleView> {
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (dialogCtx) => AlertDialog(
-          title: const Text('Modo Leitura Automática'),
-          content: const Text(
-            'Devido a falta de base de dados para os áudios da Bíblia, '
-            'esta funcionalidade funcionará com versões diferentes de '
-            'leitura/escrita. Deseja prosseguir?',
+          title: Text(context.l10n.t('Modo Leitura Automática')),
+          content: Text(
+            context.l10n.t(
+              'Devido a falta de base de dados para os áudios da Bíblia, esta funcionalidade funcionará com versões diferentes de leitura/escrita. Deseja prosseguir?',
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogCtx, false),
-              child: const Text('Cancelar'),
+              child: Text(context.l10n.t('Cancelar')),
             ),
             TextButton(
               onPressed: () => Navigator.pop(dialogCtx, true),
-              child: const Text('Prosseguir'),
+              child: Text(context.l10n.t('Prosseguir')),
             ),
           ],
         ),
@@ -385,8 +412,9 @@ class _TextBibleViewState extends State<_TextBibleView> {
       SnackBar(
         content: Text(
           _highlightMode
-              ? 'Modo destaque ativado: toque em um versículo para colorir.'
-              : 'Modo destaque desativado.',
+              ? context.l10n.t(
+                  'Modo destaque ativado: toque em um versículo para colorir.')
+              : context.l10n.t('Modo destaque desativado.'),
         ),
         duration: const Duration(seconds: 2),
       ),
@@ -419,7 +447,7 @@ class _TextBibleViewState extends State<_TextBibleView> {
         automaticallyImplyLeading: true,
         actions: [
           PopupMenuButton<String>(
-            tooltip: 'Opções',
+            tooltip: context.l10n.t('Opções'),
             icon: Badge(
               isLabelVisible: viewModel.selectedVerseIndices.isNotEmpty,
               label: Text('${viewModel.selectedVerseIndices.length}'),
@@ -470,7 +498,7 @@ class _TextBibleViewState extends State<_TextBibleView> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'Leitura automática',
+                            context.l10n.t('Leitura automática'),
                             style: TextStyle(
                               color: colorScheme.onSurface,
                               fontWeight: FontWeight.w600,
@@ -478,8 +506,8 @@ class _TextBibleViewState extends State<_TextBibleView> {
                           ),
                           Text(
                             viewModel.isAutoScrollEnabled
-                                ? 'Ativada'
-                                : 'Desativada',
+                                ? context.l10n.t('Ativada')
+                                : context.l10n.t('Desativada'),
                             style: TextStyle(
                               color: viewModel.isAutoScrollEnabled
                                   ? AppTheme.sucesso
@@ -520,14 +548,16 @@ class _TextBibleViewState extends State<_TextBibleView> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'Modo destaque',
+                            context.l10n.t('Modo destaque'),
                             style: TextStyle(
                               color: colorScheme.onSurface,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           Text(
-                            _highlightMode ? 'Ativado' : 'Desativado',
+                            _highlightMode
+                                ? context.l10n.t('Ativado')
+                                : context.l10n.t('Desativado'),
                             style: TextStyle(
                               color: _highlightMode
                                   ? AppTheme.sucesso
@@ -566,7 +596,7 @@ class _TextBibleViewState extends State<_TextBibleView> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'Compartilhar',
+                            context.l10n.t('Compartilhar'),
                             style: TextStyle(
                               color: colorScheme.onSurface,
                               fontWeight: FontWeight.w600,
@@ -574,8 +604,14 @@ class _TextBibleViewState extends State<_TextBibleView> {
                           ),
                           Text(
                             viewModel.selectedVerseIndices.isEmpty
-                                ? 'Capítulo completo'
-                                : '${viewModel.selectedVerseIndices.length} versículo(s) selecionado(s)',
+                                ? context.l10n.t('Capítulo completo')
+                                : context.l10n.t(
+                                    '{count} versículo(s) selecionado(s)',
+                                    {
+                                      'count':
+                                          '${viewModel.selectedVerseIndices.length}',
+                                    },
+                                  ),
                             style: TextStyle(
                               color: colorScheme.onSurface
                                   .withValues(alpha: 0.6),
@@ -606,7 +642,7 @@ class _TextBibleViewState extends State<_TextBibleView> {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        'Limpar seleção',
+                        context.l10n.t('Limpar seleção'),
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.error,
                           fontWeight: FontWeight.w600,
@@ -666,7 +702,9 @@ class _TextBibleViewState extends State<_TextBibleView> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        isRead ? "Capítulo concluído" : "Marcar como lido",
+                        isRead
+                            ? context.l10n.t("Capítulo concluído")
+                            : context.l10n.t("Marcar como lido"),
                         style: TextStyle(
                           color: colorScheme.onSurface,
                           fontWeight: FontWeight.w700,
@@ -675,8 +713,8 @@ class _TextBibleViewState extends State<_TextBibleView> {
                       const SizedBox(height: 2),
                       Text(
                         isRead
-                            ? "Toque para marcar como não lido."
-                            : "Toque para marcar como lido.",
+                            ? context.l10n.t("Toque para marcar como não lido.")
+                            : context.l10n.t("Toque para marcar como lido."),
                         style: TextStyle(
                           color: colorScheme.onSurface.withValues(alpha: 0.72),
                           height: 1.3,
@@ -699,7 +737,7 @@ class _TextBibleViewState extends State<_TextBibleView> {
                 padding: const EdgeInsets.all(8.0),
                 child: ControlledSearchField(
                   controller: viewModel.keywordController,
-                  hintText: "Pesquisar Palavra-chave",
+                  hintText: context.l10n.t("Pesquisar Palavra-chave"),
                   onChanged: viewModel.setKeywordQuery,
                 ),
               ),
@@ -718,7 +756,10 @@ class _TextBibleViewState extends State<_TextBibleView> {
                 child: Padding(
                   padding: const EdgeInsets.all(32.0),
                   child: Text(
-                    'Nenhum versículo encontrado para "${viewModel.keywordController.text}" neste capítulo.',
+                    context.l10n.t(
+                      'Nenhum versículo encontrado para "{query}" neste capítulo.',
+                      {'query': viewModel.keywordController.text},
+                    ),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: settings.fontSize,

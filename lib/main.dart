@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:biblia_e_harpa/src/services/app_audio_handler.dart';
 import 'package:biblia_e_harpa/src/database/app_database.dart';
+import 'package:biblia_e_harpa/src/l10n/app_localizations.dart';
 import 'package:biblia_e_harpa/src/utils/theme.dart';
 import 'package:biblia_e_harpa/src/view/home_view.dart';
+import 'package:biblia_e_harpa/src/view/component/language_gate.dart';
 import 'package:biblia_e_harpa/src/view/component/mini_player.dart';
 import 'package:biblia_e_harpa/src/view/component/started_access_on.dart';
 import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
@@ -12,6 +14,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:just_audio_media_kit/just_audio_media_kit.dart';
 import 'package:provider/provider.dart';
 import 'package:upgrader/upgrader.dart';
@@ -84,22 +87,36 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final upgraderMessages = UpgraderMessages(code: 'pt-br');
     return Consumer<SettingsController>(
       builder: (context, settings, _) {
+        // Mantém os serviços/controladores (fora da árvore de widgets) no
+        // idioma atual para mensagens e notificações.
+        AppLocalizations.currentLanguage = settings.language;
+        final upgraderMessages =
+            UpgraderMessages(code: settings.language.upgraderCode);
         return MaterialApp(
-          title: 'Bíblia e Harpa',
+          onGenerateTitle: (context) => context.l10n.t('Bíblia e Harpa'),
+          locale: settings.locale,
+          supportedLocales: AppLocalizations.supportedLocales,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
           navigatorKey: appNavigatorKey,
           theme: lightMode,
           darkTheme: darkMode,
           themeMode: settings.themeMode,
           debugShowCheckedModeBanner: false,
-          home: UpgradeAlert(
-            upgrader: Upgrader(
-              debugLogging: false,
-              messages: upgraderMessages,
+          home: LanguageGate(
+            child: UpgradeAlert(
+              upgrader: Upgrader(
+                debugLogging: false,
+                messages: upgraderMessages,
+              ),
+              child: const StartupGate(child: HomeView()),
             ),
-            child: const StartupGate(child: HomeView()),
           ),
         );
       },

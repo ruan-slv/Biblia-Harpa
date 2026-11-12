@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
 import '../../services/app_audio_handler.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Chave do Navigator raiz, usada pelo mini-player (que fica acima das rotas)
 /// para abrir a folha de "tocando agora".
@@ -253,7 +254,12 @@ class _NowPlayingSheet extends StatelessWidget {
                     if (handler.trackCount > 1) ...[
                       const SizedBox(height: 4),
                       Text(
-                        'Faixa ${handler.currentIndex + 1} de ${handler.trackCount}',
+                        context.l10n.t(
+                            'Faixa {current} de {total}',
+                            {
+                              'current': '${handler.currentIndex + 1}',
+                              'total': '${handler.trackCount}',
+                            }),
                         style: TextStyle(
                           color: colorScheme.onSurface.withValues(alpha: .55),
                           fontSize: 12,
@@ -299,13 +305,13 @@ class _NowPlayingSheet extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         IconButton(
-                          tooltip: 'Anterior',
+                          tooltip: context.l10n.t('Anterior'),
                           iconSize: 34,
                           onPressed: handler.skipToPrevious,
                           icon: const Icon(Icons.skip_previous_rounded),
                         ),
                         IconButton(
-                          tooltip: 'Voltar 10s',
+                          tooltip: context.l10n.t('Voltar 10s'),
                           iconSize: 28,
                           onPressed: () {
                             final target = sharedAudioPlayer.position -
@@ -318,7 +324,9 @@ class _NowPlayingSheet extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         IconButton.filled(
-                          tooltip: playing ? 'Pausar' : 'Reproduzir',
+                          tooltip: playing
+                              ? context.l10n.t('Pausar')
+                              : context.l10n.t('Reproduzir'),
                           iconSize: 42,
                           onPressed: () =>
                               playing ? handler.pause() : handler.play(),
@@ -330,7 +338,7 @@ class _NowPlayingSheet extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         IconButton(
-                          tooltip: 'Avançar 10s',
+                          tooltip: context.l10n.t('Avançar 10s'),
                           iconSize: 28,
                           onPressed: () => handler.seek(
                             sharedAudioPlayer.position +
@@ -339,7 +347,7 @@ class _NowPlayingSheet extends StatelessWidget {
                           icon: const Icon(Icons.forward_10_rounded),
                         ),
                         IconButton(
-                          tooltip: 'Próximo',
+                          tooltip: context.l10n.t('Próximo'),
                           iconSize: 34,
                           onPressed: handler.skipToNext,
                           icon: const Icon(Icons.skip_next_rounded),

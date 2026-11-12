@@ -5,12 +5,14 @@ library;
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../utils/bible_version_defaults.dart';
+
 class BibleVersionController {
-  static const _prefsKey = 'selectedVersion';
+  static const _prefsKey = kBibleVersionPrefsKey;
 
   Future<String> getSelectedVersionFileName() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_prefsKey) ?? 'acf.json';
+    return prefs.getString(_prefsKey) ?? kDefaultPortugueseBibleFile;
   }
 
   Future<void> setSelectedVersionFileName(String fileName) async {

@@ -6,6 +6,8 @@ import 'package:flutter/rendering.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../l10n/app_localizations.dart';
+
 /// Conteúdo textual desenhado sobre a imagem escolhida na galeria.
 class ImageShareContent {
   const ImageShareContent({
@@ -74,7 +76,7 @@ class _ImageShareViewState extends State<ImageShareView> {
       if (data != null) {
         await file.writeAsBytes(data.buffer.asUint8List());
       } else {
-        throw Exception('Falha ao converter a imagem.');
+        throw Exception(tr('Falha ao converter a imagem.'));
       }
 
       await SharePlus.instance.share(
@@ -90,7 +92,9 @@ class _ImageShareViewState extends State<ImageShareView> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao gerar imagem: $e')),
+          SnackBar(
+              content: Text(tr('Erro ao gerar imagem: {error}',
+                  {'error': '$e'}))),
         );
       }
     } finally {
@@ -107,7 +111,8 @@ class _ImageShareViewState extends State<ImageShareView> {
       appBar: AppBar(
         backgroundColor: Colors.black87,
         foregroundColor: Colors.white,
-        title: Text('Compartilhar ${content.label}'),
+        title: Text(context.l10n.t('Compartilhar {label}',
+            {'label': content.label})),
         actions: [
           IconButton(
             icon: _sharing
@@ -117,7 +122,7 @@ class _ImageShareViewState extends State<ImageShareView> {
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
                 : const Icon(Icons.share),
-            tooltip: 'Compartilhar imagem',
+            tooltip: context.l10n.t('Compartilhar imagem'),
             onPressed: _imageReady ? _share : null,
           ),
         ],

@@ -13,6 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../l10n/app_localizations.dart';
+
 class BibleAudioChaptersView extends StatelessWidget {
   final BibleAudioBook book;
   const BibleAudioChaptersView({super.key, required this.book});
@@ -47,7 +49,7 @@ class _AudioBookChaptersView extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: FeatureSearchField(
-              hintText: "Pesquisar capítulo",
+              hintText: context.l10n.t("Pesquisar capítulo"),
               onChanged: viewModel.setQuery,
             ),
           ),
@@ -96,7 +98,7 @@ class _AudioBookChaptersView extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
-                              tooltip: "Compartilhar",
+                              tooltip: context.l10n.t("Compartilhar"),
                               onPressed: kIsWeb
                                   ? null
                                   : () async {
@@ -104,13 +106,20 @@ class _AudioBookChaptersView extends StatelessWidget {
                                         if (!context.mounted) return;
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
-                                          const SnackBar(
+                                          SnackBar(
                                             content: Text(
-                                              'Preparando áudio para compartilhar...',
+                                              context.l10n.t(
+                                                  'Preparando áudio para compartilhar...'),
                                             ),
-                                            duration: Duration(seconds: 2),
+                                            duration: const Duration(seconds: 2),
                                           ),
                                         );
+                                        final shareText = context.l10n.t(
+                                            'Ouça este trecho da Bíblia: {chapter} - {book}',
+                                            {
+                                              'chapter': chapter.name,
+                                              'book': book.title,
+                                            });
                                         final path = await viewModel
                                             .prepareShareFilePath(
                                                 originalIndex);
@@ -119,8 +128,7 @@ class _AudioBookChaptersView extends StatelessWidget {
                                         }
                                         await SharePlus.instance.share(
                                           ShareParams(
-                                            text:
-                                                'Ouça este trecho da Bíblia: ${chapter.name} - ${book.title}',
+                                            text: shareText,
                                             files: [
                                               XFile(path),
                                             ],
@@ -130,9 +138,10 @@ class _AudioBookChaptersView extends StatelessWidget {
                                         if (!context.mounted) return;
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
-                                          const SnackBar(
+                                          SnackBar(
                                             content: Text(
-                                              "Não foi possível compartilhar o áudio.",
+                                              context.l10n.t(
+                                                  "Não foi possível compartilhar o áudio."),
                                             ),
                                           ),
                                         );
@@ -146,7 +155,7 @@ class _AudioBookChaptersView extends StatelessWidget {
                             ),
                             if (isDownloaded)
                               IconButton(
-                                tooltip: "Remover",
+                                tooltip: context.l10n.t("Remover"),
                                 onPressed: kIsWeb
                                     ? null
                                     : () async {
@@ -158,8 +167,10 @@ class _AudioBookChaptersView extends StatelessWidget {
                                           SnackBar(
                                             content: Text(
                                               ok
-                                                  ? 'Áudio removido do dispositivo.'
-                                                  : 'Não foi possível remover o áudio.',
+                                                  ? context.l10n.t(
+                                                      'Áudio removido do dispositivo.')
+                                                  : context.l10n.t(
+                                                      'Não foi possível remover o áudio.'),
                                             ),
                                           ),
                                         );
@@ -173,7 +184,7 @@ class _AudioBookChaptersView extends StatelessWidget {
                               )
                             else
                               IconButton(
-                                tooltip: "Baixar",
+                                tooltip: context.l10n.t("Baixar"),
                                 onPressed: kIsWeb || isDownloading
                                     ? null
                                     : () async {
@@ -185,8 +196,11 @@ class _AudioBookChaptersView extends StatelessWidget {
                                           SnackBar(
                                             content: Text(
                                               ok
-                                                  ? '${chapter.name} baixado com sucesso!'
-                                                  : 'Erro ao baixar o áudio.',
+                                                  ? context.l10n.t(
+                                                      '{chapter} baixado com sucesso!',
+                                                      {'chapter': chapter.name})
+                                                  : context.l10n.t(
+                                                      'Erro ao baixar o áudio.'),
                                             ),
                                           ),
                                         );

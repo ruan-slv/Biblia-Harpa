@@ -1,6 +1,7 @@
 import 'package:biblia_e_harpa/src/view/component/app_bar_component.dart';
 import 'package:biblia_e_harpa/src/controllers/quiz_controller.dart';
 import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
+import 'package:biblia_e_harpa/src/l10n/app_localizations.dart';
 import 'package:biblia_e_harpa/src/model/quiz_model.dart';
 import 'package:biblia_e_harpa/src/utils/theme.dart';
 import 'package:flutter/material.dart';
@@ -43,8 +44,8 @@ class _QuizViewContent extends StatelessWidget {
     if (viewModel.errorMessage != null) {
       return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        appBar: const CustomAppBar(
-          title: 'Quizz Bíblico',
+        appBar: CustomAppBar(
+          title: context.l10n.t('Quizz Bíblico'),
           centerTitle: false,
           automaticallyImplyLeading: true,
         ),
@@ -84,7 +85,8 @@ class _QuizViewContent extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        'Tente recarregar para buscar as perguntas novamente.',
+                        context.l10n.t(
+                            'Tente recarregar para buscar as perguntas novamente.'),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: colorScheme.onSurface.withValues(alpha: 0.72),
@@ -98,7 +100,7 @@ class _QuizViewContent extends StatelessWidget {
                           onPressed:
                               context.read<QuizController>().loadQuestions,
                           icon: const Icon(Icons.refresh_rounded),
-                          label: const Text('Tentar novamente'),
+                          label: Text(context.l10n.t('Tentar novamente')),
                         ),
                       ),
                     ],
@@ -114,8 +116,8 @@ class _QuizViewContent extends StatelessWidget {
     if (viewModel.questions.isEmpty) {
       return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        appBar: const CustomAppBar(
-          title: 'Quizz Bíblico',
+        appBar: CustomAppBar(
+          title: context.l10n.t('Quizz Bíblico'),
           centerTitle: false,
           automaticallyImplyLeading: true,
         ),
@@ -124,7 +126,7 @@ class _QuizViewContent extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
               child: Text(
-                'Nenhuma pergunta disponivel.',
+                context.l10n.t('Nenhuma pergunta disponivel.'),
                 style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w600,
@@ -152,8 +154,8 @@ class _QuizViewContent extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: const CustomAppBar(
-        title: 'Resultado do Quiz',
+      appBar: CustomAppBar(
+        title: context.l10n.t('Resultado do Quiz'),
         centerTitle: false,
         automaticallyImplyLeading: true,
       ),
@@ -184,7 +186,7 @@ class _QuizViewContent extends StatelessWidget {
                         ),
                         const SizedBox(height: 18),
                         Text(
-                          'Quiz concluído',
+                          context.l10n.t('Quiz concluído'),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 24,
@@ -194,7 +196,13 @@ class _QuizViewContent extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Voce acertou ${viewModel.score} de $total perguntas.',
+                          context.l10n.t(
+                            'Voce acertou {score} de {total} perguntas.',
+                            {
+                              'score': '${viewModel.score}',
+                              'total': '$total',
+                            },
+                          ),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 16,
@@ -224,17 +232,17 @@ class _QuizViewContent extends StatelessWidget {
                           children: [
                             _SummaryChip(
                               icon: Icons.check_circle_outline_rounded,
-                              label: 'Acertos',
+                              label: context.l10n.t('Acertos'),
                               value: '${viewModel.score}',
                             ),
                             _SummaryChip(
                               icon: Icons.menu_book_rounded,
-                              label: 'Perguntas',
+                              label: context.l10n.t('Perguntas'),
                               value: '$total',
                             ),
                             _SummaryChip(
                               icon: Icons.percent_rounded,
-                              label: 'Desempenho',
+                              label: context.l10n.t('Desempenho'),
                               value: '${(percent * 100).round()}%',
                             ),
                           ],
@@ -267,7 +275,7 @@ class _QuizViewContent extends StatelessWidget {
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
-                                'Resumo das perguntas',
+                                context.l10n.t('Resumo das perguntas'),
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w700,
@@ -299,7 +307,10 @@ class _QuizViewContent extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Pergunta ${index + 1}',
+                                  context.l10n.t(
+                                    'Pergunta {number}',
+                                    {'number': '${index + 1}'},
+                                  ),
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700,
@@ -317,7 +328,10 @@ class _QuizViewContent extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  'Referência: ${question.reference}',
+                                  context.l10n.t(
+                                    'Referência: {reference}',
+                                    {'reference': question.reference},
+                                  ),
                                   style: TextStyle(
                                     color: colorScheme.onSurface
                                         .withValues(alpha: 0.74),
@@ -336,7 +350,7 @@ class _QuizViewContent extends StatelessWidget {
                 ElevatedButton.icon(
                   onPressed: context.read<QuizController>().loadQuestions,
                   icon: const Icon(Icons.replay_rounded),
-                  label: const Text('Reiniciar quiz'),
+                  label: Text(context.l10n.t('Reiniciar quiz')),
                 ),
               ],
             ),
@@ -356,8 +370,13 @@ class _QuizViewContent extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
-        title:
-            'Quizz Bíblico ${viewModel.current + 1}/${viewModel.questions.length}',
+        title: context.l10n.t(
+          'Pergunta {current}/{total}',
+          {
+            'current': '${viewModel.current + 1}',
+            'total': '${viewModel.questions.length}',
+          },
+        ),
         centerTitle: false,
         automaticallyImplyLeading: true,
       ),
@@ -386,7 +405,10 @@ class _QuizViewContent extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(999),
                               ),
                               child: Text(
-                                'Pergunta ${viewModel.current + 1}',
+                                context.l10n.t(
+                                  'Pergunta {number}',
+                                  {'number': '${viewModel.current + 1}'},
+                                ),
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700,
@@ -396,7 +418,10 @@ class _QuizViewContent extends StatelessWidget {
                             ),
                             const Spacer(),
                             Text(
-                              '${viewModel.score} acertos',
+                              context.l10n.t(
+                                '{score} acertos',
+                                {'score': '${viewModel.score}'},
+                              ),
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
@@ -445,7 +470,7 @@ class _QuizViewContent extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Referência bíblica',
+                                  context.l10n.t('Referência bíblica'),
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700,
@@ -496,8 +521,8 @@ class _QuizViewContent extends StatelessWidget {
                     ),
                     label: Text(
                       viewModel.current == viewModel.questions.length - 1
-                          ? 'Ver resultado'
-                          : 'Próxima pergunta',
+                          ? context.l10n.t('Ver resultado')
+                          : context.l10n.t('Próxima pergunta'),
                     ),
                   ),
                 ],

@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../l10n/app_localizations.dart';
+
 /// Projeto exibido na tela "Outros projetos".
 class _OtherProject {
   const _OtherProject({
@@ -29,19 +31,19 @@ class _OtherProject {
 class OtherProjectsView extends StatelessWidget {
   const OtherProjectsView({super.key});
 
-  static const List<_OtherProject> _projects = [
+  List<_OtherProject> get _projects => [
     _OtherProject(
-      title: 'Bíblia Lite - sem anúncios',
-      description:
-          'Uma versão extra leve do aplicativo Bíblia & Harpa com foco em reduzir funcionalidades para alcançar público com dispositivos antigos.',
+      title: tr('Bíblia Lite - sem anúncios'),
+      description: tr(
+          'Uma versão extra leve do aplicativo Bíblia & Harpa com foco em reduzir funcionalidades para alcançar público com dispositivos antigos.'),
       icon: Icons.menu_book_rounded,
       envKey: 'BIBLIA_LITE_URL',
       fallbackUrl: 'https://ruan-slv.github.io/biblia-lite/',
     ),
     _OtherProject(
-      title: 'Não Informado',
-      description:
-          'Programa Desktop para o público de utilização do Windows e Linux. Este projeto ainda não será divulgado pois está em desenvolvimento sem previsões de conclusão.',
+      title: tr('Não Informado'),
+      description: tr(
+          'Programa Desktop para o público de utilização do Windows e Linux. Este projeto ainda não será divulgado pois está em desenvolvimento sem previsões de conclusão.'),
       //description: 'Organize a rotina da sua igreja: escalas, avisos, finanças e muito mais em um só lugar.',
       icon: Icons.church_rounded,
       envKey: 'CONTROLDESK_CHURCH_URL',
@@ -65,7 +67,8 @@ class OtherProjectsView extends StatelessWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Não foi possível abrir o link: $e'),
+            content: Text(tr('Não foi possível abrir o link: {error}',
+                {'error': '$e'})),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -78,7 +81,7 @@ class OtherProjectsView extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
-        title: 'Outros projetos',
+        title: context.l10n.t('Outros projetos'),
         centerTitle: false,
         automaticallyImplyLeading: true,
       ),
@@ -93,7 +96,7 @@ class OtherProjectsView extends StatelessWidget {
               child: ElevatedButton.icon(
                 onPressed: () => _open(context, project),
                 icon: const Icon(Icons.open_in_new_rounded),
-                label: const Text('Visitar'),
+                label: Text(context.l10n.t('Visitar')),
               ),
             ),
             const SizedBox(height: 16),

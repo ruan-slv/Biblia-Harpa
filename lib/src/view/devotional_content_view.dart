@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:biblia_e_harpa/src/utils/theme.dart';
+import '../l10n/app_localizations.dart';
 
 class DevotionalTextModel {
   final String versiculo;
@@ -97,7 +98,7 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
         activeTopic = resolvedTopic;
         isLoading = false;
         if (loadedDevocionais.isEmpty) {
-          loadError = 'Nenhum conteúdo encontrado para este devocional.';
+          loadError = tr('Nenhum conteúdo encontrado para este devocional.');
         }
       });
 
@@ -115,7 +116,7 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
         devocionais = [];
         isLoading = false;
         activeTopic = null;
-        loadError = 'Não foi possível carregar este devocional.';
+        loadError = tr('Não foi possível carregar este devocional.');
       });
     }
   }
@@ -194,7 +195,9 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(isRead ? "Marcado como lido" : "Marcado como não lido"),
+          content: Text(isRead
+              ? context.l10n.t("Marcado como lido")
+              : context.l10n.t("Marcado como não lido")),
           duration: const Duration(seconds: 1),
         ),
       );
@@ -223,18 +226,18 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
 
   String _getDataForSharing() {
     if (devocionais.isEmpty || currentIndex >= devocionais.length) {
-      return "Nenhum conteúdo devocional para compartilhar no momento.";
+      return tr("Nenhum conteúdo devocional para compartilhar no momento.");
     }
     final devocionalAtual = devocionais[currentIndex];
     StringBuffer sb = StringBuffer();
 
-    sb.writeln("Tópico do Devocional: $_topicKey");
+    sb.writeln(tr("Tópico do Devocional: {topic}", {'topic': _topicKey}));
     sb.writeln("\n");
-    sb.writeln("📖 versiculo:");
+    sb.writeln(tr("📖 versiculo:"));
     sb.writeln(devocionalAtual.versiculo);
-    sb.writeln("\n✝️ Reflexão:");
+    sb.writeln(tr("\n✝️ Reflexão:"));
     sb.writeln(devocionalAtual.texto);
-    sb.writeln("\n🙏 Oração:");
+    sb.writeln(tr("\n🙏 Oração:"));
     sb.writeln(devocionalAtual.oracao);
 
     return sb.toString();
@@ -283,7 +286,7 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
   Widget build(BuildContext context) {
     if (isLoading || devocionais.isEmpty) {
       final colorScheme = Theme.of(context).colorScheme;
-      final title = loadError ?? 'Devocional não encontrado.';
+      final title = loadError ?? tr('Devocional não encontrado.');
 
       return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -317,7 +320,8 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Verifique se há conteúdo disponível no arquivo de devocionais.',
+                        context.l10n.t(
+                            'Verifique se há conteúdo disponível no arquivo de devocionais.'),
                         style: TextStyle(
                           color: colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
@@ -347,7 +351,12 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
               await SharePlus.instance.share(
                 ShareParams(
                   text: devocionalText,
-                  subject: "Devocional: $_topicKey - ${devocional.versiculo}",
+                  subject: context.l10n.t(
+                      "Devocional: {topic} - {verse}",
+                      {
+                        'topic': _topicKey,
+                        'verse': devocional.versiculo,
+                      }),
                 ),
               );
             },
@@ -405,7 +414,9 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        isRead ? "Devocional concluído" : "Marcar como lido",
+                        isRead
+                            ? context.l10n.t("Devocional concluído")
+                            : context.l10n.t("Marcar como lido"),
                         style: TextStyle(
                           color: colorScheme.onSurface,
                           fontWeight: FontWeight.w700,
@@ -414,8 +425,8 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
                       const SizedBox(height: 2),
                       Text(
                         isRead
-                            ? "Toque para marcar como não lido."
-                            : "Toque para marcar como lido.",
+                            ? context.l10n.t("Toque para marcar como não lido.")
+                            : context.l10n.t("Toque para marcar como lido."),
                         style: TextStyle(
                           color: colorScheme.onSurface.withValues(alpha: 0.72),
                           height: 1.3,
@@ -444,7 +455,12 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 20),
                           child: Text(
-                            "Devocional ${currentIndex + 1} de ${devocionais.length}",
+                            context.l10n.t(
+                                "Devocional {current} de {total}",
+                                {
+                                  'current': '${currentIndex + 1}',
+                                  'total': '${devocionais.length}',
+                                }),
                             style: TextStyle(
                               fontSize: 12,
                               color: Theme.of(context)
@@ -465,7 +481,7 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
                         ),
                         const SizedBox(height: 20),
                         Text(
-                          'Reflexão',
+                          context.l10n.t('Reflexão'),
                           style: TextStyle(
                             fontSize: settings.fontSize + 2,
                             fontWeight: FontWeight.bold,
@@ -484,7 +500,7 @@ class _DevotionalContentViewState extends State<DevotionalContentView> {
                         ),
                         const SizedBox(height: 20),
                         Text(
-                          'Oração',
+                          context.l10n.t('Oração'),
                           style: TextStyle(
                             fontSize: settings.fontSize + 2,
                             fontWeight: FontWeight.bold,

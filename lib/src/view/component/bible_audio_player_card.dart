@@ -4,6 +4,7 @@
 library;
 
 import '../../model/bible_audio.dart';
+import '../../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -104,11 +105,13 @@ class BibleAudioPlayerCard extends StatelessWidget {
                         } catch (_) {
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
+                              SnackBar(
                                 content: Text(
-                                  'Não foi possível reproduzir o áudio. Verifique se há fones ou caixas de som conectados.',
+                                  context.l10n.t(
+                                    'Não foi possível reproduzir o áudio. Verifique se há fones ou caixas de som conectados.',
+                                  ),
                                 ),
-                                duration: Duration(seconds: 3),
+                                duration: const Duration(seconds: 3),
                               ),
                             );
                           }

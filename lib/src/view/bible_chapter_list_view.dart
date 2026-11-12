@@ -9,6 +9,7 @@ import 'package:biblia_e_harpa/src/model/bible_audio.dart';
 import 'package:biblia_e_harpa/src/controllers/bible_text_assets_controller.dart';
 import 'package:biblia_e_harpa/src/controllers/bible_read_controller.dart';
 import 'package:biblia_e_harpa/src/controllers/chapter_list_controller.dart';
+import 'package:biblia_e_harpa/src/l10n/app_localizations.dart';
 import 'package:biblia_e_harpa/src/view/component/feature_search_field.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -93,9 +94,9 @@ class _ChapterListViewState extends State<_ChapterListView>
           labelColor: Theme.of(context).colorScheme.onSurface,
           unselectedLabelColor: Theme.of(context).colorScheme.onSurface,
           indicatorColor: Theme.of(context).colorScheme.onSurface,
-          tabs: const [
-            Tab(text: "Todos"),
-            Tab(text: "Lidos"),
+          tabs: [
+            Tab(text: context.l10n.t("Todos")),
+            Tab(text: context.l10n.t("Lidos")),
           ],
         ),
       ),
@@ -104,7 +105,7 @@ class _ChapterListViewState extends State<_ChapterListView>
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: FeatureSearchField(
-              hintText: "Pesquisar Capítulo",
+              hintText: context.l10n.t("Pesquisar capítulo"),
               keyboardType: TextInputType.number,
               onChanged: (v) =>
                   context.read<BibleChapterListController>().setQuery(v),
@@ -115,7 +116,10 @@ class _ChapterListViewState extends State<_ChapterListView>
             child: viewModel.loading
                 ? const Center(child: CircularProgressIndicator())
                 : viewModel.chapters.isEmpty
-                    ? const Center(child: Text("Nenhum texto foi encontrado"))
+                    ? Center(
+                        child: Text(
+                            context.l10n.t("Nenhum texto foi encontrado")),
+                      )
                     : TabBarView(
                         controller: _tabController,
                         children: [
@@ -162,7 +166,8 @@ class _ChapterGrid extends StatelessWidget {
     final readViewModel = context.watch<BibleReadController>();
     final settings = context.watch<SettingsController>();
     if (chapterNumbers.isEmpty) {
-      return const Center(child: Text("Nenhum capítulo disponível."));
+      return Center(
+          child: Text(context.l10n.t("Nenhum capítulo disponível.")));
     }
 
     return GridView.builder(

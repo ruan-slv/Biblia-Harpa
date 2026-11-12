@@ -7,6 +7,8 @@ import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../l10n/app_localizations.dart';
+
 class ConnectivityErrorView extends StatelessWidget {
   final String message;
   final VoidCallback? onOfflinePressed;
@@ -52,7 +54,7 @@ class ConnectivityErrorView extends StatelessWidget {
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
                 label: Text(
-                  "Áudios Baixados",
+                  context.l10n.t("Áudios Baixados"),
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onSurface,
                     fontSize: settings.fontSize * 0.9,

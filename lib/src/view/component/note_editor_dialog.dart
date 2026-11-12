@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../controllers/notes_controller.dart';
+import '../../l10n/app_localizations.dart';
 import '../../model/note.dart';
 
 /// Diálogo de criação/edição de anotação.
@@ -64,7 +65,8 @@ class _NoteEditorDialogState extends State<NoteEditorDialog> {
 
     if (title.isEmpty && content.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Digite um título ou conteúdo.')),
+        SnackBar(
+            content: Text(context.l10n.t('Digite um título ou conteúdo.'))),
       );
       return;
     }
@@ -98,7 +100,9 @@ class _NoteEditorDialogState extends State<NoteEditorDialog> {
     return AlertDialog(
       backgroundColor: colorScheme.surface,
       title: Text(
-        isEditing ? 'Editar anotação' : 'Nova anotação',
+        isEditing
+            ? context.l10n.t('Editar anotação')
+            : context.l10n.t('Nova anotação'),
         style: TextStyle(color: colorScheme.onSurface, fontSize: 18),
       ),
       content: SizedBox(
@@ -109,7 +113,7 @@ class _NoteEditorDialogState extends State<NoteEditorDialog> {
             TextField(
               controller: _titleController,
               decoration: InputDecoration(
-                hintText: 'Título',
+                hintText: context.l10n.t('Título'),
                 hintStyle: TextStyle(
                   color: colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
@@ -121,7 +125,7 @@ class _NoteEditorDialogState extends State<NoteEditorDialog> {
               controller: _contentController,
               maxLines: 5,
               decoration: InputDecoration(
-                hintText: 'Escreva sua anotação...',
+                hintText: context.l10n.t('Escreva sua anotação...'),
                 hintStyle: TextStyle(
                   color: colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
@@ -132,7 +136,8 @@ class _NoteEditorDialogState extends State<NoteEditorDialog> {
             TextField(
               controller: _referenceController,
               decoration: InputDecoration(
-                hintText: 'Referência (ex.: João 3:16)',
+                hintText:
+                    context.l10n.t('Referência (ex.: João 3:16)'),
                 hintStyle: TextStyle(
                   color: colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
@@ -145,12 +150,12 @@ class _NoteEditorDialogState extends State<NoteEditorDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context, false),
-          child: const Text('Cancelar'),
+          child: Text(context.l10n.t('Cancelar')),
         ),
         TextButton(
           onPressed: _save,
           child: Text(
-            'Salvar',
+            context.l10n.t('Salvar'),
             style: TextStyle(color: colorScheme.onSurface),
           ),
         ),

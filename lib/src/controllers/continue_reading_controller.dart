@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../l10n/app_localizations.dart';
+
 /// Identifica a funcionalidade associada a um item de continuidade.
 enum ContinueReadingType {
   /// Um item de devocional.
@@ -158,7 +160,7 @@ class ContinueReadingController {
         id: 'bible:$bookName:$jsonPath',
         type: ContinueReadingType.bible,
         title: bookName,
-        subtitle: 'Capítulo $chapterNumber',
+        subtitle: tr('Capítulo {number}', {'number': '$chapterNumber'}),
         position: chapterNumber - 1,
         updatedAt: DateTime.now(),
         data: {'bookName': bookName, 'jsonPath': jsonPath},

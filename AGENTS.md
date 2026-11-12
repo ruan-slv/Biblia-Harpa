@@ -1,5 +1,85 @@
 # Tarefas
 
+## ✅ Concluído — Versão da Bíblia acompanha o idioma escolhido
+
+* **Demanda:** ao escolher o idioma (ex.: russo), o aplicativo deve selecionar
+  automaticamente a versão da Bíblia daquele idioma. No Brasil, onde há três
+  versões, a padrão deve ser a NVI.
+* **Correção aplicada:**
+  * `lib/src/utils/bible_version_defaults.dart` → mapeamento centralizado
+    idioma → arquivo da Bíblia:
+    * `pt` → `nvi.json` (NVI), `en` → `en_kjv.json`, `es` → `es_rvr.json`,
+      `de` → `de_schlachter.json`, `fr` → `fr_apee.json`,
+      `ru` → `ru_synodal.json`, `zh` → `zh_cuv.json`, `ko` → `ko_ko.json`,
+      `vi` → `vi_vietnamese.json`, `el` → `el_greek.json`,
+      `ro` → `ro_cornilescu.json`, `eo` → `eo_esperanto.json`,
+      `ar` → `ar_svd.json`, `fi` → `fi_finnish.json`.
+    * Conversão entre chave do seletor e arquivo (`NVI` ↔ `nvi.json`), chave de
+      preferência e fallback para o padrão do português.
+  * `settings_controller.dart` → ao trocar o idioma, também persiste a versão
+    da Bíblia correspondente em `selectedVersion`.
+  * `bible_version_controller.dart` → passa a usar o mapeamento central e tem a
+    NVI como fallback (antes era ACF).
+  * `bible_list_controller.dart` → usa o mapeamento (remove switches
+    duplicados), expõe `setVersionForLanguage()` e escuta o
+    `SettingsController` para recarregar a Bíblia quando o idioma muda com o
+    app aberto.
+  * `bible_providers_controller.dart` → injeta o `SettingsController` no
+    `BibleListController`.
+  * `database_export_controller.dart` → usa a mesma chave/constantes e o mesmo
+    fallback NVI na exportação.
+* **Comportamento:** a escolha manual de versão continua sendo respeitada
+  enquanto o idioma não mudar; ao trocar o idioma, a versão padrão daquele
+  idioma é aplicada novamente.
+* **Testes:**
+  * `test/bible_version_defaults_test.dart` → todos os idiomas apontam para
+    arquivos existentes, português usa NVI, russo usa Synodal e conversões
+    chave/arquivo.
+  * `test/settings_controller_test.dart` → escolher russo/português/trocar de
+    idioma atualiza `selectedVersion`.
+  * `test/widget_test.dart` → escolher russo no popup persiste a Bíblia russa.
+  * `flutter analyze` e `flutter test` sem erros.
+
+## ✅ Concluído — Seleção de idioma no primeiro acesso e interface traduzida
+
+* **Demanda:** ao abrir o aplicativo pela primeira vez, exibir um popup para o
+  usuário escolher o idioma, reutilizando as bandeiras da lista de versões da
+  Bíblia. A escolha deve ser salva e restaurar o idioma nas próximas aberturas,
+  traduzindo toda a interface (ex.: Português do Brasil e Russo).
+* **Correção aplicada:**
+  * `lib/src/l10n/` → nova camada de internacionalização sem codegen:
+    * `app_localizations.dart` com 14 idiomas (`pt`, `en`, `es`, `de`, `fr`,
+      `ru`, `zh`, `ko`, `vi`, `el`, `ro`, `eo`, `ar`, `fi`), bandeiras, nomes
+      nativos, locale, delegate e o atalho `context.l10n` / `tr(...)`.
+    * Chaves de tradução são os próprios textos em português, com fallback:
+      idioma escolhido → dicionário comum do idioma → inglês → dicionário
+      comum em inglês → texto original em português. O português retorna a
+      própria chave (sem cair no inglês).
+    * Dicionários completos em `translations_en/es/ru.dart`, dicionários
+      essenciais nos demais arquivos e `translations_common.dart` para chaves
+      pontuais (áudio, devocionais, cores, notificações, exportação etc.).
+  * `settings_controller.dart` → preferência persistida `app_language`, com
+    normalização de códigos (`pt-BR` → `pt`), `initialized`,
+    `hasSelectedLanguage`, `language`, `locale` e `setLanguage()`.
+  * `language_selection_dialog.dart` → popup com bandeiras, nomes nativos e
+    marcação do idioma atual; modo de primeiro acesso não dispensável.
+  * `language_gate.dart` → aguarda o carregamento das preferências e exibe o
+    popup apenas quando ainda não há idioma salvo, reagendando caso seja
+    fechado sem escolha.
+  * `main.dart` → `locale`, `supportedLocales`, delegates do
+    `flutter_localizations`, título gerado por idioma, mensagens do Upgrader e
+    `LanguageGate` envolvendo o app.
+  * `settings_view.dart` → novo cartão de idioma com "Alterar idioma".
+  * Telas, controladores e serviços (Bíblia, Harpa, áudios, notas, quiz,
+    devocionais, compartilhamento, segundo plano etc.) passaram a usar
+    `context.l10n.t(...)`/`tr(...)`.
+* **Testes:**
+  * `test/settings_controller_test.dart` → idioma padrão, persistência,
+    normalização e fallback de código desconhecido.
+  * `test/widget_test.dart` → popup no primeiro acesso, escolha persistida e
+    ausência do popup quando o idioma já foi escolhido.
+  * `flutter analyze` e `flutter test` sem erros.
+
 ## ✅ Concluído — Versão do aplicativo e Agradecimentos nas Configurações
 
 * **Demanda:** Na tela de "Configurações", criar uma seção informando a versão de

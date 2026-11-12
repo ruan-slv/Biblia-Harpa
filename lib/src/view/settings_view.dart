@@ -6,6 +6,8 @@ library;
 import 'package:biblia_e_harpa/src/view/component/app_section_card.dart';
 import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
 import 'package:biblia_e_harpa/src/controllers/database_export_controller.dart';
+import 'package:biblia_e_harpa/src/l10n/app_localizations.dart';
+import 'package:biblia_e_harpa/src/view/component/language_selection_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -28,6 +30,9 @@ class SettingsView extends StatelessWidget {
 }
 
 class _SettingsContent extends StatelessWidget {
+  static const String _repositoryUrl =
+      'https://github.com/ruan-slv/Biblia-Harpa.git';
+
   final Future<PackageInfo> _packageInfoFuture = PackageInfo.fromPlatform();
 
   // Valores lidos do .env a cada construção da tela (em vez de uma vez de
@@ -39,8 +44,7 @@ class _SettingsContent extends StatelessWidget {
   late final Uri _playStoreUrl;
 
   _SettingsContent() {
-    _supportEmail =
-        dotenv.env["SUPPORT_EMAIL"] ?? "Email de suporte não encontrado!";
+    _supportEmail = dotenv.env["SUPPORT_EMAIL"] ?? "";
     _playStoreURL = dotenv.env["PLAYSTORE_URL"] ?? "";
     _pixKey = dotenv.env["PIX_KEY"] ?? "";
     _playStoreUrl = Uri.parse(_playStoreURL);
@@ -50,8 +54,8 @@ class _SettingsContent extends StatelessWidget {
     Clipboard.setData(ClipboardData(text: _pixKey));
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Chave PIX copiada com sucesso!"),
+        SnackBar(
+          content: Text(context.l10n.t("Chave PIX copiada com sucesso!")),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -101,28 +105,28 @@ class _SettingsContent extends StatelessWidget {
             borderRadius: BorderRadius.circular(24),
           ),
           title: Text(
-            "Suporte",
+            context.l10n.t("Suporte"),
             style: TextStyle(
               color: colorScheme.onSurface,
               fontWeight: FontWeight.w700,
             ),
           ),
           content: Text(
-            "E-mail: $_supportEmail",
+            "E-mail: ${_supportEmail.isEmpty ? context.l10n.t("Email de suporte não encontrado!") : _supportEmail}",
             style: TextStyle(color: colorScheme.onSurface),
           ),
           actions: [
             TextButton(
               onPressed: () => _startSupport(context),
               child: Text(
-                "Entrar em contato",
+                context.l10n.t("Entrar em contato"),
                 style: TextStyle(color: colorScheme.onSurface),
               ),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: Text(
-                "Fechar",
+                context.l10n.t("Fechar"),
                 style: TextStyle(color: colorScheme.onSurface),
               ),
             ),
@@ -135,6 +139,30 @@ class _SettingsContent extends StatelessWidget {
   Future<void> _openExternal(Uri url) async {
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       throw Exception("Não foi possível abrir a Play Store");
+    }
+  }
+
+  Future<void> _openRepository(BuildContext context) async {
+    try {
+      if (!await launchUrl(
+        Uri.parse(_repositoryUrl),
+        mode: LaunchMode.externalApplication,
+      )) {
+        throw Exception('link inválido');
+      }
+    } catch (error) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            context.l10n.t(
+              'Não foi possível abrir o link: {error}',
+              {'error': '$error'},
+            ),
+          ),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     }
   }
 
@@ -157,71 +185,6 @@ class _SettingsContent extends StatelessWidget {
     );
   }
 
-  Widget _buildContributorItem(
-    BuildContext context, {
-    required String name,
-    required String role,
-    required IconData icon,
-  }) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: colorScheme.onSurface.withValues(alpha: 0.08),
-        ),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: colorScheme.primaryContainer,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              icon,
-              size: 20,
-              color: colorScheme.primary,
-            ),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  name,
-                  style: TextStyle(
-                    color: colorScheme.onSurface,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 15,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  role,
-                  style: TextStyle(
-                    color: colorScheme.onSurface.withValues(alpha: 0.75),
-                    fontSize: 13,
-                    height: 1.3,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -237,14 +200,19 @@ class _SettingsContent extends StatelessWidget {
                 children: [
                   AppSectionCard(
                     icon: Icons.format_size_rounded,
-                    title: "Tamanho da fonte",
-                    subtitle:
-                        "Defina um tamanho confortável para leitura em todas as telas de texto.",
+                    title: context.l10n.t("Tamanho da fonte"),
+                    subtitle: context.l10n.t(
+                        "Defina um tamanho confortável para leitura em todas as telas de texto."),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Tamanho atual: ${viewModel.fontSize.toStringAsFixed(0)} pt",
+                          context.l10n.t(
+                            "Tamanho atual: {size} pt",
+                            {
+                              'size': viewModel.fontSize.toStringAsFixed(0),
+                            },
+                          ),
                           style: TextStyle(color: colorScheme.onSurface),
                         ),
                         const SizedBox(height: 12),
@@ -267,12 +235,46 @@ class _SettingsContent extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   AppSectionCard(
+                    icon: Icons.language_rounded,
+                    title: context.l10n.t("Idioma do aplicativo"),
+                    subtitle: context.l10n.t("Escolha o idioma da interface"),
+                    child: Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 280,
+                          child: Text(
+                            context.l10n.t(
+                              "Idioma atual: {language}",
+                              {
+                                'language':
+                                    "${viewModel.language.flag} ${viewModel.language.nativeName}",
+                              },
+                            ),
+                            style: TextStyle(
+                              color: colorScheme.onSurface,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: () => showLanguageSelectionDialog(context),
+                          icon: const Icon(Icons.translate_rounded),
+                          label: Text(context.l10n.t("Alterar idioma")),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  AppSectionCard(
                     icon: viewModel.isDarkMode
                         ? Icons.dark_mode_rounded
                         : Icons.light_mode_rounded,
-                    title: "Tema do aplicativo",
-                    subtitle:
-                        "Alterne entre os modos claro e escuro conforme o ambiente e sua preferência.",
+                    title: context.l10n.t("Tema do aplicativo"),
+                    subtitle: context.l10n.t(
+                        "Alterne entre os modos claro e escuro conforme o ambiente e sua preferência."),
                     child: Wrap(
                       spacing: 12,
                       runSpacing: 12,
@@ -282,8 +284,8 @@ class _SettingsContent extends StatelessWidget {
                           width: 280,
                           child: Text(
                             viewModel.isDarkMode
-                                ? "Modo escuro ativo"
-                                : "Modo claro ativo",
+                                ? context.l10n.t("Modo escuro ativo")
+                                : context.l10n.t("Modo claro ativo"),
                             style: TextStyle(
                               color: colorScheme.onSurface,
                               fontWeight: FontWeight.w600,
@@ -296,52 +298,126 @@ class _SettingsContent extends StatelessWidget {
                               ? Icons.sunny
                               : Icons.brightness_2),
                           label: Text(viewModel.isDarkMode
-                              ? "Usar claro"
-                              : "Usar escuro"),
+                              ? context.l10n.t("Usar claro")
+                              : context.l10n.t("Usar escuro")),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 16),
                   AppSectionCard(
-                    icon: Icons.repeat_rounded,
-                    title: "Reprodução contínua",
-                    subtitle:
-                        "Ao terminar um hino da Harpa, passa automaticamente para o próximo, sem parar.",
-                    child: SwitchListTile(
-                      contentPadding: EdgeInsets.zero,
-                      value: viewModel.continuousPlayback,
-                      onChanged: viewModel.setContinuousPlayback,
-                      title: Text(
-                        viewModel.continuousPlayback
-                            ? "Modo sem parar ativado"
-                            : "Modo sem parar desativado",
-                        style: TextStyle(
-                          color: colorScheme.onSurface,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  AppSectionCard(
                     icon: Icons.share_outlined,
-                    title: "Compartilhar app",
-                    subtitle:
-                        "Envie o aplicativo para familiares e amigos e ajude mais pessoas a alcançarem esse conteúdo.",
+                    title: context.l10n.t("Compartilhar app"),
+                    subtitle: context.l10n.t(
+                        "Envie o aplicativo para familiares e amigos e ajude mais pessoas a alcançarem esse conteúdo."),
                     child: ElevatedButton.icon(
                       onPressed: () {
                         SharePlus.instance.share(
                           ShareParams(
                             text:
-                                "📖✨ Descubra uma nova forma de se conectar com a Palavra de Deus!\n\n"
-                                "Baixe agora nosso aplicativo gratuito de leitura bíblica e tenha acesso a versiculos, harpa e muito mais, tudo na palma da sua mão de forma ofline e sem anúncios.\n\n"
-                                "🔗 Acesse aqui: $_playStoreUrl",
+                                "📖✨ ${context.l10n.t("Descubra uma nova forma de se conectar com a Palavra de Deus!")}\n\n"
+                                "${context.l10n.t("Baixe agora nosso aplicativo gratuito de leitura bíblica e tenha acesso a versículos, harpa e muito mais, tudo na palma da sua mão, offline e sem anúncios.")}\n\n"
+                                "🔗 ${context.l10n.t("Acesse aqui: {url}", {
+                                  'url': _playStoreUrl.toString()
+                                })}",
                           ),
                         );
                       },
                       icon: const Icon(Icons.share),
-                      label: const Text("Compartilhar"),
+                      label: Text(context.l10n.t("Compartilhar")),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  AppSectionCard(
+                    icon: Icons.coffee_rounded,
+                    title: context.l10n.t("Apoiar projeto"),
+                    subtitle: context.l10n.t(
+                        "Seu apoio nos ajuda a manter este projeto de pé com manutenções e atualizações do aplicativo para seu aproveitamento."),
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        copyPixKey(context);
+                      },
+                      icon: const Icon(Icons.info_outline_rounded),
+                      label: Text(context.l10n.t("Apoiar")),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  AppSectionCard(
+                    icon: Icons.support_agent_rounded,
+                    title: context.l10n.t("Suporte"),
+                    subtitle: context.l10n.t(
+                        "Entre em contato por e-mail para pedir ajuda ou enviar feedback."),
+                    child: ElevatedButton.icon(
+                      onPressed: () => _showSupportDialog(context),
+                      icon: const Icon(Icons.mail_outline_rounded),
+                      label: Text(context.l10n.t("Solicitar suporte")),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  AppSectionCard(
+                    icon: Icons.privacy_tip_outlined,
+                    title: context.l10n.t("Política de Privacidade"),
+                    subtitle: context.l10n.t(
+                        "Conheça como tratamos seus dados e sua privacidade."),
+                    child: ElevatedButton.icon(
+                      onPressed: () async => await _openExternal(
+                          Uri.parse("https://ruan-slv.github.io/biblia-site/")),
+                      icon: const Icon(Icons.open_in_new_rounded),
+                      label: Text(context.l10n.t("Ver política")),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Consumer<DatabaseExportController>(
+                    builder: (context, exportController, _) {
+                      return AppSectionCard(
+                        icon: Icons.save_alt_rounded,
+                        title: context.l10n.t("Exportar Base de Dados"),
+                        subtitle: context.l10n.t(
+                            "Salve os arquivos .json da Bíblia (versão selecionada) e da Harpa em uma pasta do seu dispositivo."),
+                        child: ElevatedButton.icon(
+                          onPressed: exportController.isExporting
+                              ? null
+                              : () => _exportDatabase(
+                                    context,
+                                    exportController,
+                                  ),
+                          icon: exportController.isExporting
+                              ? const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Icon(Icons.save_alt_rounded),
+                          label: Text(
+                            exportController.isExporting
+                                ? context.l10n.t("Exportando...")
+                                : context.l10n.t("Exportar"),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  AppSectionCard(
+                    icon: Icons.code_rounded,
+                    title: context.l10n.t('Projeto Open Source'),
+                    subtitle: context.l10n.t(
+                      'Este projeto faz parte da comunidade Open Source. Contribua com ideias, melhorias ou código e ajude o aplicativo a crescer.',
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 12),
+                        ElevatedButton.icon(
+                          onPressed: () => _openRepository(context),
+                          icon: const Icon(Icons.open_in_new_rounded),
+                          label: Text(
+                            context.l10n.t('Contribuir no GitHub'),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -356,9 +432,9 @@ class _SettingsContent extends StatelessWidget {
 
                       return AppSectionCard(
                         icon: Icons.info_outline_rounded,
-                        title: "Versão do aplicativo",
-                        subtitle:
-                            "Informações sobre a versão atual instalada e canal de atualização.",
+                        title: context.l10n.t("Versão do aplicativo"),
+                        subtitle: context.l10n.t(
+                            "Informações sobre a versão atual instalada e canal de atualização."),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -395,127 +471,7 @@ class _SettingsContent extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 12),
-                            Text(
-                              "Abra a Play Store para verificar novas versões, ver novidades e avaliar o aplicativo.",
-                              style: TextStyle(
-                                color: colorScheme.onSurface
-                                    .withValues(alpha: 0.8),
-                                fontSize: 13,
-                                height: 1.4,
-                              ),
-                            ),
-                            const SizedBox(height: 14),
-                            ElevatedButton.icon(
-                              onPressed: () async =>
-                                  await _openExternal(_playStoreUrl),
-                              icon: const Icon(Icons.open_in_new_rounded),
-                              label: const Text("Abrir Play Store"),
-                            ),
                           ],
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  AppSectionCard(
-                    icon: Icons.coffee_rounded,
-                    title: "Apoiar projeto",
-                    subtitle:
-                        "Seu apoio nos ajuda a manter este projeto de pé com manutenções e atualizações do aplicativo para seu aproveitamento.",
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        copyPixKey(context);
-                      },
-                      icon: const Icon(Icons.info_outline_rounded),
-                      label: const Text("Apoiar"),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  AppSectionCard(
-                    icon: Icons.volunteer_activism_rounded,
-                    title: "Agradecimentos",
-                    subtitle:
-                        "Reconhecimento especial às pessoas que colaboraram para a criação e aprimoramento deste aplicativo.",
-                    child: Column(
-                      children: [
-                        _buildContributorItem(
-                          context,
-                          name: "Ruan Gustavo Soares da Silva",
-                          role: "Criador do projeto e desenvolvedor",
-                          icon: Icons.code_rounded,
-                        ),
-                        const SizedBox(height: 10),
-                        _buildContributorItem(
-                          context,
-                          name: "Glaucia Iara Nascimento Soares",
-                          role: "Criadora da nova logo e publicidade",
-                          icon: Icons.palette_rounded,
-                        ),
-                        const SizedBox(height: 10),
-                        _buildContributorItem(
-                          context,
-                          name: "Hyago dos Santos",
-                          role: "Idealizador da Palavra do Dia",
-                          icon: Icons.auto_stories_rounded,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  AppSectionCard(
-                    icon: Icons.support_agent_rounded,
-                    title: "Suporte",
-                    subtitle:
-                        "Entre em contato por e-mail para pedir ajuda ou enviar feedback.",
-                    child: ElevatedButton.icon(
-                      onPressed: () => _showSupportDialog(context),
-                      icon: const Icon(Icons.mail_outline_rounded),
-                      label: const Text("Solicitar suporte"),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  AppSectionCard(
-                    icon: Icons.privacy_tip_outlined,
-                    title: "Política de Privacidade",
-                    subtitle:
-                        "Conheça como tratamos seus dados e sua privacidade.",
-                    child: ElevatedButton.icon(
-                      onPressed: () async => await _openExternal(
-                          Uri.parse("https://ruan-slv.github.io/biblia-site/")),
-                      icon: const Icon(Icons.open_in_new_rounded),
-                      label: const Text("Ver política"),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Consumer<DatabaseExportController>(
-                    builder: (context, exportController, _) {
-                      return AppSectionCard(
-                        icon: Icons.save_alt_rounded,
-                        title: "Exportar Base de Dados",
-                        subtitle:
-                            "Salve os arquivos .json da Bíblia (versão selecionada) e da Harpa em uma pasta do seu dispositivo.",
-                        child: ElevatedButton.icon(
-                          onPressed: exportController.isExporting
-                              ? null
-                              : () => _exportDatabase(
-                                    context,
-                                    exportController,
-                                  ),
-                          icon: exportController.isExporting
-                              ? const SizedBox(
-                                  width: 18,
-                                  height: 18,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : const Icon(Icons.save_alt_rounded),
-                          label: Text(
-                            exportController.isExporting
-                                ? "Exportando..."
-                                : "Exportar",
-                          ),
                         ),
                       );
                     },

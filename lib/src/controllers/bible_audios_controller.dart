@@ -10,6 +10,8 @@ import '../utils/text_normalizer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../l10n/app_localizations.dart';
+
 class BibleAudiosController extends ChangeNotifier {
   final BibleAudioAssetsController audioAssetsService;
 
@@ -44,13 +46,13 @@ class BibleAudiosController extends ChangeNotifier {
         }
         books = offlineBooks;
         if (books.isEmpty) {
-          _error = "Nenhum áudio foi baixado para ser acessado offline.";
+          _error = tr("Nenhum áudio foi baixado para ser acessado offline.");
         }
       }
       _allBooks = books;
       _applyFilter();
     } catch (_) {
-      _error = "Erro ao listar áudios. Verifique os arquivos do aplicativo.";
+      _error = tr("Erro ao listar áudios. Verifique os arquivos do aplicativo.");
       _allBooks = const [];
       _filteredBooks = const [];
     } finally {

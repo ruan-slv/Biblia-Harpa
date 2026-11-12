@@ -90,7 +90,8 @@ void main() {
     expect(find.text('Bem-vindo!'), findsNothing);
   });
 
-  testWidgets('StartupGate mostra o popup no primeiro acesso', (tester) async {
+  testWidgets('StartupGate mostra o app mesmo no primeiro acesso',
+      (tester) async {
     SharedPreferences.setMockInitialValues({});
 
     await tester.pumpWidget(
@@ -102,7 +103,9 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
 
-    expect(find.text('Bem-vindo!'), findsOneWidget);
-    expect(find.text('TELA PRINCIPAL'), findsNothing);
+    // O fluxo de download do primeiro acesso foi desativado: a tela inicial
+    // é liberada diretamente (a escolha de idioma é tratada por LanguageGate).
+    expect(find.text('TELA PRINCIPAL'), findsOneWidget);
+    expect(find.text('Bem-vindo!'), findsNothing);
   });
 }

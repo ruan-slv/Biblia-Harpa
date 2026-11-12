@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../controllers/notes_controller.dart';
+import '../l10n/app_localizations.dart';
 import '../model/note.dart';
 import 'component/app_bar_component.dart';
 import 'component/note_editor_dialog.dart';
@@ -36,7 +37,7 @@ class _NotesViewState extends State<NotesView> {
       child: Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: CustomAppBar(
-          title: 'Anotações',
+          title: context.l10n.t('Anotações'),
           centerTitle: false,
           automaticallyImplyLeading: true,
         ),
@@ -47,7 +48,7 @@ class _NotesViewState extends State<NotesView> {
             controller: _controller,
           ),
           icon: const Icon(Icons.note_add_outlined),
-          label: const Text('Nova anotação'),
+          label: Text(context.l10n.t('Nova anotação')),
         ),
       ),
     );
@@ -80,7 +81,7 @@ class _NotesBody extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Nenhuma anotação ainda',
+                context.l10n.t('Nenhuma anotação ainda'),
                 style: TextStyle(
                   color: colorScheme.onSurface,
                   fontSize: 18,
@@ -89,7 +90,7 @@ class _NotesBody extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Toque em "Nova anotação" para começar.',
+                context.l10n.t('Toque em "Nova anotação" para começar.'),
                 style: TextStyle(
                   color: colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
@@ -133,7 +134,9 @@ class _NotesBody extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          note.title.isEmpty ? 'Sem título' : note.title,
+                          note.title.isEmpty
+                              ? context.l10n.t('Sem título')
+                              : note.title,
                           style: TextStyle(
                             color: colorScheme.onSurface,
                             fontSize: 17,
@@ -148,7 +151,7 @@ class _NotesBody extends StatelessWidget {
                           Icons.delete_outline,
                           color: colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
-                        tooltip: 'Excluir',
+                        tooltip: context.l10n.t('Excluir'),
                         onPressed: () => _confirmDelete(context, note),
                       ),
                     ],
@@ -203,21 +206,24 @@ class _NotesBody extends StatelessWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Excluir anotação?'),
+        title: Text(context.l10n.t('Excluir anotação?')),
         content: Text(
           note.title.isEmpty
-              ? 'Esta anotação será excluída.'
-              : '"${note.title}" será excluída.',
+              ? context.l10n.t('Esta anotação será excluída.')
+              : context.l10n.t(
+                  '"{title}" será excluída.',
+                  {'title': note.title},
+                ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
+            child: Text(context.l10n.t('Cancelar')),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: Text(
-              'Excluir',
+              context.l10n.t('Excluir'),
               style: TextStyle(color: colorScheme.onSurface),
             ),
           ),

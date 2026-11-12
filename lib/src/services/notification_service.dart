@@ -4,6 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
+import '../l10n/app_localizations.dart';
+
 /// Serviço de notificações locais.
 ///
 /// Agenta uma notificação de leitura a cada 17 horas. Ao tocar na
@@ -94,14 +96,15 @@ class NotificationService {
 
       await _plugin.zonedSchedule(
         _notificationId,
-        'Hora de ler!',
-        'Não esqueça de ler a Palavra de Deus hoje. Toque para abrir o app.',
+        tr('Hora de ler!'),
+        tr('Não esqueça de ler a Palavra de Deus hoje. Toque para abrir o app.'),
         scheduledTZ,
-        const NotificationDetails(
+        NotificationDetails(
           android: AndroidNotificationDetails(
             'reading_channel',
-            'Leituras',
-            channelDescription: 'Lembrete de leitura da Bíblia e Harpa',
+            tr('Leituras'),
+            channelDescription:
+                tr('Lembrete de leitura da Bíblia e Harpa'),
             importance: Importance.high,
             priority: Priority.high,
             icon: '@mipmap/ic_launcher',

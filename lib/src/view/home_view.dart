@@ -17,6 +17,7 @@ import 'background_tasks_view.dart';
 import 'package:biblia_e_harpa/src/services/app_audio_handler.dart';
 import 'component/daily_word_card.dart';
 import 'other_projects_view.dart';
+import 'package:biblia_e_harpa/src/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'component/app_bar_component.dart';
@@ -64,8 +65,8 @@ class _HomeViewState extends State<HomeView> {
         if (!mounted || book == null) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                  content: Text('Não foi possível retomar a Bíblia.')),
+              SnackBar(
+                  content: Text(context.l10n.t('Não foi possível retomar a Bíblia.'))),
             );
           }
           return;
@@ -146,14 +147,14 @@ class _HomeViewState extends State<HomeView> {
                   leading:
                       Icon(Icons.auto_fix_high, color: colorScheme.onSurface),
                   title: Text(
-                    'Próximo devocional não lido',
+                    context.l10n.t('Próximo devocional não lido'),
                     style: TextStyle(
                       color: colorScheme.onSurface,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   subtitle: Text(
-                    'Avança para a próxima leitura disponível',
+                    context.l10n.t('Avança para a próxima leitura disponível'),
                     style: TextStyle(
                       color: colorScheme.onSurface.withValues(alpha: .72),
                     ),
@@ -165,9 +166,9 @@ class _HomeViewState extends State<HomeView> {
                     if (!mounted) return;
                     if (entry == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content:
-                              Text('Nenhum devocional não lido encontrado.'),
+                        SnackBar(
+                          content: Text(context.l10n
+                              .t('Nenhum devocional não lido encontrado.')),
                         ),
                       );
                       return;
@@ -184,7 +185,7 @@ class _HomeViewState extends State<HomeView> {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Continuar de onde parou',
+                      context.l10n.t('Continuar de onde parou'),
                       style: TextStyle(
                         color: colorScheme.onSurface,
                         fontWeight: FontWeight.w700,
@@ -196,7 +197,7 @@ class _HomeViewState extends State<HomeView> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                     child: Text(
-                      'Nenhuma leitura ou atividade recente.',
+                      context.l10n.t('Nenhuma leitura ou atividade recente.'),
                       style: TextStyle(
                         color: colorScheme.onSurface.withValues(alpha: .72),
                       ),
@@ -275,9 +276,9 @@ class _HomeViewState extends State<HomeView> {
                     padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
                     child: buildMenuCard(
                       context,
-                      title: 'Continuar lendo',
-                      description:
-                          'Retome Devocional, Bíblia, Harpa ou Quiz de onde parou.',
+                      title: context.l10n.t('Continuar lendo'),
+                      description: context.l10n.t(
+                          'Retome Devocional, Bíblia, Harpa ou Quiz de onde parou.'),
                       iconData: Icons.read_more_rounded,
                       gradientColors: gradienteDevocional,
                       onPressed: _showContinueReading,
@@ -289,7 +290,7 @@ class _HomeViewState extends State<HomeView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Atalhos principais",
+                          context.l10n.t("Atalhos principais"),
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
@@ -302,7 +303,7 @@ class _HomeViewState extends State<HomeView> {
                             Expanded(
                               child: buildMenuCard(
                                 context,
-                                title: 'Bíblia',
+                                title: context.l10n.t('Bíblia'),
                                 iconData: Icons.menu_book_rounded,
                                 gradientColors: gradienteBiblia,
                                 onPressed: () => Navigator.push(
@@ -319,7 +320,7 @@ class _HomeViewState extends State<HomeView> {
                             Expanded(
                               child: buildMenuCard(
                                 context,
-                                title: 'Harpa',
+                                title: context.l10n.t('Harpa'),
                                 iconData: Icons.music_note_rounded,
                                 gradientColors: gradienteHarpa,
                                 onPressed: () => Navigator.push(
@@ -341,7 +342,7 @@ class _HomeViewState extends State<HomeView> {
                             Expanded(
                               child: buildMenuCard(
                                 context,
-                                title: 'Devocional',
+                                title: context.l10n.t('Devocional'),
                                 iconData: Icons.auto_stories_rounded,
                                 gradientColors: gradienteDevocional,
                                 onPressed: () => Navigator.push(
@@ -358,7 +359,7 @@ class _HomeViewState extends State<HomeView> {
                             Expanded(
                               child: buildMenuCard(
                                 context,
-                                title: 'Áudios',
+                                title: context.l10n.t('Áudios'),
                                 iconData: Icons.headphones_outlined,
                                 gradientColors: gradienteAudios,
                                 onPressed: () => Navigator.push(
@@ -379,7 +380,7 @@ class _HomeViewState extends State<HomeView> {
                             Expanded(
                               child: buildMenuCard(
                                 context,
-                                title: 'Quiz bíblico',
+                                title: context.l10n.t('Quiz bíblico'),
                                 iconData: Icons.quiz_outlined,
                                 gradientColors: gradienteAudios,
                                 onPressed: () => Navigator.push(
@@ -395,7 +396,7 @@ class _HomeViewState extends State<HomeView> {
                             Expanded(
                               child: buildMenuCard(
                                 context,
-                                title: 'Anotações',
+                                title: context.l10n.t('Anotações'),
                                 iconData: Icons.edit_note_outlined,
                                 gradientColors: gradienteApoio,
                                 onPressed: () => Navigator.push(
@@ -416,9 +417,9 @@ class _HomeViewState extends State<HomeView> {
                     padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
                     child: buildMenuCard(
                       context,
-                      title: 'Outros projetos',
-                      description:
-                          'Descubra outros projetos em que estamos preparando para você',
+                      title: context.l10n.t('Outros projetos'),
+                      description: context.l10n.t(
+                          'Descubra outros projetos em que estamos preparando para você'),
                       iconData: Icons.apps_rounded,
                       gradientColors: gradienteOutros,
                       onPressed: () => Navigator.push(
@@ -446,10 +447,10 @@ class _HomeViewState extends State<HomeView> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
         title: currentPageIndex == 1
-            ? "Segundo plano"
+            ? context.l10n.t("Segundo plano")
             : currentPageIndex == 2
-                ? "Configurações"
-                : "Bíblia e Harpa",
+                ? context.l10n.t("Configurações")
+                : context.l10n.t("Bíblia e Harpa"),
         centerTitle: false,
       ),
       body: pages[currentPageIndex],
@@ -474,7 +475,7 @@ class _HomeViewState extends State<HomeView> {
               Icons.home_outlined,
               color: colorScheme.onSurface,
             ),
-            label: "Inicio",
+            label: context.l10n.t("Início"),
           ),
           NavigationDestination(
             selectedIcon: Icon(
@@ -504,7 +505,7 @@ class _HomeViewState extends State<HomeView> {
                 );
               },
             ),
-            label: "Segundo plano",
+            label: context.l10n.t("Segundo plano"),
           ),
           NavigationDestination(
             selectedIcon: Icon(
@@ -517,7 +518,7 @@ class _HomeViewState extends State<HomeView> {
               Icons.settings_outlined,
               color: colorScheme.onSurface,
             ),
-            label: "Configurações",
+            label: context.l10n.t("Configurações"),
           ),
         ],
       ),

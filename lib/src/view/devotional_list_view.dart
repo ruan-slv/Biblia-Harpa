@@ -14,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../utils/config.dart';
 import '../utils/theme.dart';
+import '../l10n/app_localizations.dart';
 
 class DevotionalListView extends StatefulWidget {
   const DevotionalListView({super.key});
@@ -112,7 +113,7 @@ class _DevotionalListViewState extends State<DevotionalListView> {
           child: TextField(
             controller: _filterController,
             decoration: InputDecoration(
-              hintText: "Pesquisar livro",
+              hintText: context.l10n.t("Pesquisar livro"),
               hintStyle: TextStyle(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
@@ -236,8 +237,9 @@ class _DevotionalListViewState extends State<DevotionalListView> {
                                     const SizedBox(height: 6),
                                     Text(
                                       progress >= 1.0
-                                          ? "Tema concluído"
-                                          : "Toque para iniciar ou continuar a leitura",
+                                          ? context.l10n.t("Tema concluído")
+                                          : context.l10n.t(
+                                              "Toque para iniciar ou continuar a leitura"),
                                       style: TextStyle(
                                         color: colorScheme.onSurface
                                             .withValues(alpha: 0.72),
@@ -279,8 +281,8 @@ class _DevotionalListViewState extends State<DevotionalListView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: const CustomAppBar(
-        title: "Devocional",
+      appBar: CustomAppBar(
+        title: context.l10n.t("Devocional"),
         centerTitle: false,
         automaticallyImplyLeading: true,
       ),

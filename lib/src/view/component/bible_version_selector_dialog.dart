@@ -5,6 +5,8 @@ library;
 
 import 'package:flutter/material.dart';
 
+import '../../l10n/app_localizations.dart';
+
 class BibleVersionInfo {
   final String key;
   final String fileName;
@@ -204,7 +206,7 @@ class _BibleVersionSelectorDialogState
                 children: [
                   Expanded(
                     child: Text(
-                      'Selecione a versão',
+                      context.l10n.t('Selecione a versão'),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -226,7 +228,7 @@ class _BibleVersionSelectorDialogState
                 controller: _searchController,
                 onChanged: (v) => setState(() => _searchQuery = v),
                 decoration: InputDecoration(
-                  hintText: 'Buscar por nome ou idioma',
+                  hintText: context.l10n.t('Buscar por nome ou idioma'),
                   hintStyle:
                       TextStyle(color: Theme.of(context).colorScheme.onSurface),
                   prefixIcon: Icon(Icons.search,

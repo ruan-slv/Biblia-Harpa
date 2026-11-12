@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'bible_audio_chapters_view.dart';
+import '../l10n/app_localizations.dart';
 
 class BibleAudioListView extends StatefulWidget {
   final bool isOffline;
@@ -48,7 +49,7 @@ class _BibleAudioListViewState extends State<BibleAudioListView> {
           ? CustomAppBar(
               automaticallyImplyLeading: true,
               centerTitle: false,
-              title: "Áudios Baixados (Offline)",
+              title: context.l10n.t("Áudios Baixados (Offline)"),
             )
           : null,
       body: _Content(viewModel: viewModel),
@@ -88,7 +89,7 @@ class _Content extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: FeatureSearchField(
-            hintText: "Pesquisar livro",
+            hintText: context.l10n.t("Pesquisar livro"),
             onChanged: (v) => context.read<BibleAudiosController>().setQuery(v),
           ),
         ),

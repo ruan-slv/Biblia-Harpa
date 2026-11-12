@@ -12,6 +12,9 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../l10n/app_localizations.dart';
+import '../utils/bible_version_defaults.dart';
+
 /// Resultado de uma exportação da base de dados.
 class DatabaseExportResult {
   const DatabaseExportResult({
@@ -30,7 +33,7 @@ class DatabaseExportResult {
 class DatabaseExportController extends ChangeNotifier {
   /// Chave usada pelo [BibleVersionController] para persistir a versão
   /// selecionada da Bíblia.
-  static const String _versionPrefsKey = 'selectedVersion';
+  static const String _versionPrefsKey = kBibleVersionPrefsKey;
 
   static const String _harpaAssetPath =
       'assets/json/outros/harpa_crista_640_hinos.json';
@@ -55,7 +58,8 @@ class DatabaseExportController extends ChangeNotifier {
     try {
       // 1. Descobre qual versão da Bíblia está selecionada.
       final prefs = await SharedPreferences.getInstance();
-      final versionFile = prefs.getString(_versionPrefsKey) ?? 'acf.json';
+      final versionFile =
+          prefs.getString(_versionPrefsKey) ?? kDefaultBibleFile;
       final bibleAssetPath = 'assets/json/bible/$versionFile';
 
       // 2. Lê os arquivos direto dos assets do aplicativo.
@@ -77,14 +81,13 @@ class DatabaseExportController extends ChangeNotifier {
           if (!await directory.exists()) {
             await directory.create(recursive: true);
           }
-          await File('${directory.path}/$versionFile')
-              .writeAsBytes(bibleData);
+          await File('${directory.path}/$versionFile').writeAsBytes(bibleData);
           await File('${directory.path}/$_harpaFileName')
               .writeAsBytes(harpaData);
 
           return DatabaseExportResult(
             success: true,
-            message: 'Base exportada com sucesso!',
+            message: tr('Base exportada com sucesso!'),
             directory: directory.path,
           );
         } catch (e) {
@@ -92,15 +95,15 @@ class DatabaseExportController extends ChangeNotifier {
         }
       }
 
-      return const DatabaseExportResult(
+      return DatabaseExportResult(
         success: false,
-        message: 'Não foi possível salvar os arquivos no dispositivo.',
+        message: tr('Não foi possível salvar os arquivos no dispositivo.'),
       );
     } catch (e) {
       debugPrint('Erro ao exportar base de dados: $e');
       return DatabaseExportResult(
         success: false,
-        message: 'Não foi possível exportar: $e',
+        message: tr('Não foi possível exportar: {error}', {'error': '$e'}),
       );
     } finally {
       _isExporting = false;
@@ -118,7 +121,7 @@ class DatabaseExportController extends ChangeNotifier {
 
     try {
       final picked = await FilePicker.getDirectoryPath(
-        dialogTitle: 'Escolha onde salvar a base de dados',
+        dialogTitle: tr('Escolha onde salvar a base de dados'),
       );
       if (picked != null && picked.trim().isNotEmpty && picked.trim() != '/') {
         directories.add(Directory(picked));

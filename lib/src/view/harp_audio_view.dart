@@ -19,6 +19,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'component/app_bar_component.dart';
+import '../l10n/app_localizations.dart';
 import '../utils/theme.dart';
 import '../services/app_audio_handler.dart';
 
@@ -197,12 +198,12 @@ class _HarpAudioViewState extends State<HarpAudioView> {
         _filtrarHarpa = _allHarpas;
         isLoading = false;
         if (widget.isOffline && _allHarpas.isEmpty) {
-          error = "Nenhum hino foi baixado.";
+          error = tr('Nenhum hino foi baixado.');
         }
       });
     } catch (e) {
       setState(() {
-        error = "Erro ao carregar áudios.";
+        error = tr('Erro ao carregar áudios.');
         isLoading = false;
       });
     }
@@ -273,7 +274,7 @@ class _HarpAudioViewState extends State<HarpAudioView> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Erro ao reproduzir áudio.")));
+            SnackBar(content: Text(tr('Erro ao reproduzir áudio.'))));
       }
     }
   }
@@ -345,14 +346,14 @@ class _HarpAudioViewState extends State<HarpAudioView> {
         _isDownloading = false;
       });
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("${hino.titulo} baixado!")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(tr('{hino} baixado!', {'hino': hino.titulo}))));
       }
     } catch (e) {
       setState(() => _isDownloading = false);
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("Erro no download.")));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(tr('Erro no download.'))));
       }
     }
   }
@@ -364,14 +365,15 @@ class _HarpAudioViewState extends State<HarpAudioView> {
     setState(() => _downloadedIndices.remove(_allHarpas.indexOf(hino)));
     if (mounted) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Removido.")));
+          .showSnackBar(SnackBar(content: Text(tr('Removido.'))));
     }
   }
 
   Future<void> _share(int index) async {
     final hino = _filtrarHarpa[index];
     await SharePlus.instance.share(ShareParams(
-        text: "Ouça ${hino.titulo} na Harpa Cristã: ${hino.hinoURL}"));
+        text: tr('Ouça {hino} na Harpa Cristã: {url}',
+            {'hino': hino.titulo, 'url': hino.hinoURL})));
   }
 
   String _formatDuration(Duration d) =>
@@ -385,7 +387,7 @@ class _HarpAudioViewState extends State<HarpAudioView> {
           ? CustomAppBar(
               automaticallyImplyLeading: true,
               centerTitle: false,
-              title: "Hinos Baixados")
+              title: context.l10n.t('Hinos Baixados'))
           : null,
       body: _buildContent(),
     );
@@ -412,7 +414,7 @@ class _HarpAudioViewState extends State<HarpAudioView> {
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    hintText: "Pesquisar hino",
+                    hintText: context.l10n.t('Pesquisar hino'),
                     hintStyle: TextStyle(
                         color: Theme.of(context).colorScheme.onSurface),
                     prefixIcon: Icon(Icons.search,
@@ -431,8 +433,10 @@ class _HarpAudioViewState extends State<HarpAudioView> {
               ),
               IconButton(
                 tooltip: settings.continuousPlayback
-                    ? "Reprodução contínua ativada (toque para desativar)"
-                    : "Reprodução contínua desativada (toque para ativar)",
+                    ? context.l10n.t(
+                        'Reprodução contínua ativada (toque para desativar)')
+                    : context.l10n.t(
+                        'Reprodução contínua desativada (toque para ativar)'),
                 onPressed: settings.toggleContinuousPlayback,
                 icon: Icon(
                   settings.continuousPlayback
@@ -520,7 +524,7 @@ class _HarpAudioViewState extends State<HarpAudioView> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     IconButton(
-                                      tooltip: "Hino anterior",
+                                      tooltip: context.l10n.t('Hino anterior'),
                                       visualDensity: VisualDensity.compact,
                                       constraints: const BoxConstraints(
                                           minWidth: 36, minHeight: 36),
@@ -533,7 +537,7 @@ class _HarpAudioViewState extends State<HarpAudioView> {
                                           : _playPrevious,
                                     ),
                                     IconButton(
-                                        tooltip: "Voltar 10s",
+                                        tooltip: context.l10n.t('Voltar 10s'),
                                         visualDensity: VisualDensity.compact,
                                         constraints: const BoxConstraints(
                                             minWidth: 36, minHeight: 36),
@@ -554,7 +558,7 @@ class _HarpAudioViewState extends State<HarpAudioView> {
                                       onPressed: _togglePlayPause,
                                     ),
                                     IconButton(
-                                        tooltip: "Avançar 10s",
+                                        tooltip: context.l10n.t('Avançar 10s'),
                                         visualDensity: VisualDensity.compact,
                                         constraints: const BoxConstraints(
                                             minWidth: 36, minHeight: 36),
@@ -565,7 +569,7 @@ class _HarpAudioViewState extends State<HarpAudioView> {
                                                         10)
                                                     .clamp(0, 1 << 31)))),
                                     IconButton(
-                                      tooltip: "Próximo hino",
+                                      tooltip: context.l10n.t('Próximo hino'),
                                       visualDensity: VisualDensity.compact,
                                       constraints: const BoxConstraints(
                                           minWidth: 36, minHeight: 36),

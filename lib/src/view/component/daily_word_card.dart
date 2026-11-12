@@ -7,6 +7,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../controllers/daily_word_controller.dart';
 import '../../controllers/devotional_of_the_day_controller.dart';
+import '../../l10n/app_localizations.dart';
 import '../../model/daily_word.dart';
 import '../../model/devotional_of_the_day.dart';
 import '../image_share_view.dart';
@@ -38,7 +39,6 @@ class _DailyWordCardState extends State<DailyWordCard> {
 
   DailyWord? get _word => _wordController.currentWord;
   DevotionalOfTheDay? get _devotional => _devotionalController.current;
-  String get _title => _showDevotional ? 'Devocional do Dia' : 'Palavra do Dia';
 
   @override
   void initState() {
@@ -90,6 +90,7 @@ class _DailyWordCardState extends State<DailyWordCard> {
     try {
       // Aguarda o próximo quadro para garantir que as ações foram removidas
       // da árvore antes de capturar a imagem.
+      final shareText = _shareSubject(context);
       await WidgetsBinding.instance.endOfFrame;
 
       final image = await _screenshotController.capture(pixelRatio: 2.0);
@@ -104,7 +105,7 @@ class _DailyWordCardState extends State<DailyWordCard> {
       await SharePlus.instance.share(
         ShareParams(
           files: [XFile(file.path)],
-          text: _shareSubject,
+          text: shareText,
         ),
       );
     } catch (e) {
@@ -119,13 +120,13 @@ class _DailyWordCardState extends State<DailyWordCard> {
     }
   }
 
-  String get _shareSubject {
+  String _shareSubject(BuildContext context) {
     if (_showDevotional) {
       final reference = _devotional?.versiculo ?? '';
-      return 'Devocional do Dia - $reference';
+      return '${context.l10n.t('Devocional do Dia')} - $reference';
     }
     final reference = _word?.reference ?? '';
-    return 'Palavra do Dia - $reference';
+    return '${context.l10n.t('Palavra do Dia')} - $reference';
   }
 
   Future<void> _shareAsText() async {
@@ -135,18 +136,19 @@ class _DailyWordCardState extends State<DailyWordCard> {
     if (_showDevotional) {
       final devotional = _devotional;
       if (devotional == null) return;
-      text = 'Tópico do Devocional: ${devotional.topic}\n\n'
-          '📖 Versículo:\n${devotional.versiculo}\n\n'
-          '✝️ Reflexão:\n${devotional.texto}\n\n'
-          '🙏 Oração:\n${devotional.oracao}\n\n'
-          'Devocional do Dia • Bíblia e Harpa';
-      subject = 'Devocional do Dia - ${devotional.topic}';
+      text = '${context.l10n.t('Tópico do Devocional: {topic}', {'topic': devotional.topic})}\n\n'
+          '📖 ${context.l10n.t('Versículo')}:\n${devotional.versiculo}\n\n'
+          '✝️ ${context.l10n.t('Reflexão')}:\n${devotional.texto}\n\n'
+          '🙏 ${context.l10n.t('Oração')}:\n${devotional.oracao}\n\n'
+          '${context.l10n.t('Devocional do Dia • Bíblia e Harpa')}';
+      subject =
+          '${context.l10n.t('Devocional do Dia')} - ${devotional.topic}';
     } else {
       final word = _word;
       if (word == null) return;
       text = '“${word.text}”\n— ${word.reference}\n\n'
-          'Palavra do Dia • Bíblia e Harpa';
-      subject = 'Palavra do Dia';
+          '${context.l10n.t('Palavra do Dia • Bíblia e Harpa')}';
+      subject = context.l10n.t('Palavra do Dia');
     }
 
     await SharePlus.instance.share(
@@ -183,7 +185,7 @@ class _DailyWordCardState extends State<DailyWordCard> {
       // permissões de leitura de mídia automaticamente quando necessário).
       final result = await FilePicker.pickFiles(
         type: FileType.image,
-        dialogTitle: 'Escolha uma imagem para compartilhar',
+        dialogTitle: context.l10n.t('Escolha uma imagem para compartilhar'),
       );
       final String? pickedPath =
           (result == null || result.paths.isEmpty) ? null : result.paths.first;
@@ -193,8 +195,9 @@ class _DailyWordCardState extends State<DailyWordCard> {
         // Usuário cancelou a seleção.
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Nenhuma imagem selecionada.'),
+            SnackBar(
+              content:
+                  Text(context.l10n.t('Nenhuma imagem selecionada.')),
             ),
           );
         }
@@ -218,7 +221,10 @@ class _DailyWordCardState extends State<DailyWordCard> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Não foi possível abrir a galeria: $e'),
+            content: Text(context.l10n.t(
+              'Não foi possível abrir a galeria: {error}',
+              {'error': '$e'},
+            )),
           ),
         );
       }
@@ -255,7 +261,11 @@ class _DailyWordCardState extends State<DailyWordCard> {
                   children: [
                     Expanded(
                       child: Text(
-                        _title,
+                        context.l10n.t(
+                          _showDevotional
+                              ? 'Devocional do Dia'
+                              : 'Palavra do Dia',
+                        ),
                         style: TextStyle(
                           color: colorScheme.onSurface,
                           fontSize: 18,
@@ -272,8 +282,8 @@ class _DailyWordCardState extends State<DailyWordCard> {
                         ),
                         onPressed: _isSharing ? null : _toggleContent,
                         tooltip: _showDevotional
-                            ? 'Mudar para Palavra do Dia'
-                            : 'Mudar para Devocional diário',
+                            ? context.l10n.t('Mudar para Palavra do Dia')
+                            : context.l10n.t('Mudar para Devocional diário'),
                       ),
                       const SizedBox(width: 10),
                       IconButton(
@@ -283,7 +293,7 @@ class _DailyWordCardState extends State<DailyWordCard> {
                           size: 22,
                         ),
                         onPressed: _isSharing ? null : _showShareOptions,
-                        tooltip: 'Compartilhar',
+                        tooltip: context.l10n.t('Compartilhar'),
                       ),
                     ],
                   ],
@@ -305,8 +315,8 @@ class _DailyWordCardState extends State<DailyWordCard> {
         return _buildPlaceholder(
           colorScheme,
           _devotionalLoaded
-              ? 'Nenhum devocional disponível hoje.'
-              : 'Carregando devocional...',
+              ? context.l10n.t('Nenhum devocional disponível hoje.')
+              : context.l10n.t('Carregando devocional...'),
           loading: !_devotionalLoaded,
         );
       }
@@ -353,8 +363,8 @@ class _DailyWordCardState extends State<DailyWordCard> {
       return _buildPlaceholder(
         colorScheme,
         _wordLoaded
-            ? 'Nenhuma palavra disponível hoje.'
-            : 'Carregando palavra...',
+            ? context.l10n.t('Nenhuma palavra disponível hoje.')
+            : context.l10n.t('Carregando palavra...'),
         loading: !_wordLoaded,
       );
     }
@@ -436,7 +446,7 @@ class _DailyWordCardState extends State<DailyWordCard> {
               ListTile(
                 leading: Icon(Icons.text_snippet, color: colorScheme.onSurface),
                 title: Text(
-                  'Compartilhar texto',
+                  context.l10n.t('Compartilhar texto'),
                   style: TextStyle(color: colorScheme.onSurface),
                 ),
                 onTap: () => Navigator.pop(sheetContext, 'text'),
@@ -444,11 +454,11 @@ class _DailyWordCardState extends State<DailyWordCard> {
               ListTile(
                 leading: Icon(Icons.image, color: colorScheme.onSurface),
                 title: Text(
-                  'Compartilhar imagem da galeria',
+                  context.l10n.t('Compartilhar imagem da galeria'),
                   style: TextStyle(color: colorScheme.onSurface),
                 ),
                 subtitle: Text(
-                  'Escolha uma imagem do seu dispositivo',
+                  context.l10n.t('Escolha uma imagem do seu dispositivo'),
                   style: TextStyle(
                     color: colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
@@ -458,11 +468,11 @@ class _DailyWordCardState extends State<DailyWordCard> {
               ListTile(
                 leading: Icon(Icons.screenshot, color: colorScheme.onSurface),
                 title: Text(
-                  'Compartilhar como imagem',
+                  context.l10n.t('Compartilhar como imagem'),
                   style: TextStyle(color: colorScheme.onSurface),
                 ),
                 subtitle: Text(
-                  'Gera uma imagem com o conteúdo do card',
+                  context.l10n.t('Gera uma imagem com o conteúdo do card'),
                   style: TextStyle(
                     color: colorScheme.onSurface.withValues(alpha: 0.7),
                   ),

@@ -17,6 +17,7 @@ import '../model/music.dart';
 import '../controllers/music_controller.dart';
 import '../utils/theme.dart';
 import '../services/app_audio_handler.dart';
+import '../l10n/app_localizations.dart';
 
 class PlaylistView extends StatefulWidget {
   const PlaylistView({super.key});
@@ -130,8 +131,9 @@ class _PlaylistViewState extends State<PlaylistView> {
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                      content: Text(
-                          'Música "${music.title}" adicionada automaticamente!')),
+                      content: Text(tr(
+                          'Música "{title}" adicionada automaticamente!',
+                          {'title': music.title}))),
                 );
               }
             });
@@ -201,9 +203,9 @@ class _PlaylistViewState extends State<PlaylistView> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text(
-                  'Erro ao tocar a música, verifique se o seu arquivo de aúdio é no formato mp3, wav e acc')),
+          SnackBar(
+              content: Text(tr(
+                  'Erro ao tocar a música, verifique se o seu arquivo de aúdio é no formato mp3, wav e acc'))),
         );
       }
     }
@@ -226,16 +228,18 @@ class _PlaylistViewState extends State<PlaylistView> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-                content: Text('Música "${file.name}" adicionada com sucesso!')),
+                content: Text(tr(
+                    'Música "{name}" adicionada com sucesso!',
+                    {'name': file.name}))),
           );
         }
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text(
-                  'Erro ao adicionar música, verifique se o seu arquivo de aúdio é no formato mp3, wav e acc')),
+          SnackBar(
+              content: Text(tr(
+                  'Erro ao adicionar música, verifique se o seu arquivo de aúdio é no formato mp3, wav e acc'))),
         );
       }
     }
@@ -246,7 +250,7 @@ class _PlaylistViewState extends State<PlaylistView> {
       await _musicController.deleteMusic(index);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Música removida com sucesso!')),
+          SnackBar(content: Text(tr('Música removida com sucesso!'))),
         );
       }
       if (_currentPlayingIndex == index) {
@@ -271,7 +275,7 @@ class _PlaylistViewState extends State<PlaylistView> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Erro ao remover música')),
+          SnackBar(content: Text(tr('Erro ao remover música'))),
         );
       }
     }
@@ -291,7 +295,7 @@ class _PlaylistViewState extends State<PlaylistView> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       floatingActionButton: FloatingActionButton(
         onPressed: _pickMusicFile,
-        tooltip: 'Adicionar Música',
+        tooltip: context.l10n.t('Adicionar Música'),
         backgroundColor: Theme.of(context).colorScheme.primary,
         child: Icon(
           Icons.library_music,
@@ -312,7 +316,7 @@ class _PlaylistViewState extends State<PlaylistView> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Vazio',
+                  context.l10n.t('Vazio'),
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onSurface,
                     fontSize: settings.fontSize,
@@ -325,7 +329,7 @@ class _PlaylistViewState extends State<PlaylistView> {
                     backgroundColor: Theme.of(context).colorScheme.primary,
                   ),
                   child: Text(
-                    "Adicionar áudio",
+                    context.l10n.t("Adicionar áudio"),
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onSurface,
                       fontSize: settings.fontSize,

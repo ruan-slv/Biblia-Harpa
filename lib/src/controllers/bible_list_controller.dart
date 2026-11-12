@@ -3,10 +3,14 @@
 /// Este módulo integra a arquitetura interna do aplicativo Bíblia e Harpa.
 library;
 
+import 'dart:async';
+
 import '../model/bible_audio.dart';
 import 'bible_audio_assets_controller.dart';
 import 'bible_text_assets_controller.dart';
 import 'bible_version_controller.dart';
+import 'settings_controller.dart';
+import '../utils/bible_version_defaults.dart';
 import '../utils/text_normalizer.dart';
 import 'package:flutter/foundation.dart';
 
@@ -14,46 +18,30 @@ class BibleListController extends ChangeNotifier {
   final BibleVersionController versionService;
   final BibleAudioAssetsController audioAssetsService;
   final BibleTextAssetsController textAssetsService;
+  final SettingsController? settingsController;
 
   BibleListController({
     required this.versionService,
     required this.audioAssetsService,
     required this.textAssetsService,
+    this.settingsController,
   }) {
+    _lastLanguageCode = settingsController?.languageCode;
+    _lastLanguageVersion = settingsController?.languageVersion ?? 0;
+    settingsController?.addListener(_handleSettingsChanged);
     _init();
   }
 
   bool _initialized = false;
   bool get initialized => _initialized;
 
-  String _selectedVersionFile = 'acf.json';
+  String _selectedVersionFile = kDefaultPortugueseBibleFile;
   String get selectedVersionFile => _selectedVersionFile;
 
-  String get selectedVersionKey {
-    // Reverse map: file -> key
-    switch (_selectedVersionFile) {
-      case 'acf.json': return 'ACF';
-      case 'aa.json': return 'AA';
-      case 'nvi.json': return 'NVI';
-      case 'en_kjv.json': return 'KJV';
-      case 'en_bbe.json': return 'BBE';
-      case 'es_rvr.json': return 'RVR';
-      case 'de_schlachter.json': return 'SCHLACHTER';
-      case 'fr_apee.json': return 'APEE';
-      case 'ru_synodal.json': return 'SYNODAL';
-      case 'zh_cuv.json': return 'CUV';
-      case 'zh_ncv.json': return 'NCV';
-      case 'ko_ko.json': return 'KO';
-      case 'vi_vietnamese.json': return 'VIETNAMESE';
-      case 'el_greek.json': return 'GREEK';
-      case 'ro_cornilescu.json': return 'CORNILESCU';
-      case 'eo_esperanto.json': return 'ESPERANTO';
-      case 'ar_svd.json': return 'SVD';
-      case 'fi_finnish.json': return 'FINNISH';
-      case 'fi_pr.json': return 'FI_PR';
-      default: return 'ACF';
-    }
-  }
+  String get selectedVersionKey => bibleVersionKeyForFile(_selectedVersionFile);
+
+  String? _lastLanguageCode;
+  int _lastLanguageVersion = 0;
 
   String get jsonAssetPath => 'assets/json/bible/$_selectedVersionFile';
 
@@ -84,70 +72,39 @@ class BibleListController extends ChangeNotifier {
   }
 
   Future<void> setVersionByKey(String key) async {
-    String newVersion = 'acf.json';
-    switch (key) {
-      case 'ACF':
-        newVersion = 'acf.json';
-        break;
-      case 'AA':
-        newVersion = 'aa.json';
-        break;
-      case 'NVI':
-        newVersion = 'nvi.json';
-        break;
-      case 'KJV':
-        newVersion = 'en_kjv.json';
-        break;
-      case 'BBE':
-        newVersion = 'en_bbe.json';
-        break;
-      case 'RVR':
-        newVersion = 'es_rvr.json';
-        break;
-      case 'SCHLACHTER':
-        newVersion = 'de_schlachter.json';
-        break;
-      case 'APEE':
-        newVersion = 'fr_apee.json';
-        break;
-      case 'SYNODAL':
-        newVersion = 'ru_synodal.json';
-        break;
-      case 'CUV':
-        newVersion = 'zh_cuv.json';
-        break;
-      case 'NCV':
-        newVersion = 'zh_ncv.json';
-        break;
-      case 'KO':
-        newVersion = 'ko_ko.json';
-        break;
-      case 'VIETNAMESE':
-        newVersion = 'vi_vietnamese.json';
-        break;
-      case 'GREEK':
-        newVersion = 'el_greek.json';
-        break;
-      case 'CORNILESCU':
-        newVersion = 'ro_cornilescu.json';
-        break;
-      case 'ESPERANTO':
-        newVersion = 'eo_esperanto.json';
-        break;
-      case 'SVD':
-        newVersion = 'ar_svd.json';
-        break;
-      case 'FINNISH':
-        newVersion = 'fi_finnish.json';
-        break;
-      case 'FI_PR':
-        newVersion = 'fi_pr.json';
-        break;
-    }
-    _selectedVersionFile = newVersion;
-    await versionService.setSelectedVersionFileName(newVersion);
+    final fileName = bibleVersionFileForKey(key);
+    if (fileName == null) return;
+    await _applyVersionFile(fileName);
+  }
+
+  /// Aplica a versão padrão do idioma informado (ex.: russo → Bíblia russa).
+  Future<void> setVersionForLanguage(String languageCode) =>
+      _applyVersionFile(bibleVersionFileForLanguage(languageCode));
+
+  /// Reage à troca de idioma em tempo de execução, recarregando a Bíblia.
+  void _handleSettingsChanged() {
+    final settings = settingsController;
+    if (settings == null) return;
+    final versionChanged = settings.languageVersion != _lastLanguageVersion;
+    final codeChanged = settings.languageCode != _lastLanguageCode;
+    if (!versionChanged && !codeChanged) return;
+    _lastLanguageVersion = settings.languageVersion;
+    _lastLanguageCode = settings.languageCode;
+    unawaited(setVersionForLanguage(settings.languageCode));
+  }
+
+  Future<void> _applyVersionFile(String fileName) async {
+    if (_selectedVersionFile == fileName) return;
+    _selectedVersionFile = fileName;
+    await versionService.setSelectedVersionFileName(fileName);
     await _loadBooks();
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    settingsController?.removeListener(_handleSettingsChanged);
+    super.dispose();
   }
 
   Future<void> _loadBooks() async {

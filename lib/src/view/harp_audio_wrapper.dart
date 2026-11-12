@@ -7,6 +7,7 @@ import 'package:biblia_e_harpa/src/view/harp_audio_view.dart';
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
+import 'package:biblia_e_harpa/src/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 class HarpAudioWrapper extends StatefulWidget {
@@ -44,7 +45,8 @@ class _HarpAudioWrapperState extends State<HarpAudioWrapper>
           }
           if (snapshot.hasError) {
             return _buildErrorWidget(
-                context, "Erro ao verificar a conexão. Tente novamente.");
+                context, context.l10n.t(
+                    "Erro ao verificar a conexão. Tente novamente."));
           }
 
           if (snapshot.hasData &&
@@ -54,7 +56,8 @@ class _HarpAudioWrapperState extends State<HarpAudioWrapper>
 
           return _buildErrorWidget(
             context,
-            "Sem conexão com a internet. Conecte-se para baixar novos hinos ou acesse seus downloads.",
+            context.l10n.t(
+                "Sem conexão com a internet. Conecte-se para baixar novos hinos ou acesse seus downloads."),
             showOfflineButton: true,
           );
         },
@@ -105,7 +108,7 @@ class _HarpAudioWrapperState extends State<HarpAudioWrapper>
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
                 label: Text(
-                  "Hinos Baixados",
+                  context.l10n.t("Hinos Baixados"),
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onSurface,
                     fontSize: settings.fontSize * 0.9,

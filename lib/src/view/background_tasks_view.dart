@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 
 import '../controllers/settings_controller.dart';
 import '../services/app_audio_handler.dart';
+import '../l10n/app_localizations.dart';
 import 'component/app_section_card.dart';
 import 'home_audio_view.dart';
 
@@ -112,7 +113,9 @@ class _ActiveAudioPlayerCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            playing ? 'Em reprodução' : 'Pausado',
+                            playing
+                                ? context.l10n.t('Em reprodução')
+                                : context.l10n.t('Pausado'),
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
@@ -125,7 +128,7 @@ class _ActiveAudioPlayerCard extends StatelessWidget {
                       ),
                     ),
                     IconButton(
-                      tooltip: 'Encerrar áudio',
+                      tooltip: context.l10n.t('Encerrar áudio'),
                       icon: const Icon(Icons.close_rounded),
                       color: colorScheme.onSurfaceVariant,
                       onPressed: () => handler.stop(),
@@ -185,7 +188,12 @@ class _ActiveAudioPlayerCard extends StatelessWidget {
                           if (handler.trackCount > 1) ...[
                             const SizedBox(height: 2),
                             Text(
-                              'Faixa ${handler.currentIndex + 1} de ${handler.trackCount}',
+                              context.l10n.t(
+                                  'Faixa {current} de {total}',
+                                  {
+                                    'current': '${handler.currentIndex + 1}',
+                                    'total': '${handler.trackCount}',
+                                  }),
                               style: TextStyle(
                                 fontSize: 12,
                                 color: colorScheme.primary,
@@ -269,13 +277,13 @@ class _ActiveAudioPlayerCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     IconButton(
-                      tooltip: 'Anterior',
+                      tooltip: context.l10n.t('Anterior'),
                       iconSize: 32,
                       icon: const Icon(Icons.skip_previous_rounded),
                       onPressed: handler.skipToPrevious,
                     ),
                     IconButton(
-                      tooltip: 'Voltar 10s',
+                      tooltip: context.l10n.t('Voltar 10s'),
                       iconSize: 26,
                       icon: const Icon(Icons.replay_10_rounded),
                       onPressed: () {
@@ -300,7 +308,9 @@ class _ActiveAudioPlayerCard extends StatelessWidget {
                       )
                     else
                       IconButton.filled(
-                        tooltip: playing ? 'Pausar' : 'Reproduzir',
+                        tooltip: playing
+                            ? context.l10n.t('Pausar')
+                            : context.l10n.t('Reproduzir'),
                         iconSize: 36,
                         icon: Icon(
                           playing
@@ -311,7 +321,7 @@ class _ActiveAudioPlayerCard extends StatelessWidget {
                             playing ? handler.pause() : handler.play(),
                       ),
                     IconButton(
-                      tooltip: 'Avançar 10s',
+                      tooltip: context.l10n.t('Avançar 10s'),
                       iconSize: 26,
                       icon: const Icon(Icons.forward_10_rounded),
                       onPressed: () => handler.seek(
@@ -320,7 +330,7 @@ class _ActiveAudioPlayerCard extends StatelessWidget {
                       ),
                     ),
                     IconButton(
-                      tooltip: 'Próximo',
+                      tooltip: context.l10n.t('Próximo'),
                       iconSize: 32,
                       icon: const Icon(Icons.skip_next_rounded),
                       onPressed: handler.skipToNext,
@@ -338,13 +348,14 @@ class _ActiveAudioPlayerCard extends StatelessWidget {
                         Icons.repeat_rounded,
                         color: colorScheme.primary,
                       ),
-                      title: const Text(
-                        'Reprodução contínua',
-                        style: TextStyle(fontWeight: FontWeight.w600),
+                      title: Text(
+                        context.l10n.t('Reprodução contínua'),
+                        style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
-                      subtitle: const Text(
-                        'Avançar automaticamente para o próximo áudio',
-                        style: TextStyle(fontSize: 12),
+                      subtitle: Text(
+                        context.l10n.t(
+                            'Avançar automaticamente para o próximo áudio'),
+                        style: const TextStyle(fontSize: 12),
                       ),
                       value: settings.continuousPlayback,
                       onChanged: (value) =>
@@ -378,14 +389,15 @@ class _EmptyAudioExecutionCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return AppSectionCard(
-      title: 'Execução de áudio',
-      subtitle: 'Nenhum áudio em execução no momento',
+      title: context.l10n.t('Execução de áudio'),
+      subtitle: context.l10n.t('Nenhum áudio em execução no momento'),
       icon: Icons.headphones_outlined,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Ao iniciar a reprodução de um capítulo da Bíblia ou de um hino da Harpa, os controles de reprodução em segundo plano aparecerão aqui.',
+            context.l10n.t(
+                'Ao iniciar a reprodução de um capítulo da Bíblia ou de um hino da Harpa, os controles de reprodução em segundo plano aparecerão aqui.'),
             style: TextStyle(
               color: colorScheme.onSurface.withValues(alpha: 0.8),
               height: 1.4,
@@ -403,7 +415,8 @@ class _EmptyAudioExecutionCard extends StatelessWidget {
                 );
               },
               icon: const Icon(Icons.play_circle_outline_rounded),
-              label: const Text('Ouvir áudios da Bíblia e Harpa'),
+              label: Text(
+                  context.l10n.t('Ouvir áudios da Bíblia e Harpa')),
             ),
           ),
         ],
@@ -421,35 +434,36 @@ class _BackgroundServicesCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return AppSectionCard(
-      title: 'Serviços em segundo plano',
-      subtitle: 'Recursos ativos fora da tela para melhorar sua experiência',
+      title: context.l10n.t('Serviços em segundo plano'),
+      subtitle: context.l10n.t(
+          'Recursos ativos fora da tela para melhorar sua experiência'),
       icon: Icons.miscellaneous_services_rounded,
       child: Column(
         children: [
           _ServiceStatusTile(
             icon: Icons.surround_sound_rounded,
-            title: 'Áudio em segundo plano',
-            subtitle:
-                'Reproduz com a tela apagada ou app minimizado, integrando à central de controle e fones de ouvido.',
-            status: 'Ativo',
+            title: context.l10n.t('Áudio em segundo plano'),
+            subtitle: context.l10n.t(
+                'Reproduz com a tela apagada ou app minimizado, integrando à central de controle e fones de ouvido.'),
+            status: context.l10n.t('Ativo'),
             statusColor: colorScheme.primary,
           ),
           const Divider(height: 24),
           _ServiceStatusTile(
             icon: Icons.notifications_active_outlined,
-            title: 'Lembretes de leitura',
-            subtitle:
-                'Notificações periódicas para incentivar a leitura diária da Palavra de Deus.',
-            status: 'Agendado',
+            title: context.l10n.t('Lembretes de leitura'),
+            subtitle: context.l10n.t(
+                'Notificações periódicas para incentivar a leitura diária da Palavra de Deus.'),
+            status: context.l10n.t('Agendado'),
             statusColor: colorScheme.primary,
           ),
           const Divider(height: 24),
           _ServiceStatusTile(
             icon: Icons.offline_pin_outlined,
-            title: 'Suporte offline',
-            subtitle:
-                'Áudios baixados no aparelho continuam tocando normalmente sem conexão com a internet.',
-            status: 'Disponível',
+            title: context.l10n.t('Suporte offline'),
+            subtitle: context.l10n.t(
+                'Áudios baixados no aparelho continuam tocando normalmente sem conexão com a internet.'),
+            status: context.l10n.t('Disponível'),
             statusColor: colorScheme.secondary,
           ),
         ],
