@@ -338,6 +338,61 @@ class _TextBibleViewState extends State<_TextBibleView> {
     }
   }
 
+  Future<void> _handleAutoScroll(
+    BuildContext context,
+    BibleContentController viewModel,
+  ) async {
+    if (!viewModel.isAutoScrollEnabled) {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (dialogCtx) => AlertDialog(
+          title: const Text('Modo Leitura Automática'),
+          content: const Text(
+            'Devido a falta de base de dados para os áudios da Bíblia, '
+            'esta funcionalidade funcionará com versões diferentes de '
+            'leitura/escrita. Deseja prosseguir?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogCtx, false),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(dialogCtx, true),
+              child: const Text('Prosseguir'),
+            ),
+          ],
+        ),
+      );
+      if (confirmed != true) return;
+    }
+    viewModel.toggleAutoScroll();
+    if (viewModel.isAutoScrollEnabled &&
+        !viewModel.audioPlayer.playing &&
+        viewModel.currentAudioChapter != null) {
+      try {
+        await viewModel.audioPlayer.play();
+      } catch (_) {}
+    }
+  }
+
+  void _toggleHighlightMode() {
+    setState(() {
+      _highlightMode = !_highlightMode;
+    });
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          _highlightMode
+              ? 'Modo destaque ativado: toque em um versículo para colorir.'
+              : 'Modo destaque desativado.',
+        ),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<BibleContentController>();
@@ -363,93 +418,204 @@ class _TextBibleViewState extends State<_TextBibleView> {
         centerTitle: false,
         automaticallyImplyLeading: true,
         actions: [
-          IconButton(
-            onPressed: () async {
-              if (!viewModel.isAutoScrollEnabled) {
-                // Show confirmation dialog when enabling
-                final confirmed = await showDialog<bool>(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Modo Leitura Automática'),
-                    content: const Text(
-                      'Devido a falta de base de dados para os áudios da Bíblia, '
-                      'esta funcionalidade funcionará com versões diferentes de '
-                      'leitura/escrita. Deseja prosseguir?',
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, false),
-                        child: const Text('Cancelar'),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, true),
-                        child: const Text('Prosseguir'),
-                      ),
-                    ],
-                  ),
-                );
-                if (confirmed != true) return;
-              }
-              viewModel.toggleAutoScroll();
-              if (viewModel.isAutoScrollEnabled &&
-                  !viewModel.audioPlayer.playing &&
-                  viewModel.currentAudioChapter != null) {
-                try {
-                  await viewModel.audioPlayer.play();
-                } catch (_) {}
-              }
-            },
-            icon: Icon(
-              viewModel.isAutoScrollEnabled
-                  ? Icons.auto_stories
-                  : Icons.auto_stories_outlined,
-              color: viewModel.isAutoScrollEnabled
-                  ? colorScheme.onSurface
-                  : colorScheme.onSurface.withValues(alpha: 0.6),
-            ),
-            tooltip: viewModel.isAutoScrollEnabled
-                ? 'Pausar leitura automática'
-                : 'Iniciar leitura automática',
-          ),
-          IconButton(
-            onPressed: () {
-              setState(() {
-                _highlightMode = !_highlightMode;
-              });
-              if (_highlightMode) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(
-                      'Modo destaque ativado: toque em um versículo para colorir.',
-                    ),
-                    duration: Duration(seconds: 3),
-                  ),
-                );
-              }
-            },
-            icon: Icon(
-              _highlightMode ? Icons.colorize : Icons.colorize_rounded,
-              color: _highlightMode
-                  ? colorScheme.onSurface
-                  : colorScheme.onSurface.withValues(alpha: 0.6),
-            ),
-            tooltip: _highlightMode ? 'Modo destaque ativado' : 'Modo destaque',
-          ),
-          IconButton(
-            onPressed: () => _handleShareOrSelection(context, viewModel),
+          PopupMenuButton<String>(
+            tooltip: 'Opções',
             icon: Badge(
               isLabelVisible: viewModel.selectedVerseIndices.isNotEmpty,
               label: Text('${viewModel.selectedVerseIndices.length}'),
               child: Icon(
-                viewModel.selectedVerseIndices.isEmpty
-                    ? Icons.share_outlined
-                    : Icons.share,
+                Icons.more_vert,
                 color: colorScheme.onSurface,
               ),
             ),
-            tooltip: viewModel.selectedVerseIndices.isEmpty
-                ? 'Compartilhar'
-                : 'Compartilhar ou Limpar seleção',
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            color: colorScheme.surface,
+            elevation: 4,
+            onSelected: (action) async {
+              switch (action) {
+                case 'auto_scroll':
+                  await _handleAutoScroll(context, viewModel);
+                  break;
+                case 'highlight':
+                  _toggleHighlightMode();
+                  break;
+                case 'share':
+                  await _handleShareOrSelection(context, viewModel);
+                  break;
+                case 'clear':
+                  viewModel.clearSelections();
+                  break;
+              }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem<String>(
+                value: 'auto_scroll',
+                child: Row(
+                  children: [
+                    Icon(
+                      viewModel.isAutoScrollEnabled
+                          ? Icons.auto_stories
+                          : Icons.auto_stories_outlined,
+                      color: viewModel.isAutoScrollEnabled
+                          ? colorScheme.primary
+                          : colorScheme.onSurface,
+                      size: 22,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Leitura automática',
+                            style: TextStyle(
+                              color: colorScheme.onSurface,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            viewModel.isAutoScrollEnabled
+                                ? 'Ativada'
+                                : 'Desativada',
+                            style: TextStyle(
+                              color: viewModel.isAutoScrollEnabled
+                                  ? AppTheme.sucesso
+                                  : colorScheme.onSurface
+                                      .withValues(alpha: 0.6),
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (viewModel.isAutoScrollEnabled)
+                      const Icon(
+                        Icons.check_circle_rounded,
+                        color: AppTheme.sucesso,
+                        size: 18,
+                      ),
+                  ],
+                ),
+              ),
+              PopupMenuItem<String>(
+                value: 'highlight',
+                child: Row(
+                  children: [
+                    Icon(
+                      _highlightMode
+                          ? Icons.colorize
+                          : Icons.colorize_rounded,
+                      color: _highlightMode
+                          ? colorScheme.primary
+                          : colorScheme.onSurface,
+                      size: 22,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Modo destaque',
+                            style: TextStyle(
+                              color: colorScheme.onSurface,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            _highlightMode ? 'Ativado' : 'Desativado',
+                            style: TextStyle(
+                              color: _highlightMode
+                                  ? AppTheme.sucesso
+                                  : colorScheme.onSurface
+                                      .withValues(alpha: 0.6),
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (_highlightMode)
+                      const Icon(
+                        Icons.check_circle_rounded,
+                        color: AppTheme.sucesso,
+                        size: 18,
+                      ),
+                  ],
+                ),
+              ),
+              PopupMenuItem<String>(
+                value: 'share',
+                child: Row(
+                  children: [
+                    Icon(
+                      viewModel.selectedVerseIndices.isEmpty
+                          ? Icons.share_outlined
+                          : Icons.share,
+                      color: colorScheme.onSurface,
+                      size: 22,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Compartilhar',
+                            style: TextStyle(
+                              color: colorScheme.onSurface,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            viewModel.selectedVerseIndices.isEmpty
+                                ? 'Capítulo completo'
+                                : '${viewModel.selectedVerseIndices.length} versículo(s) selecionado(s)',
+                            style: TextStyle(
+                              color: colorScheme.onSurface
+                                  .withValues(alpha: 0.6),
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (viewModel.selectedVerseIndices.isNotEmpty)
+                      Badge(
+                        label: Text(
+                          '${viewModel.selectedVerseIndices.length}',
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              if (viewModel.selectedVerseIndices.isNotEmpty)
+                PopupMenuItem<String>(
+                  value: 'clear',
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.close_rounded,
+                        color: Theme.of(context).colorScheme.error,
+                        size: 22,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Limpar seleção',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
           ),
         ],
       ),

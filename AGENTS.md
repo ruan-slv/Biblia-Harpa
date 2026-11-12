@@ -1,5 +1,49 @@
 # Tarefas
 
+## ✅ Concluído — Versão do aplicativo e Agradecimentos nas Configurações
+
+* **Demanda:** Na tela de "Configurações", criar uma seção informando a versão de
+  atualização do app com o sufixo estável `stable 1.0` (ex: `1.1.4 - stable 1.0`) e
+  botão para abrir a Play Store. Também criar uma seção para "Agradecimentos"
+  contendo os contribuidores:
+  * "Ruan Gustavo Soares da Silva - Criador do projeto e desenvolvedor"
+  * "Glaucia Iara Nascimento Soares - Criadora da nova logo e publicidade"
+  * "Hyago dos Santos - Idealizador da Palavra do Dia"
+* **Correção aplicada:**
+  * `lib/src/view/settings_view.dart`:
+    * Atualizado o card de atualização para "Versão do aplicativo", exibindo a
+      versão lida dinamicamente via `package_info_plus` (com fallback) formatada
+      como `1.1.4 - stable 1.0` dentro de uma tag/chip com ícone de verificação
+      (`Icons.verified_rounded`) e botão para verificar novidades na Play Store.
+    * Adicionada nova seção "Agradecimentos" (`Icons.volunteer_activism_rounded`)
+      com cartões visuais para cada contribuinte, com avatar estilizado, nome
+      em destaque e descrição da contribuição.
+
+## ✅ Concluído — Caixa de seleção de ações no AppBar (Bíblia e Harpa)
+
+* **Demanda:** No `AppBar` onde carregam os conteúdos (`BibleContentView` e `HarpContentView`),
+  havia múltiplos botões de ação ocupando muito espaço, encurtando o título (ex.: "Deuteronô...")
+  e confundindo o usuário. Substituir o excesso de botões por uma caixa de seleção/menu
+  de opções onde o usuário clica e escolhe o que deseja fazer.
+* **Correção aplicada:**
+  * `lib/src/view/bible_content_view.dart`:
+    * Substituiu os 3 botões avulsos de ação (`IconButton` de leitura automática,
+      destaque e compartilhar) por um `PopupMenuButton` único com `Icons.more_vert`.
+    * A caixa de seleção exibe itens com ícone, título descritivo e estado atual:
+      * **Leitura automática:** status "Ativada" / "Desativada" e diálogo de confirmação.
+      * **Modo destaque:** status "Ativado" / "Desativado" com feedback.
+      * **Compartilhar:** indicação de capítulo completo ou quantidade de versículos selecionados.
+      * **Limpar seleção:** opção rápida para desmarcar versículos quando houver seleção ativa.
+    * Mantido badge com contagem de versículos selecionados no ícone do menu.
+  * `lib/src/view/harp_content_view.dart`:
+    * Adicionada a mesma caixa de seleção/menu no `AppBar` com:
+      * **Compartilhar hino:** compartilha a letra completa do hino (título, versos e coro).
+      * **Tocar sem parar / Reprodução contínua:** alternador do modo contínuo com indicador de status.
+      * **Reproduzir / Pausar / Parar áudio:** controles rápidos de áudio diretamente no menu quando houver faixa disponível.
+  * `lib/src/view/component/app_bar_component.dart`:
+    * Adicionados `maxLines: 1` e `overflow: TextOverflow.ellipsis` no título do `CustomAppBar`
+      para garantir tratamento gracioso de títulos longos em qualquer densidade de tela.
+
 ## ✅ Concluído — Área "Segundo plano" no Bottom Navigation e remoção do card flutuante
 
 * **Demanda:** No `bottomNavigationBar` da tela inicial, criar uma nova área chamada

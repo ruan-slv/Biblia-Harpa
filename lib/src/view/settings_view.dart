@@ -9,9 +9,11 @@ import 'package:biblia_e_harpa/src/controllers/database_export_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:biblia_e_harpa/src/utils/theme.dart';
 
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});
@@ -26,6 +28,8 @@ class SettingsView extends StatelessWidget {
 }
 
 class _SettingsContent extends StatelessWidget {
+  final Future<PackageInfo> _packageInfoFuture = PackageInfo.fromPlatform();
+
   // Valores lidos do .env a cada construção da tela (em vez de uma vez de
   // forma estática), para refletir o conteúdo após o dotenv ser carregado
   // em paralelo na inicialização.
@@ -153,6 +157,71 @@ class _SettingsContent extends StatelessWidget {
     );
   }
 
+  Widget _buildContributorItem(
+    BuildContext context, {
+    required String name,
+    required String role,
+    required IconData icon,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: colorScheme.onSurface.withValues(alpha: 0.08),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: colorScheme.primaryContainer,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              icon,
+              size: 20,
+              color: colorScheme.primary,
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  name,
+                  style: TextStyle(
+                    color: colorScheme.onSurface,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  role,
+                  style: TextStyle(
+                    color: colorScheme.onSurface.withValues(alpha: 0.75),
+                    fontSize: 13,
+                    height: 1.3,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -276,16 +345,77 @@ class _SettingsContent extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  AppSectionCard(
-                    icon: Icons.system_update_alt_rounded,
-                    title: "Atualizações e avaliação",
-                    subtitle:
-                        "Abra a Play Store para verificar novas versões e avaliar o aplicativo.",
-                    child: ElevatedButton.icon(
-                      onPressed: () async => await _openExternal(_playStoreUrl),
-                      icon: const Icon(Icons.open_in_new_rounded),
-                      label: const Text("Abrir Play Store"),
-                    ),
+                  FutureBuilder<PackageInfo>(
+                    future: _packageInfoFuture,
+                    builder: (context, snapshot) {
+                      final version = (snapshot.hasData &&
+                              snapshot.data!.version.isNotEmpty)
+                          ? snapshot.data!.version
+                          : "1.1.4";
+                      final displayVersion = "$version - stable 1.0";
+
+                      return AppSectionCard(
+                        icon: Icons.info_outline_rounded,
+                        title: "Versão do aplicativo",
+                        subtitle:
+                            "Informações sobre a versão atual instalada e canal de atualização.",
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 10,
+                              ),
+                              decoration: BoxDecoration(
+                                color: colorScheme.surface,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: colorScheme.onSurface
+                                      .withValues(alpha: 0.12),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.verified_rounded,
+                                    size: 20,
+                                    color: AppTheme.sucesso,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    displayVersion,
+                                    style: TextStyle(
+                                      color: colorScheme.onSurface,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              "Abra a Play Store para verificar novas versões, ver novidades e avaliar o aplicativo.",
+                              style: TextStyle(
+                                color: colorScheme.onSurface
+                                    .withValues(alpha: 0.8),
+                                fontSize: 13,
+                                height: 1.4,
+                              ),
+                            ),
+                            const SizedBox(height: 14),
+                            ElevatedButton.icon(
+                              onPressed: () async =>
+                                  await _openExternal(_playStoreUrl),
+                              icon: const Icon(Icons.open_in_new_rounded),
+                              label: const Text("Abrir Play Store"),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 16),
                   AppSectionCard(
@@ -299,6 +429,37 @@ class _SettingsContent extends StatelessWidget {
                       },
                       icon: const Icon(Icons.info_outline_rounded),
                       label: const Text("Apoiar"),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  AppSectionCard(
+                    icon: Icons.volunteer_activism_rounded,
+                    title: "Agradecimentos",
+                    subtitle:
+                        "Reconhecimento especial às pessoas que colaboraram para a criação e aprimoramento deste aplicativo.",
+                    child: Column(
+                      children: [
+                        _buildContributorItem(
+                          context,
+                          name: "Ruan Gustavo Soares da Silva",
+                          role: "Criador do projeto e desenvolvedor",
+                          icon: Icons.code_rounded,
+                        ),
+                        const SizedBox(height: 10),
+                        _buildContributorItem(
+                          context,
+                          name: "Glaucia Iara Nascimento Soares",
+                          role: "Criadora da nova logo e publicidade",
+                          icon: Icons.palette_rounded,
+                        ),
+                        const SizedBox(height: 10),
+                        _buildContributorItem(
+                          context,
+                          name: "Hyago dos Santos",
+                          role: "Idealizador da Palavra do Dia",
+                          icon: Icons.auto_stories_rounded,
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 16),
