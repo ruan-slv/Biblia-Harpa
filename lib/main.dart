@@ -10,10 +10,10 @@ import 'package:biblia_e_harpa/src/view/component/mini_player.dart';
 import 'package:biblia_e_harpa/src/view/component/started_access_on.dart';
 import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
 import 'package:biblia_e_harpa/src/controllers/bible_providers_controller.dart';
+import 'package:biblia_e_harpa/src/utils/app_links.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:just_audio_media_kit/just_audio_media_kit.dart';
 import 'package:provider/provider.dart';
@@ -39,7 +39,7 @@ Future<void> _warmUp() async {
     // Carrega o tema e o tamanho de fonte salvos.
     settingsController.initialize(),
     // Carrega as variáveis de suporte usadas na tela de configurações.
-    dotenv.load(fileName: ".env"),
+    AppLinks.load(),
   ];
 
   if (!kIsWeb) {

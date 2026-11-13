@@ -7,6 +7,7 @@ import 'package:biblia_e_harpa/src/view/component/app_section_card.dart';
 import 'package:biblia_e_harpa/src/controllers/settings_controller.dart';
 import 'package:biblia_e_harpa/src/controllers/database_export_controller.dart';
 import 'package:biblia_e_harpa/src/l10n/app_localizations.dart';
+import 'package:biblia_e_harpa/src/utils/app_links.dart';
 import 'package:biblia_e_harpa/src/view/component/language_selection_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,24 +31,19 @@ class SettingsView extends StatelessWidget {
 }
 
 class _SettingsContent extends StatelessWidget {
-  static const String _repositoryUrl =
-      'https://github.com/ruan-slv/Biblia-Harpa.git';
-
   final Future<PackageInfo> _packageInfoFuture = PackageInfo.fromPlatform();
 
   // Valores lidos do .env a cada construção da tela (em vez de uma vez de
   // forma estática), para refletir o conteúdo após o dotenv ser carregado
   // em paralelo na inicialização.
   late final String _supportEmail;
-  late final String _playStoreURL;
   late final String _pixKey;
-  late final Uri _playStoreUrl;
+
+  Uri? get _playStoreUrl => AppLinks.configuredUri('PLAYSTORE_URL');
 
   _SettingsContent() {
     _supportEmail = dotenv.env["SUPPORT_EMAIL"] ?? "";
-    _playStoreURL = dotenv.env["PLAYSTORE_URL"] ?? "";
     _pixKey = dotenv.env["PIX_KEY"] ?? "";
-    _playStoreUrl = Uri.parse(_playStoreURL);
   }
 
   void copyPixKey(BuildContext context) {
@@ -136,16 +132,18 @@ class _SettingsContent extends StatelessWidget {
     );
   }
 
-  Future<void> _openExternal(Uri url) async {
-    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-      throw Exception("Não foi possível abrir a Play Store");
-    }
+  Future<void> _openRepository(BuildContext context) async {
+    await _openConfiguredLink(context, 'GITHUB_REPOSITORY_URL');
   }
 
-  Future<void> _openRepository(BuildContext context) async {
+  Future<void> _openConfiguredLink(
+    BuildContext context,
+    String environmentKey,
+  ) async {
     try {
+      await AppLinks.load();
       if (!await launchUrl(
-        Uri.parse(_repositoryUrl),
+        AppLinks.requireUri(environmentKey),
         mode: LaunchMode.externalApplication,
       )) {
         throw Exception('link inválido');
@@ -311,14 +309,28 @@ class _SettingsContent extends StatelessWidget {
                     subtitle: context.l10n.t(
                         "Envie o aplicativo para familiares e amigos e ajude mais pessoas a alcançarem esse conteúdo."),
                     child: ElevatedButton.icon(
-                      onPressed: () {
+                      onPressed: () async {
+                        await AppLinks.load();
+                        if (!context.mounted) return;
+                        final playStoreUrl = _playStoreUrl;
+                        if (playStoreUrl == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(context.l10n.t(
+                                  'Não foi possível abrir o link: {error}',
+                                  {'error': 'PLAYSTORE_URL inválida'})),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                          return;
+                        }
                         SharePlus.instance.share(
                           ShareParams(
                             text:
                                 "📖✨ ${context.l10n.t("Descubra uma nova forma de se conectar com a Palavra de Deus!")}\n\n"
                                 "${context.l10n.t("Baixe agora nosso aplicativo gratuito de leitura bíblica e tenha acesso a versículos, harpa e muito mais, tudo na palma da sua mão, offline e sem anúncios.")}\n\n"
                                 "🔗 ${context.l10n.t("Acesse aqui: {url}", {
-                                  'url': _playStoreUrl.toString()
+                                  'url': playStoreUrl.toString()
                                 })}",
                           ),
                         );
@@ -360,8 +372,8 @@ class _SettingsContent extends StatelessWidget {
                     subtitle: context.l10n.t(
                         "Conheça como tratamos seus dados e sua privacidade."),
                     child: ElevatedButton.icon(
-                      onPressed: () async => await _openExternal(
-                          Uri.parse("https://ruan-slv.github.io/biblia-site/")),
+                      onPressed: () =>
+                          _openConfiguredLink(context, 'PRIVACY_POLICY_URL'),
                       icon: const Icon(Icons.open_in_new_rounded),
                       label: Text(context.l10n.t("Ver política")),
                     ),

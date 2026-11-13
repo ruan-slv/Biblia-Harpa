@@ -16,6 +16,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../services/notification_service.dart';
+import '../../utils/app_links.dart';
 import '../../utils/theme.dart';
 
 /// Um arquivo .json de conteúdo que o usuário pode escolher baixar.
@@ -45,15 +46,13 @@ class JsonFileOption {
 class JsonFileConfig {
   const JsonFileConfig({
     required this.option,
-    this.baseUrl =
-        'https://raw.githubusercontent.com/ruanslv/Biblia-Harpa/main/assets/json/',
   });
 
   final JsonFileOption option;
-  final String baseUrl;
 
   String get downloadUrl =>
-      option.url ?? '$baseUrl${option.assetPath.split('/').last}';
+      option.url ??
+      AppLinks.bibleJson(option.assetPath.split('/').last).toString();
 }
 
 /// Arquivos .json disponíveis para download no primeiro acesso.
@@ -350,6 +349,7 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
   Future<bool> _downloadOne(JsonFileConfig config) async {
     final id = config.option.id;
     try {
+      await AppLinks.load();
       setState(() {
         _status[id] = DownloadStatus.downloading;
         _errors.remove(id);
@@ -357,9 +357,14 @@ class _StartedAccessOnState extends State<StartedAccessOn> {
       });
 
       if (kIsWeb) {
+        final downloadUri = Uri.parse(config.downloadUrl);
         final response = await http.get(
-          Uri.parse(
-              '${config.downloadUrl}?t=${DateTime.now().millisecondsSinceEpoch}'),
+          downloadUri.replace(
+            queryParameters: {
+              ...downloadUri.queryParameters,
+              't': '${DateTime.now().millisecondsSinceEpoch}',
+            },
+          ),
         );
         if (response.statusCode != 200) {
           throw Exception('HTTP ${response.statusCode}');

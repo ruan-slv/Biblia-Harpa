@@ -21,6 +21,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'component/app_bar_component.dart';
 import '../l10n/app_localizations.dart';
 import '../utils/theme.dart';
+import '../utils/app_links.dart';
 import '../services/app_audio_handler.dart';
 
 class HarpAudioView extends StatefulWidget {
@@ -162,16 +163,6 @@ class _HarpAudioViewState extends State<HarpAudioView> {
     return '$audioDir/${_safeHinoName(hinoTitle)}.mp3';
   }
 
-  String _playableUrl(String url) {
-    if (url.contains("drive.google.com")) {
-      final id = RegExp(r"/d/([^/]+)/").firstMatch(url)?.group(1);
-      if (id != null) {
-        return "https://drive.google.com/uc?export=download&id=$id&confirm=t";
-      }
-    }
-    return url;
-  }
-
   Future<void> _fetchAudioHarpa() async {
     setState(() => isLoading = true);
     try {
@@ -218,6 +209,7 @@ class _HarpAudioViewState extends State<HarpAudioView> {
     });
 
     try {
+      await AppLinks.load();
       final audioDir = await _getAudioDir();
       String localPathFor(String titulo) =>
           '$audioDir/${_safeHinoName(titulo)}.mp3';
@@ -232,7 +224,7 @@ class _HarpAudioViewState extends State<HarpAudioView> {
             id: 'harp-audio:$i:${item.titulo}',
             title: item.titulo,
             artist: 'Harpa Cristã',
-            remoteUri: Uri.parse(_playableUrl(item.hinoURL)),
+            remoteUri: AppLinks.harpAudio(item.hinoURL),
             localPath: localPathFor(item.titulo),
             extras: <String, String>{
               'source': 'harp-audio',
@@ -352,8 +344,8 @@ class _HarpAudioViewState extends State<HarpAudioView> {
     } catch (e) {
       setState(() => _isDownloading = false);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(tr('Erro no download.'))));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(tr('Erro no download.'))));
       }
     }
   }
@@ -433,8 +425,8 @@ class _HarpAudioViewState extends State<HarpAudioView> {
               ),
               IconButton(
                 tooltip: settings.continuousPlayback
-                    ? context.l10n.t(
-                        'Reprodução contínua ativada (toque para desativar)')
+                    ? context.l10n
+                        .t('Reprodução contínua ativada (toque para desativar)')
                     : context.l10n.t(
                         'Reprodução contínua desativada (toque para ativar)'),
                 onPressed: settings.toggleContinuousPlayback,

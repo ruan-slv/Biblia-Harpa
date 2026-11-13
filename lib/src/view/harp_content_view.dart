@@ -18,6 +18,7 @@ import 'package:provider/provider.dart';
 import 'component/app_bar_component.dart';
 import 'component/bottombar.dart';
 import '../services/app_audio_handler.dart';
+import '../utils/app_links.dart';
 
 class HarpTextModel {
   final String hino;
@@ -176,6 +177,7 @@ class _HarpContentViewState extends State<HarpContentView> {
     }
 
     try {
+      await AppLinks.load();
       final hymns = _playableHymns();
       var index =
           hymns.indexWhere((audio) => _sameHymn(audio.titulo, widget.harp));
@@ -193,7 +195,7 @@ class _HarpContentViewState extends State<HarpContentView> {
               id: 'harp-content:${_hymnNumber(audio.titulo)}:${audio.titulo}',
               title: audio.titulo,
               artist: 'Harpa Cristã',
-              remoteUri: Uri.parse(audio.hinoURL),
+              remoteUri: AppLinks.harpAudio(audio.hinoURL),
               localPath: '$audioDir/${_safeFileName(audio.titulo)}.mp3',
               extras: const <String, String>{'source': 'harp-content'},
             ),

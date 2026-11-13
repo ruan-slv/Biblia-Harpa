@@ -14,6 +14,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:biblia_e_harpa/src/utils/theme.dart';
 import '../services/app_audio_handler.dart';
+import '../utils/app_links.dart';
 
 class HarpFileView extends StatefulWidget {
   final List<DataAudioModel> allHymns;
@@ -127,17 +128,6 @@ class _HarpFileViewState extends State<HarpFileView> {
     return '$audioDir/${_safeFileName(fileName)}.mp3';
   }
 
-  String _playableUrl(String url) {
-    if (url.contains("drive.google.com")) {
-      final idMatch = RegExp(r"/d/([^/]+)/").firstMatch(url);
-      if (idMatch != null) {
-        final id = idMatch.group(1);
-        return "https://drive.google.com/uc?export=download&id=$id&confirm=t";
-      }
-    }
-    return url;
-  }
-
   Future<void> _checkIfDownloaded() async {
     final path = await _getLocalFilePath(_currentHymn.titulo);
     final exists = await File(path).exists();
@@ -213,6 +203,7 @@ class _HarpFileViewState extends State<HarpFileView> {
 
   Future<void> _loadAndPlayAudio({bool allowDownloadFallback = true}) async {
     try {
+      await AppLinks.load();
       setState(() {
         _currentPosition = Duration.zero;
         _audioDuration = Duration.zero;
@@ -227,7 +218,7 @@ class _HarpFileViewState extends State<HarpFileView> {
             id: 'harp-file:$i:${hymn.titulo}',
             title: hymn.titulo,
             artist: 'Harpa Cristã',
-            remoteUri: Uri.parse(_playableUrl(hymn.hinoURL)),
+            remoteUri: AppLinks.harpAudio(hymn.hinoURL),
             localPath: '$audioDir/${_safeFileName(hymn.titulo)}.mp3',
             headers: const <String, String>{
               'User-Agent':
@@ -301,7 +292,11 @@ class _HarpFileViewState extends State<HarpFileView> {
         'User-Agent':
             'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36',
       };
-      await dio.download(_playableUrl(_currentHymn.hinoURL), savePath);
+      await AppLinks.load();
+      await dio.download(
+        AppLinks.harpAudio(_currentHymn.hinoURL).toString(),
+        savePath,
+      );
       if (mounted) {
         setState(() => _isDownloaded = true);
       }
